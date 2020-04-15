@@ -29,16 +29,17 @@ slm = SurfStatLinMod(v1,ss_model);
 slm = SurfStatT(slm,c);
 %% BrainStat
 addpath(genpath(brainstat_directory));
-which effect
-bs_plus = effect(v3) + effect(v4);
-bs_minus1 = effect(v3) - effect(v4);
-bs_minus2 = effect(v3) - effect([v3(:,1),v4]);
+which fixed
+bs_plus = fixed(v3) + fixed(v4);
+bs_minus1 = fixed(v3) - fixed(v4);
+bs_minus2 = fixed(v3) - fixed([v3(:,1),v4]);
 
-bs_model = effect(c) + effect(v2) + effect(v3) + effect(v4); 
-lm = BrainStatLinMod(v1,bs_model,c,slm);
+bs_model = fixed(c) + fixed(v2) + fixed(v3) + fixed(v4); 
+lm = BrainStatLinMod(v1,bs_model,c);
 %% Compare
 [ ...
 all(all(double(ss_plus) == bs_plus.data));
 all(all(double(ss_minus1) == bs_minus1.data));
 all(all(double(ss_minus2) == bs_minus2.data));
+abs(slm.t - lm.t) < 0.001 
 ]'

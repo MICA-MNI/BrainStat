@@ -1,17 +1,14 @@
-classdef effect
+classdef randomterm < fixed
     
-    properties(SetAccess = private)
-        data
-        type
-        names
+    properties(Hidden = true, Dependent)
+        variance
     end
     
     methods
-        function obj = effect(values,varargin)            
+        function obj = randomterm(values,varargin)            
             % Parse input
             p = inputParser;
             addParameter(p,'names',[])
-            addParameter(p,'type','fixed');
             parse(p,varargin{:})
             R = p.Results;
             
@@ -45,9 +42,12 @@ classdef effect
             end
             
             % Set properties. 
-            obj.data = values;
-            obj.names = R.names(:); 
-            obj.type = R.type; 
+            %obj.data = values;
+            %obj.names = R.names(:); 
+        end
+        
+        function variance = get.variance(obj)
+            variance = obj.data * obj.data';
         end
     end
 end

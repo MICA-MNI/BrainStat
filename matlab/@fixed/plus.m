@@ -5,7 +5,7 @@ function out = plus(t1,t2,precision)
 % negative colinearity i.e. r = -1?
 
 % Check input.
-if ~isa(t2,'effect')
+if ~isa(t2,'fixed')
     error('Input should consist of effects.');
 end
 
@@ -33,8 +33,7 @@ if any(remove)
 end
 
 % Build a new effect from the output. 
-out = effect([t1.data,t2.data(:,~remove)], ...
-           'names',[t1.names;t2.names(~remove)], ...
-           'type',t1.type);
+out = fixed([t1.data,t2.data(:,~remove)], ...
+           'names',[t1.names;t2.names(~remove)]);
 
 end

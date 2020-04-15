@@ -3,7 +3,7 @@ function s=minus(obj,t2,precision)
 % overall scaling of the vectors.
 
 % Check input.
-if ~isa(t2,'effect')
+if ~isa(t2,'fixed')
     error('Input must be a effect.')
 end
 if nargin < 3
@@ -28,7 +28,7 @@ r = corr(x1,x2);
 remove = sum(r>precision,2); 
    
 % Build a new effect from the output. 
-s = effect(obj.data(:,~remove));
+s = fixed(obj.data(:,~remove));
 
 end
 
