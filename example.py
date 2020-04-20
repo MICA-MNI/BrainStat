@@ -1,3 +1,8 @@
+#####  install matlab engine for python --- before running example
+#cd MATLABROOT/extern/engines
+#python setup.py build --build-base /tmp/matbuild install --user
+#####
+
 import numpy as np
 import surfstat_wrap as sw 
 
