@@ -9,7 +9,7 @@ test_python
 build
 dist
 
-*.m~
+*~
 *_deprecated.m
 *.swp
 
