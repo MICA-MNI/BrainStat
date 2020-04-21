@@ -113,6 +113,7 @@ When opening a pull request, please use one of the following prefixes:
 * **[DOC]** for new or updated documentation
 * **[STY]** for stylistic changes
 * **[REF]** for refactoring existing code
+* **[GIT]** for github-related changes
 
 Pull requests should be submitted early and often (please don't mix too many unrelated changes within one PR)!
 If your pull request is not yet ready to be merged, please also include the **[WIP]** prefix (you can remove it once your PR is ready to be merged).
