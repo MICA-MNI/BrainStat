@@ -20,8 +20,8 @@ if size(m2,3)==1
     m2.variance=term(v(:),'I');
 end
 
-s.mean=m1.mean*m2.mean;
-s.variance=m1.variance*m2.variance;
+mean=m1.mean*m2.mean;
+variance=m1.variance*m2.variance;
 
 N=char(m1.mean);
 if ~isempty(N)
@@ -42,7 +42,7 @@ if ~isempty(N)
             end
         end
     end
-    s.variance=s.variance+t*m2.variance;
+    variance = variance+t*m2.variance;
 end
 
 N=char(m2.mean);
@@ -64,10 +64,10 @@ if ~isempty(N)
             end
         end
     end
-    s.variance=s.variance+m1.variance*t;
+    variance = variance + m1.variance*t;
 end
 
-s=class(s,'random');
+s = random(variance,mean,[],[],true);
 
 return
 end

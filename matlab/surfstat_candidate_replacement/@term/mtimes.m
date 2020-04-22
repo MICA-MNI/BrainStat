@@ -40,6 +40,9 @@ m=x./repmat(sum(abs(x)),n,1);
 [u,j]=unique(flipud(m'),'rows');
 j=sort(k1*k2-j+1);
 jj=j(any(x(:,j)));
-s.names=nms(jj);
-s.matrix=x(:,jj);
-s=class(s,'term');
+
+s = term(x(:,jj),nms(jj));
+
+%s.names=nms(jj);
+%s.matrix=x(:,jj);
+%s=term(s);

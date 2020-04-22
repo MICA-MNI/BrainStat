@@ -17,7 +17,7 @@ v3 = rand(100,1);
 y = rand(100,1);
 
 %% Show the displays
-addpath(git_path + "matlab/surfstat_candidate_replacement");
+cd(git_path + "matlab/surfstat_candidate_replacement");
 fixed_object = term(v1);
 random_object = random(v2);
 

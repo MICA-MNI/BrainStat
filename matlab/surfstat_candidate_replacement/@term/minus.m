@@ -21,8 +21,12 @@ m1=t1.matrix./repmat(sum(abs(t1.matrix)),n,1);
 m2=t2.matrix./repmat(sum(abs(t2.matrix)),n,1);
 [d,i1]=setdiff(m1',m2','rows');
 i1=sort(i1);
-s.names=t1.names(i1);
-s.matrix=t1.matrix(:,i1);
-s=class(s,'term');
+
+s = term(t1.matrix(:,i1),t1.names(i1));
+
+
+% s.names=t1.names(i1);
+% s.matrix=t1.matrix(:,i1);
+% s=class(s,'term');
 end
 

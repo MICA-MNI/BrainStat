@@ -20,6 +20,4 @@ if size(m2,3)==1
     m2.variance=term(v(:),'I');
 end
 
-s.mean=m1.mean-m2.mean;
-s.variance=m1.variance-m2.variance;
-s=class(s,'random');
+s = random(m1.variance + m2.variance, m1.mean + m2.mean, [] ,[], true);
