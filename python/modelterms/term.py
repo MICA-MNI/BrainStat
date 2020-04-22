@@ -1,7 +1,7 @@
 import numpy as np
 
 class term:
-    def __init__(self,x,names=None):
+    def __init__(self,x=None,names=None):
         self.matrix = np.array(x)
         if names is not None:
             self.names = names
@@ -53,6 +53,25 @@ class term:
         out_matrix = np.array(out_matrix).T
         out_names = [self.names[idx] for idx in range(not_duplicate.size) if not_duplicate[idx]]
         return term(out_matrix,out_names)
+
+class random:
+    def __init__(self,ran=None,fix=None,name_ran=None,name_fix=None,ranisvar=False):
+        
+        if ran is not None:
+            if ranisvar:
+                self.variance = term(ran,name_ran)
+            else:
+                variance = ran @ ran.t
+                self.variance = term(np.flatten(variance),name_ran)
+        else:
+            self.variance = term()
+
+        if fix is not None:
+            self.mean = term(fix,name_fix)
+        else:
+            self.mean = term()
+
+
 
 
         
