@@ -54,7 +54,34 @@ class term:
         out_names = [self.names[idx] for idx in range(not_duplicate.size) if not_duplicate[idx]]
         return term(out_matrix,out_names)
 
+    def __mul__(self,t):
+        # Gotta double check this one - the matlab script seems a tad overcomplicated. 
+        # Check that second input is also a term.
+        if type(t) is not term:
+            t = term(t)
+        
+        # Grab matrices. 
+        m1 = self.matrix
+        m2 = t.matrix
+
+        m1r = np.expand_dims(m1,2)
+        m2r = np.reshape(m2,(m2.shape[0],1,m2.shape[1]))
+
+        # Compute multiplication
+        out_matrix = np.reshape(m1r * m2r, (m1.shape[0],-1))
+
+        # TO-DO: Add a check for colinear columns
+        
+        # Get new names.
+        out_names = []
+        for n1 in self.names:
+            for n2 in t.names:
+                out_names = out_names + [n1 + '*' + n2] 
+
+        return term(out_matrix,out_names)
+
 class random:
+    # NOT FUNCTIONAL YET.
     def __init__(self,ran=None,fix=None,name_ran=None,name_fix=None,ranisvar=False):
         
         if ran is not None:
@@ -70,10 +97,3 @@ class random:
             self.mean = term(fix,name_fix)
         else:
             self.mean = term()
-
-
-
-
-        
-
-
