@@ -17,22 +17,22 @@ class term:
             t = term(t)
 
         # Grab matrices. 
-        m1 = self.matrix
-        m2 = t.matrix
+        m0 = self.matrix
+        m1 = t.matrix
 
         # Check for duplicate columns (i.e. corr(x,y)==1))
-        r = m1.T @ m2 / np.linalg.norm(m1,axis=0,keepdims=1).T / np.linalg.norm(m2,axis=0,keepdims=1)
-        not_duplicate = np.less(r,0.999).all(axis=0) # Not 1 to account for floating point.
+        duplicate = check_colinearity(m0,m1,dim=0)
 
         # Remove duplicates from t
-        mat = [m2[:,idx] for idx in range(not_duplicate.size) if not_duplicate[idx]]
-        names = [t.names[idx] for idx in range(not_duplicate.size) if not_duplicate[idx]]
+        mat = [m1[:,idx] for idx in range(duplicate.size) if not duplicate[idx]]
+        names = [t.names[idx] for idx in range(duplicate.size) if not duplicate[idx]]
    
         mat = np.array(mat).T 
         
         # Create new term
-        out_matrix = np.concatenate([m1,mat],axis=1)
+        out_matrix = np.concatenate([m0,mat],axis=1)
         out_names = self.names + names
+        
         return term(out_matrix,out_names)
 
     def __sub__(self,t):
@@ -41,17 +41,17 @@ class term:
             t = term(t)
 
         # Grab matrices. 
-        m1 = self.matrix
-        m2 = t.matrix
+        m0 = self.matrix
+        m1 = t.matrix
 
         # Check for duplicate columns (i.e. corr(x,y)==1))
-        r = m1.T @ m2 / np.linalg.norm(m1,axis=0,keepdims=1).T / np.linalg.norm(m2,axis=0,keepdims=1)
-        not_duplicate = np.less(r,0.999).all(axis=1) # Not 1 to account for floating point.
+        duplicate = check_colinearity(m0,m1,dim=1) # Not ==1 to account for floating point.
 
         # Remove occurences of t from self
-        out_matrix = [m1[:,idx] for idx in range(not_duplicate.size) if not_duplicate[idx]]
+        out_matrix = [m0[:,idx] for idx in range(duplicate.size) if not duplicate[idx]]
         out_matrix = np.array(out_matrix).T
-        out_names = [self.names[idx] for idx in range(not_duplicate.size) if not_duplicate[idx]]
+        out_names = [self.names[idx] for idx in range(duplicate.size) if not duplicate[idx]]
+        
         return term(out_matrix,out_names)
 
     def __mul__(self,t):
@@ -61,22 +61,26 @@ class term:
             t = term(t)
         
         # Grab matrices. 
-        m1 = self.matrix
-        m2 = t.matrix
+        m0 = self.matrix
+        m1 = t.matrix
 
-        m1r = np.expand_dims(m1,2)
-        m2r = np.reshape(m2,(m2.shape[0],1,m2.shape[1]))
+        m0r = np.expand_dims(m0,2)
+        m1r = np.reshape(m1,(m1.shape[0],1,m1.shape[1]))
 
         # Compute multiplication
-        out_matrix = np.reshape(m1r * m2r, (m1.shape[0],-1))
+        out_matrix = np.reshape(m0r * m1r, (m0.shape[0],-1))
 
-        # TO-DO: Add a check for colinear columns
-        
-        # Get new names.
+         # Get new names.
         out_names = []
         for n1 in self.names:
             for n2 in t.names:
                 out_names = out_names + [n1 + '*' + n2] 
+
+        # Check for colinear columns
+        duplicate = check_colinearity(out_matrix)
+        out_matrix = [out_matrix[:,idx] for idx in range(duplicate.size) if not duplicate[idx]]
+        out_matrix = np.array(out_matrix).T
+        out_names = [out_names[idx] for idx in range(duplicate.size) if not duplicate[idx]]
 
         return term(out_matrix,out_names)
 
@@ -97,3 +101,18 @@ class random:
             self.mean = term(fix,name_fix)
         else:
             self.mean = term()
+
+def check_colinearity(m0,m1=None,dim=0):
+    # Check for colinearity of columns of input matrices m0 and m1. If only one
+    # matrix is provided, then it looks for colinearity of the columns of this
+    # matrix instead.
+
+    if m1 is None:
+        r = m0.T @ m0 / np.linalg.norm(m0,axis=0,keepdims=1).T / np.linalg.norm(m0,axis=0,keepdims=1)
+        r = np.tril(r,-1)
+    else:
+        r = m0.T @ m1 / np.linalg.norm(m0,axis=0,keepdims=1).T / np.linalg.norm(m1,axis=0,keepdims=1)
+
+    colinear = np.greater(r,0.999).any(axis=dim) # Not 1 to account for floating point.
+
+    return colinear
