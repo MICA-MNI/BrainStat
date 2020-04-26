@@ -1,7 +1,7 @@
 import sys
 sys.path.append("python")
 
-import BrainStatLinMod as BrainStatLinMod
+from SurfStatLinMod import *
 import surfstat_wrap as sw
 import numpy as np
 import sys
@@ -22,7 +22,7 @@ except:
     print >> sys.stderr, "ORIGINAL MATLAB CODE DOES NOT WORK WITH THESE INPUTS..."
     sys.exit(1)
 
-resPy = BrainStatLinMod.BrainStatLinMod(A,B)
+resPy = py_SurfStatLinMod(A,B)
 print(resPy)
 
 for key in resPyWrapper:

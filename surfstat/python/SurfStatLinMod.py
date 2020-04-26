@@ -5,7 +5,7 @@ import numpy as np
 import numpy.matlib
 import surfstat_wrap as sw
 
-def BrainStatLinMod(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
+def py_SurfStatLinMod(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
 
 	maxchunk=2^20;
 
