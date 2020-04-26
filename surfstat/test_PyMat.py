@@ -1,4 +1,7 @@
-import BrainStatLinMod
+import sys
+sys.path.append("python")
+
+import BrainStatLinMod as BrainStatLinMod
 import surfstat_wrap as sw
 import numpy as np
 import sys

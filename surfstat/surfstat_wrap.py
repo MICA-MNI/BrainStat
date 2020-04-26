@@ -6,7 +6,7 @@ import numpy as np
 def matlab_init_surfstat():
     global surfstat_eng
     surfstat_eng = matlab.engine.start_matlab()
-    addpath = surfstat_eng.addpath('surfstat')
+    addpath = surfstat_eng.addpath('matlab')
 
 def matlab_SurfStatLinMod(T, M):
 
