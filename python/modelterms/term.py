@@ -84,6 +84,14 @@ class term:
 
         return term(out_matrix,out_names)
 
+    def __pow__(self,p):
+        if p % 1 is not 0 or p < 0:
+            print('p must be a positive integer. (TO-DO: Turn into an error.)')
+        elif p >= 2:
+            return term(self * (self ** (p-1)))
+        elif p == 1:
+            return term(self)
+
 class random:
     # NOT FUNCTIONAL YET.
     def __init__(self,ran=None,fix=None,name_ran=None,name_fix=None,ranisvar=False):
@@ -113,6 +121,4 @@ def check_colinearity(m0,m1=None,dim=0):
     else:
         r = m0.T @ m1 / np.linalg.norm(m0,axis=0,keepdims=1).T / np.linalg.norm(m1,axis=0,keepdims=1)
 
-    colinear = np.greater(r,0.999).any(axis=dim) # Not 1 to account for floating point.
-
-    return colinear
+    return np.greater(r,0.999).any(axis=dim) # Not 1 to account for floating point.
