@@ -7,7 +7,7 @@ rmpath(genpath(git_path));
 warning('on','MATLAB:rmpath:DirNotFound');
 
 addpath(git_path + "matlab/surfstat_ported");
-addpath(git_path + "matlab/surfstat_candidate_replacement");
+addpath(git_path + "matlab/temporary_directories/surfstat_candidate_replacement");
 
 %% Checks
 rng(0);

@@ -17,7 +17,7 @@ v3 = rand(100,1);
 y = rand(100,1);
 
 %% Show the displays
-cd(git_path + "matlab/surfstat_candidate_replacement");
+cd(git_path + "matlab/temporary_directories/surfstat_candidate_replacement");
 fixed_object = term(v1);
 random_object = random(v2);
 
@@ -29,14 +29,14 @@ random_object
 
 %% First lets show that the new random/term classes are equivalent.
 % Get a p-value for a pseudo-random BrainStat model.
-cd(git_path + "matlab/surfstat_candidate_replacement");
+cd(git_path + "matlab/temporary_directories/surfstat_candidate_replacement");
 M = 1 + term(v1) + random(v2) + term(v3) + I; 
 slm = SurfStatLinMod(y,M);
 slm = SurfStatT(slm,v1);
 p = SurfStatP(slm);
 
 % Get the same p-value with a pseudo-random SurfStat model
-cd(git_path + "matlab/surfstat");
+cd(git_path + "matlab/temporary_directories/surfstat");
 clear M random_object fixed_object
 M2 = 1 + term(v1) + random(v2) + term(v3) + I; 
 slm2 = SurfStatLinMod(y,M2);
