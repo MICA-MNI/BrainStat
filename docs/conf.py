@@ -20,7 +20,7 @@
 # -- Project information -----------------------------------------------------
 
 project = u'BrainStat'
-copyright = u'2020, MICA Lab, Valk Lab'
+copyright = u'2020, MICA Lab, CNG Lab'
 author = u'MICA Lab, Valk Lab'
 
 # The short X.Y version
