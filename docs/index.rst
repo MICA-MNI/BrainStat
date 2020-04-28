@@ -5,7 +5,7 @@ Welcome to BrainStat's documentation!
    :target: https://opensource.org/licenses/BSD-3-Clause
 
 
-BrainStat is an amazing toolbox and here is where we tell you why. x 
+BrainStat is an amazing toolbox and here is where we tell you why.
 
 .. toctree::
    :maxdepth: 1
@@ -24,6 +24,7 @@ Developers
 - Reinder Vos de Wael, MICA Lab - Montreal Neurological Institute
 - Oualid Benkarim, MICA Lab - Montreal Neurological Institute
 - Boris Bernhardt, MICA Lab - Montreal Neurological Institute
+
 ADD ALL OTHER CODE CONTRIBUTORS
 
 License
