@@ -21,7 +21,7 @@
 
 project = u'BrainStat'
 copyright = u'2020, MICA Lab, CNG Lab'
-author = u'MICA Lab, Valk Lab'
+author = u'MICA Lab, CNG Lab'
 
 # The short X.Y version
 version = u''
@@ -129,7 +129,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'BrainStat.tex', u'BrainStat Documentation',
-     u'MICA Lab, Valk Lab', 'manual'),
+     u'MICA Lab, CNG Lab', 'manual'),
 ]
 
 
