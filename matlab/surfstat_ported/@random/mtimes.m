@@ -29,8 +29,8 @@ if ~isempty(N)
     X=X./repmat(max(abs(X)),size(X,1),1);
     k=length(N);
     t=term;
-    for i=1:k;
-        for j=1:i;
+    for i=1:k
+        for j=1:i
             if i==j
                 v=X(:,i)*X(:,i)';
                 t=t+term(v(:),N{i});
