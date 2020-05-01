@@ -8,7 +8,7 @@ function [volume,header] = read_volume(file)
 
 % Niftiread is part of the image processing toolbox 
 if endsWith(file,{'.nii.gz','.nii'})
-    nii = load_nii(file);
+    nii = nifti_toolbox.load_nii(file);
     volume = nii.img; 
     header = nii.hdr;
 elseif endsWith(file,'.mnc')
