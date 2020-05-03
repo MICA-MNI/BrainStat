@@ -169,12 +169,20 @@ def matlab_SurfStatStand(Y, mask, subtractordivide):
 # ==> SurfStatSurf2Vol.m <==
 def matlab_SurfStatSurf2Vol(s, surf, template):
     sys.exit("Function matlab_SurfStatSurf2Vol is not implemented yet")
-
+	
 # ==> SurfStatT.m <==
 def matlab_SurfStatT(slm, contrast):
+
+    for key in slm.keys():
+        if np.ndim(slm[key]) == 0:
+            
+            slm[key] = surfstat_eng.double(slm[key].item())
+        else:
+            slm[key] = matlab.double(slm[key].tolist())
+
     contrast = matlab.double(contrast.tolist())
     return surfstat_eng.SurfStatT(slm, contrast)
-
+    
 # ==> SurfStatView.m <==
 def matlab_SurfStatView(struct, surf, title, background):
     sys.exit("Function matlab_SurfStatView is not implemented yet")

@@ -3,6 +3,8 @@ import matlab
 from numbers import Number
 import numpy as np
 import numpy.matlib
+import sys
+sys.path.append("/data/p_02323/hippoc/BrainStat/surfstat")
 import surfstat_wrap as sw
 
 def py_SurfStatLinMod(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
@@ -51,7 +53,7 @@ def py_SurfStatLinMod(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
 		print('Did you forget a constant term? :-)')
 
 	p = np.shape(slm['X'])[1]
-	slm['df'] = np.array(n - np.linalg.matrix_rank(slm['X']))
+	slm['df'] = np.array([n - np.linalg.matrix_rank(slm['X'])])
 
 	if k == 1:
 		slm['coef'] = np.zeros((p,v))
@@ -60,7 +62,6 @@ def py_SurfStatLinMod(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
 	  
 	k2 = k*(k+1)/2;
 	slm['SSE'] = np.zeros((int(k2),v))
-
 
 	if isnum:
 		nc = 1
@@ -83,7 +84,6 @@ def py_SurfStatLinMod(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
 					if s == (1, 1) and np.shape(M)[0]>1:
 						coef = pinvX * Y[0][0]
 
-						print('s 1 1 ', coef)
 					else:
 						coef = np.dot(pinvX, Y)
 
@@ -111,7 +111,8 @@ def py_SurfStatLinMod(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
 			j = 0
 			for j1 in range(0, k):
 					for j2 in range(0, j1+1):
-						SSE[j,:] = np.sum(Y[:,:,j1] * Y[:,:,j2], axis=1)
+						SSE[j,:] = np.sum(np.multiply(Y[:,:,j1], Y[:,:,j2]), axis=0)
+						
 						j += 1
 			slm['coef'][:,(v1-1):(v2),:] = coef
 			slm['SSE'][:,(v1-1):v2] = SSE
@@ -145,10 +146,7 @@ def py_SurfStatLinMod(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
 
 			slm['resl'][:, j-1] = s;
 
-	#print(slm)
-
 	return slm
-
 
 
 
