@@ -125,7 +125,6 @@ def matlab_SurfStatNorm(Y, mask=None, subdiv='s'):
         mymask = matlab.logical(matlab.double(mymask.tolist()))
         Y, Ya = surfstat_eng.SurfStatNorm(Y, mymask, subdiv, nargout=2)
 
-    print(Y, Ya)
     return np.array(Y), np.array(Ya)
 
 
