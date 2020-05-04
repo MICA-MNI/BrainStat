@@ -111,7 +111,7 @@ classdef (InferiorClasses = {?term}) random
             % Deal with odd inputs.
             if nargin == 0
                 return
-            elseif isa(ran,'random2')
+            elseif isa(ran,'random')
                 obj = ran;
                 warning('First input argument is already a random term; returning first input argument.');
                 return

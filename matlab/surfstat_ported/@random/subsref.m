@@ -1,12 +1,13 @@
 function r = subsref(obj,s)
 if numel(s) > 1
     % If accessing the object in the "normal" manner
+    r = obj;
     for ii = 1:numel(s)
         switch s(ii).type
             case '()'
-                r = obj(s(ii).subs{:});
+                r = r(s(ii).subs{:});
             case '.'
-                r = obj.(s(ii).subs);
+                r = r.(s(ii).subs);
         end
     end
 else
