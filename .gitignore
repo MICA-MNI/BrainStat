@@ -9,10 +9,11 @@ test_python
 build
 dist
 
-*.m~
+*~
 *_deprecated.m
 *.swp
 
 .vscode
 
 .DS_Store
+__pycache__/
