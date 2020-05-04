@@ -58,6 +58,7 @@ Name-Value Pairs
 ^^^^^^^^^^^^^^^^^
 - *parcellation*: an k-by-1 vector containing the parcellation scheme, where k is the number of vertices. 
 - *labeltext*: A cell array of m elements containing labels for each column of data. These will be printed next to the hemispheres. 
+- *views*: a character vector containing the angles from which to view the brain. Valid characters are: l(ateral), m(edial), i(nferior), s(uperior), a(nterior), and p(osterior). When supplying a single surface, the lateral/medial designations must be inverted for the right hemisphere. Default is 'lm'. 
 
 -------------------
 Methods
@@ -66,16 +67,6 @@ Methods
 The plot_hemispheres class has three public methods that may be used to further
 modify the figure. 
 
-- *colorlimits*: Used as :matlab:`obj.colorlimits(M)` where M is either a 1-by-2
-vector containing the lower and upper limit of the colorbar, or a a n-by-2
-matrix containing the lower and upper limits of the colorbar for each plotted
-row. 
-- *colormaps*: Used as :matlab:`obj.colormaps(M)` where M is either a
-c-by-3 colormap, where c is the number of different colors, or a n-element cell
-vector where the ith cell contains the colormap for the ith plotted row. 
-- *labels*: Used as :matlab:`obj.labels(varargin)` where varargin are name-value
-pairs containing the new properties of the labeltext e.g.
-:matlab:`obj.labels('FontSize',10,'FontName',DroidSans)`. Any properties left
-unset will default to the BrainStat defaults i.e. Rotation: 90, Units: Normalized,
-HorizontalAlignment: 'Center', FontName: DroidSans, FontSize 18, otherwise
-default text() parameters. 
+- *colorlimits*: Used as :matlab:`obj.colorlimits(M)` where M is either a 1-by-2 vector containing the lower and upper limit of the colorbar, or a a n-by-2 matrix containing the lower and upper limits of the colorbar for each plotted row. 
+- *colormaps*: Used as :matlab:`obj.colormaps(M)` where M is either a c-by-3 colormap, where c is the number of different colors, or a n-element cell vector where the ith cell contains the colormap for the ith plotted row. 
+- *labels*: Used as :matlab:`obj.labels(varargin)` where varargin are name-value pairs containing the new properties of the labeltext e.g. :matlab:`obj.labels('FontSize',10,'FontName',DroidSans)`. Any properties left unset will default to the BrainStat defaults i.e. Rotation: 90, Units: Normalized, HorizontalAlignment: 'Center', FontName: DroidSans, FontSize 18, otherwise default text() parameters. 
