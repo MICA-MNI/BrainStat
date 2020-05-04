@@ -10,8 +10,11 @@ function colorlimits(obj,limits)
 % href="https://brainspace.readthedocs.io/en/latest/pages/matlab_doc/visualization/plot_hemispheres.html">ReadTheDocs</a>.
 
 % Check for correct input.
-if size(limits,1) ~= size(obj.data,2) && numel(limits) == 1
+if size(limits,1) ~= size(obj.data,2) && size(limits,1) ~= 1
     error('The number of color limits must be equal to the number of columns in the data matrix..');
+end
+if size(limits,2) ~= 2
+    error('Limits must be a 1-by-2 or m-by-2 matrix, where m is the number of plotted rows.');
 end
 
 % Set color limits for the axes and colorbar. 
