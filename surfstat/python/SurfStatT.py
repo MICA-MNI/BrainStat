@@ -29,7 +29,7 @@ def py_SurfStatT(slm, contrast):
     [n, p] = np.shape(slm['X'])
     pinvX  = np.linalg.pinv(slm['X'])
 
-    if np.shape(contrast)[1] <= p:
+    if len(contrast) <= p:
         c = np.concatenate((contrast, \
                             np.zeros((1, p-np.shape(contrast)[1]))), axis=1).T
 
@@ -39,7 +39,7 @@ def py_SurfStatT(slm, contrast):
 
     else:
         c = np.dot(pinvX, contrast)
-        r = contrast - slm['X'] * c
+        r = contrast - np.dot(slm['X'], c)
 
         if np.square(np.ravel(r, 'F')).sum() \
                 / np.square(np.ravel(contrast, 'F')).sum() >  np.spacing(1) :
@@ -133,5 +133,6 @@ def py_SurfStatT(slm, contrast):
         slm['t'] = np.multiply(np.sqrt(slm['t'] + (slm['t'] <= 0)), (slm['t'] > 0))
 
     return slm
+
 
 
