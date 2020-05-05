@@ -231,19 +231,48 @@ def matlab_SurfStatStand(Y, mask=None, subtractordivide='s'):
 def matlab_SurfStatSurf2Vol(s, surf, template):
     sys.exit("Function matlab_SurfStatSurf2Vol is not implemented yet")
 	
+	
+	
+	
 # ==> SurfStatT.m <==
 def matlab_SurfStatT(slm, contrast):
+    # T statistics for a contrast in a univariate or multivariate model.
+    # Inputs
+    # slm         = a dict with mandatory keys 'X', 'df', 'coef', 'SSE'
+    # slm['X']    = numpy array of shape (n x p), design matrix.
+    # slm['df']   = numpy array of shape (a,), dtype=float64, degrees of freedom
+    # slm['coef'] = numpy array of shape (p x v) or (p x v x k)
+    #             = array of coefficients of the linear model.
+    #             = if (p x v), then k is thought to be 1.
+    # slm['SSE']  = numpy array of shape (k*(k+1)/2 x v)
+    #             = array of sum of squares of errors
+    #
+    # contrast    = numpy array of shape (n x 1)
+    #             = vector of contrasts in the observations, ie.
+    #             = ...
 
-    for key in slm.keys():
-        if np.ndim(slm[key]) == 0:
-            
-            slm[key] = surfstat_eng.double(slm[key].item())
+    slm_mat = slm.copy()
+    
+    for key in slm_mat.keys():
+        if np.ndim(slm_mat[key]) == 0:
+            slm_mat[key] = surfstat_eng.double(slm_mat[key].item())
         else:
-            slm[key] = matlab.double(slm[key].tolist())
+            slm_mat[key] = matlab.double(slm_mat[key].tolist())
 
     contrast = matlab.double(contrast.tolist())
+    
+    slm_MAT = surfstat_eng.SurfStatT(slm_mat, contrast)
+    
+    slm_py = {}
+    
+    for key in slm_MAT.keys():
+        slm_py[key] = np.array(slm_MAT[key])
 
-    return surfstat_eng.SurfStatT(slm, contrast)
+    return slm_py
+    
+    
+    
+    
     
 # ==> SurfStatView.m <==
 def matlab_SurfStatView(struct, surf, title, background):
