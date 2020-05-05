@@ -47,16 +47,13 @@ def dummy_test():
 
 	return
 
+
 tmp = {}
-tmp['X']  = np.array([[1], [1], [1], [1]])
+tmp['X']  = np.array([[1], [2], [3], [4]])
 tmp['df'] = np.array([[3.0]])
 tmp['coef'] = np.array([0.3333, 0.3333, 0.3333, 0.3333]).reshape(1,4)
 tmp['SSE'] = np.array([0.6667, 0.6667, 0.6667, 0.6667])
 
+C = np.array([[1]])
 
-result_SurfStatLinMod, result_SurfStatT = dummy_test()
-
-print('TEST 1a ', result_SurfStatLinMod, result_SurfStatT)
-
-
-
+py_SurfStatT(tmp, C)
