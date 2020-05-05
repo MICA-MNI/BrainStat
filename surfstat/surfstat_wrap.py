@@ -189,10 +189,44 @@ def matlab_SurfStatResels(slm, mask):
 def matlab_SurfStatSmooth(Y, surf, FWHM):
     sys.exit("Function matlab_SurfStatSmooth is not implemented yet")
 
-# ==> SurfStatStand.m <==
-def matlab_SurfStatStand(Y, mask, subtractordivide):
-    sys.exit("Function matlab_SurfStatStand is not implemented yet")
 
+
+
+# ==> SurfStatStand.m <==
+def matlab_SurfStatStand(Y, mask=None, subtractordivide='s'):
+
+	# Standardizes by subtracting the global mean, or dividing it.
+ 	# Inputs
+	# Y      = numpy array of shape (n x v), v=#vertices.
+	#        = NEED TO BE DISCUSSED: it works for (n x v x k) now, DO WE NEED THAT?
+	# mask   = numpy boolean array of shape (1 x v). 
+    #          True=inside the mask, False=outside.
+	# subdiv = 's' for Y=Y-Ymean or 'd' for Y=(Y/Ymean -1)*100. 
+	# Outputs
+	# Y      = standardized data, numpy array of shape (n x v).
+	# Ym     = mean of input Y along the mask, numpy array of shape (n x 1).
+
+    Y = matlab.double(Y.tolist())
+    if mask is None and subtractordivide=='s':
+        Y, Ya = surfstat_eng.SurfStatStand(Y, nargout=2)
+    
+    elif mask is not None and subtractordivide=='s':
+        mymask = np.array(mask, dtype=int)
+        mymask = matlab.logical(matlab.double(mymask.tolist()))
+        Y, Ya = surfstat_eng.SurfStatStand(Y, mymask, nargout=2)
+
+    elif mask is not None and subtractordivide=='d':
+        mymask = np.array(mask, dtype=int)
+        mymask = matlab.logical(matlab.double(mymask.tolist()))
+        Y, Ya = surfstat_eng.SurfStatStand(Y, mymask, subtractordivide, nargout=2)
+
+    return np.array(Y), np.array(Ya)
+
+
+
+
+
+    
 # ==> SurfStatSurf2Vol.m <==
 def matlab_SurfStatSurf2Vol(s, surf, template):
     sys.exit("Function matlab_SurfStatSurf2Vol is not implemented yet")
