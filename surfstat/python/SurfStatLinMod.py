@@ -4,7 +4,7 @@ from numbers import Number
 import numpy as np
 import numpy.matlib
 import sys
-sys.path.append("/data/p_02323/hippoc/BrainStat/surfstat")
+sys.path.append("../surfstat")
 import surfstat_wrap as sw
 
 def py_SurfStatLinMod(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
