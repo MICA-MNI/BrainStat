@@ -40,8 +40,8 @@ def py_SurfStatT(slm, contrast):
     slm['df'] = slm['df'][len(slm['df'])-1 ]
 
     if np.ndim(slm['coef']) == 2:
+        k = 1
         slm['k'] = 1
-
         if not 'r' in slm.keys():
             # fixed effect 
             if 'V' in slm.keys():
@@ -59,6 +59,7 @@ def py_SurfStatT(slm, contrast):
         slm['sd'] = np.sqrt(np.multiply(Vc, slm['SSE']) / slm['df'])
         slm['t']  = np.multiply(np.divide(slm['ef'], (slm['sd']+(slm['sd']<= 0))), \
                                 slm['sd']>0)
+        print('AAAA slm.t', slm['t'])
     else:
         # multivariate
         p, v, k   = np.shape(slm['coef'])
@@ -75,6 +76,7 @@ def py_SurfStatT(slm, contrast):
         vf =  np.divide(np.sum(np.square(np.dot(c.T, pinvX)), axis=1), slm['df'])
         slm['sd'] = np.sqrt(vf * slm['SSE'][jj,:])
 
+    print('CCCC ', k)
     if k == 2:
         det = np.multiply(slm['SSE'][0,:], slm['SSE'][2,:]) - \
               np.square(slm['SSE'][1,:])
@@ -124,4 +126,13 @@ def py_SurfStatT(slm, contrast):
     return slm
 
 
+
+tmp = {}
+tmp['X']  = np.array([[1], [1], [1], [1]])
+tmp['df'] = np.array([[3.0]])
+tmp['coef'] = np.array([0.3333, 0.3333, 0.3333, 0.3333]).reshape(1,4)
+tmp['SSE'] = np.array([0.6667, 0.6667, 0.6667, 0.6667])
+C = np.array([[1]])
+
+py_SurfStatT(tmp, C)
 
