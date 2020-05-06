@@ -27,12 +27,13 @@ end
 brainstat_path = string(fileparts(fileparts(fileparts(mfilename('fullpath')))));
 data_dir = brainstat_path + filesep() + "shared" + filesep() + "contextdata" + filesep();
 
-for type = {'PET','neurosynth'} % TODO: Add genes
-    out.(type{1}) = decode(map, data_dir + type + ".mat", mask);
+for type = {'pet','neurosynth'} % TODO: Add genes
+    [out.(type{1}),field] = decode(map, data_dir + type + ".mat", mask);
 end
+out.surface = field(6:end);
 end
 %% Local functions. 
-function out = decode(map, context_file, mask)
+function [out,field] = decode(map, context_file, mask)
 
 % Grab correct map. 
 if size(map,1) == 64984
