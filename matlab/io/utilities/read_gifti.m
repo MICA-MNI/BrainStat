@@ -120,8 +120,7 @@ end
 if array.Attributes.Dimensionality == "1"
     output_data = decoded_data(:);
 elseif array.Attributes.Dimensionality == "2"
-    output_data = reshape(decoded_data, str2double(array.Attributes.Dim1), ...
-        str2double(array.Attributes.Dim0))';
+    output_data = reshape(decoded_data, dim(2), dim(1))';
 else
     error('Unknown dimensionality.');
 end
