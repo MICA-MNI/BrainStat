@@ -40,15 +40,7 @@ end
 % If input is a char array, load the file. 
 if ischar(S)
     if endsWith(S,'.gii')
-        try
-            S = gifti(S);
-        catch ME
-            if strcmp(ME.identifier,'MATLAB:UndefinedFunction')
-                error('Could not find GIFTI library. Is it installed? If yes, is it on your path?');
-            else
-                rethrow(ME);
-            end
-        end
+        S = read_gifti(S);
     elseif endsWith(S, '.mat')
         S = load(S);
     else
@@ -90,19 +82,7 @@ end
 % Write surface
 if ~isempty(path)
     if endsWith(path,'.gii')
-        % Write gifti
-        try
-            gii = gifti();
-        catch ME
-            if strcmp(ME.identifier,'MATLAB:UndefinedFunction')
-                error('Could not find GIFTI library. Is it installed? If yes, is it on your path?');
-            else
-                rethrow(ME);
-            end
-        end
-        gii.vertices = vertices;
-        gii.faces = faces;
-        save(gii,path);
+        error('Saving to gifti format is not currently supported.');
     elseif endsWith(path,'.mat')
         % Write matlab file
         switch lower(format)
