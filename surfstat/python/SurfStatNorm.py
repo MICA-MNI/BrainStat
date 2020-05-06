@@ -1,7 +1,6 @@
 import sys
 import numpy as np
 
-
 def py_SurfStatNorm(Y, mask=None, subdiv='s'):
 
 	# Normalizes by subtracting the global mean, or dividing it. 
@@ -33,20 +32,12 @@ def py_SurfStatNorm(Y, mask=None, subdiv='s'):
         Yav = Yav.reshape(len(Yav), 1)
     elif np.ndim(Y) > 2:
         Yav = np.mean(Y[:,mask,:], axis=1)
-    
-    for i in range(0,n):
-       if  subdiv == 's':
-           if k == 1:
-               Y[i,:] = Y[i,:] - Yav[i]
-           elif k > 1:
-               for j in range(0, k):			
-                   Y[i,:,j] = Y[i,:,j] - Yav[i,j]			
-       elif subdiv == 'd':
-           if k == 1:
-               Y[i,:] = Y[i,:] / Yav[i]
-           elif k > 1:
-               for j in range(0, k):
-                   Y[i,:,j] = Y[i,:,j] / Yav[i,j];        
+        Yav = np.expand_dims(Yav, axis=1)
 
-    return Y, Yav
+    if subdiv == 's':
+        Y = Y - Yav
+    elif subdiv == 'd':
+        Y = Y / Yav
+    
+    return Y, np.squeeze(Yav)
 
