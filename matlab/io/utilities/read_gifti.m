@@ -1,6 +1,6 @@
-function gii = read_gifti2(file)
+function gii = read_gifti(file)
 
-% Check for correct file.
+% Check for correct file input.
 if ~endsWith(file,'.gii')
     error('This function only accepts GIFTI files.');
 end
@@ -11,14 +11,19 @@ end
 % Convert GIFTI file to a structure.
 xml = xml2struct(file);
 if ~iscell(xml.GIFTI.DataArray)
+    % Convert data structures to a cell; this makes the upcoming for-loop a
+    % bit easier.
     xml.GIFTI.DataArray = {xml.GIFTI.DataArray};
 end
 
-% Decode data.
+% Decode data arrays.
 path = string(fileparts(file));
 for ii = 1:numel(xml.GIFTI.DataArray)
+    % Convert the xml array to a data matrix. 
     data = decode_array(xml.GIFTI.DataArray{ii}, path);    
     
+    % Assign the data to the output. The field depends on the intent of the
+    % array. 
     switch xml.GIFTI.DataArray{ii}.Attributes.Intent
         case 'NIFTI_INTENT_LABEL'
             gii.cdata = data;
@@ -46,9 +51,13 @@ end
 %% Support functions
 function output_data = decode_array(array,path)
 
-% Get array properties
+% Get array encoding.
 encoding = array.Attributes.Encoding;
+
+% Get array data. 
 coded_data = array.Data.Text;
+
+% Get the data type. 
 datatype = array.Attributes.DataType;
 datatype = regexp(datatype,'_[A-Z]+[0-9]+','match','once');
 datatype = lower(datatype(2:end));
@@ -59,20 +68,25 @@ switch datatype
         datatype = 'double';
 end
 
+% Get the dimensions of the output array. 
 for ii = 1:str2double(array.Attributes.Dimensionality)
     dim(ii) = str2double(array.Attributes.(['Dim' num2str(ii-1)]));
 end
 
-% Decode data array
+% Check whether the bytes need to be swapped. 
 [~,~,machine_encoding] = fopen(1); 
-if (array.Attributes.Endian == "LittleEndian" && contains(machine_encoding,'ieee-be')) || (array.Attributes.Endian == "BigEndian" && ~contains(machine_encoding,'ieee-le'))
+if encoding == "ASCII"
+    swap = @(x) x;
+elseif (array.Attributes.Endian == "LittleEndian" && contains(machine_encoding,'ieee-be')) || (array.Attributes.Endian == "BigEndian" && ~contains(machine_encoding,'ieee-le'))
     swap = @swapbytes;
 else
     swap = @(x) x; 
 end
 
+% Perform the decoding. 
 switch encoding
     case {'ASCII','ExternalFileBinary'}
+        % DEcode
         if encoding == "ASCII"
             decoded_data = str2num(coded_data);  %#ok<ST2NM>
         elseif encoding == "ExternalFileBinary"
@@ -83,17 +97,20 @@ switch encoding
             fseek(fid,str2double(array.Attributes.ExternalFileOffset),0);
             decoded_data = fread(fid,prod(dim),datatype);
         end
+        % Set correct type
         fun = str2func(datatype);
         decoded_data = fun(decoded_data);
-        if encoding == "ExternalFileBinary"
-            decoded_data = swap(decoded_data);
-        end
+        % Swap bytes if needed. 
+        decoded_data = swap(decoded_data);
     case {'Base64Binary','GZipBase64Binary'}
         import matlab.net.base64decode
+        % Decode
         decoded = base64decode(coded_data);
+        % Unzip
         if encoding == "GZipBase64Binary"
             decoded = chunkDunzip(decoded);
         end
+        % Set correct type. 
         decoded_data = typecast(swap(decoded),datatype);
     otherwise
         error('Unknown encoding.')
