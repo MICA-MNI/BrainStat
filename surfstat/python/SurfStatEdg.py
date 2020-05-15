@@ -59,7 +59,7 @@ def py_SurfStatEdge(surf):
 						 [edg1], [edg2], [IJ, 2*IJ]]) + (k-1) *IJ) 
 										 
 				if np.remainder((K+1), 2) == f:
-					edg[ (k-1)*n1 + np.arange(0,n2) -1 , :]  = \
+					edg[ (K-1)*n1 + np.arange(0,n2), :]  = \
 					 edg0[np.arange(0,n2),:] + (K-1) * IJ
 					
 			
@@ -86,10 +86,10 @@ def py_SurfStatEdge(surf):
 #Z[:,:,2] = a
 
 
-a = np.array([[9, 10]])
-Z = np.zeros((1,2,2))
+a = np.array([[9, 10,11,12]])
+Z = np.zeros((1,4,2))
 Z[:,:,0] = a
-Z[:,:,1] = a 
+Z[:,:,1] = a + 5
 
 
 surf = {}
