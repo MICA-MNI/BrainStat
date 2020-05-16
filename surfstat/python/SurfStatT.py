@@ -1,7 +1,8 @@
 import warnings
-from scipy.linalg import null_space
 import scipy
 from scipy import linalg, matrix
+from scipy.linalg import null_space
+from scipy.linalg import cholesky
 import numpy as np
 
 def null(A, eps=1e-15):
@@ -55,9 +56,8 @@ def py_SurfStatT(slm, contrast):
         if not 'r' in slm.keys():
             # fixed effect 
             if 'V' in slm.keys():
-                print('NOT YET IMPLEMENTED AAAA ')
-                #            % Vmh=inv(chol(slm.V)');
-                #            % pinvX=pinv(Vmh*slm.X);
+                Vmh = np.linalg.inv(cholesky(slm['V']).T)
+                pinvX = np.linalg.pinv(np.dot(Vmh, slm['X']))
 
             Vc = np.sum(np.square(np.dot(c.T, pinvX)), axis=1)
         else:
@@ -187,52 +187,4 @@ def py_SurfStatT(slm, contrast):
         slm['t'] = np.multiply(np.sqrt(slm['t'] + (slm['t'] <= 0)), (slm['t'] > 0))
 
     return slm
-
-
-#a = np.random.randint(1,10)
-
-#tmp = {}
-#tmp['X']  = np.array([[1,2]]).T
-#tmp['df'] = np.array([[3.0]])
-#tmp['coef'] = np.array([[2,2]])
-#tmp['SSE'] = np.array([[3,3]])
-
-#C = np.array([[4]])
-
-
-
-tmp = {}
-tmp['X'] = np.array([ [1, 2], [3,4], [5,6] ])
-
-a = np.array([ [4,4,4], [5,5,5], [6,6,6] ])
-b = np.array([[1,0,0], [0,1,0], [0,0,1]])
-Z = np.zeros((3,3,2))
-Z[:,:,0] = a
-Z[:,:,1] = b
-tmp['V'] = Z
-
-
-tmp['df'] = np.array([[1.0]])
-tmp['coef'] = np.array([[8] , [9]])
-tmp['SSE'] = np.array([[3]])
-tmp['r'] = np.array([[4]])
-tmp['dr'] = np.array([[5]])
-
-#print(tmp)
-#print(tmp['V'][:,:,0])
-#print(tmp['V'][:,:,1])
-
-C = np.array([[1]])
-
-
-result_SurfStatT = py_SurfStatT(slm=tmp, contrast=C)
-
-print(result_SurfStatT)
-
-#print('Test 1a: ', result_SurfStatT)
-
-
-
-
-
 
