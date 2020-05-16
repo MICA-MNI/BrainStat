@@ -48,9 +48,14 @@ def matlab_SurfStatDelete(varargin):
     sys.exit("Function matlab_SurfStatDelete is not implemented yet")
 
 # ==> SurfStatEdg.m <==
-def matlab_SurfStatEdg(asurf):
-    mystruct = surfstat_eng.struct('tri', matlab.double(asurf.tolist()))
-    edg = surfstat_eng.SurfStatEdg(mystruct)
+def matlab_SurfStatEdg(surf):
+    surf_mat = surf.copy()
+    for key in surf_mat.keys():
+        if np.ndim(surf_mat[key]) == 0:
+            surf_mat[key] = surfstat_eng.double(surf_mat[key].item())
+        else:
+            surf_mat[key] = matlab.double(surf_mat[key].tolist())
+    edg = surfstat_eng.SurfStatEdg(surf_mat)
     return np.array(edg)
 
 # ==> SurfStatF.m <==
@@ -64,6 +69,11 @@ def matlab_SurfStatInd2Coord(ind, surf):
 # ==> SurfStatInflate.m <==
 def matlab_SurfStatInflate(surf, w, spherefile):
     sys.exit("Function matlab_SurfStatInflate is not implemented yet")
+
+
+
+
+
 
 # ==> SurfStatLinMod.m <==
 def matlab_SurfStatLinMod(T, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
@@ -97,6 +107,11 @@ def matlab_SurfStatListDir(d, exclude):
 def matlab_SurfStatMaskCut(surf):
     sys.exit("Function matlab_SurfStatMaskCut is not implemented yet")
 
+
+
+
+
+
 # ==> SurfStatNorm.m <==
 def matlab_SurfStatNorm(Y, mask=None, subdiv='s'):
 	# Normalizes by subtracting the global mean, or dividing it. 
@@ -126,6 +141,10 @@ def matlab_SurfStatNorm(Y, mask=None, subdiv='s'):
         Y, Ya = surfstat_eng.SurfStatNorm(Y, mymask, subdiv, nargout=2)
 
     return np.array(Y), np.array(Ya)
+
+
+
+
 
 
 # ==> SurfStatP.m <==
@@ -192,6 +211,8 @@ def matlab_SurfStatSmooth(Y, surf, FWHM):
 
 
 
+
+
 # ==> SurfStatStand.m <==
 def matlab_SurfStatStand(Y, mask=None, subtractordivide='s'):
 
@@ -233,6 +254,7 @@ def matlab_SurfStatSurf2Vol(s, surf, template):
 	
 	
 	
+
 	
 # ==> SurfStatT.m <==
 def matlab_SurfStatT(slm, contrast):
@@ -273,6 +295,7 @@ def matlab_SurfStatT(slm, contrast):
     
     
     
+
     
 # ==> SurfStatView.m <==
 def matlab_SurfStatView(struct, surf, title, background):
