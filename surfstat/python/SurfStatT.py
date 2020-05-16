@@ -18,7 +18,7 @@ def py_SurfStatT(slm, contrast):
     # slm['df']   = numpy array of shape (a,), dtype=float64, degrees of freedom
     # slm['coef'] = numpy array of shape (p x v) or (p x v x k)
     #             = array of coefficients of the linear model. 
-    #             = if (p x v), then k is thought to be 1. 
+    #             = if (p x v), then k is assigned to 1 here. 
     # slm['SSE']  = numpy array of shape (k*(k+1)/2 x v)
     #             = array of sum of squares of errors   
     
@@ -55,15 +55,69 @@ def py_SurfStatT(slm, contrast):
         if not 'r' in slm.keys():
             # fixed effect 
             if 'V' in slm.keys():
-                print('NOT YET IMPLEMENTED')
+                print('NOT YET IMPLEMENTED AAAA ')
                 #            % Vmh=inv(chol(slm.V)');
                 #            % pinvX=pinv(Vmh*slm.X);
 
             Vc = np.sum(np.square(np.dot(c.T, pinvX)), axis=1)
         else:
-            print('NOT YET IMPLEMENTED')
             # mixed effect
+            q1, v = np.shape(slm['r'])
+            q = q1 + 1
+            nc = np.shape(slm['dr'])[1]
+            chunck = np.ceil(v / nc)
+            irs = np.zeros((q1, v))
+            
+            for ic in range(1, nc+1):
+            	v1 = 1 + (ic - 1) * chunck
+            	v2 = np.min((v1 + chunck - 1, v))
+            	vc = v2 - v1 + 1
+            	
+            	irs[:, int(v1-1):int(v2)] = np.around(np.multiply(\
+            	 slm['r'][:, int(v1-1):int(v2)], \
+            	 np.tile(1/slm['dr'][:,(ic-1)], (1,vc))))
+            	
+            ur, ir, jr = np.unique(irs, axis=0, return_index=True, return_inverse=True)	
+            ir = ir + 1
+            jr = jr + 1
+            nr = np.shape(ur)[0]
+            slm['dfs'] = np.zeros((1,v))
+            Vc = np.zeros((1,v))
+            
 
+            for ir in range(1, nr+1):
+                iv = (jr == ir).astype(int) 
+                rv = slm['r'][:, (iv-1)].mean(axis=1)
+                V = (1 - rv.sum()) * slm['V'][:,:,(q-1)]
+                
+                for j in range(1, q1+1):
+                    V = V + rv[(j-1)] * slm['V'][:,:,(j-1)]	
+                    
+                Vinv = np.linalg.inv(V)
+                VinvX = np.dot(Vinv, slm['X'])
+                Vbeta = np.linalg.pinv(np.dot(slm['X'].T, VinvX))
+                G = np.dot(Vbeta, VinvX.T)
+                Gc = np.dot(G.T, c)
+               	R = Vinv - np.dot(VinvX, G)
+               	E = np.zeros((q,1))
+               	RVV = np.zeros((np.shape(slm['V'])))
+               	M = np.zeros((q,q))
+               
+                for j in range(1, q+1):
+                    E[(j-1)] = np.dot(Gc.T, np.dot(slm['V'][:,:,(j-1)], Gc))
+                    RVV[:,:,(j-1)] = np.dot(R, slm['V'][:,:,(j-1)])
+                    
+                for j1 in range(1, q+1):
+                    for j2 in range(j1, q+1):
+                        M[(j1-1),(j2-1)] = (RVV[:,:,(j1-1)] * RVV[:,:,(j2-1)].T).sum()
+                        M[(j2-1),(j1-1)] = M[(j1-1),(j2-1)]
+                
+                vc = np.dot(c.T, np.dot(Vbeta, c))
+                iv = (jr == ir).astype(int) 
+                Vc[iv-1] = vc 
+                slm['dfs'][iv-1] = np.square(vc) / np.dot(E.T, \
+                 np.dot(np.linalg.pinv(M), E))
+ 
         slm['ef'] = np.dot(c.T, slm['coef'])
         slm['sd'] = np.sqrt(np.multiply(Vc, slm['SSE']) / slm['df'])
         slm['t']  = np.multiply(np.divide(slm['ef'], (slm['sd']+(slm['sd']<= 0))), \
@@ -133,6 +187,52 @@ def py_SurfStatT(slm, contrast):
         slm['t'] = np.multiply(np.sqrt(slm['t'] + (slm['t'] <= 0)), (slm['t'] > 0))
 
     return slm
+
+
+#a = np.random.randint(1,10)
+
+#tmp = {}
+#tmp['X']  = np.array([[1,2]]).T
+#tmp['df'] = np.array([[3.0]])
+#tmp['coef'] = np.array([[2,2]])
+#tmp['SSE'] = np.array([[3,3]])
+
+#C = np.array([[4]])
+
+
+
+tmp = {}
+tmp['X'] = np.array([ [1, 2], [3,4], [5,6] ])
+
+a = np.array([ [4,4,4], [5,5,5], [6,6,6] ])
+b = np.array([[1,0,0], [0,1,0], [0,0,1]])
+Z = np.zeros((3,3,2))
+Z[:,:,0] = a
+Z[:,:,1] = b
+tmp['V'] = Z
+
+
+tmp['df'] = np.array([[1.0]])
+tmp['coef'] = np.array([[8] , [9]])
+tmp['SSE'] = np.array([[3]])
+tmp['r'] = np.array([[4]])
+tmp['dr'] = np.array([[5]])
+
+#print(tmp)
+#print(tmp['V'][:,:,0])
+#print(tmp['V'][:,:,1])
+
+C = np.array([[1]])
+
+
+result_SurfStatT = py_SurfStatT(slm=tmp, contrast=C)
+
+print(result_SurfStatT)
+
+#print('Test 1a: ', result_SurfStatT)
+
+
+
 
 
 
