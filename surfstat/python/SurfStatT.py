@@ -12,6 +12,7 @@ def null(A, eps=1e-15):
     return scipy.transpose(null_space)
 
 def py_SurfStatT(slm, contrast):
+
     # T statistics for a contrast in a univariate or multivariate model.
     # Inputs
     # slm         = a dict with mandatory keys 'X', 'df', 'coef', 'SSE'
@@ -22,11 +23,39 @@ def py_SurfStatT(slm, contrast):
     #             = if (p x v), then k is assigned to 1 here. 
     # slm['SSE']  = numpy array of shape (k*(k+1)/2 x v)
     #             = array of sum of squares of errors   
+    # slm['V']    = numpy array of shape (n x n x q), variance array bases, 
+    #             = normalised so that mean(diag(slm['V']))=1. If absent, assumes q=1 
+    #             and slm.V=eye(n).
+    # slm['r']    = numpy array of shape ((q-1) x v), coefficients of the
+    #             first (q-1) components of slm['V'] divided by their sum.
+    # slm['dr']   = numpy array of shape ((q-1) x 1), increments in slm['r']     
+    # contrast    = numpy array of shape (n x 1), contrasts in the observations, ie.,
+    #             = slm['X']*slm['c'].T, where slm['c'] is a contrast in slm.coef, or,
+    #             = numpy array of shape (1 x p), of slm.c, 
+    #             padded with 0's if len(contrast)<p. 
+    # Outputs
+    # slm['c']    = numpy array of shape (1 x p), contrasts in coefficents of the 
+    #             linear model.  
+    # slm['k']    = number of variates
+    # slm['ef']   = numpy array of shape (k x v), array of effects.
+    # slm['sd']   = numpy array of shape (k x v), standard deviations of the effects.
+    # slm['t']    = numpy array of shape (1 x v), array of T = ef/sd if k=1, or,
+    #             Hotelling's T if k=2 or 3, defined as the maximum T over all linear
+    #             combinations of the k variates, k>3 is not programmed yet.
+    # slm['dfs']  = numpy array of shape (1 x v), effective degrees of freedom.
+    #             Absent if q=1.
     
-    # contrast    = numpy array of shape (n x 1)
-    #             = vector of contrasts in the observations, ie.
-    #             = ...
-   
+	#% Note that the contrast in the observations is used to determine the
+	#% intended contrast in the model coefficients, slm.c. However there is some
+	#% ambiguity in this when the model contains redundant terms. An example of
+	#% such a model is 1 + Gender (Gender by itself does not contain redundant 
+	#% terms). Only one of the ambiguous contrasts is estimable (i.e. has slm.sd
+	#% < Inf), and this is the one chosen, though it may not be the contrast
+	#% that you intended. To check this, compare the contrast in the 
+	#% coefficients slm.c to the actual design matrix in slm.X. Note that the
+	#% redundant columns of the design matrix have weights given by the rows of
+	#% null(slm.X,'r')'
+  
     [n, p] = np.shape(slm['X'])
     pinvX  = np.linalg.pinv(slm['X'])
 
