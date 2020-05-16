@@ -1,7 +1,7 @@
 import sys
 import numpy as np
 
-def py_SurfStatEdge(surf):
+def py_SurfStatEdg(surf):
 
 	# Finds edges of a triangular mesh or lattice.
  	# Inputs
