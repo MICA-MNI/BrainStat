@@ -98,8 +98,35 @@ def matlab_SurfStatMaskCut(surf):
     sys.exit("Function matlab_SurfStatMaskCut is not implemented yet")
 
 # ==> SurfStatNorm.m <==
-def matlab_SurfStatNorm(Y, mask, subdiv):
-    sys.exit("Function matlab_SurfStatNorm is not implemented yet")
+def matlab_SurfStatNorm(Y, mask=None, subdiv='s'):
+	# Normalizes by subtracting the global mean, or dividing it. 
+    # Inputs     	
+    # Y      = numpy array of shape (n x v) or (n x v x k). 
+    #          v=#vertices.
+    # mask   = numpy boolean array of shape (1 x v). 
+    #          True=inside the mask, False=outside. 
+    # subdiv = 's' for Y=Y-Yav or 'd' for Y=Y/Yav.
+    # Outputs
+    # Y      = normalized data, numpy array of shape (n x v) or (n x v x k)
+    # Yav    = mean of input Y along the mask, numpy array of shape (n x 1) or (n x k)   
+
+    Y = matlab.double(Y.tolist())
+
+    if mask is None and subdiv=='s':
+        Y, Ya = surfstat_eng.SurfStatNorm(Y, nargout=2)
+    
+    elif mask is not None and subdiv=='s':
+        mymask = np.array(mask, dtype=int)
+        mymask = matlab.logical(matlab.double(mymask.tolist()))
+        Y, Ya = surfstat_eng.SurfStatNorm(Y, mymask, nargout=2)
+
+    elif mask is not None and subdiv=='d':
+        mymask = np.array(mask, dtype=int)
+        mymask = matlab.logical(matlab.double(mymask.tolist()))
+        Y, Ya = surfstat_eng.SurfStatNorm(Y, mymask, subdiv, nargout=2)
+
+    return np.array(Y), np.array(Ya)
+
 
 # ==> SurfStatP.m <==
 # TODO original matlab signature was SurfStatP(slm, mask, clusthresh):
@@ -169,12 +196,21 @@ def matlab_SurfStatStand(Y, mask, subtractordivide):
 # ==> SurfStatSurf2Vol.m <==
 def matlab_SurfStatSurf2Vol(s, surf, template):
     sys.exit("Function matlab_SurfStatSurf2Vol is not implemented yet")
-
+	
 # ==> SurfStatT.m <==
 def matlab_SurfStatT(slm, contrast):
-    contrast = matlab.double(contrast.tolist())
-    return surfstat_eng.SurfStatT(slm, contrast)
 
+    for key in slm.keys():
+        if np.ndim(slm[key]) == 0:
+            
+            slm[key] = surfstat_eng.double(slm[key].item())
+        else:
+            slm[key] = matlab.double(slm[key].tolist())
+
+    contrast = matlab.double(contrast.tolist())
+
+    return surfstat_eng.SurfStatT(slm, contrast)
+    
 # ==> SurfStatView.m <==
 def matlab_SurfStatView(struct, surf, title, background):
     sys.exit("Function matlab_SurfStatView is not implemented yet")
