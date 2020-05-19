@@ -4,10 +4,6 @@
 # redirects to a py_SurfStat* or matlab_Surfstat* implementation. The goals
 # is to remove all the matlab_Surfstat* calls.
 
-# Some systems crash when importing matlab *after* numper, that's why we do it here */
-import matlab.engine
-import matlab
-
 import sys
 sys.path.append("python")
 

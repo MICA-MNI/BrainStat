@@ -3,9 +3,6 @@
 #python setup.py build --build-base /tmp/matbuild install --user
 #####
 
-# Some systems crash when importing matlab *after* numper, that's why we do it here */
-import matlab.engine
-import matlab
 import numpy as np
 import surfstat_wrap as sw
 
