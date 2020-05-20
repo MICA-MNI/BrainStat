@@ -38,7 +38,7 @@ end
 mni_coordinates = genetics.utilities.get_coordinates_from_well_ids(well_ids,voxel_size(1));
 
 % Discard probes in the mask. 
-[nifti_values,xyz_coordinates] = genetics.utilities.get_values_at_locations(nii_file, mni_coordinates, I.radius, I.mask);
+nifti_values = genetics.utilities.get_values_at_locations(nii_file, mni_coordinates, I.radius, I.mask);
 
 % Perform statisticla test
 if I.inference_method == "random"
