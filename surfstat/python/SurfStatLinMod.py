@@ -6,13 +6,17 @@ import numpy.matlib
 import sys
 sys.path.append("../surfstat")
 import surfstat_wrap as sw
+from term import Term
 
 def py_SurfStatLinMod(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
 
-        if isinstance(M, Term): 
-            M = M.matrix.values
+	if isinstance(M, Term):
+		M = M.matrix.values
 
-	maxchunk=2^20;
+	if isinstance(Y, Term):
+		Y = Y.matrix.values
+
+	maxchunk=2^20
 
 	if isinstance(Y, Number):
 		isnum = True
