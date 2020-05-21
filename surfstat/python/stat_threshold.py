@@ -26,6 +26,16 @@ def minterp1(x,y,ix):
             my = np.c_[my, y[i]]
     return interp1(mx,my,ix)
 
+def mrange(start,stop,increment=1):
+    # np.arange but inlcude endpoint. 
+    m = np.arange(start,stop,increment)
+    if m.size == 0:
+        if start == stop:
+            m = np.append(m,stop)
+    elif m[-1] + increment == stop:
+        m = np.append(m,stop)
+    return m
+
 def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf, 
     p_val_peak=0.05, cluster_threshold=0.001, p_val_extent=0.05, nconj=1, 
     nvar=1, EC_file=None, expr=None, nprint=5):
@@ -74,7 +84,7 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
     else:
         fwhm_inv = np.zeros(fwhm.shape)
     resels = search_volume * fwhm_inv ** np.arange(0,lsv)
-    invol = resels * (4*math.log(2)) ** (np.arange(0,lsv)/2)
+    invol = resels * (4*np.log(2)) ** (np.arange(0,lsv)/2)
 
     D = invol.shape[1] - np.argmax(np.fliplr(invol),axis=1) - 1
 
@@ -104,14 +114,14 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
         df2 = math.inf
     df0 = df1 + df2
 
-    dfw1 = df[1:3,1]
-    dfw2 = df[1:3,2]
+    dfw1 = df[0,1:3]
+    dfw2 = df[1,1:3]
 
     dfw1[dfw1 >= 1000] = math.inf
     dfw2[dfw2 >= 1000] = math.inf
 
     if nvar.size == 1:
-        nvar = np.c_[nvar,df1]
+        nvar = np.r_[nvar,df1][0]
     
     if isscale and (D[1]>1 or nvar[0,0] > 1 | df2 < math.inf):
         print(D)
@@ -128,10 +138,10 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
     # Find the upper tail probs cumulating the F density using Simpson's rule:
     if math.isinf(df2):
         u = df1*t
-        b = math.exp(-u/2-math.log(2*math.pi)/2+math.log(u)/4)*df1**(1/4)*4/100
+        b = np.exp(-u/2-np.log(2*math.pi)/2+np.log(u)/4)*df1**(1/4)*4/100
     else:
         u = df1*t/df2
-        b=math.exp(-df0/2*math.log(1+u)+math.log(u)/4-betaln(1/2, (df0-1)/2))*(df1/df2)**(1/4)*4/100
+        b=np.exp(-df0/2*np.log(1+u)+np.log(u)/4-betaln(1/2, (df0-1)/2))*(df1/df2)**(1/4)*4/100
 
     t = np.r_[t,0]
     b = np.r_[b,0]
@@ -140,60 +150,61 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
     sb1 = np.cumsum(b * (-1) ** np.arange(1,n+1))
     pt1 = sb + sb1/3 - b/3
     pt2 = sb - sb1/3 - b/3
-    tau = np.zeros(n, DD[0]+1, DD[1]+1)
-    tau[0:n:2,1,1] = pt1[0:n:2]
-    tau[1:n:2,1,1] = pt2[1:n:2]
+    tau = np.zeros((n, DD[0]+1, DD[1]+1))
+    tau[0:n:2,0,0] = pt1[0:n:2]
+    tau[1:n:2,0,0] = pt2[1:n:2]
     tau[n-1,0,0] = 1
-    tau[:,1,1] = np.min(tau[:,1,1])
+    tau[tau>1] = 1
 
     # Find the EC densities:
     u = df1 * t
     for d in range(1,np.max(DD)+1):
-        for e in range(0,np.min(DD)+1):
+        e_loop = np.min([np.min(DD),d])+1
+        for e in range(0,e_loop):
             s1 = 0
-            cons = -((d+e)/2+1)*math.log(math.pi)+gammaln(d)+gammaln(e+1)
+            cons = -((d+e)/2+1)*np.log(math.pi)+gammaln(d)+gammaln(e+1)
             for k in np.arange(0,(d-1+e)/2+1):
                 i, j = np.meshgrid(np.arange(0,k+1),np.arange(0,k+1))
                 if df2 == math.inf:
-                    q1 = math.log(math.pi)/2-((d+e-1)/2+i+j)*math.log(2)
+                    q1 = np.log(math.pi)/2-((d+e-1)/2+i+j)*np.log(2)
                 else:
-                    q1 = (df0-1-d-e)*math.log(2)+gammaln((df0-d)/2+i)+gammaln((df0-e)/2+j)-gammalni(df0-d-e+i+j+k)-((d+e-1)/2-k)*math.log(df2)
+                    q1 = (df0-1-d-e)*np.log(2)+gammaln((df0-d)/2+i)+gammaln((df0-e)/2+j)-gammalni(df0-d-e+i+j+k)-((d+e-1)/2-k)*np.log(df2)
                 q2=cons-gammalni(i+1)-gammalni(j+1)-gammalni(k-i-j+1)-gammalni(d-k-i+j)-gammalni(e-k-j+i+1)
-                s2 = np.sum(math.exp(q1+q2))
+                s2 = np.sum(np.exp(q1+q2))
                 if s2 > 0:
                     s1=s1+(-1)**k*u**((d+e-1)/2-k)*s2
             
             if df2 == math.inf:
-                s1 = s1 * math.exp(-u/2)
+                s1 = s1 * np.exp(-u/2)
             else:
-                s1 = s1 * math.exp(-(df0-2)/2*math.log(1+u/df2))
+                s1 = s1 * np.exp(-(df0-2)/2*np.log(1+u/df2))
             
             if DD[0] >= DD[1]:
-                tau[:,d,e] = s1
+                tau[:,d-1,e] = s1
                 if d <= np.min(DD):
-                    tau[:,e,d] = s1
+                    tau[:,e,d-1] = s1
             else:
-                tau[:,e,d] = s1
+                tau[:,e,d-1] = s1
                 if d<= np.min(DD):
-                    tau[:,d,e] = s1
+                    tau[:,d-1,e] = s1
     
     # For multivariate statistics, add a sphere to the search region:
     a = np.zeros((2,np.max(nvar)))
     for k in range(0,2):
         j = np.arange((nvar[k]-1),-0.001,-2)
-        a[k,j] = math.exp(j*math.log(2)+j/2*math.log(math.pi) + 
+        a[k,j] = np.exp(j*np.log(2)+j/2*np.log(math.pi) + 
             gammaln((nvar[k]+1)/2)-gammaln((nvar[k]+1-j)/2)-gammaln(j+1))
 
     rho = np.zeros((n, Dlim[0]+1, Dlim[1]+1))
 
     for k in range(0,nvar[0]):
         for l in range(0,nvar[1]):
-            rho = rho + a[0,k] * a[1,l] * tau[:, np.arange(0,Dlim[0])+k, np.arange(0,Dlim[1])+l]
+            rho = rho + np.expand_dims(a[0,k] * a[1,l] * tau[:, mrange(0,Dlim[0])+k, mrange(0,Dlim[1])+l],axis=2)
     
     if is_tstat:
         if all(nvar==1):
             t = np.r_[np.sqrt(t[0:n]), -np.sqrt(t)[::-1]]
-            rho = np.r_[rho[0:n,:,:], rho[::-1]/2]
+            rho = np.r_[rho[0:n,:,:], rho[::-1,:,:]/2]
             for i in range(0,D[0]+1):
                 for j in range(0,D[1]+1):
                     rho[n-1+np.arange(0,n),i,j] = -(-1)**(i+j)*rho[n-1+np.arange(0,n),i,j]
@@ -209,10 +220,10 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
         for d in range(0,D[0]+1):
             s1 = 0
             for k in range(0,d/2+1):
-                s1 = s1+(-1)^k/(1-2*k)*math.exp(gammaln(d+1)-gammaln(k+1)-gammaln(d-2*k+1)
-                    + (1/2-k)*math.log(kappa)-k*math.log(4*math.pi)) * rho[:,d+1-2*k,1]
+                s1 = s1+(-1)^k/(1-2*k)*np.exp(gammaln(d+1)-gammaln(k+1)-gammaln(d-2*k+1)
+                    + (1/2-k)*np.log(kappa)-k*np.log(4*math.pi)) * rho[:,d+1-2*k,1]
             if d == 0:
-                cons = math.log(scale)
+                cons = np.log(scale)
             else:
                 cons = (1-1/scale**d)/d
             tau[:,d] = rho[:,d,1] * (1+1/scale**d) / 2 + s1 * cons
@@ -317,23 +328,23 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
     
     # Expected number of clusters
     EL = invol[0,D[0]] * invol[1,D[1]] * rhoD
-    cons = gamma(d/2+1)*(4*math.log(2))**(d/2)/fwhm[0]**D[0]/fwhm[1]**D[1]*rhoD/p
+    cons = gamma(d/2+1)*(4*np.log(2))**(d/2)/fwhm[0]**D[0]/fwhm[1]**D[1]*rhoD/p
 
     if df2 == math.inf and dfw1[0] == math.inf and dfw1[1] == math.inf:
         if p_val_extent[0] <= tlim:
-            pS = -math.log(1-p_val_extent)/EL
-            extent_threshold = (-math.log(pS))**(d/2)/2
-            pS = -math.log(1-p_val_extent)
-            extent_threshold_1 = (-math.log(pS))**(d/2)/cons
+            pS = -np.log(1-p_val_extent)/EL
+            extent_threshold = (-np.log(pS))**(d/2)/2
+            pS = -np.log(1-p_val_extent)
+            extent_threshold_1 = (-np.log(pS))**(d/2)/cons
             if p_val_extent.size <= nprint:
                 print(extent_threshold)
                 print(extent_threshold_1)
         else:
             # p_val_extent is now treated as a spatial extent:
-            pS = math.exp(-(p_val_extent*cons)**(2/d))
-            P_val_extent = 1 - math.exp(-pS*EL)
+            pS = np.exp(-(p_val_extent*cons)**(2/d))
+            P_val_extent = 1 - np.exp(-pS*EL)
             extent_threshold = P_val_extent
-            P_val_extent_1 = 1 - math.exp(-pS)
+            P_val_extent_1 = 1 - np.exp(-pS)
             extent_threshold_1 = P_val_extent_1
             if p_val_extent.size <= nprint:
                 print(P_val_extent)
@@ -344,9 +355,9 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
         a = d/2
         b2 = a * 10 * np.max(np.sqrt(2/(np.min([df1+df2,np.min(dfw1)]))),axis=0)
         if df2 < math.inf:
-            b1 = a * math.log((1-(1-0.000001)^(2/(df2-d)))*df2/2)
+            b1 = a * np.log((1-(1-0.000001)^(2/(df2-d)))*df2/2)
         else:
-            b1 = a * math.log(-math.log(1-0.000001))
+            b1 = a * np.log(-np.log(1-0.000001))
         dy = (b2-b1)/ny
         b1 = round(b1/dy)*dy
         y = np.arange(0,ny) * dy + b1
@@ -357,15 +368,15 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
         mu = np.zeros(1,numrv)
         if df2 < math.inf:
             # Density of log(Beta(1,(df2-d)/2)^(d/2)):
-            yy = math.exp(y/a)/df2*2
+            yy = np.exp(y/a)/df2*2
             yy = yy*(yy<1)
             f[:,0] = (1-yy) ** ((df2-d)/2-1) * ((df2-d)/2) * yy / a
-            mu[0] = math.exp(gammaln(a+1)+gammaln((df2-d+2)/2)-gammaln((df2+2)/2)+a*math.log(df2/2))
+            mu[0] = np.exp(gammaln(a+1)+gammaln((df2-d+2)/2)-gammaln((df2+2)/2)+a*np.log(df2/2))
         else:
             # Density of log(exp(1)^(d/2)):
-            yy = math.exp(y / a)
-            f[:,0] = math.exp(-yy) * yy / a
-            mu[0] = math.exp(gammaln(a+1))
+            yy = np.exp(y / a)
+            f[:,0] = np.exp(-yy) * yy / a
+            mu[0] = np.exp(gammaln(a+1))
         
         nuv = np.array([])
         aav = np.array([])
@@ -391,10 +402,10 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
         for i in range(0,numrv-1):
             nu = nuv[i]
             aa = aav[i]
-            yy = y / aa + math.log(nu)
+            yy = y / aa + np.log(nu)
             # Density of log((chi^2_nu/nu)^aa):
-            f[:,i+1] = math.exp(nu/2*yy-math.exp(yy)/2-(nu/2)*math.log(2)-gammaln(nu/2))/abs(aa)
-            mu[i+1] = math.exp(gammaln(nu/2+aa)-gammaln(nu/2)-aa*math.log(nu/2))
+            f[:,i+1] = np.exp(nu/2*yy-np.exp(yy)/2-(nu/2)*np.log(2)-gammaln(nu/2))/abs(aa)
+            mu[i+1] = np.exp(gammaln(nu/2+aa)-gammaln(nu/2)-aa*np.log(nu/2))
         
         # Check: plot(y,f); sum(f*dy,1) should be 1
         
@@ -404,37 +415,37 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
         # Density of Y=log(B^(d/2)*U^(d/2)/sqrt(det(Q))):
         ff = np.real(np.fft.ifft(prodfft))
         # Check: plot(y,ff); sum(ff*dy) should be 1
-        mu0 = prod(mu)
+        mu0 = np.prod(mu)
         # Check: plot(y,ff.*exp(y)); sum(ff.*exp(y)*dy.*(y<10)) should equal mu0   
 
-        alpha=p/rhoD/mu0*fwhm[0]**D[0]*fwhm[1]**D[1]/(4*math.log(2))**(d/2)
+        alpha=p/rhoD/mu0*fwhm[0]**D[0]*fwhm[1]**D[1]/(4*np.log(2))**(d/2)
 
         # Integrate the density to get the p-value for one cluster:
         pS = np.cumsum(ff[ny-1:0:-1])*dy
-        pS = pS(ny-1:-1:0)
+        pS = pS[ny-1:-1:0]
 
         # The number of clusters is Poisson with mean EL:
-        pSmax = 1 - math.exp(-pS*EL)
+        pSmax = 1 - np.exp(-pS*EL)
 
         if p_val_extent[0] <= tlim:
             yval = minterp1(-pSmax, y, -p_val_extent)
             # Spatial extent is alpha*exp(Y) -dy/2 correction for mid-point rule:
-            extent_threshold = alpha * math.exp(yval-dy/2)
+            extent_threshold = alpha * np.exp(yval-dy/2)
             # For a single cluster:
             yval=minterp1(-pS,y,-p_val_extent)
-            extent_threshold_1=alpha*math.exp(yval-dy/2)
-            if p_val_extent.size<=nprint
+            extent_threshold_1=alpha*np.exp(yval-dy/2)
+            if p_val_extent.size<=nprint:
                 print(extent_threshold)
                 print(extent_threshold_1)
         else:
             # p_val_extent is now treated as a spatial extent:
-            logpval=math.log(p_val_extent/alpha+(p_val_extent<=0))+dy/2
+            logpval=np.log(p_val_extent/alpha+(p_val_extent<=0))+dy/2
             P_val_extent=interp1(y,pSmax,logpval)
-            extent_threshold=P_val_extent.*(p_val_extent>0)+(p_val_extent<=0)
+            extent_threshold=P_val_extent*(p_val_extent>0)+(p_val_extent<=0)
             # For a single cluster:
             P_val_extent_1=interp1(y,pS,logpval)
-            extent_threshold_1=P_val_extent_1.*(p_val_extent>0)+(p_val_extent<=0)
-            if p_val_extent.size<=nprint
+            extent_threshold_1=P_val_extent_1*(p_val_extent>0)+(p_val_extent<=0)
+            if p_val_extent.size<=nprint:
                 print(P_val_extent)
                 print(P_val_extent_1)
     
