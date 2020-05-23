@@ -3,6 +3,7 @@ sys.path.append("python")
 from SurfStatLinMod import *
 import surfstat_wrap as sw
 import numpy as np
+from term import Term
 
 sw.matlab_init_surfstat()
 
@@ -10,7 +11,15 @@ def dummy_test(A, B):
 
     try:
         # wrap matlab functions
-        Wrapped_SurfStatLinMod, bla_tmp = sw.matlab_SurfStatLinMod(A, B)
+        # For term inputs, we can't put these directly into the MATLAB engine.
+        if isinstance(A,Term) or isinstance(B,Term):
+            if isinstance(A,Term):
+                Amat = A.matrix.values
+            if isinstance(B,Term):
+                Bmat = B.matrix.values
+            Wrapped_SurfStatLinMod, bla_tmp = sw.matlab_SurfStatLinMod(Amat, Bmat)
+        else:
+            Wrapped_SurfStatLinMod, bla_tmp = sw.matlab_SurfStatLinMod(A, B)
     except:
         pytest.fail("ORIGINAL MATLAB CODE DOES NOT WORK WITH THESE INPUTS...")
 	
@@ -37,19 +46,6 @@ def test_1d_row_vectors():
     B = np.random.rand(1,v)
 
     dummy_test(A, B)
-
-
-#### test 1b
-# 1D inputs --- column vectors
-def test_1d_column_vectors():
-
-    v = np.random.randint(1,100)
-
-    A = np.random.rand(v,1)
-    B = np.random.rand(v,1)
-
-    dummy_test(A, B)
-
 
 #### test 2a
 # 2D inputs --- square matrices
@@ -100,3 +96,22 @@ def test_3d_A_is_3d_B_is_2d():
 
     dummy_test(A, B)
 
+
+def test_1d_column_vectors():
+
+    v = np.random.randint(1,100)
+
+    A = np.random.rand(v,1)
+    B = np.random.rand(v,1)
+
+    dummy_test(A, B)
+
+# 1D terms
+def test_1d_terms():
+
+    v = np.random.randint(1,100)
+
+    A = Term(np.random.rand(1,v))
+    B = Term(np.random.rand(1,v))
+
+    dummy_test(A, B)
