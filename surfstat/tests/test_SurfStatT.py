@@ -1,6 +1,5 @@
 import sys
-sys.path.append("/data/p_02323/hippoc/BrainStat/surfstat")
-sys.path.append("/data/p_02323/hippoc/BrainStat/surfstat/python")
+sys.path.append("python")
 from SurfStatT import *
 import surfstat_wrap as sw
 import numpy as np
