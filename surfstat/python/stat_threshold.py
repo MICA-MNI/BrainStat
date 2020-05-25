@@ -14,7 +14,7 @@ def interp1(x,y,ix):
     return f(ix)
 
 def minterp1(x,y,ix):
-# interpolates only the monotonically increasing values of x at ix
+    # interpolates only the monotonically increasing values of x at ix
     n = x.size
     mx = x[0]
     my = y[0]
@@ -22,16 +22,16 @@ def minterp1(x,y,ix):
     for i in range(0,n):
         if x[i] > xx:
             xx = x[i]
-            mx = np.c_[mx, xx]
-            my = np.c_[my, y[i]]
+            mx = np.r_[mx, xx]
+            my = np.r_[my, y[i]]
     return interp1(mx,my,ix)
 
 def mrange(start,stop,increment=1):
-    # np.arange but inlcude endpoint. 
+    # np.arange but inlcude endpoint (i.e. matlab behavior)
+    # very useful for matlab/python conversion :). 
     m = np.arange(start,stop,increment)
-    if m.size == 0:
-        if start == stop:
-            m = np.append(m,stop)
+    if m.size == 0 and start == stop:
+        m = np.append(m,stop)
     elif m[-1] + increment == stop:
         m = np.append(m,stop)
     return m
@@ -44,11 +44,13 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
 
     # Make sure all input is in np.array format.
     fwhm = np.array(fwhm, ndmin=1)
-    search_volume = np.array(search_volume, ndmin=1)
+    search_volume = np.array(search_volume, ndmin=2)
     num_voxels = np.array(num_voxels)
     df = np.array(df)
     nvar = np.array(nvar)
-
+    p_val_peak = np.array(p_val_peak,ndmin=1)
+    p_val_extent = np.array(p_val_extent,ndmin=1)
+    
     # Set the FWHM
     if fwhm.ndim == 1:
         fwhm = np.expand_dims(fwhm,axis=0)
@@ -65,14 +67,13 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
         num_voxels = np.append(num_voxels,1)
     
     # Set the search volume.
-    if search_volume.ndim == 1:
-        search_volume = np.expand_dims(search_volume,1)
+    if search_volume.shape[1] == 1:
         radius = (search_volume / (4/3*math.pi)) ** (1/3)
         search_volume = np.c_[np.ones(radius.shape),
                               4 * radius,
                               2 * radius ** 2 * math.pi,
                              search_volume]
-
+    
     if search_volume.shape[0] == 1:
         search_volume = np.concatenate((search_volume, 
                                         np.concatenate((np.ones((1,1)),np.zeros((1,search_volume.size-1))),axis=1)),
@@ -86,8 +87,8 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
     resels = search_volume * fwhm_inv ** np.arange(0,lsv)
     invol = resels * (4*np.log(2)) ** (np.arange(0,lsv)/2)
 
-    D = invol.shape[1] - np.argmax(np.fliplr(invol),axis=1) - 1
-
+    D = np.sum(invol != 0, axis=1) - 1
+    
     # determines which method was used to estimate fwhm (see fmrilm or multistat): 
     df_limit=4
 
@@ -114,14 +115,13 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
         df2 = math.inf
     df0 = df1 + df2
 
-    dfw1 = df[0,1:3]
-    dfw2 = df[1,1:3]
-
+    dfw1 = df[1:3,0]
+    dfw2 = df[1:3,1]
     dfw1[dfw1 >= 1000] = math.inf
     dfw2[dfw2 >= 1000] = math.inf
 
     if nvar.size == 1:
-        nvar = np.r_[nvar,df1][0]
+        nvar = np.r_[nvar,df1]
     
     if isscale and (D[1]>1 or nvar[0,0] > 1 | df2 < math.inf):
         print(D)
@@ -180,18 +180,18 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
                 s1 = s1 * np.exp(-(df0-2)/2*np.log(1+u/df2))
             
             if DD[0] >= DD[1]:
-                tau[:,d-1,e] = s1
+                tau[:,d,e] = s1
                 if d <= np.min(DD):
-                    tau[:,e,d-1] = s1
+                    tau[:,e,d] = s1
             else:
                 tau[:,e,d-1] = s1
                 if d<= np.min(DD):
-                    tau[:,d-1,e] = s1
-    
+                    tau[:,d,e] = s1
+
     # For multivariate statistics, add a sphere to the search region:
     a = np.zeros((2,np.max(nvar)))
     for k in range(0,2):
-        j = np.arange((nvar[k]-1),-0.001,-2)
+        j = mrange((nvar[k]-1),0,-2)
         a[k,j] = np.exp(j*np.log(2)+j/2*np.log(math.pi) + 
             gammaln((nvar[k]+1)/2)-gammaln((nvar[k]+1-j)/2)-gammaln(j+1))
 
@@ -200,11 +200,11 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
     for k in range(0,nvar[0]):
         for l in range(0,nvar[1]):
             rho = rho + np.expand_dims(a[0,k] * a[1,l] * tau[:, mrange(0,Dlim[0])+k, mrange(0,Dlim[1])+l],axis=2)
-    
+
     if is_tstat:
         if all(nvar==1):
-            t = np.r_[np.sqrt(t[0:n]), -np.sqrt(t)[::-1]]
-            rho = np.r_[rho[0:n,:,:], rho[::-1,:,:]/2]
+            t = np.r_[np.sqrt(t[0:n-1]), -np.sqrt(t)[::-1]]
+            rho = np.r_[rho[0:n-1,:,:], rho[::-1,:,:]]/2
             for i in range(0,D[0]+1):
                 for j in range(0,D[1]+1):
                     rho[n-1+np.arange(0,n),i,j] = -(-1)**(i+j)*rho[n-1+np.arange(0,n),i,j]
@@ -254,7 +254,7 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
             raise ValueError('EC File support has not been implemented. We are not living in the 90s anymore.')
 
     if all(fwhm>0):
-        pval_rf = np.zeros((n,1))
+        pval_rf = np.zeros(n)
         for i in range(0,D[0]+1):
             for j in range(0,D[1]+1):
                 pval_rf = pval_rf + invol[0,i] * invol[1,j] * rho[:,i,j]
@@ -266,7 +266,7 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
     pval_bon = abs(np.prod(num_voxels)) * pt
 
     # Minimum of the two
-    pval = np.min([pval_rf, pval_bon])
+    pval = np.minimum(pval_rf,pval_bon)
 
     tlim = 1
     if p_val_peak[0] <= tlim:
@@ -282,7 +282,7 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
         if p_val_peak.size <= nprint:
             print(P_val_peak)
     
-    if np.all(fwhm<=0) or np.any(num_voxels > 0):
+    if np.all(fwhm<=0) or np.any(num_voxels < 0):
         peak_threshold_1 = p_val_peak + float('nan')
         extent_threshold = p_val_extent + float('nan')
         extent_threshold_1 = extent_threshold + float('nan')
