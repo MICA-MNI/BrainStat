@@ -33,7 +33,7 @@ def py_SurfStatSmooth(Y, surf, FWHM):
             
         elif np.ndim(Y) == 3:
             n, v, k = np.shape(Y)
-            print("NOT YET IMPLEMENTED")
+            isnum = True
 
     edg = py_SurfStatEdg(surf)
     agg_1 = aggregate(edg[:,0], 2, size=(v+1))
@@ -54,27 +54,46 @@ def py_SurfStatSmooth(Y, surf, FWHM):
             if isnum:
                 if np.ndim(Y) == 2:
                     Ys = Y[(i-1),:]
-                    for itera in range(1, niter+1):
-                        Yedg = Ys[edg[:,0]-1] + Ys[edg[:,1]-1];    
-                        agg_tmp1 = aggregate(edg[:,0], Yedg, size=(v+1))[1:]                        
-                        agg_tmp2 = aggregate(edg[:,1], Yedg, size=(v+1))[1:] 
-                        Ys = (agg_tmp1 + agg_tmp2) / Y1
-                    Y[(i-1),:] = Ys
 
                 elif np.ndim(Y) == 3:
-                    print('NOT YET IMPLEMENTED')
+                    Ys = Y[(i-1),:,(j-1)]
+
+                for itera in range(1, niter+1):
+                    Yedg = Ys[edg[:,0]-1] + Ys[edg[:,1]-1];    
+                    agg_tmp1 = aggregate(edg[:,0], Yedg, size=(v+1))[1:]                        
+                    agg_tmp2 = aggregate(edg[:,1], Yedg, size=(v+1))[1:] 
+                    Ys = (agg_tmp1 + agg_tmp2) / Y1
+
+                if np.ndim(Y) == 2:
+                    Y[(i-1),:] = Ys
+                
+                elif np.ndim(Y) == 3:
+                    Y[(i-1),:,(j-1)] = Ys
     if n>1:
         print('Done')
 
     return Y
 
+# 2D array
+#Y = np.array([[2,4,5], [7,9,10]])
+#surf = {}
+#surf['tri'] = np.array([[1,2,3]])
+#FWHM = 3.0 
+
+#k = py_SurfStatSmooth(Y, surf, FWHM)
+
 Y = np.array([[2,4,5], [7,9,10]])
+Z = np.zeros((2,3,2))
+Z[:,:,0] = Y
+Z[:,:,1] = Y + 2
 surf = {}
 surf['tri'] = np.array([[1,2,3]])
 FWHM = 3.0 
+k = py_SurfStatSmooth(Z, surf, FWHM)
 
-k = py_SurfStatSmooth(Y, surf, FWHM)
 
 print(k)
+
+
 
 
