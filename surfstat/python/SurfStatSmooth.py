@@ -46,8 +46,8 @@ def py_SurfStatSmooth(Y, surf, FWHM):
     n10 = np.floor(n/10)
 
     for i in range(1, n+1):
-        if np.remainder(i, n10) == 0:
-            print(" ADJUST THE CASE FOR n10=0" )
+
+        if n10 != 0 and np.remainder(i, n10) == 0:
             print('%s ' % str(int(100-i/n10*10)), end = '')
         
         for j in range(1, k+1):
@@ -73,27 +73,4 @@ def py_SurfStatSmooth(Y, surf, FWHM):
         print('Done')
 
     return Y
-
-# 2D array
-#Y = np.array([[2,4,5], [7,9,10]])
-#surf = {}
-#surf['tri'] = np.array([[1,2,3]])
-#FWHM = 3.0 
-
-#k = py_SurfStatSmooth(Y, surf, FWHM)
-
-Y = np.array([[2,4,5], [7,9,10]])
-Z = np.zeros((2,3,2))
-Z[:,:,0] = Y
-Z[:,:,1] = Y + 2
-surf = {}
-surf['tri'] = np.array([[1,2,3]])
-FWHM = 3.0 
-k = py_SurfStatSmooth(Z, surf, FWHM)
-
-
-print(k)
-
-
-
 
