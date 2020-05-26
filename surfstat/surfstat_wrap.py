@@ -204,10 +204,36 @@ def matlab_SurfStatReadVol1(file, Z, T):
 def matlab_SurfStatResels(slm, mask):
     sys.exit("Function matlab_SurfStatResels is not implemented yet")
 
+
+
+
+
 # ==> SurfStatSmooth.m <==
 def matlab_SurfStatSmooth(Y, surf, FWHM):
-    sys.exit("Function matlab_SurfStatSmooth is not implemented yet")
+    
+    #Y : numpy array of shape (n,v) or (n,v,k)
+    #    surface data, v=#vertices, n=#observations, k=#variates.
+    #surf : a dictionary with key 'tri' or 'lat'
+    #    surf['tri'] = numpy array of shape (t,3), triangle indices, or
+    #    surf['lat'] = numpy array of shape (nx,ny,nz), 1=in, 0=out,
+    #    (nx,ny,nz) = size(volume).
+    #FWHM : approximate FWHM of Gaussian smoothing filter, in mesh units.
 
+    Y_mat = matlab.double(Y.tolist())
+
+    surf_mat = surf.copy()
+
+    for key in surf_mat.keys():
+        if np.ndim(surf_mat[key]) == 0:
+            surf_mat[key] = surfstat_eng.double(surf_mat[key].item())
+        else:
+            surf_mat[key] = matlab.double(surf_mat[key].tolist())
+
+    FWHM_mat = FWHM
+
+    Y_mat_out = surfstat_eng.SurfStatSmooth(Y_mat, surf_mat, FWHM_mat)
+
+    return np.array(Y_mat_out)
 
 
 
