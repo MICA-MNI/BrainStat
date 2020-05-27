@@ -7,6 +7,7 @@ import sys
 sys.path.append("../surfstat")
 import surfstat_wrap as sw
 from term import Term
+from SurfStatEdg import *
 
 def py_SurfStatLinMod(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
 	""" Fits linear mixed effects models to surface data and estimates resels.
@@ -149,8 +150,7 @@ def py_SurfStatLinMod(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
 
 	if surf is not None:
 		print('surf is given... ')
-		sw.matlab_init_surfstat()
-		edg = sw.matlab_SurfStatEdg(surf)
+		edg = py_SurfStatEdg(surf)
 		e = np.shape(edg)[0]
 		e1 = edg[:,0].astype(int) -1 
 		e2 = edg[:,1].astype(int) -1
@@ -170,7 +170,5 @@ def py_SurfStatLinMod(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
 				s = s + np.square(u[e1] - u[e2])
 			slm['resl'][:, j-1] = s;
 	return slm
-
-
 
 
