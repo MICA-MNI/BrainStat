@@ -90,14 +90,22 @@ def matlab_SurfStatLinMod(T, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
     else:
         M = surfstat_eng.double(M)
 
-    result_mat = surfstat_eng.SurfStatLinMod(T, M)
+    if surf is None:
+        result_mat = surfstat_eng.SurfStatLinMod(T, M)
+    else:
+        surf_mat = surf.copy()
+        for key in surf_mat.keys():
+            if np.ndim(surf_mat[key]) == 0:
+                surf_mat[key] = surfstat_eng.double(surf_mat[key].item())
+            else:
+                surf_mat[key] = matlab.double(surf_mat[key].tolist())    
+        result_mat = surfstat_eng.SurfStatLinMod(T, M, surf_mat)    
 
-    result_py = {key: None for key in result_mat.keys()}
-
+    result_mat_dic = {key: None for key in result_mat.keys()}
     for key in result_mat:
-        result_py[key] = np.array(result_mat[key])
+        result_mat_dic[key] = np.array(result_mat[key])
 
-    return result_py, result_mat
+    return result_mat_dic
 
 # ==> SurfStatListDir.m <==
 def matlab_SurfStatListDir(d, exclude):

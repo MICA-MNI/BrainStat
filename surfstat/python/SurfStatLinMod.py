@@ -51,9 +51,6 @@ def py_SurfStatLinMod(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
         slm['lat'] : surf['lat']
 
 	"""
-	if isinstance(M, Term):
-		M = M.matrix.values
-
 	maxchunk=2^20
 
 	if isinstance(Y, Number):
@@ -76,6 +73,9 @@ def py_SurfStatLinMod(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
 	keys = ['X', 'df', 'coef', 'SSE']
 	slm = {key: None for key in keys}
 
+	if isinstance(M, Term):
+		M = M.matrix.values
+	
 	if isinstance(M, Number):
 		M = np.array([[M]])
 		slm['X'] = np.matlib.repmat(M,n,1)
@@ -90,7 +90,8 @@ def py_SurfStatLinMod(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
 			slm['X'] = M
 			pinvX = np.linalg.pinv(slm['X'])
 			r = np.ones((n,1)) - np.dot(slm['X'], pinvX * np.ones((n)))
-	q = 1
+
+	q = 1 ### NOT YET IMPLEMENTED for q!=0
 
 	if np.square(r).mean() > np.spacing(1):
 		print('Did you forget a constant term? :-)')
@@ -154,14 +155,17 @@ def py_SurfStatLinMod(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
 		e = np.shape(edg)[0]
 		e1 = edg[:,0].astype(int) -1 
 		e2 = edg[:,1].astype(int) -1
-		slm['tri']  = surf
+		if 'tri' in surf:
+		    slm['tri'] = surf['tri']
+		elif 'lat' in surf:
+		    slm['lat'] = surf['lat'] 
 		slm['resl'] = np.zeros((e, k))
 		
 		for j in range(1, k+1):
 			jj = int(j * (j+1)/2 -1)
 			normr = np.sqrt(slm['SSE'][jj,:])
 			s = 0
-			
+
 			for i in range(0, n):
 				if k == 1:
 					u = np.divide(Y[i,:], normr)
@@ -170,5 +174,4 @@ def py_SurfStatLinMod(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
 				s = s + np.square(u[e1] - u[e2])
 			slm['resl'][:, j-1] = s;
 	return slm
-
 
