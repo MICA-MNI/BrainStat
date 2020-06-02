@@ -24,7 +24,7 @@ classdef plot_hemispheres < handle
     %   in obj.handles.
     %
     %   For more information, please consult our <a
-    %   href="https://brainspace.readthedocs.io/en/latest/pages/matlab_doc/visualization/plot_hemispheres.html">ReadTheDocs</a>.
+    %   href="https://brainstat.readthedocs.io/en/latest/matlab_doc/visualization/plot_hemispheres.html">ReadTheDocs</a>.
     
     properties
         handles

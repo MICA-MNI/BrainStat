@@ -57,6 +57,7 @@ slm.c=c';
 
 slm.df=slm.df(length(slm.df));
 if ndims(slm.coef)==2
+    
     slm.k=1;
     if ~isfield(slm,'r')
 %% fixed effect
@@ -116,6 +117,8 @@ if ndims(slm.coef)==2
     slm.ef=c'*slm.coef;
     slm.sd=sqrt(Vc.*slm.SSE/slm.df);
     slm.t=slm.ef./(slm.sd+(slm.sd<=0)).*(slm.sd>0);
+    fprintf('AAAAA ')
+    slm.t
 else
 %% multivariate    
     [p,v,k]=size(slm.coef);
