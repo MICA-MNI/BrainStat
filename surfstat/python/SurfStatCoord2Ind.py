@@ -1,8 +1,27 @@
 import numpy as np
-import sys
 
 def py_SurfStatCoord2Ind(coord, surf):
+    """Converts a vertex index to x,y,z coordinates
 
+    Parameters
+    ----------
+    coord : 2D numpy array of shape (c,3)
+        coordinates for finfing indices thereof.
+    surf : a dictionary with key 'coord' OR 'lat', 'vox', 'origin'
+        surf['coord'] : 2D numpy array, the coordinates.
+        or
+        surf['lat'] : 3D numpy array of 1's and 0's (1=in, 0=out).
+        surf['vox'] : 2D numpy array of shape (1,3),
+            voxel sizes in mm, [1,1,1] by default.
+        surf['origin'] : 2D numpy array of shape (1,3),
+            position of the first voxel in mm, [0,0,0] by default.
+
+    Returns
+    -------
+    ind : 2D numpy array of shape (c,1)
+        indices of the nearest vertex to the surface. If surf us a volume and
+        the point is outside, then ind = 0.
+    """
     # if coord is a 1D array, reshape it to 2D    
     if np.ndim(coord) == 1:
         coord = coord.reshape(1, len(coord))
@@ -47,7 +66,6 @@ def py_SurfStatCoord2Ind(coord, surf):
             myind = np.ravel_multi_index(multi_ind, dim, order='F')           
             ind[a] = vid[myind]    
 
-    ind = ind.flatten()
+    ind = ind.reshape(c, 1)
     return ind
-
 
