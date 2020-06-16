@@ -27,9 +27,27 @@ def matlab_SurfStatColLim(clim):
 def matlab_SurfStatColormap(map):
     sys.exit("Function matlab_SurfStatColormap is not implemented yet")
 
+
+
+
+
+
+
 # ==> SurfStatCoord2Ind.m <==
 def matlab_SurfStatCoord2Ind(coord, surf):
-    sys.exit("Function matlab_SurfStatCoord2Ind is not implemented yet")
+    if isinstance(coord, np.ndarray):
+        coord = matlab.double(coord.tolist())
+    surf_mat = surf.copy()
+    for key in surf_mat.keys():
+        surf_mat[key] = matlab.double(surf_mat[key].tolist())  
+    ind = surfstat_eng.SurfStatCoord2Ind(coord, surf_mat)
+    return np.array(ind)
+
+
+
+
+
+
 
 # ==> SurfStatDataCursor.m <==
 def matlab_SurfStatDataCursor(empt,event_obj):
@@ -47,6 +65,12 @@ def matlab_SurfStatDataCursorQ(empt,event_obj):
 def matlab_SurfStatDelete(varargin):
     sys.exit("Function matlab_SurfStatDelete is not implemented yet")
 
+
+
+
+
+
+
 # ==> SurfStatEdg.m <==
 def matlab_SurfStatEdg(surf):
     surf_mat = surf.copy()
@@ -57,6 +81,11 @@ def matlab_SurfStatEdg(surf):
             surf_mat[key] = matlab.double(surf_mat[key].tolist())
     edg = surfstat_eng.SurfStatEdg(surf_mat)
     return np.array(edg)
+
+
+
+
+
 
 # ==> SurfStatF.m <==
 def matlab_SurfStatF(slm1, slm2):
