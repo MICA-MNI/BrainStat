@@ -57,14 +57,17 @@ def py_SurfStatCoord2Ind(coord, surf):
 
         a = [m and n and l for m, n, l, in zip(i,j,k)]
         a = np.array(a, dtype=bool)
+
         ind = np.zeros((c,1))
-        vid = np.cumsum(surf['lat'].flatten()) * surf['lat'].flatten()
-        multi_ind = np.concatenate((i[a]-1, j[a]-1, k[a]-1))
-        multi_ind = multi_ind.astype(int).tolist()
-    
-        if len(multi_ind) != 0:
-            myind = np.ravel_multi_index(multi_ind, dim, order='F')           
-            ind[a] = vid[myind]    
+        vid = np.cumsum(surf['lat'].T.flatten()) * surf['lat'].T.flatten()
+
+        values = []
+        for row in range(0, len(a)):
+            XI = [i[row]-1, j[row]-1, k[row]-1]
+            XI = [int(xi) for xi in XI]
+            values.append(vid[np.ravel_multi_index(XI, dim, order='F')])
+        values = np.array(values).reshape(ind[a].shape)
+        ind[a] = values         
 
     ind = ind.reshape(c, 1)
     return ind
