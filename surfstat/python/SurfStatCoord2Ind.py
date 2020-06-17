@@ -8,7 +8,7 @@ def py_SurfStatCoord2Ind(coord, surf):
     coord : 2D numpy array of shape (c,3)
         coordinates for finfing indices thereof.
     surf : a dictionary with key 'coord' OR 'lat', 'vox', 'origin'
-        surf['coord'] : 2D numpy array, the coordinates.
+        surf['coord'] : 2D numpy array of shape (3,v), array of coordinates.
         or
         surf['lat'] : 3D numpy array of 1's and 0's (1=in, 0=out).
         surf['vox'] : 2D numpy array of shape (1,3),
