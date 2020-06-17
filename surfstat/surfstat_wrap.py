@@ -91,9 +91,27 @@ def matlab_SurfStatEdg(surf):
 def matlab_SurfStatF(slm1, slm2):
     sys.exit("Function matlab_SurfStatF is not implemented yet")
 
+
+
+
+
+
+
 # ==> SurfStatInd2Coord.m <==
 def matlab_SurfStatInd2Coord(ind, surf):
-    sys.exit("Function matlab_SurfStatInd2Coord is not implemented yet")
+    if isinstance(ind, np.ndarray):
+        ind = matlab.double(ind.tolist())
+    surf_mat = surf.copy()
+    for key in surf_mat.keys():
+        surf_mat[key] = matlab.double(surf_mat[key].tolist())  
+    coord = surfstat_eng.SurfStatInd2Coord(ind, surf_mat)
+    return np.array(coord)
+
+
+
+
+
+
 
 # ==> SurfStatInflate.m <==
 def matlab_SurfStatInflate(surf, w, spherefile):
