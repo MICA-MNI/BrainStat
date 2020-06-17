@@ -22,10 +22,7 @@ def py_SurfStatCoord2Ind(coord, surf):
         indices of the nearest vertex to the surface. If surf us a volume and
         the point is outside, then ind = 0.
     """
-    # if coord is a 1D array, reshape it to 2D    
-    if np.ndim(coord) == 1:
-        coord = coord.reshape(1, len(coord))
-    
+
     c = np.shape(coord)[0]
     ind = np.zeros((c,1))
 
@@ -60,14 +57,17 @@ def py_SurfStatCoord2Ind(coord, surf):
 
         ind = np.zeros((c,1))
         vid = np.cumsum(surf['lat'].T.flatten()) * surf['lat'].T.flatten()
-
         values = []
-        for row in range(0, len(a)):
-            XI = [i[row]-1, j[row]-1, k[row]-1]
-            XI = [int(xi) for xi in XI]
-            values.append(vid[np.ravel_multi_index(XI, dim, order='F')])
-        values = np.array(values).reshape(ind[a].shape)
-        ind[a] = values         
+
+        # check if indices are all not empty
+        list_to_check = np.concatenate((i[a], j[a], k[a])).tolist()
+        if list_to_check:       
+            for row in range(0, len(a)):
+                XI = [i[row]-1, j[row]-1, k[row]-1]
+                XI = [int(xi) for xi in XI]
+                values.append(vid[np.ravel_multi_index(XI, dim, order='F')])
+            values = np.array(values).reshape(ind[a].shape)
+            ind[a] = values         
 
     ind = ind.reshape(c, 1)
     return ind
