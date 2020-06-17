@@ -22,7 +22,6 @@ def dummy_test(coord, surf):
     assert testout
 
 
-
 #### Test 1 
 def test_surf_coord():
     # coord is 2D array, surf['coord'] is 2D array
@@ -38,8 +37,22 @@ def test_surf_coord():
 ### Test 2 
 def test_surf_lat_easy():
     # coord is 2D array, surf['lat'] is 3D array of ones
-    
-    coord = np.array([[1,2,3], [4,5,6]])    
+    m = np.random.randint(1,100)
+ 
+    coord = np.random.rand(m,3)
     surf = {}
     surf['lat'] = np.ones((10,10,10))
     dummy_test(coord, surf)
+
+### Test 3 
+def test_surf_lat_hard():
+    # coord is 2D array, surf['lat'] is 3D array of ones
+    m = np.random.randint(1,100)
+    coord = np.random.rand(m,3)
+    surf = {}
+    surf['lat'] = np.random.choice([0, 1], size=(3,3,3))
+    dummy_test(coord, surf)
+
+
+
+
