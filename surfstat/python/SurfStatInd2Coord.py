@@ -1,6 +1,26 @@
 import numpy as np
 
 def py_SurfStatInd2Coord(ind, surf):
+    """Converts a vertex index to x,y,z coordinates
+
+    Parameters
+    ----------
+    ind : 2D numpy array of shape (1,c)
+        indices of vertex, 1-based
+    surf : a dictionary with key 'coord' OR 'lat', 'vox', 'origin'
+        surf['coord'] : 2D numpy array of shape (3,v), the coordinates.
+        or
+        surf['lat'] : 3D numpy array of 1's and 0's (1=in, 0=out).
+        surf['vox'] : 2D numpy array of shape (1,3),
+            voxel sizes in mm, [1,1,1] by default.
+        surf['origin'] : 2D numpy array of shape (1,3),
+            position of the first voxel in mm, [0,0,0] by default.
+
+    Returns
+    -------
+    coord : 2D numpy array of shape (3,c)
+        array of coordinates
+    """
 
     ind = ind.astype(int)
 
