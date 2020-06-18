@@ -37,7 +37,7 @@ def py_SurfStatInd2Coord(ind, surf):
         
         # implement matlab-ismember
         loc = []
-        for i in range(0, len(ind)+1):
+        for i in range(0, ind.shape[1]):
             loc.append(np.where(vid == ind[0,i])[0].tolist())
         loc_flat = [item for sublist in loc for item in sublist]        
 
