@@ -1,4 +1,5 @@
 import numpy as np
+from cmath import sqrt
 import warnings
 
 def py_SurfStatF(slm1, slm2):
@@ -35,7 +36,7 @@ def py_SurfStatF(slm1, slm2):
     elif np.ndim(slm['coef']) > 2:
         k2, v = np.shape(SSE2)
         k = np.around((np.sqrt(1 + 8*k2) -1)/2)
-        slm['k'] = k
+        slm['k'] = np.array(k)
         
         if k > 3:
             print('Roy''s max root for k>3 not programmed yet.')
@@ -82,26 +83,18 @@ def py_SurfStatF(slm1, slm2):
             a2 = -(a11 + a22 + a33)
             q = a1/3-a2**2/9
             r = (a1*a2 - 3*a0)/6 - a2**3/27
-            s1 = (r + np.sqrt(q**3 + r**2))**(1/3)
+            s1 = (r + [sqrt(x) for x in  (q**3 + r**2)])**(1/3)
             z = np.zeros((3,v))
-            
             z[0,:] = 2 * s1.real - a2/3
             z[1,:] = -s1.real - a2/3 + np.sqrt(3) * s1.imag
-            z[2,:] = -s1.real - a2/3 + np.sqrt(3) * s1.imag
-            
-            
-            if  np.count_nonzero(z) == 0:
-                
-                #z = z.sort()
-                #z.argsort(axis=0)[::-1] 
-                print('NOT YET IMPLEMENTED')
-    
+            z[2,:] = -s1.real - a2/3 - np.sqrt(3) * s1.imag
+           
+            if  not np.count_nonzero(z) == 0:
+                z.sort(axis=0)
+                z = z[::-1]
             d = (df2/(df1-df2) / (det + (det<=0)) * (det>0) )
             
             for j in range(0, l):
                 slm['t'][j,:] = z[j,:] * d
-    
-
-            print('AAA ' , slm)    
     return slm
 
