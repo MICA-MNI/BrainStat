@@ -87,9 +87,31 @@ def matlab_SurfStatEdg(surf):
 
 
 
+
+
 # ==> SurfStatF.m <==
 def matlab_SurfStatF(slm1, slm2):
-    sys.exit("Function matlab_SurfStatF is not implemented yet")
+
+    slm1_mat = slm1.copy()
+    for key in slm1_mat.keys():
+        if np.ndim(slm1_mat[key]) == 0:
+            slm1_mat[key] = surfstat_eng.double(slm1_mat[key])
+        else:
+            slm1_mat[key] = matlab.double(slm1_mat[key].tolist())    
+
+    slm2_mat = slm2.copy()
+    for key in slm2_mat.keys():
+        if np.ndim(slm2_mat[key]) == 0:
+            slm2_mat[key] = surfstat_eng.double(slm2_mat[key])
+        else:
+            slm2_mat[key] = matlab.double(slm2_mat[key].tolist())    
+    
+    result_mat = (surfstat_eng.SurfStatF(slm1_mat, slm2_mat))    
+
+    result_mat_dic = {key: None for key in result_mat.keys()}
+    for key in result_mat:
+        result_mat_dic[key] = np.array(result_mat[key])
+    return result_mat_dic
 
 
 
