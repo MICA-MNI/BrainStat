@@ -8,9 +8,13 @@ def py_SurfStatF(slm1, slm2):
         warnings.warn("Mixed effects models not programmed yet.")
         
     if slm1['df'] > slm2['df']:
-        print('NOT YET IMPLEMENTED')
         X1 = slm1['X']
         X2 = slm2['X']
+        df1 = slm1['df']
+        df2 = slm2['df']
+        SSE1 = slm1['SSE']
+        SSE2 = slm2['SSE']
+        slm = slm2.copy()
     else:
         X1 = slm2['X']
         X2 = slm1['X']
@@ -52,7 +56,7 @@ def py_SurfStatF(slm1, slm2):
             a22 = SSE2[0,:] * h[2,:] - SSE2[1,:] * h[1,:]
             a0 = a11 * a22 - a12 * a21
             a1 = (a11 + a22) / 2 
-            s1 = np.sqrt(a1**2-a0).real
+            s1 = np.array([sqrt(x) for x in  (a1**2-a0)]).real
             d = (df2 / (df1-df2)) / (det + (det<=0)) * (det>0)
             slm['t'][0,:] = (a1+s1) * d
             if l == 2:
