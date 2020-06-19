@@ -31,19 +31,18 @@ def py_SurfStatF(slm1, slm2):
     h = SSE1 - SSE2
     
     if np.ndim(slm['coef']) == 2:
-        slm['k'] = 1
-        slm['t'] =  h / np.dot(((SSE2 + (SSE2<=0))*(SSE2>0)), (df2/(df1-df2)))
+        slm['k'] = np.array(1)
+        slm['t'] =  np.dot((h / ((SSE2 + (SSE2<=0))*(SSE2>0))), (df2/(df1-df2)))
     elif np.ndim(slm['coef']) > 2:
         k2, v = np.shape(SSE2)
         k = np.around((np.sqrt(1 + 8*k2) -1)/2)
         slm['k'] = np.array(k)
-        
         if k > 3:
             print('Roy''s max root for k>3 not programmed yet.')
             return
 
         l = min(k, df1-df2)
-        slm['t'] = np.zeros((l,v))
+        slm['t'] = np.zeros((int(l),int(v)))
 
         if k == 2:
             det = SSE2[0,:] * SSE2[2,:] - SSE2[1,:]**2
