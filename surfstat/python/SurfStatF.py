@@ -33,6 +33,11 @@ def py_SurfStatF(slm1, slm2):
     
     slm['df'] = np.array([[df1-df2, df2]])
     h = SSE1 - SSE2
+
+    # if slm['coef'] is 3D and third dimension is 1, then squeeze it to 2D
+    if np.ndim(slm['coef']) == 3 and np.shape(slm['coef'])[2] == 1:
+        x1, x2, x3 = np.shape(slm['coef'])
+        slm['coef'] = slm['coef'].reshape(x1, x2)
     
     if np.ndim(slm['coef']) == 2:
         slm['k'] = np.array(1)
