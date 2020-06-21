@@ -3,6 +3,30 @@ from cmath import sqrt
 import warnings
 
 def py_SurfStatF(slm1, slm2):
+    """ F-statistics for comparing two uni- or nulti-variate fixed effects models.
+    Parameters
+    ----------
+    slm1 : a dictionary with keys 'X', 'df', 'SSE' and 'coef'
+        slm1['X'] : 2D numpy array of shape (n,p), the design matrix.
+        surf['df'] : int, degrees of freedom.
+        surf['SSE'] : 2D numpy array of shape (k*(k+1)/2,v), sum of squares of errors.
+        surf['coef'] : 2D or 3D numpy array of shape (p,v) or (p,v,k)
+    slm2 : the same style as slm1
+
+    Returns
+    -------
+    slm : a dictionary with keys 'X', 'df', 'SSE', 'coef', 'k' and 't'
+        slm['X'], slm['SSE'], slm['coef']: copied from the bigger model (slm1 or slm2)
+        slm['df'] : 2D numpy array of shape (1,2), it is equal to [df1-df2, df2],
+                    where df1 and df2 are the min and max of slm1.df and slm2.df,
+                    and SSE1 and SSE2 are the corresponding slm_.SSE's.
+        slm['k'] : k, the number of variates.
+        slm['t'] : 2D numpy array of shape (l,v), non-zero eigenvalues in descending
+                   order, of F = (SSE1-SSE2)/(df1-df2)/(SSE2/df2), where
+                   l=min(k,df1-df2);  slm.t(1,:) = Roy's maximum root = maximum F
+                   over all linear combinations of the k variates.
+                   k>3 is not programmed yet.
+    """
 
     if 'r' in slm1.keys() or 'r' in slm2.keys():
         warnings.warn("Mixed effects models not programmed yet.")
