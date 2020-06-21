@@ -27,9 +27,27 @@ def matlab_SurfStatColLim(clim):
 def matlab_SurfStatColormap(map):
     sys.exit("Function matlab_SurfStatColormap is not implemented yet")
 
+
+
+
+
+
+
 # ==> SurfStatCoord2Ind.m <==
 def matlab_SurfStatCoord2Ind(coord, surf):
-    sys.exit("Function matlab_SurfStatCoord2Ind is not implemented yet")
+    if isinstance(coord, np.ndarray):
+        coord = matlab.double(coord.tolist())
+    surf_mat = surf.copy()
+    for key in surf_mat.keys():
+        surf_mat[key] = matlab.double(surf_mat[key].tolist())  
+    ind = surfstat_eng.SurfStatCoord2Ind(coord, surf_mat)
+    return np.array(ind)
+
+
+
+
+
+
 
 # ==> SurfStatDataCursor.m <==
 def matlab_SurfStatDataCursor(empt,event_obj):
@@ -47,6 +65,12 @@ def matlab_SurfStatDataCursorQ(empt,event_obj):
 def matlab_SurfStatDelete(varargin):
     sys.exit("Function matlab_SurfStatDelete is not implemented yet")
 
+
+
+
+
+
+
 # ==> SurfStatEdg.m <==
 def matlab_SurfStatEdg(surf):
     surf_mat = surf.copy()
@@ -58,13 +82,58 @@ def matlab_SurfStatEdg(surf):
     edg = surfstat_eng.SurfStatEdg(surf_mat)
     return np.array(edg)
 
+
+
+
+
+
+
+
 # ==> SurfStatF.m <==
 def matlab_SurfStatF(slm1, slm2):
-    sys.exit("Function matlab_SurfStatF is not implemented yet")
+
+    slm1_mat = slm1.copy()
+    for key in slm1_mat.keys():
+        if np.ndim(slm1_mat[key]) == 0:
+            slm1_mat[key] = surfstat_eng.double(slm1_mat[key])
+        else:
+            slm1_mat[key] = matlab.double(slm1_mat[key].tolist())    
+
+    slm2_mat = slm2.copy()
+    for key in slm2_mat.keys():
+        if np.ndim(slm2_mat[key]) == 0:
+            slm2_mat[key] = surfstat_eng.double(slm2_mat[key])
+        else:
+            slm2_mat[key] = matlab.double(slm2_mat[key].tolist())    
+    
+    result_mat = (surfstat_eng.SurfStatF(slm1_mat, slm2_mat))    
+
+    result_mat_dic = {key: None for key in result_mat.keys()}
+    for key in result_mat:
+        result_mat_dic[key] = np.array(result_mat[key])
+    return result_mat_dic
+
+
+
+
+
+
 
 # ==> SurfStatInd2Coord.m <==
 def matlab_SurfStatInd2Coord(ind, surf):
-    sys.exit("Function matlab_SurfStatInd2Coord is not implemented yet")
+    if isinstance(ind, np.ndarray):
+        ind = matlab.double(ind.tolist())
+    surf_mat = surf.copy()
+    for key in surf_mat.keys():
+        surf_mat[key] = matlab.double(surf_mat[key].tolist())  
+    coord = surfstat_eng.SurfStatInd2Coord(ind, surf_mat)
+    return np.array(coord)
+
+
+
+
+
+
 
 # ==> SurfStatInflate.m <==
 def matlab_SurfStatInflate(surf, w, spherefile):
@@ -90,14 +159,22 @@ def matlab_SurfStatLinMod(T, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
     else:
         M = surfstat_eng.double(M)
 
-    result_mat = surfstat_eng.SurfStatLinMod(T, M)
+    if surf is None:
+        result_mat = surfstat_eng.SurfStatLinMod(T, M)
+    else:
+        surf_mat = surf.copy()
+        for key in surf_mat.keys():
+            if np.ndim(surf_mat[key]) == 0:
+                surf_mat[key] = surfstat_eng.double(surf_mat[key].item())
+            else:
+                surf_mat[key] = matlab.double(surf_mat[key].tolist())    
+        result_mat = surfstat_eng.SurfStatLinMod(T, M, surf_mat)    
 
-    result_py = {key: None for key in result_mat.keys()}
-
+    result_mat_dic = {key: None for key in result_mat.keys()}
     for key in result_mat:
-        result_py[key] = np.array(result_mat[key])
+        result_mat_dic[key] = np.array(result_mat[key])
 
-    return result_py, result_mat
+    return result_mat_dic
 
 # ==> SurfStatListDir.m <==
 def matlab_SurfStatListDir(d, exclude):
@@ -204,10 +281,36 @@ def matlab_SurfStatReadVol1(file, Z, T):
 def matlab_SurfStatResels(slm, mask):
     sys.exit("Function matlab_SurfStatResels is not implemented yet")
 
+
+
+
+
 # ==> SurfStatSmooth.m <==
 def matlab_SurfStatSmooth(Y, surf, FWHM):
-    sys.exit("Function matlab_SurfStatSmooth is not implemented yet")
+    
+    #Y : numpy array of shape (n,v) or (n,v,k)
+    #    surface data, v=#vertices, n=#observations, k=#variates.
+    #surf : a dictionary with key 'tri' or 'lat'
+    #    surf['tri'] = numpy array of shape (t,3), triangle indices, or
+    #    surf['lat'] = numpy array of shape (nx,ny,nz), 1=in, 0=out,
+    #    (nx,ny,nz) = size(volume).
+    #FWHM : approximate FWHM of Gaussian smoothing filter, in mesh units.
 
+    Y_mat = matlab.double(Y.tolist())
+
+    surf_mat = surf.copy()
+
+    for key in surf_mat.keys():
+        if np.ndim(surf_mat[key]) == 0:
+            surf_mat[key] = surfstat_eng.double(surf_mat[key].item())
+        else:
+            surf_mat[key] = matlab.double(surf_mat[key].tolist())
+
+    FWHM_mat = FWHM
+
+    Y_mat_out = surfstat_eng.SurfStatSmooth(Y_mat, surf_mat, FWHM_mat)
+
+    return np.array(Y_mat_out)
 
 
 
