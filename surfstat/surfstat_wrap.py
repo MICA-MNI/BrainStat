@@ -4,6 +4,7 @@
 import matlab.engine
 import matlab
 import numpy as np
+import math
 import sys
 
 def matlab_init_surfstat():
@@ -439,3 +440,47 @@ def matlab_SurfStatWriteVol(filenames, data, vol):
 # ==> SurfStatWriteVol1.m <==
 def matlab_SurfStatWriteVol(d, Z, T):
     sys.exit("Function matlab_SurfStatWriteVol is not implemented yet")
+    
+
+
+
+
+
+    
+# ==> stat_threshold.m <==
+def matlab_stat_threshold(search_volume, num_voxels, fwhm, df, p_val_peak, 
+    cluster_threshold, p_val_extent, nconj, nvar):
+
+    def var2mat(var):
+        # Brings the input variables to matlab format.
+        if var == None:
+            var = []
+        elif not isinstance(var,list):
+            var = [var]
+        return matlab.double(var)
+
+
+    peak_threshold_mat, extent_threshold_mat, peak_threshold_1_mat, \
+    extent_threshold_1_mat, t_mat, rho_mat = surfstat_eng.stat_threshold(
+            var2mat(search_volume), 
+            var2mat(num_voxels), 
+            var2mat(fwhm), 
+            var2mat(df), 
+            var2mat(p_val_peak), 
+            var2mat(cluster_threshold), 
+            var2mat(p_val_extent), 
+            var2mat(nconj), 
+            var2mat(nvar), 
+            var2mat(None), 
+            var2mat(None), 
+            var2mat(0),
+            nargout=6 )
+
+    return peak_threshold_mat, extent_threshold_mat, peak_threshold_1_mat, \
+            extent_threshold_1_mat, t_mat, rho_mat
+
+    
+
+
+
+
