@@ -47,7 +47,45 @@ def mrange(start,stop,increment=1):
 def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf, 
     p_val_peak=0.05, cluster_threshold=0.001, p_val_extent=0.05, nconj=1, 
     nvar=1, EC_file=None, expr=None, nprint=5):
+    """Thresholds and P-values of peaks and clusters of random fields in any D.
 
+    Parameters
+    ----------
+    search_volume : a float, or a list, or a numpy array
+        volume of the search region in mm^3.
+    num_voxels : a float, or int, or list, or array of shape (x,1) or (x,1)
+        number of voxels (3D) or pixels (2D) in the search volume.
+    fwhm : a float, or int.
+        fwhm in mm of a smoothing kernel applied to the data.
+    df : a float, or int, or list, or  array of shape (2,2)
+        degrees of freedom.
+    p_val_peak : a float, or 1D array of shape (y,)
+        desired P-values for peaks.
+    cluster_threshold: a float
+        scalar threshold of the image for clusters
+    p_val_extent : a float, or list, or 1D array of shape (y,)
+        desired P-values for spatial extents of clusters of contiguous
+        voxels above the cluster_threshold
+    nconj : a float, or int
+        number of conjunctions
+    nvar :an int, or list if integers, or 1D array of integers
+        number of variables for multivariate equivalents of T and F
+        statistics
+
+    Returns
+    -------
+    peak_threshold :
+        thresholds for local maxima or peaks
+    extent_threshold :
+        
+    peak_threshold_1
+        height of a single peak chosen in advance
+    extent_threshold_1
+        extent of a single cluster chosen in advance
+    t :
+    
+    rho :
+    """
     ## Deal with the input
 
     # Make sure all input is in np.array format.
