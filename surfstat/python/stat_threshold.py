@@ -12,14 +12,14 @@ def gammalni(n):
 def minterp1(x,y,ix):
     # interpolates only the monotonically increasing values of x at ix
     n = x.size
-    mx = x[0]
-    my = y[0]
+    mx = np.array(x[0],ndmin=1)
+    my = np.array(y[0],ndmin=1)
     xx = x[0]
     for i in range(0,n):
         if x[i] > xx:
             xx = x[i]
-            mx = np.r_[mx, xx]
-            my = np.r_[my, y[i]]
+            mx = np.append(mx, xx)
+            my = np.append(my, y[i])
 
     ix = np.array(ix,ndmin=1)
     out = []
@@ -39,7 +39,7 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
     ----------
     search_volume : a float, or a list, or a numpy array
         volume of the search region in mm^3.
-    num_voxels : a float, or int, or list, or array of shape (x,1) or (x,1)
+    num_voxels : a float, or int, or list, or 1D numpy array 
         number of voxels (3D) or pixels (2D) in the search volume.
     fwhm : a float, or int.
         fwhm in mm of a smoothing kernel applied to the data.
@@ -54,7 +54,7 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
         voxels above the cluster_threshold
     nconj : a float, or int
         number of conjunctions
-    nvar :an int, or list if integers, or 1D array of integers
+    nvar :an int, list or 1D array of 1 or 2 integers
         number of variables for multivariate equivalents of T and F
         statistics
 

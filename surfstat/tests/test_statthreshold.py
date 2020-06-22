@@ -82,6 +82,9 @@ def dummy_test(eng, search_volume, num_voxels, fwhm, df, p_val_peak,
         #print(result)
         testout_statthreshold.append(result)
 
+    if not all(testout_statthreshold):
+        pdb.set_trace()
+
     assert all(flag == True for (flag) in testout_statthreshold)
 
 eng = matlab.engine.start_matlab()
@@ -199,7 +202,7 @@ def test_6():
 # Test 7 --> search_volume: 2D array, num_voxels: 2D array of shape (k,1),
 # fwhm: float, df: int
 def test_7():
-    m = np.random.randint(1,100)
+    m = np.random.randint(3,100)
     n = np.random.randint(1,100)
     k = np.random.randint(1,100)
 
@@ -243,12 +246,12 @@ def test_8():
 def test_9():
     m = np.random.randint(1,100)
     n = np.random.randint(1,100)
-    k = np.random.randint(1,100)
+    k = np.random.randint(1,10)
 
     rng = np.random.default_rng()
 
     search_volume     = np.random.uniform(0,100)
-    num_voxels        = rng.integers(1,100, size=(1,k))
+    num_voxels        = rng.integers(1,100, size=(k))
     fwhm              = np.random.uniform(0,10)
     df                = k
     p_val_peak        = np.random.uniform(0,1)
@@ -265,12 +268,12 @@ def test_9():
 def test_10():
     m = np.random.uniform(0,1)
     n = np.random.uniform(0,1)
-    k = k = np.random.randint(1,100)
+    k = np.random.randint(1,10)
 
     rng = np.random.default_rng()
 
     search_volume     = np.random.uniform(0,100)
-    num_voxels        = rng.integers(1,100, size=(1,k))
+    num_voxels        = rng.integers(1,100, size=(k))
     fwhm              = np.random.uniform(0,10)
     df                = k
     p_val_peak        = [m, n, m/2, n/2]
@@ -286,12 +289,12 @@ def test_10():
 # fwhm: float, df: int, p_val_peak: 1D array
 def test_11():
     m = np.random.uniform(0,1)
-    k = np.random.randint(1,100)
+    k = np.random.randint(1,10)
 
     rng = np.random.default_rng()
 
     search_volume     = np.random.uniform(0,100)
-    num_voxels        = rng.integers(1,100, size=(1,k))
+    num_voxels        = rng.integers(1,100, size=(k))
     fwhm              = np.random.uniform(0,10)
     df                = k
     p_val_peak        = np.random.rand(k,1)
@@ -307,13 +310,13 @@ def test_11():
 # Test 12 --> search_volume: float, num_voxels: 2D array of shape (1,k),
 # fwhm: float, df: int, p_val_peak: 1D array, cluster_threshold: float 
 def test_12():
-    m = np.random.randint(1,100)
+    m = np.random.randint(1,10)
     k = np.random.randint(1,100)
 
     rng = np.random.default_rng()
 
     search_volume     = np.random.uniform(0,100)
-    num_voxels        = rng.integers(1,100, size=(1,m))
+    num_voxels        = rng.integers(1,100, size=(m))
     fwhm              = np.random.uniform(0,10)
     df                = k
     p_val_peak        = np.random.rand(k,1)
@@ -329,7 +332,7 @@ def test_12():
 # fwhm: float, df: int, p_val_peak: 1D array, cluster_threshold: float,
 # p_val_extent: 1D array 
 def test_13():
-    m = np.random.randint(1,100)
+    m = np.random.randint(3,10)
     n = np.random.randint(1,100)
     k = np.random.randint(1,100)
 
@@ -337,9 +340,9 @@ def test_13():
     num_voxels        = k
     fwhm              = np.random.uniform(0,10)
     df                = np.random.randint(1,(m-1))
-    p_val_peak        = np.random.rand(k,1)
+    p_val_peak        = np.random.rand(k)
     cluster_threshold = np.random.uniform(0,1)
-    p_val_extent      = np.random.rand(k,1)
+    p_val_extent      = np.random.rand(k)
     nconj             = 0.5
     nvar              = 1
 
@@ -351,7 +354,7 @@ def test_13():
 # fwhm: float, df: int, p_val_peak: 1D array, cluster_threshold: float,
 # p_val_extent: 1D array, nconj: int 
 def test_14():
-    m = np.random.randint(1,100)
+    m = np.random.randint(3,100)
     n = np.random.randint(1,100)
     k = np.random.randint(1,100)
     l = np.random.randint(1,100)
@@ -379,13 +382,13 @@ def test_15():
     cluster_threshold = [0.001, 0.1, 0,6]
     p_val_extent      = 0.01
     nconj             = 0.02
-    nvar              = [1,1,0]
+    nvar              = [1,1]
 
     dummy_test(eng, search_volume, num_voxels, fwhm, df, p_val_peak, 
            cluster_threshold, p_val_extent, nconj, nvar)
 
 # Test 16 -->
-def text_16():
+def test_16():
     rng = np.random.default_rng()
 
     m = np.random.randint(1,100)
@@ -395,7 +398,7 @@ def text_16():
     rng = np.random.default_rng()
 
     search_volume     = np.random.uniform(0,100)
-    num_voxels        = rng.integers(1,100, size=(1,k))
+    num_voxels        = rng.integers(1,100, size=(k))
     fwhm              = np.random.uniform(0,10)
     df                = [m,n]
     p_val_peak        = 0.05
@@ -406,5 +409,3 @@ def text_16():
     
     dummy_test(eng, search_volume, num_voxels, fwhm, df, p_val_peak, 
            cluster_threshold, p_val_extent, nconj, nvar)
-
-
