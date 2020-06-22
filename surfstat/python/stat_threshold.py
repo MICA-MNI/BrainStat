@@ -2,16 +2,12 @@ import math
 import numpy as np
 from scipy.special import betaln, gammaln, gamma
 from scipy.interpolate import interp1d
+from matlab_functions import interp1, colon
 
 def gammalni(n):
     x = math.inf * np.ones(n.shape)
     x[n>=0] = gammaln(n[n>=0])
     return x
-
-def interp1(x,y,ix):
-    # Shorthand to keep the MATLAB/Python implementations comparable. 
-    f = interp1d(x, y)
-    return f(ix)
 
 def minterp1(x,y,ix):
     # interpolates only the monotonically increasing values of x at ix
@@ -33,16 +29,6 @@ def minterp1(x,y,ix):
         else:
             out.append(interp1(mx,my,ix[i]))
     return out
-
-def mrange(start,stop,increment=1):
-    # np.arange but inlcude endpoint (i.e. matlab behavior)
-    # very useful for matlab/python conversion :). 
-    m = np.arange(start,stop,increment)
-    if m.size == 0 and start == stop:
-        m = np.append(m,stop)
-    elif m[-1] + increment == stop:
-        m = np.append(m,stop)
-    return m
 
 def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf, 
     p_val_peak=0.05, cluster_threshold=0.001, p_val_extent=0.05, nconj=1, 
@@ -201,7 +187,7 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
     # For multivariate statistics, add a sphere to the search region:
     a = np.zeros((2,np.max(nvar)))
     for k in range(0,2):
-        j = mrange((nvar[k]-1),0,-2)
+        j = colon((nvar[k]-1),0,-2)
         a[k,j] = np.exp(j*np.log(2)+j/2*np.log(math.pi) + 
             gammaln((nvar[k]+1)/2)-gammaln((nvar[k]+1-j)/2)-gammaln(j+1))
 
