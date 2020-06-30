@@ -5,7 +5,9 @@ Welcome to BrainStat's documentation!
    :target: https://opensource.org/licenses/BSD-3-Clause
 
 
-BrainStat is an amazing toolbox and here is where we tell you why.
+Analysis and interpretation of neuroimaging datasets has become a multidisciplinary enterprise, relying not only on statistical methods but increasingly on the cross-referencing of other features for contextualization. Here we introduce BrainStat, a cross-platform toolbox that allows for (i) the univariate and multivariate statistical analysis of brain imaging datasets, (ii) ad hoc contextualization of results with respect to spatial maps of post-mortem gene expression and histology, as well as task-based fMRI meta-analysis and motifs of intrinsic functional brain organization. 
+
+Our toolbox flexibly (iii) handles common surface, volume, and parcel level data formats, and (iv) provides a series of interactive visualization functions. The toolbox has been implemented in both python and matlab, the two most widely adopted programming languages in the neuroimaging and neuroinformatics communities, is openly available, and complemented by an expandible documentation. 
 
 .. toctree::
    :maxdepth: 1
@@ -21,11 +23,16 @@ BrainStat is an amazing toolbox and here is where we tell you why.
 Developers
 ----------
 
-- Reinder Vos de Wael, MICA Lab - Montreal Neurological Institute
-- Oualid Benkarim, MICA Lab - Montreal Neurological Institute
-- Boris Bernhardt, MICA Lab - Montreal Neurological Institute
+- Reinder Vos de Wael - MICA Lab, Montreal Neurological Institute
+- Seyma Bayrak - Max Planck Institute for Human Cognitive and Brain Sciences 
+- Oualid Benkarim - MICA Lab, Montreal Neurological Institute
+- Sara Lariviere - MICA Lab, Montreal Neurological Institute
+- Raul Cruces - MICA Lab, Montreal Neurological Institute
+- Peer Herholz - Montreal Neurological Institute 
+- Seok-Jun Hong - Sungkyunkwan University
+- Sofie Valk - Max Planck Institute for Human Cognitive and Brain Sciences
+- Boris Bernhardt - Montreal Neurological Institute 
 
-ADD ALL OTHER CODE CONTRIBUTORS
 
 License
 -------
