@@ -7,6 +7,8 @@ Welcome to BrainStat's documentation!
 
 Analysis and interpretation of neuroimaging datasets has become a multidisciplinary enterprise, relying not only on statistical methods but increasingly on the cross-referencing of other features for contextualization. Here we introduce BrainStat, a cross-platform toolbox that allows for (i) the univariate and multivariate statistical analysis of brain imaging datasets, (ii) ad hoc contextualization of results with respect to spatial maps of post-mortem gene expression and histology, as well as task-based fMRI meta-analysis and motifs of intrinsic functional brain organization. 
 
+.. image:: ./figures/brainstat_logo_bw.png
+
 Our toolbox flexibly (iii) handles common surface, volume, and parcel level data formats, and (iv) provides a series of interactive visualization functions. The toolbox has been implemented in both python and matlab, the two most widely adopted programming languages in the neuroimaging and neuroinformatics communities, is openly available, and complemented by an expandible documentation. 
 
 .. toctree::
