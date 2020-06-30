@@ -13,9 +13,9 @@ Our toolbox flexibly (iii) handles common surface, volume, and parcel level data
    :maxdepth: 1
    :caption: Table of Contents:
 
+   theory
    install
    getting_started
-   theory
    python_doc/python_index
    matlab_doc/matlab_index
    references
