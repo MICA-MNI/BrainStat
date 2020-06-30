@@ -3,13 +3,26 @@
 BrainStat theoretical underpinnings
 ==============================
 
-The following expandable section covers some of the theoretical underpinnings and inference engines that are implemented in BrainStat. 
+The following expandable section covers some of the theoretical and mathematical underpinnings of BrainStat. 
 
 
 Mass-univariate linear modelling 
 -------------------
 
-BrainStat implements element-wise univariate and multivariate linear models and linear mixed-effects models, and similar to one of its predecessors SurfStat <http://math.mcgill.ca/keith/surfstat/>. In brief, the toolbox allows the definition and fitting of 
+BrainStat implements element-wise univariate and multivariate linear models and linear mixed-effects models, and similar to one of its predecessors SurfStat <http://www.math.mcgill.ca/keith/surfstat/>. 
+
+Linear models describe a continuous response variable as a function of one or more predictors (which can be continuous or factorial). An example of such a model is  
+
+	Y = b0 + b1*x1 + b2*x2 + e 
+	
+where the b_i are the parameter estimates, x_i are the variables and e represents the error term, which is assumed to be iid. BrainStat has adopted the straightforward formula nomenclature from SurfStat, in which the above model could be specified as 
+
+	Model = 1 + term(x1) + term(x2) 
+	
+followed by simple model fitting 
+	
+	slm = BrainStatLinMod
+
 
 
 Dependencies
