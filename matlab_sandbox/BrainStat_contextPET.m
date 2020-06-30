@@ -61,7 +61,19 @@ f = figure,
                 daspect([1 1 1]); axis tight; camlight; axis vis3d off;
                 lighting phong; material dull; shading interp;
     end
+      l = 1+i;     
+    for i = 1:length(PET.name)
+        m = 0.075
+        a(l+i) = axes('position',[0.75 0.1+(i*m) m m])
+        trisurf(template.tri(tl,:),...
+                template.coord(1,vl),template.coord(2,vl),template.coord(3,vl),...
+                double(PET.data(i,vl)),'EdgeColor','none');
+        view(90,0); 
+                daspect([1 1 1]); axis tight; camlight; axis vis3d off;
+                lighting phong; material dull; shading interp;
+    end
         
+    
         
 
 
