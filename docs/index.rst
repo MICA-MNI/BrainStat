@@ -15,7 +15,6 @@ Our toolbox flexibly (iii) handles common surface, volume, and parcel level data
 
    theory
    install
-   getting_started
    python_doc/python_index
    matlab_doc/matlab_index
    references

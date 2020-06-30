@@ -16,7 +16,6 @@ Multiple comparisons correction procedures
 -------
 
 
-
 Multivariate associative techniques  
 -------
 
