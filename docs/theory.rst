@@ -9,7 +9,7 @@ The following expandable section covers some of the theoretical underpinnings an
 Mass-univariate linear modelling 
 -------------------
 
-BrainStat implements mass univariate linear models and mixed-effects models, similar to one of its predecessors SurfStat <http://math.mcgill.ca/keith/surfstat/>
+BrainStat implements element-wise univariate and multivariate linear models and linear mixed-effects models, and similar to one of its predecessors SurfStat <http://math.mcgill.ca/keith/surfstat/>. In brief, the toolbox allows the definition and fitting of 
 
 
 Dependencies
@@ -22,6 +22,7 @@ To use BrainStat, the following Python packages are required:
 
 Correction for multiple comparisons  
 -------------------
+Mass univariate analyses implements mass univariate linear models and mixed-effects models, similar to one of its predecessors SurfStat <http://math.mcgill.ca/keith/surfstat/>. 
 
 
 Multivariate Techniques  
