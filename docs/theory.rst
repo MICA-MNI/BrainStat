@@ -1,6 +1,6 @@
 .. _theory_page:
 
-BrainStat theoretical underpinnings
+(Some) Theory
 ==============================
 
 The following expandable section covers some of the theoretical and mathematical underpinnings of BrainStat. 
@@ -9,7 +9,7 @@ The following expandable section covers some of the theoretical and mathematical
 Mass-univariate linear modelling 
 -------------------
 
-BrainStat implements element-wise univariate and multivariate linear models and linear mixed-effects models, and similar to one of its predecessors SurfStat <http://www.math.mcgill.ca/keith/surfstat/>. 
+BrainStat implements element-wise univariate and multivariate linear models, similar to one its predecessor `SurfStat <http://www.math.mcgill.ca/keith/surfstat/>`_ 
 
 Linear models describe a continuous response variable as a function of one or more predictors (which can be continuous or factorial). An example of such a model is  
 
@@ -27,17 +27,14 @@ Within a specified model, one can then interrogate specific contrasts, i.e. effe
 
 	slm = BrainStatT(slm, contrast) 
 
+Where contrast could be something like x1, -x1 from the above model in the case of continuous predictor variables, such as age.  One could also specify the contrast as x1.level1 - x1.level2 should x be a factorial variable. An example could be that x is a variable indicating sex, then the 
 
 
+Mixed effects models 
+-------------------
+BrainStat also incorporates element-wise linear mixed effects models, again leveraging functionality from `SurfStat <http://www.math.mcgill.ca/keith/surfstat/>`_ 
 
-Dependencies
-^^^^^^^^^^^^
-
-To use BrainStat, the following Python packages are required:
-
-* `numpy <https://numpy.org/>`_
-
-
+Mixed models allow for the 
 Correction for multiple comparisons  
 -------------------
 Mass univariate analyses implements mass univariate linear models and mixed-effects models, similar to one of its predecessors SurfStat <http://math.mcgill.ca/keith/surfstat/>. 
