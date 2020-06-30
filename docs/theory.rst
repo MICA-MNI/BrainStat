@@ -21,7 +21,12 @@ where the b_i are the parameter estimates, x_i are the variables and e represent
 	
 followed by simple model fitting 
 	
-	slm = BrainStatLinMod
+	slm = BrainStatLinMod....
+
+Within a specified model, one can then interrogate specific contrasts, i.e. effects of variables (or variable combinations) specified in the model. The respective code for this will be. 
+
+	slm = BrainStatT(slm, contrast) 
+
 
 
 
