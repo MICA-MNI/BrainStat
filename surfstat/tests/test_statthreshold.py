@@ -1,3 +1,10 @@
+# Developer's note: a known difference in MATLAB/Python output is that, when
+# the product of the num_voxels vector becomes extremely large, differences in 
+# MATLAB's and Python's handling of extremely large numbers causes Python
+# to throw NaNs but MATLAB still returns real values. This should never occur
+# in real-world scenario's though as storing data from such a large number of 
+# voxels is beyond reasonable computational capacities. - RV
+
 import sys
 sys.path.append("python")
 from stat_threshold import stat_threshold
@@ -81,8 +88,7 @@ def dummy_test(eng, search_volume, num_voxels, fwhm, df, p_val_peak,
                              rtol=1e-05, equal_nan=True)
         #print(result)
         testout_statthreshold.append(result)
-
-    if not all(testout_statthreshold):
+    if not np.all(testout_statthreshold):
         pdb.set_trace()
 
     assert all(flag == True for (flag) in testout_statthreshold)
@@ -393,7 +399,7 @@ def test_16():
 
     m = np.random.randint(1,100)
     n = np.random.randint(1,100)
-    k = np.random.randint(1,100)
+    k = np.random.randint(1,10)
 
     rng = np.random.default_rng()
 
