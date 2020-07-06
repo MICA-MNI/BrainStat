@@ -181,9 +181,34 @@ def matlab_SurfStatLinMod(T, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
 def matlab_SurfStatListDir(d, exclude):
     sys.exit("Function matlab_SurfStatListDir is not implemented yet")
 
+
+
+
+
+
+
 # ==> SurfStatMaskCut.m <==
 def matlab_SurfStatMaskCut(surf):
-    sys.exit("Function matlab_SurfStatMaskCut is not implemented yet")
+    # Mask that excludes the inter-hemisphere cut.
+    #
+    # Usage: mask = SurfStatMaskCut( surf );
+    #
+    # surf.coord   = 3 x v matrix of surface coordinates, v=#vertices.
+    #
+    # mask         = 1 x v vector, 1=inside, 0=outside, v=#vertices.
+    #
+    # It looks in -50<y<50 and -20<z<40, and mask vertices where |x|>thresh,
+    #  where thresh = 1.5 x arg max of a histogram of |x|. 
+    surf_mat = surf.copy()
+    for key in surf_mat.keys():
+        if np.ndim(surf_mat[key]) == 0:
+            surf_mat[key] = surfstat_eng.double(surf_mat[key].item())
+        else:
+            surf_mat[key] = matlab.double(surf_mat[key].tolist())    
+    result_mat = surfstat_eng.SurfStatMaskCut(surf_mat)    
+    result_mat = np.array(result_mat).astype(int)
+    return result_mat
+    
 
 
 
