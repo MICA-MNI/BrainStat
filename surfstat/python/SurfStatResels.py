@@ -9,13 +9,13 @@ def pacos(x):
 def py_SurfStatResels(slm, mask=None):
     if 'tri' in slm:
         # Get unique edges. Subtract 1 from edges to conform to Python's counting from 0 - RV
-        tri = np.sort(slm['tri'])
-        edg = np.unique(np.vstack((tri[:,(0,1)], tri[:,(0,2)], tri[:,(1,2)])))
+        tri = np.sort(slm['tri']) - 1
+        edg = np.unique(np.vstack((tri[:,(0,1)], tri[:,(0,2)], tri[:,(1,2)])),axis=0)
 
         # If no mask is provided, create one with all included vertices set to 1. - RV
         # If one is provided, simply grab the number of vertices from the mask. - RV  
         if mask is None:
-            v = np.amax(edg)
+            v = np.amax(edg)+1
             mask = np.full(v,False)
             mask[edg-1] = True
         else:
@@ -23,7 +23,7 @@ def py_SurfStatResels(slm, mask=None):
                 #mask = np.squeeze(mask)
                 #if mask.shape[0] > 1:
                 #    mask = mask.T
-            v = mask.size[0]
+            v = mask.size
         
         ## Compute the Lipschitz–Killing curvatures (LKC) - RV
         m = np.sum(mask)
@@ -31,36 +31,49 @@ def py_SurfStatResels(slm, mask=None):
             lkc = np.zeros((3,3))
         else:
             lkc = np.zeros((1,3))
+        lkc[0,0] = m
 
         # LKC of edges
+        print(edg)
+        print(mask)
         maskedg = np.all(mask[edg],axis=1)
+        print(maskedg)
         lkc[0,1] = np.sum(maskedg)
         if 'resl' in slm:
             r1 = np.mean(np.sqrt(slm['resl'][maskedg,:]),axis=1)
             lkc[1,1] = np.sum(r1)
         
         # LKC of triangles
-        masktri = np.all(mask[tri],2)
+        # Made an adjustment from the MATLAB implementation: 
+        # The reselspvert computation is included in the if-statement. 
+        # MATLAB errors when the if statement is false as variable r2 is not
+        # defined during the computation of reselspvert. - RV
+        masktri = np.all(mask[tri],1)
         lkc[0,2] = np.sum(masktri)
+        print(tri)
+        print(masktri)
+        print(tri[masktri,:][:,[0,1]])
         if 'resl' in slm:
-            _, loc = ismember(tri[masktri,(0,1)], edg, 'rows')
+            _, loc = ismember(tri[masktri,:][:,[0,1]], edg, 'rows')
             l12 = slm['resl'][loc,:]
-            _, loc = ismember(tri[masktri,(0,2)], edg, 'rows')
+            _, loc = ismember(tri[masktri,:][:,[0,2]], edg, 'rows')
             l13 = slm['resl'][loc,:]
-            _, loc = ismember(tri[masktri,(1,2)], edg, 'rows')
+            _, loc = ismember(tri[masktri,:][:,[1,2]], edg, 'rows')
             l23 = slm['resl'][loc,:]
             a = np.maximum(4*l12*l13-(l12+l13-l23)**2,0)
             r2 = np.mean(np.sqrt(a),axis=1)/4
             lkc[1,2] = np.sum(np.mean(np.sqrt(l12)+np.sqrt(l13)+np.sqrt(l23),axis=1))/2
             lkc[2,2] = np.sum(r2,axis=0)
         
-        # Compute resels per mask vertex
-        reselspvert = np.zeros(v)
-        for j in range(0,3):
-            reselspvert = reselspvert + np.bincount(tri[masktri,j],weights=r2,minlength=v)
-        D = 2
-        reselspvert = reselspvert.T / (D+1) / np.sqrt(4*np.log(2)) ** D
-
+            # Compute resels per mask vertex
+            reselspvert = np.zeros(v)
+            for j in range(0,3):
+                reselspvert = reselspvert + np.bincount(tri[masktri,j],weights=r2,minlength=v)
+            D = 2
+            reselspvert = reselspvert.T / (D+1) / np.sqrt(4*np.log(2)) ** D
+        else:
+            reselspvert = None
+        
     if 'lat' in slm:
         edg = SurfStatEdg(slm)
         # The lattice is filled with 5 alternating tetrahedra per cube
@@ -159,6 +172,7 @@ def py_SurfStatResels(slm, mask=None):
     tpltz = toeplitz((-1)**(np.arange(0,D1+1)), (-1)**(np.arange(0,D2+1)))
     lkcs = np.sum(tpltz * lkc, axis=1).T 
     lkcs = np.trim_zeros(lkcs,trim='b')
+    lkcs = np.atleast_2d(lkcs)
     D = lkcs.shape[1]-1
     resels = lkcs / np.sqrt(4*np.log(2))**np.arange(0,D+1)
 

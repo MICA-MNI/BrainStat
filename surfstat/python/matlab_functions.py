@@ -39,6 +39,8 @@ def ismember(A, B, rows=False):
         for i in range(0,idx.size):
             locations[idx[i]] = locB[np.argwhere(val==Aflat[idx[i]])]
         locations = np.reshape(locations,A.shape)
+        locations = [int(round(x)) for x in locations]
+    locations = [int(round(x)) for x in locations]
     return bool_array, locations
 
 def colon(start,stop,increment=1):
