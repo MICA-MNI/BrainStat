@@ -274,13 +274,22 @@ def matlab_SurfStatPeakClus(slm, mask, thresh, reselspvert, edg):
                                                        thresh_mat, 
                                                        reselspvert_mat, 
                                                        edg_mat, nargout=3)
-    peak_py = {key: None for key in peak.keys()}
-    for key in peak:
-        peak_py[key] = np.array(peak[key])
-        
-    clus_py = {key: None for key in clus.keys()}
-    for key in clus:
-        clus_py[key] = np.array(clus[key])
+                                                       
+    if isinstance(peak, matlab.double):
+        peak_py = np.array(peak)
+        print('AAAAAA ', peak)
+    elif isinstance(peak, dict):                  
+        peak_py = {key: None for key in peak.keys()}
+        for key in peak:
+            peak_py[key] = np.array(peak[key])
+    
+    if isinstance(clus, matlab.double):  
+        clus_py = np.array(clus)
+        print('BBBB ', clus)
+    elif isinstance(clus, dict):
+        clus_py = {key: None for key in clus.keys()}
+        for key in clus:
+            clus_py[key] = np.array(clus[key])
 
     clusid_py = np.array(clusid)    
     
