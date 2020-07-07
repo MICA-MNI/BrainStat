@@ -26,7 +26,7 @@ Developers
 ----------
 
 - Reinder Vos de Wael - MICA Lab, Montreal Neurological Institute
-- &Scedil;eyma Bayrak - Max Planck Institute for Human Cognitive and Brain Sciences 
+- :raw-html:`&Scedil;`eyma Bayrak - Max Planck Institute for Human Cognitive and Brain Sciences 
 - Oualid Benkarim - MICA Lab, Montreal Neurological Institute
 - Sara Lariviere - MICA Lab, Montreal Neurological Institute
 - Raul Cruces - MICA Lab, Montreal Neurological Institute
