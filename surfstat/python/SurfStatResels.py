@@ -34,10 +34,7 @@ def py_SurfStatResels(slm, mask=None):
         lkc[0,0] = m
 
         # LKC of edges
-        print(edg)
-        print(mask)
         maskedg = np.all(mask[edg],axis=1)
-        print(maskedg)
         lkc[0,1] = np.sum(maskedg)
         if 'resl' in slm:
             r1 = np.mean(np.sqrt(slm['resl'][maskedg,:]),axis=1)
@@ -50,9 +47,6 @@ def py_SurfStatResels(slm, mask=None):
         # defined during the computation of reselspvert. - RV
         masktri = np.all(mask[tri],1)
         lkc[0,2] = np.sum(masktri)
-        print(tri)
-        print(masktri)
-        print(tri[masktri,:][:,[0,1]])
         if 'resl' in slm:
             _, loc = ismember(tri[masktri,:][:,[0,1]], edg, 'rows')
             l12 = slm['resl'][loc,:]
