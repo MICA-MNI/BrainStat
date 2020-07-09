@@ -302,6 +302,3 @@ def py_SurfStatResels(slm, mask=None):
     resels = lkcs / np.sqrt(4*np.log(2))**np.arange(0,D+1)
 
     return resels, reselspvert, edg
-
-
-
