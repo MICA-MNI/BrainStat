@@ -78,15 +78,15 @@ def py_SurfStatResels(slm, mask=None):
         i = np.squeeze(np.reshape(i,(-1,1)))
         j = np.squeeze(np.reshape(j,(-1,1)))
         
-        c1  = np.argwhere(((i+j)%2)==0 & (i < I) & (j < J))
-        c2  = np.argwhere(((i+j)%2)==0 & (i > 1) & (j < J))
-        c11 = np.argwhere(((i+j)%2)==0 & (i == I) & (j < J))
-        c21 = np.argwhere(((i+j)%2)==0 & (i == I) & (j > 1))
-        c12 = np.argwhere(((i+j)%2)==0 & (i < I) & (j == J))
-        c22 = np.argwhere(((i+j)%2)==0 & (i > 1) & (j == J))
+        c1  = np.argwhere((((i+j)%2)==0) & (i < I) & (j < J))
+        c2  = np.argwhere((((i+j)%2)==0) & (i > 1) & (j < J))
+        c11 = np.argwhere((((i+j)%2)==0) & (i == I) & (j < J))
+        c21 = np.argwhere((((i+j)%2)==0) & (i == I) & (j > 1))
+        c12 = np.argwhere((((i+j)%2)==0) & (i < I) & (j == J))
+        c22 = np.argwhere((((i+j)%2)==0) & (i > 1) & (j == J))
 
-        d1  = np.argwhere(((i+j)%2)==0 & (i < I) & (j < J))+IJ
-        d2  = np.argwhere(((i+j)%2)==0 & (i > 1) & (j < J))+IJ
+        d1  = np.argwhere((((i+j)%2)==1) & (i < I) & (j < J))+IJ # outcome is 1 lower than MATLAB due to 0-1 counting difference. - RV
+        d2  = np.argwhere((((i+j)%2)==1) & (i > 1) & (j < J))+IJ
 
         tri1 = cat((
             cat((c1, c1+1, c1+1+I),axis=1),
@@ -167,17 +167,19 @@ def py_SurfStatResels(slm, mask=None):
                 mask1 = mask[np.arange(vs[k]+1,vs[k+2])]
             else:
                 edg1 = cat((
-                    edg[edg[:,0]  > vs[k]   & edg[:,1] <= vs[k+1], :] - vs[k] + vs[k+2] - vs[k+1],
-                    edg[edg[:,0] <= vs[k+1] & edg[:,1] >  vs[k+1], 1] - vs[k+1],
-                    edg[edg[:,0] <= vs[k+1] & edg[:,1] >  vs[k+1], 0] - vs[k] + vs[k+2] - vs[k+1]),
+                    edg[np.logical_and(edg[:,0]  > vs[k], edg[:,1] <= vs[k+1]), :] - vs[k] + vs[k+2] - vs[k+1],
+                    cat((
+                        np.expand_dims(edg[np.logical_and(edg[:,0] <= vs[k+1], edg[:,1] >  vs[k+1]), 1] - vs[k+1],axis=1),
+                        np.expand_dims(edg[np.logical_and(edg[:,0] <= vs[k+1], edg[:,1] >  vs[k+1]), 0] - vs[k] + vs[k+2] - vs[k+1],axis=1)),
+                        axis=1)),
                     axis=0)
                 edg2 = cat((
                     edg1, 
-                    edg[edg[:,0] > vs[k+1] & edg[:,1] <= vs[k+2],:] - vs[k+1]),
+                    edg[np.logical_and(edg[:,0] > vs[k+1], edg[:,1] <= vs[k+2]),:] - vs[k+1]),
                     axis=0)
                 tri = cat((
-                    vid[tri3[np.all(lat[tri3],axis=1),:]],
-                    vid[tri2[np.all(lat[tri2],axis=1),:]]),
+                    vid[tri3[np.all(lat.flatten('F')[tri3],axis=1),:]],
+                    vid[tri2[np.all(lat.flatten('F')[tri2],axis=1),:]]),
                     axis=0)
                 mask1 = cat((
                     mask[np.arange(mask[vs[k+1]+1], vs[k+2]+1)],
