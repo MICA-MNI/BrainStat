@@ -6,7 +6,55 @@ from SurfStatEdg import py_SurfStatEdg
 from matlab_functions import interp1d_mp, accum, ismember
 
 def py_SurfStatPeakClus(slm, mask, thresh, reselspvert=None, edg=None):
-    
+    """ Finds peaks (local maxima) and clusters for surface data.
+    Parameters
+    ----------
+    slm : a dictionary, mandatory keys: 't', 'tri' (or 'lat'),
+        optional keys 'df', 'k'.
+        slm['t'] : numpy array of shape (l,v),
+            v is the number of vertices, the first row slm['t'][0,:] is used
+            for the clusters, and the other rows are used to calculate cluster
+            resels if slm['k']>1. See SurfStatF for the precise definition
+            of the extra rows.
+        slm['tri'] : numpy array of shape (t,3), dype=int,
+            triangle indices, values should be 1 and v,
+        or,
+        slm['lat'] : numpy array of shape (nx,nx,nz),
+            values should be either 0 or 1.
+            note that [nx,ny,nz]=size(volume).
+        mask : numpy array of shape (1,v), dytpe=int,
+            values should be either 0 or 1.
+        thresh : float,
+            clusters are vertices where slm['t'][0,mask]>=thresh.
+        reselspvert : numpy array of shape (1,v),
+            resels per vertex, by default: np.ones((1,v)).
+        edg :  numpy array of shape (e,2), dtype=int,
+            edge indices, by default computed from SurfStatEdg function.
+        slm['df'] : int,
+            degrees of freedom, note that only the length (1 or 2) is used
+            to determine if slm['t'] is Hotelling's T or T^2 when k>1.
+        slm['k'] : int,
+             k is number of variates, by default 1.
+
+    Returns
+    -------
+    peak : a dictionary with keys 't', 'vertid', 'clusid'.
+        peak['t'] : numpy array of shape (np,1),
+            array of peaks (local maxima).
+        peak['vertid] : numpy array of shape (np,1),
+            array of vertex id's (1-based).
+        peak['clusid'] : numpy array of shape (np,1),
+            array of cluster id's that contain the peak.
+    clus : a dictionary with keys 'clusid', 'nverts', 'resels'.
+        clus['clusid'] : numpy array of shape (nc,1),
+            array of cluster id numbers.
+        clus['nverts'] : numpy array of shape (nc,1),
+            array of number of vertices in the cluster.
+        clus['resels'] : numpy array of shape (nc,1),
+            array of resels in the cluster.
+    clusid : numpy array of shape (1,v),
+        array of cluster id's for each vertex.
+	"""
     if edg is None:
         edg = py_SurfStatEdg(slm)
 
