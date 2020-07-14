@@ -2,6 +2,8 @@ import numpy as np
 from numpy import concatenate as cat
 from matlab_functions import ismember
 from scipy.linalg import toeplitz
+from scipy.sparse import csr_matrix
+
 from SurfStatEdg import py_SurfStatEdg
 
 def pacos(x):
@@ -70,7 +72,7 @@ def py_SurfStatResels(slm, mask=None):
             reselspvert = None
         
     if 'lat' in slm:
-        edg = py_SurfStatEdg(slm)
+        edg = py_SurfStatEdg(slm)-1 # -1 because of Python indices starting at 0 - RV
         # The lattice is filled with 5 alternating tetrahedra per cube
         I, J, K = np.shape(slm['lat'])
         IJ = I*J
@@ -141,59 +143,62 @@ def py_SurfStatResels(slm, mask=None):
         
         v = np.int(np.round(np.sum(slm['lat'])))
         if mask is None:
-            mask = np.ones((1,v))
+            mask = np.ones(v,dtype=bool)
         
         reselspvert = np.zeros(v)
         vs = np.cumsum(np.squeeze(np.sum(np.sum(slm['lat'],axis=0),axis=1)))
         vs = cat((np.zeros(1),vs,np.expand_dims(vs[K-1],axis=0)),axis=0)
+        vs = vs.astype(int)
         es = 0 
         lat = np.zeros((I,J,2))
         lat[:,:,0] = slm['lat'][:,:,0]
         lkc = np.zeros((4,4))
         n10 = np.floor(K/10)
         for k in range(0,K):
-            f = k % 2
+            f = (k+1) % 2
             if k < (K-1):
-                lat[:,:,f+1] = slm['lat'][:,:,k+1]
+                lat[:,:,f] = slm['lat'][:,:,k+1]
             else:
-                lat[:,:,f+1] = np.zeros((I,J))
+                lat[:,:,f] = np.zeros((I,J))
             vid = (np.cumsum(lat) * np.reshape(lat.T,-1)).astype(int)
-            if f:
-                edg1 = edg[edg[:,0] > vs[k] & edg[:,0] <= vs[k+1],:]-vs[k] # Indexing may go wrong here.
-                edg2 = edg[edg[:,0] > vs[k] & edg[:,1] <= vs[k+2],:]-vs[k]
-                tri = cat((vid[tri1[np.all(lat[tri1],1),:]], 
-                                    vid[tri2[np.all(lat[tri2],1),:]]),
-                                    axis=0)
-                mask1 = mask[np.arange(vs[k]+1,vs[k+2])]
+            print(np.cumsum(lat))
+            if f: # Use a NOT here because k starts counting at 0 instead of 1 (contary to MATLAB) - RV
+                edg1 = edg[np.logical_and(edg[:,0] > (vs[k]-1), edg[:,0] <= (vs[k+1]-1)),:]-vs[k] 
+                edg2 = edg[np.logical_and(edg[:,0] > (vs[k]-1), edg[:,1] <= (vs[k+2]-1)),:]-vs[k]
+                tri = cat((vid[tri1[np.all(np.reshape(lat.flatten()[tri1],tri1.shape),1),:]], 
+                           vid[tri2[np.all(np.reshape(lat.flatten()[tri2],tri2.shape),1),:]]),
+                           axis=0)
+                mask1 = mask[np.arange(vs[k]+1,vs[k+2]+1)]
             else:
                 edg1 = cat((
-                    edg[np.logical_and(edg[:,0]  > vs[k], edg[:,1] <= vs[k+1]), :] - vs[k] + vs[k+2] - vs[k+1],
+                    edg[np.logical_and(edg[:,0]  > (vs[k]-1), edg[:,1] <= (vs[k+1]-1)), :] - vs[k] + vs[k+2] - vs[k+1],
                     cat((
-                        np.expand_dims(edg[np.logical_and(edg[:,0] <= vs[k+1], edg[:,1] >  vs[k+1]), 1] - vs[k+1],axis=1),
-                        np.expand_dims(edg[np.logical_and(edg[:,0] <= vs[k+1], edg[:,1] >  vs[k+1]), 0] - vs[k] + vs[k+2] - vs[k+1],axis=1)),
+                        np.expand_dims(edg[np.logical_and(edg[:,0] <= (vs[k+1]-1), edg[:,1] >  (vs[k+1]-1)), 1] - vs[k+1],axis=1),
+                        np.expand_dims(edg[np.logical_and(edg[:,0] <= (vs[k+1]-1), edg[:,1] >  (vs[k+1]-1)), 0] - vs[k] + vs[k+2] - vs[k+1],axis=1)),
                         axis=1)),
                     axis=0)
                 edg2 = cat((
                     edg1, 
-                    edg[np.logical_and(edg[:,0] > vs[k+1], edg[:,1] <= vs[k+2]),:] - vs[k+1]),
+                    edg[np.logical_and(edg[:,0] > (vs[k+1]-1), edg[:,1] <= (vs[k+2]-1)),:] - vs[k+1]),
                     axis=0)
                 tri = cat((
                     vid[tri3[np.all(lat.flatten('F')[tri3],axis=1),:]],
                     vid[tri2[np.all(lat.flatten('F')[tri2],axis=1),:]]),
                     axis=0)
                 mask1 = cat((
-                    mask[np.arange(mask[vs[k+1]+1], vs[k+2]+1)],
-                    mask[np.arange(mask[vs[k]+1],   vs[k+1]+1)]))
-            tet = vid[tet1[np.all(lat[tet1],axis=1),:]]
+                    mask[np.arange(vs[k+1]+1, vs[k+2]+1)],
+                    mask[np.arange(vs[k]+1,   vs[k+1]+1)]))
+            tet = vid[tet1[np.all(lat.flatten('F')[tet1],axis=1),:]]
 
-            m1 = np.max(float(edg2[:,0]))
-            ue = float(edg2[:,0]) + m1 * (float(edg2[:,1])-1)
+            m1 = np.max(edg2[:,0])
+            ue = edg2[:,0] + m1 * (edg2[:,1]-1)
             e = edg2.shape[0]
             ae = np.arange(1,e+1)
             if e < 2 ** 31:
-                sparsedg = sparse(ae,(ue,1))
+                sparsedg = csr_matrix((ae,(ue,np.ones(ue.shape,dtype=int))),dtype=np.float)
+                sparsedg.eliminate_zeros()
             ##
-            lkc1 = np.zeros(4,4)
+            lkc1 = np.zeros((4,4))
             lkc[0,0] = np.sum(mask[np.arange(vs[k]+1,vs[k+1]+1)])
 
             ## LKC of edges
@@ -204,6 +209,7 @@ def py_SurfStatResels(slm, mask=None):
                 lkc1[1,1] = np.sum(r1)
             
             ## LKC of triangles
+            print(mask1.shape)
             masktri = np.all(mask1[tri],axis=1)
             lkc1[0,2] = np.sum(masktri)
             if 'resl' in slm: 
@@ -232,7 +238,7 @@ def py_SurfStatResels(slm, mask=None):
 
             ## LKC of tetrahedra
             masktet = np.all(mask1[tet],axis=1)
-            lkc1[1,4] = np.sum(masktet)
+            lkc1[0,3] = np.sum(masktet)
             if 'resl' in slm and k < K:
                 if e < 2 ** 31:
                     l12 = slm['resl'][sparsedg[tet[masktet,0] + m1 * (tet[masktet,1]-1),0] + es, :]
