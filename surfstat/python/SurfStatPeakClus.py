@@ -1,4 +1,5 @@
 import numpy as np
+import math
 import sys
 from scipy.io import loadmat
 from SurfStatEdg import py_SurfStatEdg
@@ -73,12 +74,32 @@ def py_SurfStatPeakClus(slm, mask, thresh, reselspvert=None, edg=None):
         ucrsl = accum(nf1.astype(int).reshape(reselsvox.shape),
                       reselsvox)
     if 'k' in slm and slm['k'] == 2:
-        print('NOT YET IMPLEMENTED')
-        sys.exit()
-        
+        if l == 1:
+            ndf = len(np.array([slm['df']]))
+            r = 2 * np.arccos((thresh / slm['t'][0, vox-1])**(float(1)/ndf))
+        else:
+            r = 2 * np.arccos(np.sqrt((thresh - slm['t'][1,vox-1]) *
+                                      (thresh >= slm['t'][1,vox-1]) /
+                                      (slm['t'][0,vox-1] - slm['t'][1,vox-1])))
+        ucrsl = accum(nf1.astype(int).reshape(reselsvox.shape).T,
+                      r.T * reselsvox.T)
     if 'k' in slm and slm['k'] == 3:
-        print('NOT YET IMPLEMENTED')
-        sys.exit()
+        if l == 1:
+            ndf = len(np.array([slm['df']]))
+            r = 2 * math.pi * (1 - (thresh / slm['t'][0, vox-1])**
+                                (float(1)/ndf))
+        else:
+            nt = 20
+            theta = (np.arange(1,nt+1,1) - 1/2) / nt * math.pi / 2
+            s = (np.cos(theta)**2 * slm['t'][1, vox-1]).T
+            if l == 3:
+                s =  s + ((np.sin(theta)**2) * slm['t'][2,vox-1]).T
+            r = 2 * math.pi * (1 - np.sqrt((thresh-s)*(thresh>=s) /
+                                           (np.ones((nt,1)) *
+                                            slm['t'][0, vox-1].T -
+                                            s ))).mean(axis=0)
+        ucrsl = accum(nf1.astype(int).reshape(reselsvox.shape).T,
+                      r.T * reselsvox.T)
         
     # and their ranks (in ascending order)
     iucrls = sorted(range(len(ucrsl[1:])), key=lambda k: ucrsl[1:][k])
