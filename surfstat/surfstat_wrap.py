@@ -239,7 +239,7 @@ def matlab_SurfStatPCA(Y, mask, X, k):
 
 
 # ==> SurfStatPeakClus.m <==
-def matlab_SurfStatPeakClus(slm, mask, thresh, reselspvert, edg):
+def matlab_SurfStatPeakClus(slm, mask, thresh, reselspvert=None, edg=None):
     # Finds peaks (local maxima) and clusters for surface data.
     # Usage: [ peak, clus, clusid ] = SurfStatPeakClus( slm, mask, thresh ...
     #                                [, reselspvert [, edg ] ] );
@@ -267,35 +267,44 @@ def matlab_SurfStatPeakClus(slm, mask, thresh, reselspvert, edg):
     mask_mat = matlab.logical(mask_mat)
 
     thresh_mat = surfstat_eng.double(thresh)
-    reselspvert_mat = matlab.double(reselspvert.tolist())
-    edg_mat = matlab.double(edg.tolist())
-
-    peak, clus, clusid = surfstat_eng.SurfStatPeakClus(slm_mat, mask_mat, 
-                                                       thresh_mat, 
-                                                       reselspvert_mat, 
-                                                       edg_mat, nargout=3)
-                                                       
+    
+    if reselspvert is None and edg is None:
+        peak, clus, clusid = surfstat_eng.SurfStatPeakClus(slm_mat, mask_mat, 
+                                                           thresh_mat, 
+                                                           nargout=3) 
+    elif reselspvert is not None and edg is None:
+        reselspvert_mat = matlab.double(reselspvert.tolist())
+        peak, clus, clusid = surfstat_eng.SurfStatPeakClus(slm_mat, mask_mat, 
+                                                           thresh_mat, 
+                                                           reselspvert_mat, 
+                                                           nargout=3)
+    elif reselspvert is not None and edg is not None:
+        reselspvert_mat = matlab.double(reselspvert.tolist())
+        edg_mat = matlab.double(edg.tolist())
+        peak, clus, clusid = surfstat_eng.SurfStatPeakClus(slm_mat, mask_mat, 
+                                                           thresh_mat, 
+                                                           reselspvert_mat,
+                                                           edg_mat,
+                                                           nargout=3)                 
     if isinstance(peak, matlab.double):
         peak_py = np.array(peak)
-        print('AAAAAA ', peak)
     elif isinstance(peak, dict):                  
         peak_py = {key: None for key in peak.keys()}
         for key in peak:
-            peak_py[key] = np.array(peak[key])
-    
+            peak_py[key] = np.array(peak[key])        
     if isinstance(clus, matlab.double):  
         clus_py = np.array(clus)
-        print('BBBB ', clus)
     elif isinstance(clus, dict):
         clus_py = {key: None for key in clus.keys()}
         for key in clus:
             clus_py[key] = np.array(clus[key])
-
     clusid_py = np.array(clusid)    
     
     return peak_py, clus_py, clusid_py 
     
-    
+
+
+
 
 
 
