@@ -1,9 +1,10 @@
 import numpy as np
 from numpy import concatenate as cat
-from matlab_functions import ismember
+
 from scipy.linalg import toeplitz
 from scipy.sparse import csr_matrix
 
+from matlab_functions import ismember, accumarray
 from SurfStatEdg import py_SurfStatEdg
 
 def pacos(x):
@@ -161,14 +162,13 @@ def py_SurfStatResels(slm, mask=None):
             else:
                 lat[:,:,f] = np.zeros((I,J))
             vid = (np.cumsum(lat) * np.reshape(lat.T,-1)).astype(int)
-            print(np.cumsum(lat))
             if f: # Use a NOT here because k starts counting at 0 instead of 1 (contary to MATLAB) - RV
                 edg1 = edg[np.logical_and(edg[:,0] > (vs[k]-1), edg[:,0] <= (vs[k+1]-1)),:]-vs[k] 
                 edg2 = edg[np.logical_and(edg[:,0] > (vs[k]-1), edg[:,1] <= (vs[k+2]-1)),:]-vs[k]
                 tri = cat((vid[tri1[np.all(np.reshape(lat.flatten()[tri1],tri1.shape),1),:]], 
                            vid[tri2[np.all(np.reshape(lat.flatten()[tri2],tri2.shape),1),:]]),
-                           axis=0)
-                mask1 = mask[np.arange(vs[k]+1,vs[k+2]+1)]
+                           axis=0)-1 # Added a -1 - RV
+                mask1 = mask[np.arange(vs[k],vs[k+2])]
             else:
                 edg1 = cat((
                     edg[np.logical_and(edg[:,0]  > (vs[k]-1), edg[:,1] <= (vs[k+1]-1)), :] - vs[k] + vs[k+2] - vs[k+1],
@@ -184,11 +184,11 @@ def py_SurfStatResels(slm, mask=None):
                 tri = cat((
                     vid[tri3[np.all(lat.flatten('F')[tri3],axis=1),:]],
                     vid[tri2[np.all(lat.flatten('F')[tri2],axis=1),:]]),
-                    axis=0)
+                    axis=0)-1 # Added a -1 - RV
                 mask1 = cat((
-                    mask[np.arange(vs[k+1]+1, vs[k+2]+1)],
-                    mask[np.arange(vs[k]+1,   vs[k+1]+1)]))
-            tet = vid[tet1[np.all(lat.flatten('F')[tet1],axis=1),:]]
+                    mask[np.arange(vs[k+1], vs[k+2])],
+                    mask[np.arange(vs[k],   vs[k+1])]))
+            tet = vid[tet1[np.all(lat.flatten('F')[tet1],axis=1),:]]-1 # Added a -1 -RV
 
             m1 = np.max(edg2[:,0])
             ue = edg2[:,0] + m1 * (edg2[:,1]-1)
@@ -199,17 +199,16 @@ def py_SurfStatResels(slm, mask=None):
                 sparsedg.eliminate_zeros()
             ##
             lkc1 = np.zeros((4,4))
-            lkc[0,0] = np.sum(mask[np.arange(vs[k]+1,vs[k+1]+1)])
+            lkc1[0,0] = np.sum(mask[np.arange(vs[k],vs[k+1])])
 
             ## LKC of edges
             maskedg = np.all(mask1[edg1],axis=1)
-            lkc[0,1] = np.sum(maskedg)
+            lkc1[0,1] = np.sum(maskedg)
             if 'resl' in slm:
                 r1 = np.mean(np.sqrt(slm['resl'][np.argwhere(maskedg)+es,:]),axis=1)
                 lkc1[1,1] = np.sum(r1)
             
             ## LKC of triangles
-            print(mask1.shape)
             masktri = np.all(mask1[tri],axis=1)
             lkc1[0,2] = np.sum(masktri)
             if 'resl' in slm: 
@@ -234,7 +233,7 @@ def py_SurfStatResels(slm, mask=None):
                         else:
                             v1 = tri[masktri,j] + vs[k+1]
                             v1 = v1 - int(vs > vs[k+2]) * (vs[k+2]-vs[k])
-                        reselspvert = reselspvert + accum(v1,r2, size=[v, 1])
+                        reselspvert = reselspvert + accumarray(v1,r2, size=[v, 1])
 
             ## LKC of tetrahedra
             masktet = np.all(mask1[tet],axis=1)
@@ -279,7 +278,7 @@ def py_SurfStatResels(slm, mask=None):
                 r3=np.mean(np.sqrt(np.maximum((4 * a1 * a2 - (a1 + a2 - d12) **2) / (l34 + (l34<=0)) * (l34>0), 0)),axis=1) / 48
 
                 lkc1[1,3] = (delta12+delta13+delta14+delta23+delta24+delta34)/(2 * np.pi)
-                lkc1[2,4] = np.sum(np.mean(np.sqrt(a1) + np.sqrt(a2) + np.sqrt(a3) + np.sqrt(a4), 2))/8
+                lkc1[2,3] = np.sum(np.mean(np.sqrt(a1) + np.sqrt(a2) + np.sqrt(a3) + np.sqrt(a4), 2))/8
                 lkc1[3,3] = np.sum(r3)
                 
                 ## Original MATLAB code has a if nargout>=2 here, ignore it as no equivalent exists in Python - RV. 
@@ -288,8 +287,8 @@ def py_SurfStatResels(slm, mask=None):
                         v1 = tet[masktet,j] + vs[k]
                     else:
                         v1 = tet[masktet,j] + vs[k+1]
-                        v1 = v1 - int(v1 > vs[k+2]) * (vs[k+2] - vs[k])
-                    reselspvert = reselspvert + accum(v1, r3, [v, 1])
+                        v1 = v1 - (v1 > (vs[k+2]-1)) * (vs[k+2] - vs[k])
+                    reselspvert = reselspvert + accumarray(v1, r3, [v, 1])
 
             lkc = lkc + lkc1
             es = es + edg1.shape[0]

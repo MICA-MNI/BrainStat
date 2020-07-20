@@ -10,20 +10,25 @@ import pytest
 eng = matlab.engine.start_matlab()
 eng.addpath('matlab/')
 
+import collections
+def flatten(x):
+    if isinstance(x, collections.Iterable):
+        return [a for i in x for a in flatten(i)]
+    else:
+        return [x]
 
 def py_array_to_mat(L):
     L = np.array(L) # Ascertain input is a numpy array. 
     S = L.shape
     if L.ndim == 1:
         S = [S[0],1]
-        L = L.tolist()
     else:
         S = list(S)
-        L = [item for sublist in L.tolist() for item in sublist]
+    L = flatten(L.tolist())       
     S.reverse()
     S = eng.cell2mat(S)
     M = eng.cell2mat(L)
-    return eng.transpose(eng.reshape(M,S))
+    return eng.permute(eng.reshape(M,S),eng.cell2mat([2,1,3]))
 
 
 def matlab_SurfStatResels(slm, mask=None): 
@@ -116,4 +121,13 @@ def test_3():
     mask = np.array([True,True,True,False,True])
     dummy_test(slm,mask)
 
-# Add a tri/resl/mask test with real data. 
+# Test with slm.lat, 1's only.
+def test_4():
+    slm = {'lat': np.ones((10,10,10))}
+    dummy_test(slm)
+
+# Test with slm.lat, both 0's and 1's. 
+def test_5():
+    slm = {'lat': np.random.rand(10,10,10) > 0.5}
+    dummy_test(slm)
+

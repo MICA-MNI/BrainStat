@@ -52,7 +52,7 @@ def colon(start,stop,increment=1):
         m = np.append(m,stop)
     return m
 
-def accum(accmap, a, func=None, size=None, fill_value=0, dtype=None):
+def accumarray(accmap, a, func=None, size=None, fill_value=0, dtype=None):
     """
     An accumulation function similar to Matlab's `accumarray` function.
     Function downloaded from https://scipy.github.io/old-wiki/pages/Cookbook/AccumarrayLike.html
@@ -105,7 +105,7 @@ def accum(accmap, a, func=None, size=None, fill_value=0, dtype=None):
            [-1,  8,  9]])
     >>> # Sum the diagonals.
     >>> accmap = array([[0,1,2],[2,0,1],[1,2,0]])
-    >>> s = accum(accmap, a)
+    >>> s = accumarray(accmap, a)
     array([9, 7, 15])
     >>> # A 2D output, from sub-arrays with shapes and positions like this:
     >>> # [ (2,2) (2,1)]
@@ -116,11 +116,11 @@ def accum(accmap, a, func=None, size=None, fill_value=0, dtype=None):
             [[1,0],[1,0],[1,1]],
         ])
     >>> # Accumulate using a product.
-    >>> accum(accmap, a, func=prod, dtype=float)
+    >>> accumarray(accmap, a, func=prod, dtype=float)
     array([[ -8.,  18.],
            [ -8.,   9.]])
     >>> # Same accmap, but create an array of lists of values.
-    >>> accum(accmap, a, func=lambda x: x, dtype='O')
+    >>> accumarray(accmap, a, func=lambda x: x, dtype='O')
     array([[[1, 2, 4, -1], [3, 6]],
            [[-1, 8], [9]]], dtype=object)
     """
