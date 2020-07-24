@@ -25,7 +25,7 @@ def fetch_tutorial_data(n_subjects=20, data_dir=None, resume=True, verbose=1):
     -------
     data: sklearn.datasets.base.Bunch
         Dictionary-like object, the interest attributes are :
-         - 'surface_files': Paths to surface files in mgh format
+         - 'image_files': Paths to image files in mgh format
          - 'demographics': Path to CSV file containing demographic information
 
     References
@@ -35,15 +35,18 @@ def fetch_tutorial_data(n_subjects=20, data_dir=None, resume=True, verbose=1):
 
     """
 
+    # set dataset url
     url = "https://box.bic.mni.mcgill.ca/s/wMPF2vj7EoYWELV"
 
+    # set data_dir, if not directly set use ~ as default
     if data_dir is None:
         data_dir = str(Path.home())
 
+    # set dataset name and get its corresponding directory
     dataset_name = "brainstat_tutorial"
-
     data_dir = _get_dataset_dir(dataset_name, data_dir=data_dir, verbose=verbose)
 
+    # set download information for demographic file
     files = [
         (
             "brainstat_tutorial_df.csv",
@@ -51,11 +54,14 @@ def fetch_tutorial_data(n_subjects=20, data_dir=None, resume=True, verbose=1):
             {"move": "brainstat_tutorial_df.csv"},
         )
     ]
+
+    # download demographic file
     path_to_demographics = _fetch_files(data_dir, files, verbose=verbose)[0]
 
-
+    # set ids based on complete dataset from demographic file
     ids = pd.read_csv(path_to_demographics)["ID2"].tolist()
 
+    # set and check subjects, in total and subset
     max_subjects = len(ids)
     if n_subjects is None:
         n_subjects = max_subjects
@@ -64,13 +70,20 @@ def fetch_tutorial_data(n_subjects=20, data_dir=None, resume=True, verbose=1):
         n_subjects = max_subjects
     ids = ids[:n_subjects]
 
+    # restrict demographic information to subset of subjects
+    df_tmp = pd.read_csv(path_to_demographics)
+    df_tmp =  df_tmp[df_tmp['ID2'].isin(ids)]
+    df_tmp.to_csv(path_to_demographics, index=False)
+
+    # set download information for image files and download them
     for hemi in ['lh', 'rh']:
-        surface_files = _fetch_files(data_dir, [('{}_{}2fsaverage5_20.mgh'.format(subj, hemi),
+        image_files = _fetch_files(data_dir, [('{}_{}2fsaverage5_20.mgh'.format(subj, hemi),
                                                  url + "/download?path=%2FSurfStat_tutorial_data%2Fthickness&files={}_{}2fsaverage5_20.mgh".format(subj, hemi),
                                                 {'move': '{}_{}2fsaverage5_20.mgh'.format(subj, hemi)}) for subj in ids])
 
+    # pack everything in a scikit-learn bunch and return it
     return Bunch(demographics=path_to_demographics,
-                 surface_files=surface_files)
+                 image_files=image_files)
 
 
 
