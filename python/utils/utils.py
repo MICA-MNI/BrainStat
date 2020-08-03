@@ -38,6 +38,7 @@ def fetch_tutorial_data(n_subjects=20, data_dir=None, resume=True, verbose=1):
     # set dataset url
     url = "https://box.bic.mni.mcgill.ca/s/wMPF2vj7EoYWELV"
 
+
     # set data_dir, if not directly set use ~ as default
     if data_dir is None:
         data_dir = str(Path.home())
@@ -72,18 +73,16 @@ def fetch_tutorial_data(n_subjects=20, data_dir=None, resume=True, verbose=1):
 
     # restrict demographic information to subset of subjects
     df_tmp = pd.read_csv(path_to_demographics)
-    df_tmp =  df_tmp[df_tmp['ID2'].isin(ids)]
-    df_tmp.to_csv(path_to_demographics, index=False)
+    df_tmp = df_tmp[df_tmp['ID2'].isin(ids)]
 
     # set download information for image files and download them
-    for hemi in ['lh', 'rh']:
-        image_files = _fetch_files(data_dir, [('{}_{}2fsaverage5_20.mgh'.format(subj, hemi),
-                                                 url + "/download?path=%2FSurfStat_tutorial_data%2Fthickness&files={}_{}2fsaverage5_20.mgh".format(subj, hemi),
-                                                {'move': '{}_{}2fsaverage5_20.mgh'.format(subj, hemi)}) for subj in ids])
+    # for hemi in ['lh', 'rh']:
+    image_files =_fetch_files(data_dir, [("thickness/{}_{}2fsaverage5_20.mgh".format(subj, hemi),
+                                  url + "/download?path=%2F&files=brainstat_tutorial.zip",
+                                 {"uncompress": True, "move": "brainstat_tutorial.zip"},)
+                              for subj in ids for hemi in ['lh', 'rh']
+                                            ],)
 
     # pack everything in a scikit-learn bunch and return it
-    return Bunch(demographics=path_to_demographics,
+    return Bunch(demographics=df_tmp,
                  image_files=image_files)
-
-
-
