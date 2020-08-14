@@ -43,3 +43,9 @@ def test_surf_lat_3D_ones_zeros():
     A['lat'] = np.random.choice([0, 1], size=(3,3,3))    
     dummy_test(A)
 
+### Test 4
+def test_surf_lat_3D_ones_zeros():
+    A = {}
+    A['lat'] = np.random.choice([0, 1], size=(10,10,10))    
+    dummy_test(A)
+
