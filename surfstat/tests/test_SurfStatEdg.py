@@ -30,7 +30,6 @@ def test_surf_tri():
 	A['tri'] = np.random.rand(a,3)
 	dummy_test(A)
 
-
 #### Test 2
 def test_surf_lat():
     # dummy 3D array for surf['lat']
@@ -44,8 +43,3 @@ def test_surf_lat_3D_ones_zeros():
     A['lat'] = np.random.choice([0, 1], size=(3,3,3))    
     dummy_test(A)
 
-### Test 4
-def test_surf_lat_3D_ones_zeros_large():
-    A = {}
-    A['lat'] = np.random.choice([0, 1], size=(10,10,10))    
-    dummy_test(A)
