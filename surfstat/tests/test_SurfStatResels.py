@@ -10,27 +10,6 @@ import pytest
 eng = matlab.engine.start_matlab()
 eng.addpath('matlab/')
 
-import collections
-def flatten(x):
-    if isinstance(x, collections.Iterable):
-        return [a for i in x for a in flatten(i)]
-    else:
-        return [x]
-
-def py_array_to_mat(L):
-    L = np.array(L) # Ascertain input is a numpy array. 
-    S = L.shape
-    if L.ndim == 1:
-        S = [S[0],1]
-    else:
-        S = list(S)
-    L = flatten(L.tolist())       
-    S.reverse()
-    S = eng.cell2mat(S)
-    M = eng.cell2mat(L)
-    return eng.permute(eng.reshape(M,S),eng.cell2mat([2,1,3]))
-
-
 def matlab_SurfStatResels(slm, mask=None): 
     # slm.resl = numpy array of shape (e,k)
     # slm.tri  = numpy array of shape (t,3)
@@ -40,7 +19,10 @@ def matlab_SurfStatResels(slm, mask=None):
     
     slm_mat = slm.copy()
     for key in slm_mat.keys():
-        slm_mat[key] = py_array_to_mat(slm_mat[key])
+        if np.ndim(slm_mat[key]) == 0:
+            slm_mat[key] = surfstat_eng.double(slm_mat[key].item())
+        else:
+            slm_mat[key] = matlab.double(slm_mat[key].tolist())
 
     # MATLAB errors if 'resl' is not provided and more than 1 output argument is requested.
     if 'resl' in 'slm':
@@ -96,27 +78,30 @@ def dummy_test(slm, mask=None):
 
 # Test with only slm.tri
 def test_1():
-    slm = {'tri': [[1,2,3],
+    slm = {'tri': np.array(
+                  [[1,2,3],
                    [2,3,4], 
                    [1,2,4],
-                   [2,3,5]]}
+                   [2,3,5]])}
     dummy_test(slm)
 
 # Test with slm.tri and slm.resl
 def test_2():
-    slm = {'tri':  [[1,2,3],
+    slm = {'tri': np.array(
+               [[1,2,3],
                 [2,3,4], 
                 [1,2,4],
-                [2,3,5]],
+                [2,3,5]]),
           'resl': np.random.rand(8,6)}
     dummy_test(slm)
 
 # Test with slm.tri, slm.resl, and mask
 def test_3():
-    slm = {'tri':  [[1,2,3],
+    slm = {'tri': np.array(
+               [[1,2,3],
                 [2,3,4], 
                 [1,2,4],
-                [2,3,5]],
+                [2,3,5]]),
        'resl': np.random.rand(8,6)}
     mask = np.array([True,True,True,False,True])
     dummy_test(slm,mask)

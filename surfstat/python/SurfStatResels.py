@@ -147,7 +147,7 @@ def py_SurfStatResels(slm, mask=None):
             mask = np.ones(v,dtype=bool)
         
         reselspvert = np.zeros(v)
-        vs = np.cumsum(np.squeeze(np.sum(np.sum(slm['lat'],axis=0),axis=1)))
+        vs = np.cumsum(np.squeeze(np.sum(np.sum(slm['lat'],axis=0),axis=0)))
         vs = cat((np.zeros(1),vs,np.expand_dims(vs[K-1],axis=0)),axis=0)
         vs = vs.astype(int)
         es = 0 
@@ -161,12 +161,12 @@ def py_SurfStatResels(slm, mask=None):
                 lat[:,:,f] = slm['lat'][:,:,k+1]
             else:
                 lat[:,:,f] = np.zeros((I,J))
-            vid = (np.cumsum(lat) * np.reshape(lat.T,-1)).astype(int)
-            if f: # Use a NOT here because k starts counting at 0 instead of 1 (contary to MATLAB) - RV
-                edg1 = edg[np.logical_and(edg[:,0] > (vs[k]-1), edg[:,0] <= (vs[k+1]-1)),:]-vs[k] 
+            vid = (np.cumsum(lat.flatten('F')) * np.reshape(lat.T,-1)).astype(int)
+            if f: 
+                edg1 = edg[np.logical_and(edg[:,0]>(vs[k]-1), edg[:,0] <= (vs[k+1]-1)),:]-vs[k] 
                 edg2 = edg[np.logical_and(edg[:,0] > (vs[k]-1), edg[:,1] <= (vs[k+2]-1)),:]-vs[k]
-                tri = cat((vid[tri1[np.all(np.reshape(lat.flatten()[tri1],tri1.shape),1),:]], 
-                           vid[tri2[np.all(np.reshape(lat.flatten()[tri2],tri2.shape),1),:]]),
+                tri = cat((vid[tri1[np.all(np.reshape(lat.flatten('F')[tri1],tri1.shape),1),:]], 
+                           vid[tri2[np.all(np.reshape(lat.flatten('F')[tri2],tri2.shape),1),:]]),
                            axis=0)-1 # Added a -1 - RV
                 mask1 = mask[np.arange(vs[k],vs[k+2])]
             else:
@@ -203,6 +203,8 @@ def py_SurfStatResels(slm, mask=None):
 
             ## LKC of edges
             maskedg = np.all(mask1[edg1],axis=1)
+            print(edg1.shape)
+
             lkc1[0,1] = np.sum(maskedg)
             if 'resl' in slm:
                 r1 = np.mean(np.sqrt(slm['resl'][np.argwhere(maskedg)+es,:]),axis=1)
@@ -308,4 +310,4 @@ def py_SurfStatResels(slm, mask=None):
     D = lkcs.shape[1]-1
     resels = lkcs / np.sqrt(4*np.log(2))**np.arange(0,D+1)
 
-    return resels, reselspvert, edg
+    return resels, reselspvert, edg, lkc
