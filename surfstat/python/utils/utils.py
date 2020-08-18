@@ -17,7 +17,8 @@ def fetch_tutorial_data(n_subjects=20, data_dir=None, resume=True, verbose=1):
         all 100 subjects will be loaded.
     data_dir: string, optional
         Path of the data directory. Used to force data storage in a specified
-        location. If None, data will be download to ~ (home directory). Default: None
+        location. If None, data will be download to ~ (home directory). 
+        Default: None
     resume: bool, optional
         If true, try resuming download if possible
 
@@ -45,7 +46,8 @@ def fetch_tutorial_data(n_subjects=20, data_dir=None, resume=True, verbose=1):
 
     # set dataset name and get its corresponding directory
     dataset_name = "brainstat_tutorial"
-    data_dir = _get_dataset_dir(dataset_name, data_dir=data_dir, verbose=verbose)
+    data_dir = _get_dataset_dir(dataset_name, data_dir=data_dir, 
+                                verbose=verbose)
 
     # set download information for demographic file
     files = [
@@ -77,10 +79,11 @@ def fetch_tutorial_data(n_subjects=20, data_dir=None, resume=True, verbose=1):
 
     # set download information for image files and download them
     # for hemi in ['lh', 'rh']:
-    image_files =_fetch_files(data_dir, [("thickness/{}_{}2fsaverage5_20.mgh".format(subj, hemi),
-                                  url + "/download?path=%2F&files=brainstat_tutorial.zip",
-                                 {"uncompress": True, "move": "brainstat_tutorial.zip"},)
-                              for subj in ids for hemi in ['lh', 'rh']
+    image_files =_fetch_files(data_dir, 
+                    [("thickness/{}_{}2fsaverage5_20.mgh".format(subj, hemi),
+                    url + "/download?path=%2F&files=brainstat_tutorial.zip",
+                    {"uncompress": True, "move": "brainstat_tutorial.zip"},)
+                    for subj in ids for hemi in ['lh', 'rh']
                                             ],)
 
     # pack everything in a scikit-learn bunch and return it
