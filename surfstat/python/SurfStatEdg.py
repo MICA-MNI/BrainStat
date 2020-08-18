@@ -1,5 +1,6 @@
 import sys
 import numpy as np
+from matlab_functions import colon
 
 def py_SurfStatEdg(surf):
 
@@ -26,8 +27,8 @@ def py_SurfStatEdg(surf):
 			b = np.arange(1, int(J)+1, dtype='int')
 			
 			i, j = np.meshgrid(a,b)
-			i = i.T.flatten('F'); 
-			j = j.T.flatten('F');
+			i = i.T.flatten('F') 
+			j = j.T.flatten('F')
 			
 			n1 = (I-1) * (J-1) * 6 + (I-1) * 3 + (J-1) * 3 + 1
 			n2 = (I-1) * (J-1) * 3 + (I-1) + (J-1)
@@ -56,12 +57,12 @@ def py_SurfStatEdg(surf):
 				                c22-1+IJ, c22-1+IJ]]).T +1
 			                
 				if f:
-					for k in range(2, K, 2):
+					for k in colon(2, K-1, 2):
 						edg[(k-1)*n1 + np.arange(0,n1), :]  = (np.block([[edg0], \
 						 [edg2], [edg1], [IJ, 2*IJ]]) + (k-1) *IJ) 
 				
 				else:
-					for k in range(1,2,(K-1)):
+					for k in colon(1, K-1, 2):
 						edg[(k-1)*n1 + np.arange(0,n1), :]  = (np.block([[edg0], \
 						 [edg1], [edg2], [IJ, 2*IJ]]) + (k-1) *IJ) 
 										 
