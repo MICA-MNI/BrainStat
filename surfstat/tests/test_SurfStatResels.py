@@ -1,6 +1,7 @@
 import sys
 sys.path.append("python")
 from SurfStatResels import py_SurfStatResels
+from SurfStatEdg import py_SurfStatEdg
 import numpy as np
 import matlab.engine
 import math
@@ -117,7 +118,22 @@ def test_5():
     dummy_test(slm)
 
 # Test with slm.lat, both 0's and 1's, and a mask.
-def test_():
+def test_6():
     slm = {'lat': np.random.rand(10,10,10) > 0.5}
-    mask = np.random.choice([0,1],np.sum(slm['lat']))
+    mask = np.random.choice([False,True],np.sum(slm['lat']))
     dummy_test(slm,mask)
+
+# Test with slm.lat and slm.resl
+def test_7():
+    slm = {'lat': np.random.rand(10,10,10) > 0.5}
+    edg = py_SurfStatEdg(slm)
+    slm['resl'] = np.random.rand(edg.shape[0],1)
+    dummy_test(slm)
+
+# Test with slm.lat, slm.resl, and a mask
+def test_8():
+    slm = {'lat': np.random.rand(10,10,10) > 0.5}
+    mask = np.random.choice([False,True],np.sum(slm['lat']))
+    edg = py_SurfStatEdg(slm)
+    slm['resl'] = np.random.rand(edg.shape[0],1)
+    dummy_test(slm)

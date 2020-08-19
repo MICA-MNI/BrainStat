@@ -193,9 +193,9 @@ def py_SurfStatResels(slm, mask=None):
             m1 = np.max(edg2[:,0])
             ue = edg2[:,0] + m1 * (edg2[:,1]-1)
             e = edg2.shape[0]
-            ae = np.arange(1,e+1)
+            ae = np.arange(0,e)
             if e < 2 ** 31:
-                sparsedg = csr_matrix((ae,(ue,np.ones(ue.shape,dtype=int))),dtype=np.float)
+                sparsedg = csr_matrix((ae,(ue,np.zeros(ue.shape,dtype=int))),dtype=np.int)
                 sparsedg.eliminate_zeros()
             ##
             lkc1 = np.zeros((4,4))
@@ -214,9 +214,9 @@ def py_SurfStatResels(slm, mask=None):
             lkc1[0,2] = np.sum(masktri)
             if 'resl' in slm: 
                 if e < 2 ** 31:
-                    l12 = slm['resl'][sparsedg[tri[masktri,0] + m1 * (tri[masktri,1]-1), 0] + es, :]
-                    l13 = slm['resl'][sparsedg[tri[masktri,0] + m1 * (tri[masktri,2]-1), 0] + es, :]
-                    l23 = slm['resl'][sparsedg[tri[masktri,1] + m1 * (tri[masktri,2]-1), 0] + es, :]
+                    l12 = slm['resl'][sparsedg[tri[masktri,0] + m1 * (tri[masktri,1]-1), 0].toarray() + es, :]
+                    l13 = slm['resl'][sparsedg[tri[masktri,0] + m1 * (tri[masktri,2]-1), 0].toarray() + es, :]
+                    l23 = slm['resl'][sparsedg[tri[masktri,1] + m1 * (tri[masktri,2]-1), 0].toarray() + es, :]
                 else:
                     l12 = slm['resl'][interp1(ue,ae,tri[masktri,0] + m1 * (tri[masktri,1] - 1),kind='nearest') + es, :]
                     l13 = slm['resl'][interp1(ue,ae,tri[masktri,0] + m1 * (tri[masktri,2] - 1),kind='nearest') + es, :]
@@ -239,14 +239,14 @@ def py_SurfStatResels(slm, mask=None):
             ## LKC of tetrahedra
             masktet = np.all(mask1[tet],axis=1)
             lkc1[0,3] = np.sum(masktet)
-            if 'resl' in slm and k < K:
+            if 'resl' in slm and k < (K-1):
                 if e < 2 ** 31:
-                    l12 = slm['resl'][sparsedg[tet[masktet,0] + m1 * (tet[masktet,1]-1),0] + es, :]
-                    l13 = slm['resl'][sparsedg[tet[masktet,0] + m1 * (tet[masktet,2]-1),0] + es, :]
-                    l23 = slm['resl'][sparsedg[tet[masktet,1] + m1 * (tet[masktet,2]-1),0] + es, :]
-                    l14 = slm['resl'][sparsedg[tet[masktet,0] + m1 * (tet[masktet,3]-1),0] + es, :]
-                    l24 = slm['resl'][sparsedg[tet[masktet,1] + m1 * (tet[masktet,3]-1),0] + es, :]
-                    l34 = slm['resl'][sparsedg[tet[masktet,2] + m1 * (tet[masktet,3]-1),0] + es, :]
+                    l12 = slm['resl'][sparsedg[tet[masktet,0] + m1 * (tet[masktet,1]-1),0].toarray() + es, :]
+                    l13 = slm['resl'][sparsedg[tet[masktet,0] + m1 * (tet[masktet,2]-1),0].toarray() + es, :]
+                    l23 = slm['resl'][sparsedg[tet[masktet,1] + m1 * (tet[masktet,2]-1),0].toarray() + es, :]
+                    l14 = slm['resl'][sparsedg[tet[masktet,0] + m1 * (tet[masktet,3]-1),0].toarray() + es, :]
+                    l24 = slm['resl'][sparsedg[tet[masktet,1] + m1 * (tet[masktet,3]-1),0].toarray() + es, :]
+                    l34 = slm['resl'][sparsedg[tet[masktet,2] + m1 * (tet[masktet,3]-1),0].toarray() + es, :]
                 else:
                     l12 = slm['resl'][interp1(ue,ae,tet[masktet,0]+m1*(tet[masktet,1]-1),kind='nearest')+es,:]
                     l13 = slm['resl'][interp1(ue,ae,tet[masktet,0]+m1*(tet[masktet,2]-1),kind='nearest')+es,:]
@@ -273,10 +273,10 @@ def py_SurfStatResels(slm, mask=None):
                 delta23 = np.sum(np.mean(np.sqrt(l14) * pacos((d14-a2-a3) / np.sqrt(a2 * a3 + h) / 2 * (1-h) + h),axis=1))
                 h = np.logical_or(a2 <= 0, a4 <= 0)
                 delta24 = np.sum(np.mean(np.sqrt(l13) * pacos((d13-a2-a4) / np.sqrt(a2 * a4 + h) / 2 * (1-h) + h),axis=1))
-                h = np.logical_or(a1 <= 0, a2 <= 0)
+                h = np.logical_or(a3 <= 0, a4 <= 0)
                 delta34 = np.sum(np.mean(np.sqrt(l12) * pacos((d12-a3-a4) / np.sqrt(a3 * a4 + h) / 2 * (1-h) + h),axis=1))
 
-                r3=np.mean(np.sqrt(np.maximum((4 * a1 * a2 - (a1 + a2 - d12) **2) / (l34 + (l34<=0)) * (l34>0), 0)),axis=1) / 48
+                r3=np.squeeze(np.mean(np.sqrt(np.maximum((4 * a1 * a2 - (a1 + a2 - d12) **2) / (l34 + (l34<=0)) * (l34>0), 0)),axis=1) / 48)
 
                 lkc1[1,3] = (delta12+delta13+delta14+delta23+delta24+delta34)/(2 * np.pi)
                 lkc1[2,3] = np.sum(np.mean(np.sqrt(a1) + np.sqrt(a2) + np.sqrt(a3) + np.sqrt(a4), 2))/8
@@ -289,8 +289,8 @@ def py_SurfStatResels(slm, mask=None):
                     else:
                         v1 = tet[masktet,j] + vs[k+1]
                         v1 = v1 - (v1 > (vs[k+2]-1)) * (vs[k+2] - vs[k])
-                    reselspvert = reselspvert + accumarray(v1, r3, [v, 1])
-
+                    #reselspvert = reselspvert + accumarray(v1, r3, size=np.array([v, 1]))
+                    reselspvert += np.bincount(v1,r3,v)
             lkc = lkc + lkc1
             es = es + edg1.shape[0]
 
