@@ -46,7 +46,9 @@ def colon(start,stop,increment=1):
     # Implementation of the matlab colon() function (e.g. a=1:5;).
     # Essentially it's np.arange but includes the endpoint.
     m = np.arange(start,stop,increment)
-    if start == stop or m[-1] + increment == stop:
+    if start > stop:
+        return m
+    elif start == stop or m[-1] + increment == stop:
         m = np.append(m,stop)
     return m
 
