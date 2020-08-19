@@ -282,5 +282,31 @@ def test_18():
     thresh = k * m * 1000000
     dummy_test(slm, mask, thresh)
 
+def test_19():
+    # special case n<1
+    slmfile = './tests/data/slm.mat'
+    slmdata = loadmat(slmfile)
+    slm = {}
+    slm['t'] = slmdata['slm']['t'][0,0]
+    slm['tri'] = slmdata['slm']['tri'][0,0]
+    mask = np.ones((1,64984))
+    thresh = 100000
+    dummy_test(slm, mask, thresh)
 
-
+def test_20():
+    # generate random data, small sized as 1000 points for slm['t'],
+    # generate random edge from random ['lat'], random reselspvert,
+    # random mask
+    # special case n<1
+    k = 1000
+    m = 100
+    slm = {}
+    slm['t'] = np.random.rand(1,k) 
+    slm['tri'] = np.random.randint(1,k, size=(m,3))
+    mask = np.random.choice([0, 1], size=(1,k))
+    thresh = 100000
+    reselspvert = np.random.rand(1,k)
+    A = {}
+    A['lat'] =np.random.choice([0, 1], size=(10,10,10))
+    edg = py_SurfStatEdg(A)
+    dummy_test(slm, mask, thresh, reselspvert, edg)

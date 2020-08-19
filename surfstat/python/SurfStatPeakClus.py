@@ -1,7 +1,5 @@
 import numpy as np
 import math
-import sys
-from scipy.io import loadmat
 from SurfStatEdg import py_SurfStatEdg
 from matlab_functions import interp1d_mp, accum, ismember
 
@@ -74,8 +72,7 @@ def py_SurfStatPeakClus(slm, mask, thresh, reselspvert=None, edg=None):
         clus = []
         clusid = []
         return peak, clus, clusid
-        sys.exit() ### HAS TO BE IMPLEMENTED NICER...
-    
+
     voxid = np.cumsum(excurset)
     edg = voxid[edg[np.all(excurset[edg-1],1), :]-1]
     nf = np.arange(1,n+1)
