@@ -203,7 +203,6 @@ def py_SurfStatResels(slm, mask=None):
 
             ## LKC of edges
             maskedg = np.all(mask1[edg1],axis=1)
-            print(edg1.shape)
 
             lkc1[0,1] = np.sum(maskedg)
             if 'resl' in slm:

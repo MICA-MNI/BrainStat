@@ -116,3 +116,8 @@ def test_5():
     slm = {'lat': np.random.rand(10,10,10) > 0.5}
     dummy_test(slm)
 
+# Test with slm.lat, both 0's and 1's, and a mask.
+def test_():
+    slm = {'lat': np.random.rand(10,10,10) > 0.5}
+    mask = np.random.choice([0,1],np.sum(slm['lat']))
+    dummy_test(slm,mask)
