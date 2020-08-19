@@ -13,11 +13,13 @@ BrainStat implements element-wise univariate and multivariate linear models, sim
 
 Linear models describe a continuous response variable as a function of one or more predictors (which can be continuous or factorial). An example of such a model is  
 
-	Y = b0 + b1*x1 + b2*x2 + ... + e 
+.. math ::
+	Y = b0 + b_1*x_1 + b_2*x_2 + ... + e 
 	
-where the b_i are the parameter estimates, x_i are the variables and e represents the error term, which is assumed to be iid. BrainStat has adopted the straightforward formula nomenclature from SurfStat, in which the above model could be specified as 
+where the :math:`b_i` are the parameter estimates, :math:`x_i` are the variables and e represents the error term, which is assumed to be iid. BrainStat has adopted the straightforward formula nomenclature from SurfStat, in which the above model could be specified as 
 
-	Model = 1 + term(x1) + term(x2) + ... 
+.. math ::
+	Model = 1 + term(x_1) + term(x_2) + ... + term(x_n)
 	
 followed by simple model fitting 
 	
@@ -36,11 +38,13 @@ BrainStat also incorporates element-wise linear mixed effects models, again leve
 
 Mixed models allow for the incorporation of fixed and random effects, which can be useful when handling hierarchically organized (e.g. longitudinal data) where correlated measures may exist across data points. Mixed effects models also have an advantage of flexibly handing irregular data and missing data points, making these approached more efficient than e.g. repeated measures ANOVA. A mixed effects model decomposes the total variance into fixed and random effects 
 
-	Y = b0 + b1 * x1 + ... + a1 * z1 + ... + e
+.. math ::
+	Y = b_0 + b_1 * x_1 + ... + a_1 * z_1 + ... + e
 	
 Where the b_i are the parameters associated to the fixed effects specified in the design matrix X, while a_i are the parmeters associated to the random effects specified in the design matrix Z associated for random effects. In BrainStat, implementation would be equivalent to the formula for the simple linear models, but with the addition of random effects i.e. 
 
-	Model = 1 + term(x1) + term(x2) + random(z1) + ... + I 
+.. math ::
+	Model = 1 + term(x_1) + term(x_2) + random(z_1) + ... + I 
 	
 followed by simple model fitting and contrast estimation as above 
 	
