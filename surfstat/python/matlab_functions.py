@@ -3,16 +3,36 @@ from itertools import product
 import numpy as np 
 
 def interp1(x,y,ix,kind='linear'):
-    # Shorthand for the MATLAB interp1 function.  
+    """ Interpolation between datapoints.
+    Parameters
+    ----------
+    x : x coordinates of training data. 
+    y : y coordinates of training data.
+    ix : x coordinates of the interpolated points. 
+    kind : type of interpolation; see scipy.interpolate.interp1d for options. 
+    
+    Returns
+    -------
+    iy : interpolated y coordinates.   
+    """ 
+    
     f = interp1d(x, y, kind)
-    return f(ix)
+    iy = f(ix)
+    return iy
 
 def ismember(A, B, rows=False):
-    # Implementation of MATLAB's ismember() function. 
-    # Tests if elements of A appear in B. Returns a logical array and a vector
-    # containing the index of the first appearance of each member.
-    # Note for the locations output variable: MATLAB uses 0 to denote missing values.
-    # As 0 is a valid location in Python, we use NaN here instead. 
+    """ Tests whether elements of A appear in B.
+    Parameters
+    ----------
+    A : 1D or 2D numpy array 
+    B : 1D or 2D numpy array 
+    rows : logical denoting whether to test for element-wise occurence or row occurence. 
+    
+    Returns
+    -------
+    bool_array : Boolean of the same size as A denoting which elements (or rows) occur in B.
+    locations : Indices of matching elements/rows in A.  
+    """ 
     
     if rows:
         # Get rows of A that are in B.
@@ -45,11 +65,20 @@ def ismember(A, B, rows=False):
     return bool_array, locations
 
 def colon(start,stop,increment=1):
-    # Implementation of the matlab colon() function (e.g. a=1:5;).
-    # Essentially it's np.arange but includes the endpoint.
-    m = np.arange(start,stop,increment)
+    """ Generates a range of numbers including the stop number. 
+    Parameters
+    ----------
+    start : starting scalar number of the range.
+    stop : stopping scalar number of the range.
+    increment : increments of the range
+    
+    Returns
+    -------
+    r : Numpy array of the requested numbers.  
+    """
+    r = np.arange(start,stop,increment)
     if start > stop:
-        return m
-    elif start == stop or m[-1] + increment == stop:
-        m = np.append(m,stop)
-    return m
+        return r
+    elif start == stop or r[-1] + increment == stop:
+        r = np.append(r,stop)
+    return r

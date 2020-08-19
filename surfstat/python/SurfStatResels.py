@@ -11,6 +11,25 @@ def pacos(x):
     return np.arccos( np.minimum(np.abs(x),1) * np.sign(x) ) 
 
 def py_SurfStatResels(slm, mask=None):
+    """ Resels of surface or volume data inside a mask.
+    Parameters
+    ----------
+    slm : a dictionary with keys 'lat' or 'tri' and, optionally, 'resl'.
+        slm['lat'] a 3D numpy array of 1's and 0's.
+        slm['tri'] a t x 3 numpy array containing triangles of a surface.
+        slm['resl'] an e x k matrix of sum over observations of squares of
+        differences of normalized residuals along each edge.
+    mask : a 1D numpy array of length equal to the number of vertices containing 
+        1's and 0's (1's are included and 0's are excluded).
+    
+    Returns
+    -------
+    resels : 1 x (D+1) vector of 0,...,D dimensional resels of the mask, EC of 
+    the mask if slm.resl is not given.
+    reselspvert : 1 x v vector of D-dimensional resels per mask vertex.
+    edg : e x 2 matrix of edge indices, 
+    """
+    
     if 'tri' in slm:
         # Get unique edges. Subtract 1 from edges to conform to Python's counting from 0 - RV
         tri = np.sort(slm['tri']) - 1
