@@ -4,7 +4,7 @@ from numpy import concatenate as cat
 from scipy.linalg import toeplitz
 from scipy.sparse import csr_matrix
 
-from matlab_functions import ismember, accumarray
+from matlab_functions import ismember
 from SurfStatEdg import py_SurfStatEdg
 
 def pacos(x):
