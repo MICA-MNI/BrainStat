@@ -2,53 +2,21 @@ import sys
 sys.path.append("python")
 from SurfStatResels import py_SurfStatResels
 from SurfStatEdg import py_SurfStatEdg
+import surfstat_wrap as sw
 import numpy as np
-import matlab.engine
 import math
 import itertools
 import pytest
 
-eng = matlab.engine.start_matlab()
-eng.addpath('matlab/')
 
-def matlab_SurfStatResels(slm, mask=None): 
-    # slm.resl = numpy array of shape (e,k)
-    # slm.tri  = numpy array of shape (t,3)
-    # or
-    # slm.lat  = 3D logical array
-    # mask     = numpy 'bool' array of shape (1,v)
-    
-    slm_mat = slm.copy()
-    for key in slm_mat.keys():
-        if np.ndim(slm_mat[key]) == 0:
-            slm_mat[key] = surfstat_eng.double(slm_mat[key].item())
-        else:
-            slm_mat[key] = matlab.double(slm_mat[key].tolist())
 
-    # MATLAB errors if 'resl' is not provided and more than 1 output argument is requested.
-    if 'resl' in 'slm':
-        num_out = 3
-    else:
-        num_out = 1
-    
-    if mask is None:
-        out = eng.SurfStatResels(slm_mat, 
-                                nargout=num_out)
-    else:
-        mask_mat = matlab.double(np.array(mask, dtype=int).tolist())
-        mask_mat = matlab.logical(mask_mat)
-        out = eng.SurfStatResels(slm_mat, 
-                                 mask_mat, 
-                                 nargout=num_out)
-
-    return np.array(out)
-
+sw.matlab_init_surfstat()
 
 def dummy_test(slm, mask=None):
 
     # Run MATLAB
     try:
-        mat_out = matlab_SurfStatResels(slm,mask)
+        mat_out = sw.matlab_SurfStatResels(slm,mask)
         # Deal with either 1 or 3 output arguments.
         if isinstance(mat_out,tuple) and len(mat_out) == 3:
             mat_output = list(mat_out)

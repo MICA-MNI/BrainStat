@@ -279,10 +279,37 @@ def matlab_SurfStatReadVol1(file, Z, T):
     sys.exit("Function matlab_SurfStatReadVol1 is not implemented yet")
 
 # ==> SurfStatResels.m <==
-def matlab_SurfStatResels(slm, mask):
-    sys.exit("Function matlab_SurfStatResels is not implemented yet")
+def matlab_SurfStatResels(slm, mask=None): 
+    # slm.resl = numpy array of shape (e,k)
+    # slm.tri  = numpy array of shape (t,3)
+    # or
+    # slm.lat  = 3D logical array
+    # mask     = numpy 'bool' array of shape (1,v)
+    
+    slm_mat = slm.copy()
+    for key in slm_mat.keys():
+        if np.ndim(slm_mat[key]) == 0:
+            slm_mat[key] = surfstat_eng.double(slm_mat[key].item())
+        else:
+            slm_mat[key] = matlab.double(slm_mat[key].tolist())
 
+    # MATLAB errors if 'resl' is not provided and more than 1 output argument is requested.
+    if 'resl' in 'slm':
+        num_out = 3
+    else:
+        num_out = 1
+    
+    if mask is None:
+        out = surfstat_eng.SurfStatResels(slm_mat, 
+                                nargout=num_out)
+    else:
+        mask_mat = matlab.double(np.array(mask, dtype=int).tolist())
+        mask_mat = matlab.logical(mask_mat)
+        out = surfstat_eng.SurfStatResels(slm_mat, 
+                                 mask_mat, 
+                                 nargout=num_out)
 
+    return np.array(out)
 
 
 
