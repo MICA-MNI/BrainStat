@@ -3,6 +3,7 @@ sys.path.append("python")
 from SurfStatSmooth import *
 import surfstat_wrap as sw
 import numpy as np
+import pytest
 
 sw.matlab_init_surfstat()
 
@@ -12,7 +13,7 @@ def dummy_test(Y, surf, FWHM):
         # wrap matlab functions
         Wrapped_Y = sw.matlab_SurfStatSmooth(Y, surf, FWHM)
     except:
-        pytest.fail("ORIGINAL MATLAB CODE DOES NOT WORK WITH THESE INPUTS...")
+        pytest.skip("Original MATLAB code does not work with these inputs.")
 
     # run matlab equivalent
     Python_Y = py_SurfStatSmooth(Y, surf, FWHM)
