@@ -1,7 +1,7 @@
 import numpy as np
 import math
 from SurfStatEdg import py_SurfStatEdg
-from matlab_functions import interp1d_mp, accum, ismember
+from matlab_functions import interp1, accum, ismember
 
 def py_SurfStatPeakClus(slm, mask, thresh, reselspvert=None, edg=None):
     """ Finds peaks (local maxima) and clusters for surface data.
@@ -111,7 +111,7 @@ def py_SurfStatPeakClus(slm, mask, thresh, reselspvert=None, edg=None):
         reselsvox = reselspvert[0, vox-1]
         
     # calling matlab-python version for scipy's interp1d
-    nf1 = interp1d_mp(np.append(0, ucid), np.arange(0,nclus+1), nf, 
+    nf1 = interp1(np.append(0, ucid), np.arange(0,nclus+1), nf, 
                       kind='nearest')
     
     # if k>1, find volume of cluster in added sphere
@@ -164,7 +164,7 @@ def py_SurfStatPeakClus(slm, mask, thresh, reselspvert=None, edg=None):
                              ucrsl.reshape(len(ucrsl),1)[1:]) , axis=1)
     cl = varNEW[varNEW[:,0].argsort(),]
     clusid = np.zeros((1,v))
-    clusid[0,(vox-1).T] = interp1d_mp(np.append(0, ucid),
+    clusid[0,(vox-1).T] = interp1(np.append(0, ucid),
                                       np.append(0, rankrsl), nf,
                                       kind='nearest')
     peak = {}
