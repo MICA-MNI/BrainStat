@@ -7,8 +7,7 @@ import numpy as np
 import math
 import itertools
 import pytest
-
-
+from scipy.io import loadmat
 
 sw.matlab_init_surfstat()
 
@@ -43,7 +42,6 @@ def dummy_test(slm, mask=None):
         test_out.append(result)
 
     assert all(flag == True for (flag) in test_out)
-
 
 # Test with only slm.tri
 def test_1():
@@ -104,4 +102,12 @@ def test_8():
     mask = np.random.choice([False,True],np.sum(slm['lat']))
     edg = py_SurfStatEdg(slm)
     slm['resl'] = np.random.rand(edg.shape[0],1)
+    dummy_test(slm)
+    
+def test_9(): 
+    slmfile = './tests/data/slm.mat'
+    slmdata = loadmat(slmfile)
+    slm = {}
+    slm['tri'] = slmdata['slm']['tri'][0,0]    
+    slm['resl'] = slmdata['slm']['resl'][0,0]
     dummy_test(slm)
