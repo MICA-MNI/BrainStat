@@ -469,7 +469,29 @@ def test_16():
     dummy_test(eng, search_volume, num_voxels, fwhm, df, p_val_peak, 
             cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
 
+# buggy case 
+def test_17():
+    somedata = loadmat('./tests/data/varA.mat')
+    varA = somedata['varA']
+    df = somedata['df']
+    k = somedata['k']
+    
+    # this is from some real test data
+    search_volume     = 0
+    num_voxels        = 1
+    fwhm              = 0
+    df                = df 
+    p_val_peak        = varA
+    cluster_threshold = 0.001
+    p_val_extent      = 0.05
+    nconj             = 1
+    nvar              = 1
+    EC_file           = None
+    expr              = None 
+    nprint            = 0
 
+    dummy_test(eng, search_volume, num_voxels, fwhm, df, p_val_peak, 
+            cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
 
 
 
