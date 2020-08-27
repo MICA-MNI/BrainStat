@@ -3,6 +3,7 @@ sys.path.append("python")
 from SurfStatCoord2Ind import *
 import surfstat_wrap as sw
 import numpy as np
+import pytest
 
 sw.matlab_init_surfstat()
 
@@ -13,7 +14,7 @@ def dummy_test(coord, surf):
         Wrapped_ind = sw.matlab_SurfStatCoord2Ind(coord, surf)
 
     except:
-        pytest.fail("ORIGINAL MATLAB CODE DOES NOT WORK WITH THESE INPUTS...")
+        pytest.skip("Original MATLAB code does not work with these inputs.")
 
     Python_ind = py_SurfStatCoord2Ind(coord, surf)
 
