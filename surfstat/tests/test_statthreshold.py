@@ -341,7 +341,7 @@ def test_11():
     num_voxels        = rng.integers(1,100, size=(k))
     fwhm              = np.random.uniform(0,10)
     df                = k
-    p_val_peak        = np.random.rand(k,1)
+    p_val_peak        = np.random.rand(k)
     cluster_threshold = 0.001
     p_val_extent      = 0.05
     nconj             = 0.5
@@ -366,7 +366,7 @@ def test_12():
     num_voxels        = rng.integers(1,100, size=(m))
     fwhm              = np.random.uniform(0,10)
     df                = k
-    p_val_peak        = np.random.rand(k,1)
+    p_val_peak        = np.random.rand(k)
     cluster_threshold = np.random.uniform(0,1)
     p_val_extent      = 0.05
     nconj             = 0.5
@@ -415,9 +415,9 @@ def test_14():
     num_voxels        = k
     fwhm              = np.random.uniform(0,10)
     df                = np.random.randint(1,(m-1))
-    p_val_peak        = np.random.rand(k,1)
+    p_val_peak        = np.random.rand(k)
     cluster_threshold = np.random.uniform(0,1)
-    p_val_extent      = np.random.rand(k,1)
+    p_val_extent      = np.random.rand(k)
     nconj             = l
     nvar              = 1
     EC_file           = None
@@ -469,7 +469,29 @@ def test_16():
     dummy_test(eng, search_volume, num_voxels, fwhm, df, p_val_peak, 
             cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
 
+# buggy case 
+def test_17():
+    somedata = loadmat('./tests/data/varA.mat')
+    varA = somedata['varA'][0]
+    df = somedata['df']
+    k = somedata['k'][0]
+    
+    # this is from some real test data
+    search_volume     = 0
+    num_voxels        = 1
+    fwhm              = 0
+    df                = df 
+    p_val_peak        = varA
+    cluster_threshold = 0.001
+    p_val_extent      = 0.05
+    nconj             = 1
+    nvar              = 1
+    EC_file           = None
+    expr              = None 
+    nprint            = 0
 
+    dummy_test(eng, search_volume, num_voxels, fwhm, df, p_val_peak, 
+            cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
 
 
 

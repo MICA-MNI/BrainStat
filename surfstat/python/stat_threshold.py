@@ -83,6 +83,12 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
     p_val_peak = np.array(p_val_peak,ndmin=1)
     p_val_extent = np.array(p_val_extent,ndmin=1)
     
+    # Some common error checks:
+    if p_val_peak.ndim > 1:
+        raise ValueError('p_val_peak may not have more than one dimension.')
+    if p_val_extent.ndim  > 1:
+        raise ValueError('p_val_extent may not have more than one dimension.')
+    
     # Set the FWHM
     if fwhm.ndim == 1:
         fwhm = np.expand_dims(fwhm,axis=0)
