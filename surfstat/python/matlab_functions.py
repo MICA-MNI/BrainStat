@@ -2,6 +2,18 @@ from scipy.interpolate import interp1d
 from itertools import product
 import numpy as np 
 
+def row_ismember(a, b):
+    # a is 2D numpy array
+    # b is 2D numpy array
+    # returns the adress of a-rows in b-rows (if they are identical)
+    # much faster than ismember function below
+    bind = {}
+    for i, elt in enumerate(b):
+        if tuple(elt) not in bind:
+            bind[tuple(elt)] = i
+    return [bind.get(tuple(itm), None) for itm in a] 
+
+
 def interp1(x,y,ix,kind='linear'):
     """ Interpolation between datapoints.
     Parameters
