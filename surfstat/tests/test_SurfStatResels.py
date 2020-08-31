@@ -96,14 +96,14 @@ def test_7():
     slm['resl'] = np.random.rand(edg.shape[0],1)
     dummy_test(slm)
 
-# Test with slm.lat, slm.resl, and a mask --> BUG WITH MASK BELOW
+# Test with slm.lat, slm.resl, and a mask
 def test_8():
     slm = {'lat': np.random.rand(10,10,10) > 0.5}
     mask = np.random.choice([False,True],np.sum(slm['lat']))
     edg = py_SurfStatEdg(slm)
     slm['resl'] = np.random.rand(edg.shape[0],1)
-    dummy_test(slm)
-
+    dummy_test(slm, mask) 
+    
 def test_9(): 
     slmfile = './tests/data/slm.mat'
     slmdata = loadmat(slmfile)
@@ -147,5 +147,5 @@ def test_12():
     # v is number of vertices
     v = slm['tri'].max()
     mask = np.random.choice([False,True], v)
-    dummy_test(slm, mask)
-    
+    dummy_test(slm, mask)    
+

@@ -21,7 +21,7 @@ def py_SurfStatResels(slm, mask=None):
         slm['resl'] : a 2D numpy array of shape (e, k).
             Sum over observations of squares of differences of normalized 
             residuals along each edge.
-    mask : a 1D numpy array of shape (v,).
+    mask : a 1D numpy array of shape (v,), dtype 'bool'.
         v must be equal to int(slm['tri'].max()).
         Contains 1's and 0's (1's are included and 0's are excluded).
     
@@ -196,11 +196,12 @@ def py_SurfStatResels(slm, mask=None):
                                           edg[:,0] <= (vs[k+1]-1)),:]-vs[k] 
                 edg2 = edg[np.logical_and(edg[:,0] > (vs[k]-1), \
                                           edg[:,1] <= (vs[k+2]-1)),:]-vs[k]
+                # Added a -1 - RV
                 tri = cat((vid[tri1[np.all(np.reshape(lat.flatten('F')[tri1], \
                                                       tri1.shape),1),:]], 
                            vid[tri2[np.all(np.reshape(lat.flatten('F')[tri2], \
                                                       tri2.shape),1),:]]),
-                           axis=0)-1 # Added a -1 - RV
+                           axis=0)-1
                 mask1 = mask[np.arange(vs[k],vs[k+2])]
             else:
                 edg1 = cat((
@@ -253,7 +254,7 @@ def py_SurfStatResels(slm, mask=None):
                 lkc1[1,1] = np.sum(r1)
             
             ## LKC of triangles
-            masktri = np.all(mask1[tri],axis=1)
+            masktri = np.all(mask1[tri],axis=1).flatten()
             lkc1[0,2] = np.sum(masktri)
             if 'resl' in slm: 
                 if e < 2 ** 31:
@@ -288,22 +289,22 @@ def py_SurfStatResels(slm, mask=None):
                         reselspvert += np.bincount(v1, r2, v)
 
             ## LKC of tetrahedra
-            masktet = np.all(mask1[tet],axis=1)
+            masktet = np.all(mask1[tet],axis=1).flatten()
             lkc1[0,3] = np.sum(masktet)
             if 'resl' in slm and k < (K-1):
                 if e < 2 ** 31:
-                    l12 = slm['resl'][sparsedg[tet[masktet,0] + m1 * \
-                                      (tet[masktet,1]-1),0].toarray() + es, :]
-                    l13 = slm['resl'][sparsedg[tet[masktet,0] + m1 * \
-                                      (tet[masktet,2]-1),0].toarray() + es, :]
-                    l23 = slm['resl'][sparsedg[tet[masktet,1] + m1 * \
-                                      (tet[masktet,2]-1),0].toarray() + es, :]
-                    l14 = slm['resl'][sparsedg[tet[masktet,0] + m1 * \
-                                      (tet[masktet,3]-1),0].toarray() + es, :]
-                    l24 = slm['resl'][sparsedg[tet[masktet,1] + m1 * \
-                                      (tet[masktet,3]-1),0].toarray() + es, :]
-                    l34 = slm['resl'][sparsedg[tet[masktet,2] + m1 * \
-                                      (tet[masktet,3]-1),0].toarray() + es, :]
+                    l12 = slm['resl'][(sparsedg[tet[masktet,0] + m1 * \
+                                  (tet[masktet,1]-1),0].toarray() + es).tolist(), :]
+                    l13 = slm['resl'][(sparsedg[tet[masktet,0] + m1 * \
+                                  (tet[masktet,2]-1),0].toarray() + es).tolist(), :]
+                    l23 = slm['resl'][(sparsedg[tet[masktet,1] + m1 * \
+                                  (tet[masktet,2]-1),0].toarray() + es).tolist(), :]
+                    l14 = slm['resl'][(sparsedg[tet[masktet,0] + m1 * \
+                                  (tet[masktet,3]-1),0].toarray() + es).tolist(), :]
+                    l24 = slm['resl'][(sparsedg[tet[masktet,1] + m1 * \
+                                  (tet[masktet,3]-1),0].toarray() + es).tolist(), :]
+                    l34 = slm['resl'][(sparsedg[tet[masktet,2] + m1 * \
+                                  (tet[masktet,3]-1),0].toarray() + es).tolist(), :]
                 else:
                     l12 = slm['resl'][interp1(ue,ae,tet[masktet,0] + m1 * \
                               (tet[masktet,1]-1),kind='nearest')+es,:]
@@ -352,7 +353,7 @@ def py_SurfStatResels(slm, mask=None):
                 lkc1[1,3] = (delta12 + delta13 + delta14 + delta23 + delta24 + 
                             delta34)/(2 * np.pi)
                 lkc1[2,3] = np.sum(np.mean(np.sqrt(a1) + np.sqrt(a2) + 
-                            np.sqrt(a3) + np.sqrt(a4), 2))/8
+                            np.sqrt(a3) + np.sqrt(a4), axis=1))/8
                 lkc1[3,3] = np.sum(r3)
                 
                 ## Original MATLAB code has a if nargout>=2 here, ignore it 
@@ -363,7 +364,10 @@ def py_SurfStatResels(slm, mask=None):
                     else:
                         v1 = tet[masktet,j] + vs[k+1]
                         v1 = v1 - (v1 > (vs[k+2]-1)) * (vs[k+2] - vs[k])
-                    reselspvert += np.bincount(v1,r3,v)
+                    if np.ndim(r3) == 0:
+                        r3 = r3.tolist()
+                        r3 = [r3]
+                    reselspvert += np.bincount(v1, r3, v)
             lkc = lkc + lkc1
             es = es + edg1.shape[0]
 
