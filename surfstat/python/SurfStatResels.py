@@ -15,12 +15,14 @@ def py_SurfStatResels(slm, mask=None):
     ----------
     slm : a dictionary with keys 'lat' or 'tri' and, optionally, 'resl'.
         slm['lat'] : a 3D numpy array of 1's and 0's.
-        slm['tri'] : a 2D numpy array of shape (t, 3).
-            Contains triangles of a surface.
+        slm['tri'] : a 2D numpy array of shape (t, 3). 
+            Contains triangles of a surface. slm['tri'].max() is equal to the
+            number of vertices.
         slm['resl'] : a 2D numpy array of shape (e, k).
             Sum over observations of squares of differences of normalized 
             residuals along each edge.
-    mask : a 1D numpy array of length equal to the number of vertices.
+    mask : a 1D numpy array of shape (v,).
+        v must be equal to int(slm['tri'].max()).
         Contains 1's and 0's (1's are included and 0's are excluded).
     
     Returns

@@ -96,14 +96,14 @@ def test_7():
     slm['resl'] = np.random.rand(edg.shape[0],1)
     dummy_test(slm)
 
-# Test with slm.lat, slm.resl, and a mask
+# Test with slm.lat, slm.resl, and a mask --> BUG WITH MASK BELOW
 def test_8():
     slm = {'lat': np.random.rand(10,10,10) > 0.5}
     mask = np.random.choice([False,True],np.sum(slm['lat']))
     edg = py_SurfStatEdg(slm)
     slm['resl'] = np.random.rand(edg.shape[0],1)
     dummy_test(slm)
-    
+
 def test_9(): 
     slmfile = './tests/data/slm.mat'
     slmdata = loadmat(slmfile)
@@ -111,3 +111,41 @@ def test_9():
     slm['tri'] = slmdata['slm']['tri'][0,0]    
     slm['resl'] = slmdata['slm']['resl'][0,0]
     dummy_test(slm)
+    
+# real data & random mask
+def test_10():    
+    slmfile = './tests/data/slm.mat'
+    slmdata = loadmat(slmfile)
+    slm = {}
+    slm['tri'] = slmdata['slm']['tri'][0,0]    
+    slm['resl'] = slmdata['slm']['resl'][0,0]
+    # v is number of vertices
+    v = slm['tri'].max()
+    mask = np.random.choice([False,True], v)
+    dummy_test(slm, mask)
+
+# randomized (shuffled) real data    
+def test_11():    
+    slmfile = './tests/data/slm.mat'
+    slmdata = loadmat(slmfile)
+    slm = {}
+    slm['tri'] = slmdata['slm']['tri'][0,0]    
+    slm['resl'] = slmdata['slm']['resl'][0,0]
+    np.random.shuffle(slm['tri'])
+    np.random.shuffle(slm['resl'])
+    dummy_test(slm)
+
+# randomized (shuffled) real data & random mask
+def test_12():    
+    slmfile = './tests/data/slm.mat'
+    slmdata = loadmat(slmfile)
+    slm = {}
+    slm['tri'] = slmdata['slm']['tri'][0,0]    
+    slm['resl'] = slmdata['slm']['resl'][0,0]
+    np.random.shuffle(slm['tri'])
+    np.random.shuffle(slm['resl'])
+    # v is number of vertices
+    v = slm['tri'].max()
+    mask = np.random.choice([False,True], v)
+    dummy_test(slm, mask)
+    
