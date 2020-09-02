@@ -7,10 +7,10 @@ import numpy as np
 import math
 import sys
 
-def matlab_init_surfstat():
+def matlab_init_surfstat(surfstat_path='./matlab'):
     global surfstat_eng
     surfstat_eng = matlab.engine.start_matlab()
-    addpath = surfstat_eng.addpath('matlab')
+    addpath = surfstat_eng.addpath(surfstat_path)
 
 # ==> SurfStatAvSurf.m <==
 def matlab_SurfStatAvSurf(filenames, fun):
@@ -294,7 +294,7 @@ def matlab_SurfStatResels(slm, mask=None):
             slm_mat[key] = matlab.double(slm_mat[key].tolist())
 
     # MATLAB errors if 'resl' is not provided and more than 1 output argument is requested.
-    if 'resl' in 'slm':
+    if 'resl' in slm:
         num_out = 3
     else:
         num_out = 1

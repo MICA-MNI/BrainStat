@@ -8,6 +8,7 @@ import math
 import itertools
 import pytest
 from scipy.io import loadmat
+import pdb 
 
 sw.matlab_init_surfstat()
 
@@ -15,12 +16,14 @@ def dummy_test(slm, mask=None):
 
     # Run MATLAB
     try:
-        mat_out = sw.matlab_SurfStatResels(slm,mask)
+        mat_output = sw.matlab_SurfStatResels(slm,mask)
         # Deal with either 1 or 3 output arguments.
-        if isinstance(mat_out,tuple) and len(mat_out) == 3:
-            mat_output = list(mat_out)
+        if not isinstance(mat_output, np.ndarray):
+            mat_output = mat_output[0].tolist()
         else:
-            mat_output = [mat_out]
+            mat_output = mat_output.tolist()
+            if isinstance(mat_output,float):
+                mat_output = [mat_output]
     except:
         pytest.skip("Original MATLAB code does not work with these inputs.")
 
@@ -31,14 +34,14 @@ def dummy_test(slm, mask=None):
     else:
         py_output = [resels_py,
                      reselspvert_py,
-                     edg_py]
+                     edg_py+1]
     
     # compare matlab-python outputs
-    test_out = []   
+    test_out = [] 
     for py, mat in zip(py_output,mat_output):
         result = np.allclose(np.squeeze(py),
-                             np.squeeze(np.asarray(mat)),
-                             rtol=1e-05, equal_nan=True)
+                            np.squeeze(np.asarray(mat)),
+                            rtol=1e-05, equal_nan=True)
         test_out.append(result)
         
     assert all(flag == True for (flag) in test_out)
@@ -98,7 +101,7 @@ def test_7():
 
 # Test with slm.lat, slm.resl, and a mask
 def test_8():
-    slm = {'lat': np.random.rand(10,10,10) > 0.5}
+    slm = {'lat': np.random.rand(3,3,3) > 0.5}
     mask = np.random.choice([False,True],np.sum(slm['lat']))
     edg = py_SurfStatEdg(slm)
     slm['resl'] = np.random.rand(edg.shape[0],1)
