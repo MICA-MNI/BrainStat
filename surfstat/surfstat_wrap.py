@@ -11,6 +11,7 @@ def matlab_init_surfstat(surfstat_path='./matlab'):
     global surfstat_eng
     surfstat_eng = matlab.engine.start_matlab()
     addpath = surfstat_eng.addpath(surfstat_path)
+    return surfstat_eng
 
 # ==> SurfStatAvSurf.m <==
 def matlab_SurfStatAvSurf(filenames, fun):
@@ -141,41 +142,53 @@ def matlab_SurfStatInflate(surf, w, spherefile):
     sys.exit("Function matlab_SurfStatInflate is not implemented yet")
 
 
-
-
-
-
 # ==> SurfStatLinMod.m <==
-def matlab_SurfStatLinMod(T, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
+def matlab_SurfStatLinMod(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
 
-    # TODO implement ignored arguments
+    from .python.term import Term
+    surfstat_eng.addpath('./surfstat/matlab/')
 
-    if isinstance(T, np.ndarray):
-        T = matlab.double(T.tolist())
+    if isinstance(Y, np.ndarray):
+        Y = matlab.double(Y.tolist())
     else:
-        T = surfstat_eng.double(T)
+        Y = surfstat_eng.double(Y)
 
     if isinstance(M, np.ndarray):
-        M = matlab.double(M.tolist())
+        M = {'matrix': matlab.double(M.tolist())}
+
+    elif isinstance(M, Term):
+        M = surfstat_eng.term(matlab.double(M.matrix.values.tolist()),
+                              M.matrix.columns.tolist())
+    else:  # Random
+        M1 = matlab.double(M.mean.matrix.values.tolist())
+        V1 = matlab.double(M.variance.matrix.values.tolist())
+
+        M = surfstat_eng.random(V1, M1, surfstat_eng.cell(0),
+                                surfstat_eng.cell(0), 1)
+
+    # Only require 'tri' or 'lat'
+    if surf is None or ('tri' not in surf and 'lat' not in surf):
+        k = None
+        surf = surfstat_eng.cell(0)
     else:
-        M = surfstat_eng.double(M)
+        k = 'tri' if 'tri' in surf else 'lat'
+        s = surf[k]
+        if k == 'tri':
+            s = s + 1  # +1 for matlab index
 
-    if surf is None:
-        result_mat = surfstat_eng.SurfStatLinMod(T, M)
-    else:
-        surf_mat = surf.copy()
-        for key in surf_mat.keys():
-            if np.ndim(surf_mat[key]) == 0:
-                surf_mat[key] = surfstat_eng.double(surf_mat[key].item())
-            else:
-                surf_mat[key] = matlab.double(surf_mat[key].tolist())    
-        result_mat = surfstat_eng.SurfStatLinMod(T, M, surf_mat)    
+        surf = {k: matlab.int64(s.tolist())}
 
-    result_mat_dic = {key: None for key in result_mat.keys()}
-    for key in result_mat:
-        result_mat_dic[key] = np.array(result_mat[key])
+    slm = surfstat_eng.SurfStatLinMod(Y, M, surf, niter, thetalim, drlim)
+    for key in ['SSE', 'coef']:
+        if key not in slm:
+            continue
+        slm[key] = np.atleast_2d(slm[key])
+    slm = {k: v if np.isscalar(v) else np.array(v) for k, v in slm.items()}
+    if k == 'tri':
+        slm[k] = slm[k] - 1  # -1 reset index from matlab
 
-    return result_mat_dic
+    return slm
+
 
 # ==> SurfStatListDir.m <==
 def matlab_SurfStatListDir(d, exclude):
@@ -234,9 +247,79 @@ def matlab_SurfStatP(results):
 def matlab_SurfStatPCA(Y, mask, X, k):
     sys.exit("Function matlab_SurfStatPCA is not implemented yet")
 
+
+
+
+
 # ==> SurfStatPeakClus.m <==
-def matlab_SurfStatPeakClus(slm, mask, thresh, reselspvert, edg):
-    sys.exit("Function matlab_SurfStatPeakClus is not implemented yet")
+def matlab_SurfStatPeakClus(slm, mask, thresh, reselspvert=None, edg=None):
+    # Finds peaks (local maxima) and clusters for surface data.
+    # Usage: [ peak, clus, clusid ] = SurfStatPeakClus( slm, mask, thresh ...
+    #                                [, reselspvert [, edg ] ] );
+    # slm         = python dictionary
+    # slm['t']    = numpy array of shape (l, v) 
+    # slm['tri']  = numpy array of shape (t, 3) 
+    # or
+    # slm['lat']  = 3D numpy array
+    # mask        = numpy 'bool' array of shape (1, v) vector
+    # thresh      = float
+    # reselspvert = numpy array of shape (1, v) 
+    # edg         = numpy array of shape (e, 2) 
+    # The following are optional:
+    # slm['df']     
+    # slm['k'] 
+    
+    slm_mat = slm.copy()
+    for key in slm_mat.keys():
+        if isinstance(slm_mat[key], np.ndarray):
+            slm_mat[key] = matlab.double(slm_mat[key].tolist()) 
+        else:
+            slm_mat[key] = surfstat_eng.double(slm_mat[key])
+
+    mask_mat = matlab.double(np.array(mask, dtype=int).tolist())
+    mask_mat = matlab.logical(mask_mat)
+
+    thresh_mat = surfstat_eng.double(thresh)
+    
+    if reselspvert is None and edg is None:
+        peak, clus, clusid = surfstat_eng.SurfStatPeakClus(slm_mat, mask_mat, 
+                                                           thresh_mat, 
+                                                           nargout=3) 
+    elif reselspvert is not None and edg is None:
+        reselspvert_mat = matlab.double(reselspvert.tolist())
+        peak, clus, clusid = surfstat_eng.SurfStatPeakClus(slm_mat, mask_mat, 
+                                                           thresh_mat, 
+                                                           reselspvert_mat, 
+                                                           nargout=3)
+    elif reselspvert is not None and edg is not None:
+        reselspvert_mat = matlab.double(reselspvert.tolist())
+        edg_mat = matlab.double(edg.tolist())
+        peak, clus, clusid = surfstat_eng.SurfStatPeakClus(slm_mat, mask_mat, 
+                                                           thresh_mat, 
+                                                           reselspvert_mat,
+                                                           edg_mat,
+                                                           nargout=3)                 
+    if isinstance(peak, matlab.double):
+        peak_py = np.array(peak)
+    elif isinstance(peak, dict):                  
+        peak_py = {key: None for key in peak.keys()}
+        for key in peak:
+            peak_py[key] = np.array(peak[key])        
+    if isinstance(clus, matlab.double):  
+        clus_py = np.array(clus)
+    elif isinstance(clus, dict):
+        clus_py = {key: None for key in clus.keys()}
+        for key in clus:
+            clus_py[key] = np.array(clus[key])
+    clusid_py = np.array(clusid)    
+    
+    return peak_py, clus_py, clusid_py 
+    
+
+
+
+
+
 
 # ==> SurfStatPlot.m <==
 def matlab_SurfStatPlot(x, y, M, g, varargin):

@@ -139,8 +139,10 @@ def remove_duplicate_columns(df, tol=1e-8):
 
     df = df / df.abs().sum(0)
     df *= 1 / tol
-    keep = df.round().T.drop_duplicates(keep='last').T
-    return keep.columns
+    # keep = df.round().T.drop_duplicates(keep='last').T.columns  # Slow!!
+    idx = np.unique(df.round().values, axis=1, return_index=True)[-1]
+    keep = df.columns[idx]
+    return keep
 
 
 class Term:
@@ -156,7 +158,7 @@ class Term:
 
     Attributes
     ----------
-    matrix : DataFrame
+    x : DataFrame
         Design matrix.
     names : list of str
         Names of columns in the design matrix.
@@ -194,7 +196,7 @@ class Term:
         if isinstance(names, str):
             names = [names]
 
-        self.m = to_df(x, names=names)
+        self.m = to_df(x, names=names).reset_index(drop=True)
         check_duplicate_names(self.m)
 
     def _broadcast(self, t, idx=None):
@@ -209,12 +211,16 @@ class Term:
         return df
 
     def _add(self, t, side='left'):
+        if isinstance(t, Random):
+            return NotImplemented
+
         if self.empty:
             return Term(t)
 
         idx = None
         if check_names(t) is None:
             idx = get_index(self.m)
+
         df = self._broadcast(t, idx=idx)
         if df.empty:
             return self
@@ -225,7 +231,6 @@ class Term:
         if side == 'right':
             terms = terms[::-1]
             names = names[::-1]
-
         df = pd.concat(terms, axis=1)
         df.columns = names[0] + names[1]
         cols = remove_duplicate_columns(df, tol=self.tolerance)
@@ -252,6 +257,9 @@ class Term:
         return Term(self.m[self.m.columns[mask]])
 
     def _mul(self, t, side='left'):
+        if isinstance(t, Random):
+            return NotImplemented
+
         if self.is_empty:
             return self
         if np.isscalar(t):
@@ -401,32 +409,61 @@ class Random:
             return Term(v.ravel(), names='I')
         return r1.variance
 
+    def _add(self, r, side='left'):
+        if not isinstance(r, Random):
+            r = Random(fix=r)
+
+        r.variance = self.broadcast_to(r, self)
+        self.variance = self.broadcast_to(self, r)
+        if side == 'left':
+            ran = self.variance + r.variance
+            fix = self.mean + r.mean
+        else:
+            ran = r.variance + self.variance
+            fix = r.mean + self.mean
+
+        return Random(ran=ran, fix=fix, ranisvar=True)
+
     def __add__(self, r):
+        return self._add(r)
+
+    def __radd__(self, r):
+        return self._add(r, side='right')
+
+    def _sub(self, r, side='left'):
         if not isinstance(r, Random):
             r = Random(fix=r)
         r.variance = self.broadcast_to(r, self)
         self.variance = self.broadcast_to(self, r)
-        return Random(ran=self.variance + r.variance, fix=self.mean + r.mean,
-                      ranisvar=True)
+        if side == 'left':
+            ran = self.variance - r.variance
+            fix = self.mean - r.mean
+        else:
+            ran = r.variance - self.variance
+            fix = r.mean - self.mean
+        return Random(ran=ran, fix=fix, ranisvar=True)
 
     def __sub__(self, r):
+        return self._sub(r)
+
+    def __rsub__(self, r):
+        return self._sub(r, side='right')
+
+    def _mul(self, r, side='left'):
         if not isinstance(r, Random):
             r = Random(fix=r)
         r.variance = self.broadcast_to(r, self)
         self.variance = self.broadcast_to(self, r)
-        return Random(ran=self.variance - r.variance, fix=self.mean - r.mean,
-                      ranisvar=True)
 
-    def __mul__(self, r):
-        if not isinstance(r, Random):
-            r = Random(fix=r)
-        r.variance = self.broadcast_to(r, self)
-        self.variance = self.broadcast_to(self, r)
+        if side == 'left':
+            ran = self.variance * r.variance
+            fix = self.mean * r.mean
+        else:
+            ran = r.variance * self.variance
+            fix = r.mean * self.mean
+        s = Random(ran=ran, fix=fix, ranisvar=True)
 
-        s = Random(ran=self.variance * r.variance, fix=self.mean * r.mean,
-                   ranisvar=True)
-
-        x = self.mean.m.values.T / self.mean.m.abs().values.max()
+        x = self.mean.matrix.values.T / self.mean.matrix.abs().values.max()
         t = Term()
         for i in range(x.shape[0]):
             for j in range(i + 1):
@@ -448,7 +485,7 @@ class Random:
 
         s.variance = s.variance + t * r.variance
 
-        x = r.mean.m.values.T / r.mean.m.abs().values.max()
+        x = r.mean.matrix.values.T / r.mean.matrix.abs().values.max()
         t = Term()
         for i in range(x.shape[0]):
             for j in range(i + 1):
@@ -469,6 +506,12 @@ class Random:
                     t = t + Term(v.ravel(), names=xd_name)
         s.variance = s.variance + self.variance * t
         return s
+
+    def __mul__(self, r):
+        return self._mul(r)
+
+    def __rmul__(self, r):
+        return self._mul(r, side='right')
 
     def __pow__(self, p):
         if p > 1:
