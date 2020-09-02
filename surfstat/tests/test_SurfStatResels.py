@@ -18,12 +18,13 @@ def dummy_test(slm, mask=None):
     try:
         mat_output = sw.matlab_SurfStatResels(slm,mask)
         # Deal with either 1 or 3 output arguments.
-        if not isinstance(mat_output, np.ndarray):
-            mat_output = mat_output[0].tolist()
-        else:
-            mat_output = mat_output.tolist()
-            if isinstance(mat_output,float):
-                mat_output = [mat_output]
+        #if not isinstance(mat_output, np.ndarray):
+        #    mat_output = mat_output[0].tolist()
+        #    mat_output[1] = np.squeeze(mat_output[1])
+        #else:
+        mat_output = mat_output.tolist()
+        if isinstance(mat_output,float):
+            mat_output = [mat_output]
     except:
         pytest.skip("Original MATLAB code does not work with these inputs.")
 
@@ -43,7 +44,9 @@ def dummy_test(slm, mask=None):
                             np.squeeze(np.asarray(mat)),
                             rtol=1e-05, equal_nan=True)
         test_out.append(result)
-        
+    
+    if not all(flag == True for (flag) in test_out):      
+        pdb.set_trace()  
     assert all(flag == True for (flag) in test_out)
 
 # Test with only slm.tri
@@ -101,7 +104,7 @@ def test_7():
 
 # Test with slm.lat, slm.resl, and a mask
 def test_8():
-    slm = {'lat': np.random.rand(3,3,3) > 0.5}
+    slm = {'lat': np.random.rand(10,10,10) > 0.5}
     mask = np.random.choice([False,True],np.sum(slm['lat']))
     edg = py_SurfStatEdg(slm)
     slm['resl'] = np.random.rand(edg.shape[0],1)
@@ -147,7 +150,7 @@ def test_12():
     dummy_test(slm)
 
 # randomized (shuffled) real data & random mask
-def test_12():    
+def test_13():    
     slmfile = './tests/data/slm.mat'
     slmdata = loadmat(slmfile)
     slm = {}
