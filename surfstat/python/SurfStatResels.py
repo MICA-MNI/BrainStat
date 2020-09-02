@@ -86,7 +86,7 @@ def py_SurfStatResels(slm, mask=None):
             l13 = slm['resl'][loc,:]
             loc = row_ismember(tri[masktri,:][:,[1,2]], edg)
             l23 = slm['resl'][loc,:]
-            a = np.maximum(4*l12*l13-(l12+l13-l23)**2,0)
+            a = np.fmax(4*l12*l13-(l12+l13-l23)**2,0)
             r2 = np.mean(np.sqrt(a),axis=1)/4
             lkc[1,2] = np.sum(np.mean(np.sqrt(l12) + 
                np.sqrt(l13)+np.sqrt(l23),axis=1))/2
@@ -278,7 +278,7 @@ def py_SurfStatResels(slm, mask=None):
                                 (tri[masktri,2] - 1),kind='nearest') + es, :]
                         l23 = slm['resl'][interp1(ue,ae,tri[masktri,1] + m1 * \
                                 (tri[masktri,2] - 1),kind='nearest') + es, :]
-                    a = np.maximum(4 * l12 * l13 - (l12+l13-l23) ** 2, 0)
+                    a = np.fmax(4 * l12 * l13 - (l12+l13-l23) ** 2, 0)
                     r2 = np.mean(np.sqrt(a),axis=1)/4
                     lkc1[1,2] = np.sum(np.mean(np.sqrt(l12) + np.sqrt(l13) + 
                                     np.sqrt(l23),axis=1))/2
@@ -325,10 +325,10 @@ def py_SurfStatResels(slm, mask=None):
                               (tet[masktet,3]-1),kind='nearest')+es,:]
                     l34 = slm['resl'][interp1(ue,ae,tet[masktet,2] + m1 * \
                               (tet[masktet,3]-1),kind='nearest')+es,:]
-                a4 = np.maximum(4 * l12 * l13 - (l12 + l13 -l23) ** 2, 0)
-                a3 = np.maximum(4 * l12 * l14 - (l12 + l14 -l24) ** 2, 0)
-                a2 = np.maximum(4 * l13 * l14 - (l13 + l14 -l34) ** 2, 0)   
-                a1 = np.maximum(4 * l23 * l24 - (l23 + l24 -l34) ** 2, 0)    
+                a4 = np.fmax(4 * l12 * l13 - (l12 + l13 -l23) ** 2, 0)
+                a3 = np.fmax(4 * l12 * l14 - (l12 + l14 -l24) ** 2, 0)
+                a2 = np.fmax(4 * l13 * l14 - (l13 + l14 -l34) ** 2, 0)   
+                a1 = np.fmax(4 * l23 * l24 - (l23 + l24 -l34) ** 2, 0)    
 
                 d12 = 4 * l12 * l34 - (l13 + l24 - l23 - l14) ** 2
                 d13 = 4 * l13 * l24 - (l12 + l34 - l23 - l14) ** 2
@@ -353,7 +353,7 @@ def py_SurfStatResels(slm, mask=None):
                 delta34 = np.sum(np.mean(np.sqrt(l12) * pacos((d12-a3-a4) / \
                             np.sqrt(a3 * a4 + h) / 2 * (1-h) + h),axis=1))
 
-                r3 = np.squeeze(np.mean(np.sqrt(np.maximum((4 * a1 * a2 - \
+                r3 = np.squeeze(np.mean(np.sqrt(np.fmax((4 * a1 * a2 - \
                                 (a1 + a2 - d12) **2) / (l34 + (l34<=0)) * \
                                 (l34>0), 0)),axis=1) / 48)
 
@@ -382,7 +382,7 @@ def py_SurfStatResels(slm, mask=None):
         # ignore it as no equivalent exists in Python - RV. 
         D = 2 + (K>1)
         reselspvert = reselspvert.T / (D+1) / np.sqrt(4*np.log(2)) ** D
-
+    
     ## Compute resels - RV
     D1 = lkc.shape[0]-1
     D2 = lkc.shape[1]-1
