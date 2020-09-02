@@ -7,7 +7,7 @@ import numpy as np
 import math
 import sys
 
-def matlab_init_surfstat(surfstat_path='./matlab'):
+def matlab_init_surfstat(surfstat_path='matlab'):
     global surfstat_eng
     surfstat_eng = matlab.engine.start_matlab()
     addpath = surfstat_eng.addpath(surfstat_path)
