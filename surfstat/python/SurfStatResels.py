@@ -261,8 +261,8 @@ def py_SurfStatResels(slm, mask=None):
                 if all(masktri == False):
                     # Set these variables to empty arrays to match the MATLAB
                     # implementation. 
-                    lkc[1,2] = 0
-                    lkc[2,2] = 0
+                    lkc1[1,2] = 0
+                    lkc1[2,2] = 0
                 else:
                     if e < 2 ** 31:
                         l12 = slm['resl'][sparsedg[tri[masktri,0] + m1 * \
