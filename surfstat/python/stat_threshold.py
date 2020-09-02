@@ -83,6 +83,12 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
     p_val_peak = np.array(p_val_peak,ndmin=1)
     p_val_extent = np.array(p_val_extent,ndmin=1)
     
+    # Some common error checks:
+    if p_val_peak.ndim > 1:
+        raise ValueError('p_val_peak may not have more than one dimension.')
+    if p_val_extent.ndim  > 1:
+        raise ValueError('p_val_extent may not have more than one dimension.')
+    
     # Set the FWHM
     if fwhm.ndim == 1:
         fwhm = np.expand_dims(fwhm,axis=0)
@@ -296,8 +302,18 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
     # Bonferonni
     pt = rho[:,0,0]
     pval_bon = abs(np.prod(num_voxels)) * pt
+    
     # Minimum of the two
-    pval = np.minimum(pval_rf,pval_bon)
+    if type(pval_rf) != type(pval_bon):
+        pval = np.minimum(pval_rf,pval_bon)
+    else:
+        if isinstance(pval_rf, float) and isinstance(pval_bon, float):
+            pval = np.minimum(pval_rf,pval_bon)
+        if isinstance(pval_rf, np.ndarray) and isinstance(pval_bon, np.ndarray):
+            # this will ignore nan values in arrays while finding minimum
+            pval_tmp = np.concatenate((pval_rf.reshape(pval_rf.shape[0],1),
+                                       pval_bon.reshape(pval_bon.shape[0],1)), axis=1)
+            pval = np.nanmin(pval_tmp, axis=1)
 
     tlim = 1
     if p_val_peak[0] <= tlim:

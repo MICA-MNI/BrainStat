@@ -3,6 +3,7 @@ sys.path.append("python")
 from SurfStatEdg import *
 import surfstat_wrap as sw
 import numpy as np
+import pytest
 
 sw.matlab_init_surfstat()
 
@@ -13,7 +14,7 @@ def dummy_test(surf):
         Wrapped_edg = sw.matlab_SurfStatEdg(surf)
 
     except:
-        pytest.fail("ORIGINAL MATLAB CODE DOES NOT WORK WITH THESE INPUTS...")
+        pytest.skip("ORIGINAL MATLAB CODE DOES NOT WORK WITH THESE INPUTS...")
 
     Python_edg = py_SurfStatEdg(surf)
 
