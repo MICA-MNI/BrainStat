@@ -4,6 +4,7 @@ from scipy.linalg import toeplitz
 from scipy.sparse import csr_matrix
 from matlab_functions import row_ismember, interp1
 from SurfStatEdg import py_SurfStatEdg
+import pdb
 
 def pacos(x):
     return np.arccos( np.minimum(np.abs(x),1) * np.sign(x) ) 
@@ -257,25 +258,31 @@ def py_SurfStatResels(slm, mask=None):
             masktri = np.all(mask1[tri],axis=1).flatten()
             lkc1[0,2] = np.sum(masktri)
             if 'resl' in slm: 
-                if e < 2 ** 31:
-                    l12 = slm['resl'][sparsedg[tri[masktri,0] + m1 * \
-                                      (tri[masktri,1]-1), 0].toarray() + es, :]
-                    l13 = slm['resl'][sparsedg[tri[masktri,0] + m1 * \
-                                      (tri[masktri,2]-1), 0].toarray() + es, :]
-                    l23 = slm['resl'][sparsedg[tri[masktri,1] + m1 * \
-                                      (tri[masktri,2]-1), 0].toarray() + es, :]
+                if all(masktri == False):
+                    # Set these variables to empty arrays to match the MATLAB
+                    # implementation. 
+                    lkc[1,2] = 0
+                    lkc[2,2] = 0
                 else:
-                    l12 = slm['resl'][interp1(ue,ae,tri[masktri,0] + m1 * \
-                              (tri[masktri,1] - 1),kind='nearest') + es, :]
-                    l13 = slm['resl'][interp1(ue,ae,tri[masktri,0] + m1 * \
-                              (tri[masktri,2] - 1),kind='nearest') + es, :]
-                    l23 = slm['resl'][interp1(ue,ae,tri[masktri,1] + m1 * \
-                              (tri[masktri,2] - 1),kind='nearest') + es, :]
-                a = np.maximum(4 * l12 * l13 - (l12+l13-l23) ** 2, 0)
-                r2 = np.mean(np.sqrt(a),axis=1)/4
-                lkc1[1,2] = np.sum(np.mean(np.sqrt(l12) + np.sqrt(l13) + 
+                    if e < 2 ** 31:
+                        l12 = slm['resl'][sparsedg[tri[masktri,0] + m1 * \
+                                        (tri[masktri,1]-1), 0].toarray() + es, :]
+                        l13 = slm['resl'][sparsedg[tri[masktri,0] + m1 * \
+                                        (tri[masktri,2]-1), 0].toarray() + es, :]
+                        l23 = slm['resl'][sparsedg[tri[masktri,1] + m1 * \
+                                        (tri[masktri,2]-1), 0].toarray() + es, :]
+                    else:
+                        l12 = slm['resl'][interp1(ue,ae,tri[masktri,0] + m1 * \
+                                (tri[masktri,1] - 1),kind='nearest') + es, :]
+                        l13 = slm['resl'][interp1(ue,ae,tri[masktri,0] + m1 * \
+                                (tri[masktri,2] - 1),kind='nearest') + es, :]
+                        l23 = slm['resl'][interp1(ue,ae,tri[masktri,1] + m1 * \
+                                (tri[masktri,2] - 1),kind='nearest') + es, :]
+                    a = np.maximum(4 * l12 * l13 - (l12+l13-l23) ** 2, 0)
+                    r2 = np.mean(np.sqrt(a),axis=1)/4
+                    lkc1[1,2] = np.sum(np.mean(np.sqrt(l12) + np.sqrt(l13) + 
                                     np.sqrt(l23),axis=1))/2
-                lkc1[2,2] = np.sum(r2)
+                    lkc1[2,2] = np.sum(r2)
 
                 # The following if-statement has nargout >=2 in MATLAB, 
                 # but there's no Python equivalent so ignore that. - RV

@@ -40,7 +40,7 @@ def dummy_test(slm, mask=None):
                              np.squeeze(np.asarray(mat)),
                              rtol=1e-05, equal_nan=True)
         test_out.append(result)
-
+        
     assert all(flag == True for (flag) in test_out)
 
 # Test with only slm.tri
@@ -103,8 +103,16 @@ def test_8():
     edg = py_SurfStatEdg(slm)
     slm['resl'] = np.random.rand(edg.shape[0],1)
     dummy_test(slm, mask) 
+
+# Test with slm.lat, slm.resl, and a fully false mask
+def test_9():
+    slm = {'lat': np.random.rand(10,10,10) > 0.5}
+    mask = np.zeros(np.sum(slm['lat']), dtype=bool)
+    edg = py_SurfStatEdg(slm)
+    slm['resl'] = np.random.rand(edg.shape[0],1)
+    dummy_test(slm, mask) 
     
-def test_9(): 
+def test_10(): 
     slmfile = './tests/data/slm.mat'
     slmdata = loadmat(slmfile)
     slm = {}
@@ -113,7 +121,7 @@ def test_9():
     dummy_test(slm)
     
 # real data & random mask
-def test_10():    
+def test_11():    
     slmfile = './tests/data/slm.mat'
     slmdata = loadmat(slmfile)
     slm = {}
@@ -125,7 +133,7 @@ def test_10():
     dummy_test(slm, mask)
 
 # randomized (shuffled) real data    
-def test_11():    
+def test_12():    
     slmfile = './tests/data/slm.mat'
     slmdata = loadmat(slmfile)
     slm = {}
