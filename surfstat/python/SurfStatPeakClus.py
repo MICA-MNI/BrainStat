@@ -1,7 +1,7 @@
 import numpy as np
 import math
 from SurfStatEdg import py_SurfStatEdg
-from matlab_functions import interp1, accum, ismember
+from matlab_functions import interp1, ismember
 
 def py_SurfStatPeakClus(slm, mask, thresh, reselspvert=None, edg=None):
     """ Finds peaks (local maxima) and clusters for surface data.
@@ -116,8 +116,7 @@ def py_SurfStatPeakClus(slm, mask, thresh, reselspvert=None, edg=None):
     
     # if k>1, find volume of cluster in added sphere
     if 'k' not in slm or slm['k'] == 1:
-        ucrsl = accum(nf1.astype(int).reshape(reselsvox.shape),
-                      reselsvox)
+        ucrsl = np.bincount(nf1.astype(int), reselsvox.flatten())
     if 'k' in slm and slm['k'] == 2:
         if l == 1:
             ndf = len(np.array([slm['df']]))
@@ -126,8 +125,7 @@ def py_SurfStatPeakClus(slm, mask, thresh, reselspvert=None, edg=None):
             r = 2 * np.arccos(np.sqrt((thresh - slm['t'][1,vox-1]) *
                                       (thresh >= slm['t'][1,vox-1]) /
                                       (slm['t'][0,vox-1] - slm['t'][1,vox-1])))
-        ucrsl = accum(nf1.astype(int).reshape(reselsvox.shape).T,
-                      r.T * reselsvox.T)
+        ucrsl =  np.bincount(nf1.astype(int), (r.T * reselsvox.T).flatten())
     if 'k' in slm and slm['k'] == 3:
         if l == 1:
             ndf = len(np.array([slm['df']]))
@@ -143,9 +141,8 @@ def py_SurfStatPeakClus(slm, mask, thresh, reselspvert=None, edg=None):
                                            (np.ones((nt,1)) *
                                             slm['t'][0, vox-1].T -
                                             s ))).mean(axis=0)
-        ucrsl = accum(nf1.astype(int).reshape(reselsvox.shape).T,
-                      r.T * reselsvox.T)
-        
+        ucrsl = np.bincount(nf1.astype(int), (r.T * reselsvox.T).flatten())
+    
     # and their ranks (in ascending order)
     iucrls = sorted(range(len(ucrsl[1:])), key=lambda k: ucrsl[1:][k])
     rankrsl = np.zeros((1, nclus))
