@@ -1,7 +1,6 @@
 import math
 import numpy as np
 from scipy.special import betaln, gammaln, gamma
-from scipy.interpolate import interp1d
 from matlab_functions import interp1, colon
 
 def gammalni(n):
@@ -12,6 +11,10 @@ def gammalni(n):
 def minterp1(x,y,ix):
     # interpolates only the monotonically increasing values of x at ix
     n = x.size
+    ix = np.array(ix)
+    ix_shape = ix.shape
+    ix = ix.flatten('F')
+    
     mx = np.array(x[0],ndmin=1)
     my = np.array(y[0],ndmin=1)
     xx = x[0]
@@ -20,14 +23,14 @@ def minterp1(x,y,ix):
             xx = x[i]
             mx = np.append(mx, xx)
             my = np.append(my, y[i])
-
-    ix = np.array(ix,ndmin=1)
+  
     out = []
     for i in range(0,ix.size):
         if ix[i] < mx[0] or ix[i] > mx[-1]:
             out.append(math.nan)
         else:
             out.append(interp1(mx,my,ix[i]))
+    out = np.reshape(out,ix_shape,order='F')
     return out
 
 def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf, 
@@ -82,12 +85,6 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
     nvar = np.array(nvar,dtype=int)
     p_val_peak = np.array(p_val_peak,ndmin=1)
     p_val_extent = np.array(p_val_extent,ndmin=1)
-    
-    # Some common error checks:
-    if p_val_peak.ndim > 1:
-        raise ValueError('p_val_peak may not have more than one dimension.')
-    if p_val_extent.ndim  > 1:
-        raise ValueError('p_val_extent may not have more than one dimension.')
     
     # Set the FWHM
     if fwhm.ndim == 1:
@@ -316,7 +313,7 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
             pval = np.nanmin(pval_tmp, axis=1)
 
     tlim = 1
-    if p_val_peak[0] <= tlim:
+    if p_val_peak.flatten()[0] <= tlim:
         peak_threshold = minterp1(pval, t, p_val_peak)
         if p_val_peak.size <= nprint:
             print(peak_threshold)
@@ -351,7 +348,7 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
 
     # Pre-selected peak
     pval = rho[:,D[0],D[1]] / rhoD
-    if p_val_peak[0] <= tlim:
+    if p_val_peak.flatten()[0] <= tlim:
         peak_threshold_1=minterp1(pval,t, p_val_peak)
         if p_val_peak.size <= nprint:
             print(peak_threshold_1)
@@ -377,7 +374,7 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
     cons = gamma(d/2+1)*(4*np.log(2))**(d/2)/fwhm[0]**D[0]/fwhm[1]**D[1]*rhoD/p
 
     if df2 == math.inf and dfw1[0] == math.inf and dfw1[1] == math.inf:
-        if p_val_extent[0] <= tlim:
+        if p_val_extent.flatten()[0] <= tlim:
             pS = -np.log(1-p_val_extent)/EL
             extent_threshold = (-np.log(pS))**(d/2)/cons 
             pS = -np.log(1-p_val_extent)
@@ -475,7 +472,7 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
 
         # The number of clusters is Poisson with mean EL:
         pSmax = 1 - np.exp(-pS*EL)
-        if p_val_extent[0] <= tlim:
+        if p_val_extent.flatten()[0] <= tlim:
             yval = minterp1(-pSmax, y, -p_val_extent)
             # Spaytial extent is alpha*exp(Y) -dy/2 correction for mid-point rule:
             extent_threshold = alpha * np.exp(yval-dy/2)
