@@ -2,7 +2,6 @@ from scipy.interpolate import interp1d
 from itertools import product
 import numpy as np 
 
-
 def row_ismember(a, b):
     # a is 2D numpy array
     # b is 2D numpy array
@@ -15,17 +14,34 @@ def row_ismember(a, b):
     return [bind.get(tuple(itm), None) for itm in a] 
 
 def interp1(x,y,ix,kind='linear'):
-    # Let's call it interp1_mp like matlab-python
-    # Shorthand for the MATLAB interp1 function.  
+    """ Interpolation between datapoints.
+    Parameters
+    ----------
+    x : x coordinates of training data.
+    y : y coordinates of training data.
+    ix : x coordinates of the interpolated points.
+    kind : type of interpolation; see scipy.interpolate.interp1d for options.
+
+    Returns
+    -------
+    iy : interpolated y coordinates.
+    """
     f = interp1d(x, y, kind)
-    return f(ix)
+    iy = f(ix)
+    return iy
 
 def ismember(A, B, rows=False):
-    # Implementation of MATLAB's ismember() function. 
-    # Tests if elements of A appear in B. Returns a logical array and a vector
-    # containing the index of the first appearance of each member.
-    # Note for the locations output variable: MATLAB uses 0 to denote missing values.
-    # As 0 is a valid location in Python, we use NaN here instead. 
+    """ Tests whether elements of A appear in B.
+    Parameters
+    ----------
+    A : 1D or 2D numpy array
+    B : 1D or 2D numpy array
+    rows : logical denoting whether to test for element-wise occurence or row occurence.
+    Returns
+    -------
+    bool_array : Boolean of the same size as A denoting which elements (or rows) occur in B.
+    locations : Indices of matching elements/rows in A.
+    """
     
     if rows:
         # Get rows of A that are in B.
