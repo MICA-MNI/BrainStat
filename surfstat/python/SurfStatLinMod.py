@@ -1,10 +1,10 @@
 import warnings
-
 import numpy as np
 import numpy.linalg as la
-
-from .term import Term, Random
-from .SurfStatEdg import py_SurfStatEdg
+import sys
+sys.path.append("python")
+from term import Term, Random
+from SurfStatEdg import py_SurfStatEdg
 
 
 def py_SurfStatLinMod(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
