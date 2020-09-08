@@ -2,6 +2,7 @@ import numpy as np
 import math
 from SurfStatEdg import py_SurfStatEdg
 from matlab_functions import interp1, ismember
+import copy
 
 def py_SurfStatPeakClus(slm, mask, thresh, reselspvert=None, edg=None):
     """ Finds peaks (local maxima) and clusters for surface data.
@@ -57,14 +58,15 @@ def py_SurfStatPeakClus(slm, mask, thresh, reselspvert=None, edg=None):
         edg = py_SurfStatEdg(slm)
 
     l, v = np.shape(slm['t'])
-    slm['t'][0, ~mask.flatten().astype(bool)] = slm['t'][0,:].min()
-    t1 = slm['t'][0, edg[:,0]-1]
-    t2 = slm['t'][0, edg[:,1]-1]
+    slm_t = copy.deepcopy(slm['t'])
+    slm_t[0, ~mask.flatten().astype(bool)] = slm_t[0,:].min()
+    t1 = slm_t[0, edg[:,0]-1]
+    t2 = slm_t[0, edg[:,1]-1]
     islm = np.ones((1,v))
     islm[0, [edg[t1 < t2, 0]-1]] = 0
     islm[0, [edg[t2 < t1, 1]-1]] = 0
     lmvox = np.argwhere(islm)[:,1] + 1
-    excurset = np.array(slm['t'][0,:] >= thresh, dtype=int)
+    excurset = np.array(slm_t[0,:] >= thresh, dtype=int)
     n = excurset.sum()
     
     if n < 1:
@@ -120,26 +122,26 @@ def py_SurfStatPeakClus(slm, mask, thresh, reselspvert=None, edg=None):
     if 'k' in slm and slm['k'] == 2:
         if l == 1:
             ndf = len(np.array([slm['df']]))
-            r = 2 * np.arccos((thresh / slm['t'][0, vox-1])**(float(1)/ndf))
+            r = 2 * np.arccos((thresh / slm_t[0, vox-1])**(float(1)/ndf))
         else:
-            r = 2 * np.arccos(np.sqrt((thresh - slm['t'][1,vox-1]) *
-                                      (thresh >= slm['t'][1,vox-1]) /
-                                      (slm['t'][0,vox-1] - slm['t'][1,vox-1])))
+            r = 2 * np.arccos(np.sqrt((thresh - slm_t[1,vox-1]) *
+                                      (thresh >= slm_t[1,vox-1]) /
+                                      (slm_t[0,vox-1] - slm_t[1,vox-1])))
         ucrsl =  np.bincount(nf1.astype(int), (r.T * reselsvox.T).flatten())
     if 'k' in slm and slm['k'] == 3:
         if l == 1:
             ndf = len(np.array([slm['df']]))
-            r = 2 * math.pi * (1 - (thresh / slm['t'][0, vox-1])**
+            r = 2 * math.pi * (1 - (thresh / slm_t[0, vox-1])**
                                 (float(1)/ndf))
         else:
             nt = 20
             theta = (np.arange(1,nt+1,1) - 1/2) / nt * math.pi / 2
-            s = (np.cos(theta)**2 * slm['t'][1, vox-1]).T
+            s = (np.cos(theta)**2 * slm_t[1, vox-1]).T
             if l == 3:
-                s =  s + ((np.sin(theta)**2) * slm['t'][2,vox-1]).T
+                s =  s + ((np.sin(theta)**2) * slm_t[2,vox-1]).T
             r = 2 * math.pi * (1 - np.sqrt((thresh-s)*(thresh>=s) /
                                            (np.ones((nt,1)) *
-                                            slm['t'][0, vox-1].T -
+                                            slm_t[0, vox-1].T -
                                             s ))).mean(axis=0)
         ucrsl = np.bincount(nf1.astype(int), (r.T * reselsvox.T).flatten())
     
@@ -150,7 +152,7 @@ def py_SurfStatPeakClus(slm, mask, thresh, reselspvert=None, edg=None):
     
     lmid = lmvox[ismember(lmvox, vox)[0]]
        
-    varA = slm['t'][0, (lmid-1)]
+    varA = slm_t[0, (lmid-1)]
     varB = lmid
     varC = rankrsl[0,jclmid-1]
     varALL = np.concatenate((varA.reshape(len(varA),1),
