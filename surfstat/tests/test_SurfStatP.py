@@ -270,3 +270,27 @@ def test_15():
     
     dummy_test(slm)
 
+# BUG case
+def test_16():
+    # data from Reinder, slm.k = 3    
+
+    slmfile = './tests/data/slmk3.mat'
+    slmdata = loadmat(slmfile)
+    slm = {}
+    slm['t'] = slmdata['slm']['t'][0,0]
+    slm['df'] = slmdata['slm']['df'][0,0]
+    slm['k'] = slmdata['slm']['k'][0,0]
+    slm['resl'] = slmdata['slm']['resl'][0,0]
+    slm['tri'] = slmdata['slm']['tri'][0,0]
+
+
+    dummy_test(slm)
+
+
+
+
+
+
+
+
+
