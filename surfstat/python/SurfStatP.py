@@ -1,30 +1,11 @@
 import sys
-sys.path.append("python")
-sys.path.append("../surfstat")
-import surfstat_wrap as sw
-import matlab.engine
 import numpy as np
+import copy
 from scipy.interpolate import interp1d
-from scipy.io import loadmat
+sys.path.append("python")
 from stat_threshold import stat_threshold
 from SurfStatPeakClus import py_SurfStatPeakClus
 from SurfStatResels import py_SurfStatResels
-import copy
-
-
-# WRAPPING FUNCTIONS NEED TO BE REMOVED LATER...
-sw.matlab_init_surfstat()
-eng = matlab.engine.start_matlab()
-eng.addpath('matlab/')
-def var2mat(var):
-    # Brings the input variables to matlab format.
-    if isinstance(var, np.ndarray):
-        var = var.tolist()
-    elif var == None:
-        var = []
-    if not isinstance(var,list) and not isinstance(var, np.ndarray):
-        var = [var]
-    return matlab.double(var)
 
 def py_SurfStatP(slm, mask=None, clusthresh=0.001):
     """Corrected P-values for vertices and clusters.
