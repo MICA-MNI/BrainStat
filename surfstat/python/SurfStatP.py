@@ -1,6 +1,8 @@
 import sys
 import numpy as np
 from scipy.interpolate import interp1d
+from scipy.special import gammaln
+import math
 sys.path.append("python")
 from stat_threshold import stat_threshold
 from SurfStatPeakClus import py_SurfStatPeakClus
@@ -136,8 +138,17 @@ def py_SurfStatP(slm, mask=None, clusthresh=0.001):
         pval['P'] = pp[len(peak['t']) + np.arange(1,v+1)]
         
         if slm['k'] > 1:
-            print('NOT YET IMPLEMENTED')
-            sys.exit()
+            j = np.arange(slm['k'])[::-2]
+            sphere = np.zeros((1, int(slm['k'])))
+            sphere[:,j] = np.exp((j+1)*np.log(2) + (j/2)*np.log(math.pi) + \
+                gammaln((slm['k']+1)/2) - gammaln(j+1) - gammaln((slm['k']+1-j)/2))
+            sphere = sphere*np.power(4*np.log(2), -np.arange(0,slm['k'])/2)/ndf
+            varA = np.convolve(resels.flatten(), sphere.flatten())
+            varB = np.concatenate((np.array([[10]]), clus['resels']))
+            pp, clpval, _, _, _, _, =stat_threshold(search_volume = varA,
+                                                    num_voxels = math.inf, fwhm=1.0,
+                                                    df=df, cluster_threshold=thresh,
+                                                    p_val_extent = varB, nprint = 0)
 
         clus['P'] = clpval[1:len(clpval)]
         x = np.concatenate((np.array([[0]]), clus['clusid']), axis=0)
