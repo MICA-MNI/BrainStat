@@ -487,5 +487,23 @@ def test_17():
     dummy_test(eng, search_volume, num_voxels, fwhm, df, p_val_peak, 
             cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
 
+# Test 18 ### BUG --> important for SurfStatP.py
+def test_18():
+    
+    # this is from some real test data
+    search_volume     = 0
+    num_voxels        = 1
+    fwhm              = 0
+    df                = np.array([[9,0],[9,9]])
+    p_val_peak        = 0.001
+    cluster_threshold = 0.001
+    p_val_extent      = 0.05
+    nconj             = 1
+    nvar              = 3.0
+    EC_file           = None
+    expr              = None 
+    nprint            = 0
 
+    dummy_test(eng, search_volume, num_voxels, fwhm, df, p_val_peak, 
+            cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
 
