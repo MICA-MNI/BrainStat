@@ -356,9 +356,40 @@ def matlab_SurfStatPeakClus(slm, mask, thresh, reselspvert=None, edg=None):
 def matlab_SurfStatPlot(x, y, M, g, varargin):
     sys.exit("Function matlab_SurfStatPlot is not implemented yet")
 
+
+
+
+
+
+
 # ==> SurfStatQ.m <==
-def matlab_SurfStatQ(slm, mask):
-    sys.exit("Function matlab_SurfStatQ is not implemented yet")
+def matlab_SurfStatQ(slm, mask=None):
+    
+    slm_mat = slm.copy()    
+    for key in slm_mat.keys():
+        if isinstance(slm_mat[key], np.ndarray):
+            slm_mat[key] = matlab.double(slm_mat[key].tolist())
+        else:
+            slm_mat[key] = surfstat_eng.double(slm_mat[key])
+    
+    if mask is None:
+        q_val_mat = surfstat_eng.SurfStatQ(slm_mat)
+    else:
+        mask_mat = matlab.double(np.array(mask, dtype=int).tolist())
+        mask_mat = matlab.logical(mask_mat)
+        q_val_mat = surfstat_eng.SurfStatQ(slm_mat, mask_mat)
+    
+    q_val_py = {}   
+    for key in q_val_mat.keys():
+        q_val_py[key] = np.array(q_val_mat[key])
+    
+    return q_val_py
+    
+    
+
+
+
+
 
 # ==> SurfStatROI.m <==
 def matlab_SurfStatROI(centre, radius, surf):
