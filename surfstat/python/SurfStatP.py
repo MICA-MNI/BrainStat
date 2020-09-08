@@ -131,7 +131,15 @@ def py_SurfStatP(slm, mask=None, clusthresh=0.001):
         thresh = clusthresh
 
     # NEED TO BE CALLED FROM PYTHON SURFSTATRESELS
-    resels, reselspvert, edg = sw.matlab_SurfStatResels(slm, mask)
+    mat_output = sw.matlab_SurfStatResels(slm, mask)
+    mat_output = mat_output.tolist()
+    if isinstance(mat_output,float):
+        mat_output = [mat_output]
+    if len(mat_output) == 3:
+        resels = np.array(mat_output[0])
+        reselspvert = np.array(mat_output[1])
+        edg = np.array(mat_output[2])
+
     N = mask.sum()
     
     if np.max(slm['t'][0, mask.flatten()]) < thresh:

@@ -402,10 +402,10 @@ def matlab_SurfStatResels(slm, mask=None):
     
     slm_mat = slm.copy()
     for key in slm_mat.keys():
-        if np.ndim(slm_mat[key]) == 0:
-            slm_mat[key] = surfstat_eng.double(slm_mat[key].item())
-        else:
+        if isinstance(slm_mat[key], np.ndarray):
             slm_mat[key] = matlab.double(slm_mat[key].tolist())
+        else:
+            slm_mat[key] = surfstat_eng.double(slm_mat[key])
 
     # MATLAB errors if 'resl' is not provided and more than 1 output argument is requested.
     if 'resl' in slm:
