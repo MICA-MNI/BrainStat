@@ -13,21 +13,19 @@ def row_ismember(a, b):
             bind[tuple(elt)] = i
     return [bind.get(tuple(itm), None) for itm in a] 
 
-
 def interp1(x,y,ix,kind='linear'):
     """ Interpolation between datapoints.
     Parameters
     ----------
-    x : x coordinates of training data. 
+    x : x coordinates of training data.
     y : y coordinates of training data.
-    ix : x coordinates of the interpolated points. 
-    kind : type of interpolation; see scipy.interpolate.interp1d for options. 
-    
+    ix : x coordinates of the interpolated points.
+    kind : type of interpolation; see scipy.interpolate.interp1d for options.
+
     Returns
     -------
-    iy : interpolated y coordinates.   
-    """ 
-    
+    iy : interpolated y coordinates.
+    """
     f = interp1d(x, y, kind)
     iy = f(ix)
     return iy
@@ -36,15 +34,14 @@ def ismember(A, B, rows=False):
     """ Tests whether elements of A appear in B.
     Parameters
     ----------
-    A : 1D or 2D numpy array 
-    B : 1D or 2D numpy array 
-    rows : logical denoting whether to test for element-wise occurence or row occurence. 
-    
+    A : 1D or 2D numpy array
+    B : 1D or 2D numpy array
+    rows : logical denoting whether to test for element-wise occurence or row occurence.
     Returns
     -------
     bool_array : Boolean of the same size as A denoting which elements (or rows) occur in B.
-    locations : Indices of matching elements/rows in A.  
-    """ 
+    locations : Indices of matching elements/rows in A.
+    """
     
     if rows:
         # Get rows of A that are in B.
@@ -72,8 +69,6 @@ def ismember(A, B, rows=False):
         for i in range(0,idx.size):
             locations[idx[i]] = locB[np.argwhere(val==Aflat[idx[i]])]
         locations = np.reshape(locations,A.shape)
-        locations = [int(round(x)) for x in locations]
-    locations = [int(round(x)) for x in locations]
     return bool_array, locations
 
 def colon(start,stop,increment=1):
@@ -94,3 +89,4 @@ def colon(start,stop,increment=1):
     elif start == stop or r[-1] + increment == stop:
         r = np.append(r,stop)
     return r
+

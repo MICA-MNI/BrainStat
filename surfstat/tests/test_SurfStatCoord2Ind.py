@@ -1,5 +1,5 @@
 import sys
-sys.path.append("python")
+sys.path.append("python/need_not_convert")
 from SurfStatCoord2Ind import *
 import surfstat_wrap as sw
 import numpy as np

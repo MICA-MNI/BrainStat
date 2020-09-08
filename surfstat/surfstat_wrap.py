@@ -6,11 +6,13 @@ import matlab
 import numpy as np
 import math
 import sys
+sys.path.append("python")
+sys.path.append("matlab")
 
-def matlab_init_surfstat(surfstat_path='matlab'):
+def matlab_init_surfstat():
     global surfstat_eng
     surfstat_eng = matlab.engine.start_matlab()
-    addpath = surfstat_eng.addpath(surfstat_path)
+    addpath = surfstat_eng.addpath("matlab")
     return surfstat_eng
 
 # ==> SurfStatAvSurf.m <==
@@ -145,8 +147,7 @@ def matlab_SurfStatInflate(surf, w, spherefile):
 # ==> SurfStatLinMod.m <==
 def matlab_SurfStatLinMod(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
 
-    from .python.term import Term
-    surfstat_eng.addpath('./surfstat/matlab/')
+    from term import Term
 
     if isinstance(Y, np.ndarray):
         Y = matlab.double(Y.tolist())

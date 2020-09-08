@@ -1,10 +1,10 @@
+import sys
+sys.path.append("python")
 import numpy as np
 import pytest
-
-from ..python.term import Term
-from ..python.SurfStatLinMod import py_SurfStatLinMod
-
-from .. import surfstat_wrap as sw
+from SurfStatLinMod import py_SurfStatLinMod
+import surfstat_wrap as sw
+from term import Term
 
 surfstat_eng = sw.matlab_init_surfstat()
 
