@@ -6,6 +6,8 @@ from scipy.io import loadmat
 import numpy as np
 import pytest
 
+sw.matlab_init_surfstat()
+
 def dummy_test(slm, mask=None, clusthresh=0.001):
 
     try:
