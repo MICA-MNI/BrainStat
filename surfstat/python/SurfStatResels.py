@@ -397,6 +397,6 @@ def py_SurfStatResels(slm, mask=None):
     D = lkcs.shape[1]-1
     resels = lkcs / np.sqrt(4*np.log(2))**np.arange(0,D+1)
     # back to matlab indexing by +1, otherwise tests will fail
-    edg = edg + 1
+    edg = (edg + 1).astype(int)
 
     return resels, reselspvert, edg
