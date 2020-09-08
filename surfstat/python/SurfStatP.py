@@ -1,6 +1,5 @@
 import sys
 import numpy as np
-import copy
 from scipy.interpolate import interp1d
 sys.path.append("python")
 from stat_threshold import stat_threshold
@@ -113,7 +112,6 @@ def py_SurfStatP(slm, mask=None, clusthresh=0.001):
         thresh = clusthresh
 
     resels, reselspvert, edg = py_SurfStatResels(slm, mask.flatten())
-
     N = mask.sum()
     
     if np.max(slm['t'][0, mask.flatten()]) < thresh:
@@ -131,12 +129,7 @@ def py_SurfStatP(slm, mask=None, clusthresh=0.001):
         clus = []
         clusid = []
     else:
-        # py_SurfStatPeakClus changes the slm after operation, so deepcopy..
-        slm_tmp = copy.deepcopy(slm)
-    
-        peak, clus, clusid = py_SurfStatPeakClus(slm_tmp, mask, thresh,
-                                                 reselspvert, edg.astype(int))
-        
+        peak, clus, clusid = py_SurfStatPeakClus(slm, mask, thresh,reselspvert, edg)
         slm['t'] = slm['t'].reshape(1, slm['t'].size)
         varA = np.concatenate((np.array([[10]]), peak['t'].T , slm['t']),
                               axis=1)
