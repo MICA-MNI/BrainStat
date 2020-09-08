@@ -1,11 +1,11 @@
-Contributing to BrainSpace
+Contributing to BrainStat
 ====================
 
 .. start-marker-cont
 
-Welcome to BrainSpace! We're happy you want to contribute.
+Welcome to BrainStat! We're happy you want to contribute.
 
-These guidelines are designed to make it as easy as possible to get involved. If you have any questions that aren't discussed below, please let us know by opening an `issue <https://github.com/PeerHerholz/BIDSonym>`_!
+These guidelines are designed to make it as easy as possible to get involved. If you have any questions that aren't discussed below, please let us know by opening an `issue <https://github.com/MICA-MNI/BrainStat/issues>`_!
 
 Before you start you'll need to set up a free `GitHub <https://github.com>`_ account and sign in. Here are some `instructions <https://help.github.com/articles/signing-up-for-a-new-github-account/>`_.
 If you are not familiar with version control systems such as git, please see these
@@ -72,20 +72,20 @@ below) that references the original PR.
 
 .. |python| image:: https://img.shields.io/badge/-python-162b70.svg
 
-*These issues are specific to the MATLAB/Python implementation of BrainSpace.*
+*These issues are specific to the MATLAB/Python implementation of BrainStat.*
 
 Please note that, whenever feasible, for new functionality we try to add it to
-both implementations. Don't have experience with either language? The BrainSpace
+both implementations. Don't have experience with either language? The BrainStat
 team may be able to help you convert your changes. 
 
 ===============
 
-We appreciate all contributions to BrainSpace, but those accepted fastest will
+We appreciate all contributions to BrainStat, but those accepted fastest will
 follow a workflow similar to the following:
 
 **1. Comment on an existing issue or open a new issue referencing your addition.**
 
-This allows other members of the BrainSpace development team to confirm that you
+This allows other members of the BrainStat development team to confirm that you
 aren't overlapping with work that's currently underway and that everyone is on
 the same page with the goal of the work you're going to carry out.
 
@@ -95,10 +95,10 @@ everyone involved.
 
 **2. Fork the BrainSpace repository to your profile.**
 
-This is now your own unique copy of the BrainSpace repository.
+This is now your own unique copy of the BrainStat repository.
 Changes here won't affect anyone else's work, so it's a safe space to explore edits to the code!
 
-Make sure to keep your fork up to date with the original BrainSpace repository.
+Make sure to keep your fork up to date with the original BrainStat repository.
 One way to do this is to `configure a new remote named "upstream" <https://help.github.com/articles/configuring-a-remote-for-a-fork/>`_ and to `sync your fork with the upstream repository <https://help.github.com/articles/syncing-a-fork/>`_.
 
 **3. Submit a pull request.**

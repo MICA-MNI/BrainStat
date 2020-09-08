@@ -1,153 +1,270 @@
-import matlab.engine
-import matlab
-from numbers import Number
+import warnings
+
 import numpy as np
-import numpy.matlib
-import sys
-sys.path.append("../surfstat")
-import surfstat_wrap as sw
+import numpy.linalg as la
+
+from .term import Term, Random
+from .SurfStatEdg import py_SurfStatEdg
+
 
 def py_SurfStatLinMod(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
+    """ Fits linear mixed effects models to surface data and estimates resels.
 
-	maxchunk=2^20;
+    Parameters
+    ----------
+    Y : ndarray, shape = (n_samples, n_verts) or (n_samples, n_verts, n_feats)
+        Surface data.
+    M : Term or Random
+        Design matrix.
+    surf : dict, optional
+        Surface triangles (surf['tri']) or volumetric data (surf['lat']).
+        If 'tri', shape = (n_edges, 2). If 'lat', then it is a boolean 3D
+        array. Default is None.
+    niter : int, optional
+        Number of extra iterations of the Fisher scoring algorithm for fitting
+        mixed effects models. Default is 1.
+    thetalim : float, optional
+        Lower limit on variance coefficients, in sd's. Default is 0.01.
+    drlim : float, optional
+        Step of ratio of variance coefficients, in sd's. Default 0.1.
 
-	if isinstance(Y, Number):
-		isnum = True
-		Y = np.array([[Y]])
-		s = np.shape(Y)
+    Returns
+    -------
+    slm : dict
+        Dictionary with the following keys:
 
-	elif isinstance(Y, np.ndarray):
-		isnum = True
-		if len(np.shape(Y)) == 1:
-			Y = Y.reshape(1, len(Y))
-		s = np.shape(Y)
+        - 'X' : ndarray, shape = (n_samples, n_pred)
+            Design matrix.
+        - 'df' : int
+            Degrees of freedom.
+        - 'coef' : ndarray, shape = (n_pred, n_verts)
+            Model coefficients.
+        - 'SSE' : ndarray, shape = (n_feat, n_verts)
+            Sum of square errors.
+        - 'V' : ndarray, shape = (n_samples, n_samples, n_rand)
+            Variance matrix bases. Only when mixed effects.
+        - 'r' : ndarray, shape = (n_rand - 1, n_verts)
+            Coefficients of the first (q-1) components of 'V' divided by their
+            sum. Coefficients are clamped to a minimum of 0.01 x sd.
+            Only when mixed effects.
+        - 'dr' : ndarray
+             Vector of increments in 'r' = 0.1 x sd
+        - 'resl' : ndarray, (n_edges, n_feat)
+            Sum over observations of squares of differences of normalized
+            residuals along each edge. Only when ``surf is not None``.
+        - 'tri' : ndarray, (n_cells, 3)
+            Cells in surf. Only when ``surf is not None``.
+        - 'lat' : ndarray
+            Neighbors in lattice.
 
-	n = s[0]
-	v = s[1]
-	if len(s) == 2:
-		k = 1
-	else:
-		k = s[2]
+    """
 
-	keys = ['X', 'df', 'coef', 'SSE']
-	slm = {key: None for key in keys}
+    n, v = Y.shape[:2]  # number of samples x number of points
+    k = 1 if Y.ndim == 2 else Y.shape[2]  # number of features
 
-	if isinstance(M, Number):
-		M = np.array([[M]])
-		slm['X'] = np.matlib.repmat(M,n,1)
-		pinvX = np.linalg.pinv(slm['X'])
-		r = np.ones((n,1)) - np.dot(pinvX*np.ones((n,1)), slm['X'])
+    # Get data from term/random
+    V = None
+    if isinstance(M, Random):
+        X, Vl = M.mean.matrix.values, M.variance.matrix.values
 
-	elif isinstance(M, np.ndarray):
-		if len(np.shape(M)) == 1:
-			slm['X'] = np.matlib.repmat(M.reshape(1,len(M)),n,1)
-			pinvX = np.linalg.pinv(slm['X'])
-			r = np.ones((n,1)) - np.dot(slm['X'], np.dot(pinvX, np.ones((n,1))))
-		else:
-			slm['X'] = M
-			pinvX = np.linalg.pinv(slm['X'])
-			r = np.ones((n,1)) - np.dot(slm['X'], pinvX * np.ones((n)))
-	q = 1
+        # check in var contains intercept (constant term)
+        n2, q = Vl.shape
+        II = np.identity(n).ravel()
 
-	if np.square(r).mean() > np.spacing(1):
-		print('Did you forget a constant term? :-)')
+        r = II - Vl @ (la.pinv(Vl) @ II)
+        if (r ** 2).mean() > np.finfo(float).eps:
+            warnings.warn('Did you forget an error term, I? :-)')
 
-	p = np.shape(slm['X'])[1]
-	slm['df'] = np.array([n - np.linalg.matrix_rank(slm['X'])])
+        if q > 1 or q == 1 and np.abs(II - Vl.T).sum() > 0:
+            V = Vl.reshape(n, n, -1)
 
-	if k == 1:
-		slm['coef'] = np.zeros((p,v))
-	else:
-		slm['coef'] = np.zeros((p,v,k))
-	  
-	k2 = k*(k+1)/2;
-	slm['SSE'] = np.zeros((int(k2),v))
+    else:  # No random term
+        q = 1
+        if isinstance(M, Term):
+            X = M.matrix.values
+        else:
+            if M.size > 1:
+                warnings.warn('If you don''t convert vectors to terms you can '
+                              'get unexpected results :-(')
+            X = M
 
-	if isnum:
-		nc = 1
-		chunk = v
+        if X.shape[0] == 1:
+            X = np.tile(X, (n, 1))
 
+    # check if term (x) contains intercept (constant term)
+    pinvX = la.pinv(X)
+    r = 1 - X @ pinvX.sum(1)
+    if (r ** 2).mean() > np.finfo(float).eps:
+        warnings.warn('Did you forget an error term, I? :-)')
 
-	for ic in range(0, nc):
-		ic += 1
-		v1 = 1+(ic-1)*chunk
-		v2 = min(v1+chunk-1,v)
-		vc = v2-v1+1
+    p = X.shape[1]  # number of predictors
+    df = n - la.matrix_rank(X)  # degrees of freedom
 
+    slm = dict(df=df, X=X)
 
-		if k == 1:
-			if q == 1:
+    if k == 1:  # Univariate
 
-				# fixed effects
-				if not 'V' in slm:
+        if q == 1:  # Fixed effects
 
-					if s == (1, 1) and np.shape(M)[0]>1:
-						coef = pinvX * Y[0][0]
+            if V is None:  # OLS
+                coef = pinvX @ Y
+                Y = Y - X @ coef
 
-					else:
-						coef = np.dot(pinvX, Y)
+            else:
+                V = V / np.diag(V).mean(0)
+                Vmh = la.inv(la.cholesky(V).T)
 
-					Y = Y - np.dot(slm['X'], coef)
+                coef = (la.pinv(Vmh @ X) @ Vmh) @ Y
+                Y = Vmh @ Y - (Vmh @ X) @ coef
 
-				SSE = np.sum(np.power(Y, 2), axis=0)
+            sse = np.sum(Y ** 2, axis=0)
 
-			slm['coef'][:,(v1-1):(v2)] = coef
-			slm['SSE'][:,(v1-1):v2] = SSE
+        else:  # mixed effects
 
-		else:
-			# multivariate
-			print('multivariate ...')
+            q1 = q - 1
 
-			if not 'V' in slm:
-				X = slm['X'];
+            V /= np.diagonal(V, axis1=0, axis2=1).mean(-1)
+            slm_r = np.zeros((q1, v))
 
-			coef = np.zeros((p,vc,k))
-			for j in range(0,k):
-				coef[:,:,j] = np.dot(pinvX, Y[:,:,j])
-				Y[:,:,j] = Y[:,:,j] - np.dot(X, coef[:,:,j])
+            # start Fisher scoring algorithm
+            R = np.eye(n) - X @ la.pinv(X)
+            RVV = (V.T @ R.T).T
+            E = (Y.T @ (R.T @ RVV.T))
+            E *= Y.T
+            E = E.sum(-1)
 
-			k2 = k * (k+1)/2;
-			SSE = np.zeros((int(k2), vc))
-			j = 0
-			for j1 in range(0, k):
-					for j2 in range(0, j1+1):
-						SSE[j,:] = np.sum(np.multiply(Y[:,:,j1], Y[:,:,j2]), axis=0)
-						
-						j += 1
-			slm['coef'][:,(v1-1):(v2),:] = coef
-			slm['SSE'][:,(v1-1):v2] = SSE
+            RVV2 = np.zeros([n, n, q])
+            E2 = np.zeros([q, v])
+            for j in range(q):
+                RV2 = R @ V[..., j]
+                E2[j] = (Y * ((RV2 @ R) @ Y)).sum(0)
+                RVV2[..., j] = RV2
 
-	if surf is not None:
-		print('surf is given... ')
+            M = np.einsum('ijk,jil->kl', RVV, RVV, optimize='optimal')
 
-		sw.matlab_init_surfstat()
-		edg = sw.matlab_SurfStatEdg(surf)
+            theta = la.pinv(M) @ E
+            tlim = np.sqrt(2*np.diag(la.pinv(M))) * thetalim
+            tlim = tlim[:, None] * theta.sum(0)
+            m = theta < tlim
+            theta[m] = tlim[m]
+            r = theta[:q1] / theta.sum(0)
 
-		e = np.shape(edg)[0]
-		e1 = edg[:,0].astype(int) -1 
-		e2 = edg[:,1].astype(int) -1
+            Vt = 2*la.pinv(M)
+            m1 = np.diag(Vt)
+            m2 = 2 * Vt.sum(0)
+            Vr = m1[:q1]-m2[:q1] * slm_r.mean(1) + Vt.sum()*(r**2).mean(-1)
+            dr = np.sqrt(Vr) * drlim
 
-		slm['tri']  = surf
-		slm['resl'] = np.zeros((e, k))
+            # Extra Fisher scoring iterations
+            for it in range(niter):
+                irs = np.round(r.T / dr)
+                ur, jr = np.unique(irs, axis=0, return_inverse=True)
+                nr = ur.shape[0]
+                for ir in range(nr):
+                    iv = jr == ir
+                    rv = r[:, iv].mean(1)
 
-		for j in range(1, k+1):
-			jj = int(j * (j+1)/2 -1)
-			normr = np.sqrt(slm['SSE'][jj,:])
+                    Vs = (1-rv.sum()) * V[..., q-1]
+                    Vs += (V[..., :q1] * rv).sum(-1)
 
-			s = 0
-			for i in range(0, n):
+                    Vinv = la.inv(Vs)
+                    VinvX = Vinv @ X
+                    G = la.pinv(X.T @ VinvX) @ VinvX.T
+                    R = Vinv - VinvX @ G
 
-				if k == 1:
-					u = np.divide(Y[i,:], normr)
-				else:
-					u = np.divide(Y[i,:,j-1], normr)
+                    RVV = (V.T @ R.T).T
+                    E = (Y[:, iv].T @ (R.T @ RVV.T))
+                    E *= Y[:, iv].T
+                    E = E.sum(-1)
 
-				s = s + np.square(u[e1] - u[e2])
+                    M = np.einsum('ijk,jil->kl', RVV, RVV, optimize='optimal')
 
-			slm['resl'][:, j-1] = s;
+                    thetav = la.pinv(M) @ E
+                    tlim = np.sqrt(2*np.diag(la.pinv(M))) * thetalim
+                    tlim = tlim[:, None] * thetav.sum(0)
 
-	return slm
+                    m = thetav < tlim
+                    thetav[m] = tlim[m]
+                    theta[:, iv] = thetav
 
+                r = theta[:q1] / theta.sum(0)
 
+            # finish Fisher scoring
+            irs = np.round(r.T / dr)
+            ur, jr = np.unique(irs, axis=0, return_inverse=True)
+            nr = ur.shape[0]
 
+            coef = np.zeros((p, v))
+            sse = np.zeros(v)
+            for ir in range(nr):
+                iv = jr == ir
+                rv = r[:, iv].mean(1)
 
+                Vs = (1 - rv.sum()) * V[..., q - 1]
+                Vs += (V[..., :q1] * rv).sum(-1)
+
+                # Vmh = la.inv(la.cholesky(Vs).T)
+                Vmh = la.inv(la.cholesky(Vs))
+                VmhX = Vmh @ X
+                G = (la.pinv(VmhX.T @ VmhX) @ VmhX.T) @ Vmh
+
+                coef[:, iv] = G @ Y[:, iv]
+                R = Vmh - VmhX @ G
+                Y[:, iv] = R @ Y[:, iv]
+                sse[iv] = (Y[:, iv]**2).sum(0)
+
+            slm.update(dict(r=r, dr=dr[:, None]))
+
+        sse = sse[None]
+
+    else:  # multivariate
+        if q > 1:
+            raise ValueError('Multivariate mixed effects models not yet '
+                             'implemented :-(')
+
+        if V is None:
+            X2 = X
+        else:
+            V = V / np.diag(V).mean(0)
+            Vmh = la.inv(la.cholesky(V)).T
+            X2 = Vmh @ X
+            pinvX = la.pinv(X2)
+            Y = Vmh @ Y
+
+        coef = pinvX @ Y.T.swapaxes(-1, -2)
+        Y = Y - (X2 @ coef).swapaxes(-1, -2).T
+        coef = coef.swapaxes(-1, -2).T
+
+        k2 = k * (k + 1) // 2
+        sse = np.zeros((k2, v))
+        j = -1
+        for j1 in range(k):
+            for j2 in range(j1+1):
+                j = j + 1
+                sse[j] = (Y[..., j1]*Y[..., j2]).sum(0)
+
+    slm.update(dict(coef=coef, SSE=sse))
+    if V is not None:
+        slm['V'] = V
+
+    if surf is not None and ('tri' in surf or 'lat' in surf):
+        key = 'tri' if 'tri' in surf else 'lat'
+        slm[key] = surf[key]
+
+        edges = py_SurfStatEdg(surf)  # should start from 0?
+        if key == 'lat':
+            edges -= 1
+        n_edges = edges.shape[0]
+
+        resl = np.zeros((n_edges, k))
+        Y = np.atleast_3d(Y)
+
+        for j in range(k):
+            normr = np.sqrt(sse[((j+1) * (j+2) // 2) - 1])
+            for i in range(n):
+                u = Y[i, :, j] / normr
+                resl[:, j] += np.diff(u[edges], axis=1).ravel()**2
+
+        slm['resl'] = resl
+
+    return slm

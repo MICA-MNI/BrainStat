@@ -71,6 +71,23 @@ else
     k=s(3);
 end
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This is only for testing term/random cause they're not handle objects
+% Should be removed
+if isa(M, 'struct')
+
+    if isfield(M, 'matrix')  % fix
+        if isfield(M, 'names')
+            M = term(M.matrix, M.names);
+        else
+            M = term(M.matrix);
+        end
+    else % random
+        M = random(M.variance.matrix, M.mean.matrix, M.variance.names, ...
+               M.mean.names, 1);
+    end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 if isa(M,'random')
     [slm.X,V]=double(M);
     [n2 q]=size(V);
