@@ -87,12 +87,8 @@ def py_SurfStatP(slm, mask=None, clusthresh=0.001):
     if v == 1:
         varA = varA = np.concatenate((np.array([10]), slm['t'][0]))
         pval = {}
-        pval['P'] = stat_threshold(search_volume = 0, num_voxels = 1, 
-                                   fwhm = 0, df = df, p_val_peak = varA,
-                                   cluster_threshold = 0.001, 
-                                   p_val_extent = 0.05, nconj = 1,
-                                   nvar = float(slm['k']), EC_file = None,
-                                   expr = None, nprint = 0)[0]
+        pval['P'] = stat_threshold(df = df, p_val_peak = varA,
+                                   nvar = float(slm['k']), nprint = 0)[0]
         pval['P'] = pval['P'][1]
         peak = []
         clus = []
@@ -101,12 +97,8 @@ def py_SurfStatP(slm, mask=None, clusthresh=0.001):
         return pval, peak, clus, clusid
     
     if clusthresh < 1:
-        thresh = stat_threshold(search_volume = 0, num_voxels = 1, 
-                                fwhm = 0, df = df, p_val_peak = clusthresh,
-                                cluster_threshold = 0.001, p_val_extent = 0.05, 
-                                nconj = 1, nvar = float(slm['k']),
-                                EC_file = None, expr = None, 
-                                nprint = 0)[0]
+        thresh = stat_threshold(df = df, p_val_peak = clusthresh,
+                                nvar = float(slm['k']), nprint = 0)[0]
         thresh = float(thresh[0])
     else:
         thresh = clusthresh
@@ -120,10 +112,7 @@ def py_SurfStatP(slm, mask=None, clusthresh=0.001):
         pval['P'] = stat_threshold(search_volume = resels, num_voxels = N,
                                    fwhm = 1, df = df,
                                    p_val_peak = varA.flatten(), 
-                                   cluster_threshold = 0.001, 
-                                   p_val_extent = 0.05,  nconj = 1,
-                                   nvar = float(slm['k']), EC_file = None, 
-                                   expr = None, nprint = 0)[0]
+                                   nvar = float(slm['k']), nprint = 0)[0]
         pval['P'] = pval['P'][1:v+1]
         peak = []
         clus = []
@@ -134,15 +123,13 @@ def py_SurfStatP(slm, mask=None, clusthresh=0.001):
         varA = np.concatenate((np.array([[10]]), peak['t'].T , slm['t']),
                               axis=1)
         varB = np.concatenate((np.array([[10]]), clus['resels']))
-        pp, clpval, a,b,c,d = stat_threshold(search_volume = resels, 
-                                             num_voxels = N, fwhm = 1,
-                                             df = df, 
-                                             p_val_peak = varA.flatten(),
-                                             cluster_threshold = thresh,
-                                             p_val_extent = varB,
-                                             nconj = 1, nvar = float(slm['k']),
-                                             EC_file = None, 
-                                             expr = None, nprint = 0)
+        pp, clpval, _, _, _, _, = stat_threshold(search_volume = resels,
+                                                 num_voxels = N, fwhm = 1,
+                                                 df = df,
+                                                 p_val_peak = varA.flatten(),
+                                                 cluster_threshold = thresh,
+                                                 p_val_extent = varB,
+                                                 nvar = float(slm['k']), nprint = 0)
         lenPP = len(pp[1:len(peak['t'])+1])
         peak['P'] = pp[1:len(peak['t'])+1].reshape(lenPP, 1)
         pval = {}
@@ -159,9 +146,7 @@ def py_SurfStatP(slm, mask=None, clusthresh=0.001):
             
     tlim = stat_threshold(search_volume = resels, num_voxels = N, fwhm = 1,
                           df = df, p_val_peak = np.array([0.5, 1]),
-                          cluster_threshold=0.001, p_val_extent=0.05, nconj=1, 
-                          nvar = float(slm['k']), EC_file = None, expr = None, 
-                          nprint = 0)[0]
+                          nvar = float(slm['k']), nprint = 0)[0]
     tlim = tlim[1]
     pval['P'] = pval['P'] * (slm['t'][0,:] > tlim) + (slm['t'][0,:] <= tlim)
     pval['mask'] = mask
