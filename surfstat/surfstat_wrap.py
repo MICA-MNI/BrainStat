@@ -240,9 +240,39 @@ def matlab_SurfStatNorm(Y, mask=None, subdiv='s'):
 
 
 # ==> SurfStatP.m <==
-# TODO original matlab signature was SurfStatP(slm, mask, clusthresh):
-def matlab_SurfStatP(results):
-    return surfstat_eng.SurfStatP(results)
+def matlab_SurfStatP(slm, mask=None, clusthresh=0.001):
+
+    slm_mat = slm.copy()
+    for key in slm_mat.keys():
+        if isinstance(slm_mat[key], np.ndarray):
+            slm_mat[key] = matlab.double(slm_mat[key].tolist()) 
+        else:
+            slm_mat[key] = surfstat_eng.double(slm_mat[key])
+
+    if mask is None:
+        mask_mat = matlab.double([])
+        pval, peak, clus, clusid = surfstat_eng.SurfStatP(slm_mat, mask_mat, 
+                                                          clusthresh, nargout=4) 
+    else:
+        mask_mat = matlab.double(np.array(mask, dtype=int).tolist())
+        mask_mat = matlab.logical(mask_mat)    
+        pval, peak, clus, clusid = surfstat_eng.SurfStatP(slm_mat, mask_mat, 
+                                                          clusthresh, nargout=4)
+    for key in pval:
+        pval[key] = np.array(pval[key])
+    for key in peak:
+        peak[key] = np.array(peak[key])
+    for key in clus:
+        clus[key] = np.array(clus[key])
+    clusid = np.array(clusid)
+
+    return pval, peak, clus, clusid
+
+
+
+
+
+
 
 # ==> SurfStatPCA.m <==
 def matlab_SurfStatPCA(Y, mask, X, k):
