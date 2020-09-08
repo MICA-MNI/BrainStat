@@ -12,7 +12,6 @@ import numpy as np
 import matlab.engine
 import math
 import itertools
-import pdb
 import pytest
 from scipy.io import loadmat
 
@@ -87,16 +86,11 @@ def dummy_test(eng, search_volume, num_voxels, fwhm, df, p_val_peak,
             # imaginary outputs there are edge-cases where python returns nan 
             # and matlab returns a complex number. Neither of these should ever 
             # happen to begin with, so just skip these cases.
-                continue
-
+            continue
         result = np.allclose(np.squeeze(np.asarray(py)),
                 np.squeeze(np.asarray(mat)),
                 rtol=1e-05, equal_nan=True)
-        #print(result)
         testout_statthreshold.append(result)
-
-    if not np.all(testout_statthreshold):
-        pdb.set_trace()
 
     assert all(flag == True for (flag) in testout_statthreshold)
 
@@ -433,7 +427,7 @@ def test_15():
     num_voxels        = 100
     fwhm              = 0
     df                = 5
-    p_val_peak        = 0.02
+    p_val_peak        = np.array([[0.01, 0.02],[0.03,0.04]])
     cluster_threshold = [0.001, 0.1, 0,6]
     p_val_extent      = 0.01
     nconj             = 0.02
@@ -445,7 +439,7 @@ def test_15():
     dummy_test(eng, search_volume, num_voxels, fwhm, df, p_val_peak, 
             cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
 
-# buggy case 
+# Test 16 
 def test_16():
     #slmdata = loadmat('./tests/data/someresels.mat')
     resels = np.array([[4.00000000e+00,  np.NaN, 6.59030991e+03]])
@@ -469,10 +463,10 @@ def test_16():
     dummy_test(eng, search_volume, num_voxels, fwhm, df, p_val_peak, 
             cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
 
-# buggy case 
+# Test 17
 def test_17():
     somedata = loadmat('./tests/data/varA.mat')
-    varA = somedata['varA'][0]
+    varA = somedata['varA']
     df = somedata['df']
     k = somedata['k'][0]
     
