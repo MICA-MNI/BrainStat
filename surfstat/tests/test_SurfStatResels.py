@@ -8,7 +8,6 @@ import math
 import itertools
 import pytest
 from scipy.io import loadmat
-import pdb 
 
 sw.matlab_init_surfstat()
 
@@ -35,7 +34,7 @@ def dummy_test(slm, mask=None):
     else:
         py_output = [resels_py,
                      reselspvert_py,
-                     edg_py+1]
+                     edg_py]
     
     # compare matlab-python outputs
     test_out = [] 
@@ -44,9 +43,7 @@ def dummy_test(slm, mask=None):
                             np.squeeze(np.asarray(mat)),
                             rtol=1e-05, equal_nan=True)
         test_out.append(result)
-    
-    if not all(flag == True for (flag) in test_out):      
-        pdb.set_trace()  
+
     assert all(flag == True for (flag) in test_out)
 
 # Test with only slm.tri

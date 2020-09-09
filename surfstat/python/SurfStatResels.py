@@ -31,7 +31,7 @@ def py_SurfStatResels(slm, mask=None):
     resels : a 2D numpy array of shape (1, (D+1)).
         Array of 0,...,D dimensional resels of the mask, EC of the mask 
         if slm['resl'] is not given.
-    reselspvert : a 1D numpy array of shape (v,).
+    reselspvert : a 2D numpy array of shape (1,v).
         Array of D-dimensional resels per mask vertex.
     edg : a 2D numpy array of shape (e, 2).
         Array of edge indices.
@@ -99,6 +99,8 @@ def py_SurfStatResels(slm, mask=None):
                         np.bincount(tri[masktri,j], weights=r2, minlength=v)
             D = 2
             reselspvert = reselspvert.T / (D+1) / np.sqrt(4*np.log(2)) ** D
+            # from shape (v,) to (1,v)
+            reselspvert = np.reshape(reselspvert, (1,-1))
         else:
             reselspvert = None
         
@@ -382,6 +384,8 @@ def py_SurfStatResels(slm, mask=None):
         # ignore it as no equivalent exists in Python - RV. 
         D = 2 + (K>1)
         reselspvert = reselspvert.T / (D+1) / np.sqrt(4*np.log(2)) ** D
+        # from shape (v,) to (1,v)
+        reselspvert = np.reshape(reselspvert, (1,-1))
     
     ## Compute resels - RV
     D1 = lkc.shape[0]-1
@@ -392,5 +396,7 @@ def py_SurfStatResels(slm, mask=None):
     lkcs = np.atleast_2d(lkcs)
     D = lkcs.shape[1]-1
     resels = lkcs / np.sqrt(4*np.log(2))**np.arange(0,D+1)
+    # back to matlab indexing by +1, otherwise tests will fail
+    edg = (edg + 1).astype(int)
 
     return resels, reselspvert, edg
