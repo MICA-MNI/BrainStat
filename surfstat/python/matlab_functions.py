@@ -84,9 +84,8 @@ def colon(start,stop,increment=1):
     r : Numpy array of the requested numbers.  
     """
     r = np.arange(start,stop,increment)
-    if start > stop:
+    if (start > stop and increment > 0) or (start < stop and increment < 0):
         return r
     elif start == stop or r[-1] + increment == stop:
         r = np.append(r,stop)
     return r
-
