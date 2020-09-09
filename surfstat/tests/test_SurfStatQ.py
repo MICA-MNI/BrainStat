@@ -7,6 +7,8 @@ import pytest
 from scipy.io import loadmat
 import random
 
+sw.matlab_init_surfstat()
+
 def dummy_test(slm, mask=None):
 
     try:

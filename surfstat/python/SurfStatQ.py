@@ -1,24 +1,8 @@
 import sys
 import numpy as np
-from scipy.io import loadmat
 sys.path.append("python")
-sys.path.append("../surfstat")
-import surfstat_wrap as sw
-import matlab.engine
-
-# WRAPPING FUNCTIONS NEED TO BE REMOVED LATER...
-sw.matlab_init_surfstat()
-eng = matlab.engine.start_matlab()
-eng.addpath('matlab/')
-def var2mat(var):
-    # Brings the input variables to matlab format.
-    if isinstance(var, np.ndarray):
-        var = var.tolist()
-    elif var == None:
-        var = []
-    if not isinstance(var,list) and not isinstance(var, np.ndarray):
-        var = [var]
-    return matlab.double(var)
+from stat_threshold import stat_threshold
+from SurfStatResels import py_SurfStatResels
 
 def py_SurfStatQ(slm, mask=None):
     """Q-values for False Discovey Rate of resels.
@@ -67,28 +51,15 @@ def py_SurfStatQ(slm, mask=None):
         df[0, ndf-1] = slm['dfs'][mask>0].mean()
 
     if 'du' in slm:
-        # NEED TO BE CALLED FROM PYTHON SURFSTATRESELS
-        resels, reselspvert, edg = sw.matlab_SurfStatResels(slm, mask)
+        resels, reselspvert, edg = py_SurfStatResels(slm, mask.flatten())
     else:
         reselspvert = np.ones((1,v))
     reselspvert[0, mask.flatten().astype(bool)]
     
-    # NEED TO BE CALLED FROM PYTHON STAT_THRESHOLD
     varA = np.append(10, slm['t'][0, mask.flatten().astype(bool)])
-    P_val = np.array(eng.stat_threshold(var2mat(0),
-                                        var2mat(1),
-                                        var2mat(0),
-                                        var2mat(df),
-                                        var2mat(varA),
-                                        var2mat([]),
-                                        var2mat([]),
-                                        var2mat([]),
-                                        var2mat(slm['k']),
-                                        var2mat([]),
-                                        var2mat([]),
-                                        var2mat(0),
-                                        nargout=1))
-    P_val = P_val[0,1:P_val.shape[1]]
+    P_val = stat_threshold(df = df, p_val_peak = varA,
+                           nvar = float(slm['k']), nprint = 0)[0]
+    P_val = P_val[1:len(P_val)]
     nx = len(P_val)
     index = P_val.argsort()
     P_sort = P_val[index]
