@@ -8,7 +8,6 @@ from term import Term
 
 surfstat_eng = sw.matlab_init_surfstat()
 
-
 def dummy_test(Y, model, surf=None):
     py_slm = py_SurfStatLinMod(Y, model, surf=surf)
     mat_slm = sw.matlab_SurfStatLinMod(Y, model, surf=surf)
@@ -129,7 +128,7 @@ def test_2d_A_is_1d_B_is_surf_tri():
 
 
 # 3D inputs --- A is a 3D input, B is Term
-def test_3d_A_is_2d_B_is_term_sruf_tri():
+def test_3d_A_is_2d_B_is_term_surf_tri():
     n = np.random.randint(3, 100)
     k = np.random.randint(3, 100)
     v = np.random.randint(3, 100)
