@@ -49,7 +49,7 @@ def test_01():
     slm = {}
     slm['t'] = slmdata['slm']['t'][0,0]
     slm['tri'] = slmdata['slm']['tri'][0,0]
-    mask = np.ones((1,64984))
+    mask = np.ones((64984))
     thresh = random.random()
     dummy_test(slm, mask, thresh)
 
@@ -93,7 +93,7 @@ def test_05():
     slm = {}
     slm['t'] = slmdata['slm']['t'][0,0]
     slm['tri'] = slmdata['slm']['tri'][0,0]
-    mask = np.ones((1,64984))
+    mask = np.ones((64984))
     thresh = random.random()
     reselspvert = np.random.rand(64984)
     dummy_test(slm, mask, thresh, reselspvert)
@@ -295,7 +295,7 @@ def test_19():
     slm = {}
     slm['t'] = slmdata['slm']['t'][0,0]
     slm['tri'] = slmdata['slm']['tri'][0,0]
-    mask = np.ones((1,64984))
+    mask = np.ones((64984))
     thresh = 100000
     dummy_test(slm, mask, thresh)
 
