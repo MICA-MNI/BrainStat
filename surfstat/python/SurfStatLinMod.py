@@ -252,8 +252,7 @@ def py_SurfStatLinMod(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
         slm[key] = surf[key]
 
         edges = py_SurfStatEdg(surf)  # should start from 0?
-        if key == 'lat':
-            edges -= 1
+
         n_edges = edges.shape[0]
 
         resl = np.zeros((n_edges, k))

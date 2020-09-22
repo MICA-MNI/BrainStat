@@ -33,8 +33,8 @@ def py_SurfStatP(slm, mask=None, clusthresh=0.001):
             In fact, [nx,ny,nz] = size(volume).
         surf['dfs'] : 2D numpy array of shape (1,v), dtype=int.
             Optional effective degrees of freedom.
-    mask : 2D numpy array of shape (1,v), dtype=bool.
-        1=inside, 0=outside, v= number of vertices. By default: np.ones((1,v), 
+    mask : 1D numpy array of shape (v), dtype=bool.
+        1=inside, 0=outside, v= number of vertices. By default: np.ones((v), 
         dtype=bool).
     clusthresh: a float.
         P-value threshold or statistic threshold for defining clusters.
@@ -76,7 +76,7 @@ def py_SurfStatP(slm, mask=None, clusthresh=0.001):
     l, v =np.shape(slm['t'])
 
     if mask is None:
-        mask = np.ones((1,v), dtype=bool)
+        mask = np.ones((v), dtype=bool)
 
     df = np.zeros((2,2))
     ndf = len(slm['df'])
@@ -84,7 +84,7 @@ def py_SurfStatP(slm, mask=None, clusthresh=0.001):
     df[1, 0:2] = slm['df'][ndf-1]
     
     if 'dfs' in slm.keys():
-        df[0, ndf-1] = slm['dfs'][mask > 0].mean()
+        df[0, ndf-1] = slm['dfs'][0,mask > 0].mean()
     
     if v == 1:
         varA = varA = np.concatenate((np.array([10]), slm['t'][0]))
@@ -105,10 +105,10 @@ def py_SurfStatP(slm, mask=None, clusthresh=0.001):
     else:
         thresh = clusthresh
 
-    resels, reselspvert, edg = py_SurfStatResels(slm, mask.flatten())
+    resels, reselspvert, edg = py_SurfStatResels(slm, mask)
     N = mask.sum()
     
-    if np.max(slm['t'][0, mask.flatten()]) < thresh:
+    if np.max(slm['t'][0, mask]) < thresh:
         pval = {}
         varA = np.concatenate((np.array([[10]]), slm['t']), axis=1)
         pval['P'] = stat_threshold(search_volume = resels, num_voxels = N,

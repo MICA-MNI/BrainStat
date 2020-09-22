@@ -21,12 +21,12 @@ def py_SurfStatPeakClus(slm, mask, thresh, reselspvert=None, edg=None):
         slm['lat'] : numpy array of shape (nx,nx,nz),
             values should be either 0 or 1.
             note that [nx,ny,nz]=size(volume).
-        mask : numpy array of shape (1,v), dytpe=int,
+        mask : numpy array of shape (v), dytpe=int,
             values should be either 0 or 1.
         thresh : float,
             clusters are vertices where slm['t'][0,mask]>=thresh.
-        reselspvert : numpy array of shape (1,v),
-            resels per vertex, by default: np.ones((1,v)).
+        reselspvert : numpy array of shape (v),
+            resels per vertex, by default: np.ones(v).
         edg :  numpy array of shape (e,2), dtype=int,
             edge indices, by default computed from SurfStatEdg function.
         slm['df'] : int,
@@ -59,7 +59,7 @@ def py_SurfStatPeakClus(slm, mask, thresh, reselspvert=None, edg=None):
 
     l, v = np.shape(slm['t'])
     slm_t = copy.deepcopy(slm['t'])
-    slm_t[0, ~mask.flatten().astype(bool)] = slm_t[0,:].min()
+    slm_t[0, ~mask.astype(bool)] = slm_t[0,:].min()
     t1 = slm_t[0, edg[:,0]]
     t2 = slm_t[0, edg[:,1]]
     islm = np.ones((1,v))
@@ -110,7 +110,7 @@ def py_SurfStatPeakClus(slm, mask, thresh, reselspvert=None, edg=None):
     if reselspvert is None:
         reselsvox = np.ones(np.shape(vox))
     else:
-        reselsvox = reselspvert[0, vox-1]
+        reselsvox = reselspvert[vox-1]
         
     # calling matlab-python version for scipy's interp1d
     nf1 = interp1(np.append(0, ucid), np.arange(0,nclus+1), nf, 

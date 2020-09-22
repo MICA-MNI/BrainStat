@@ -7,7 +7,7 @@ def py_SurfStatNorm(Y, mask=None, subdiv='s'):
     # Inputs     	
     # Y      = numpy array of shape (n x v) or (n x v x k). 
     #          v=#vertices.
-    # mask   = numpy boolean array of shape (1 x v). 
+    # mask   = numpy boolean array of shape (v). 
     #          True=inside the mask, False=outside. 
     # subdiv = 's' for Y=Y-Yav or 'd' for Y=Y/Yav.
     # Outputs

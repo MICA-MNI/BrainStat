@@ -8,7 +8,6 @@ import math
 import itertools
 import pytest
 from scipy.io import loadmat
-import pdb
 
 sw.matlab_init_surfstat()
 
