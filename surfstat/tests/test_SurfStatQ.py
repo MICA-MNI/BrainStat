@@ -45,7 +45,7 @@ def test_1():
     
 def test_2():
     # randomize slm['t'] and slm['df'], slm['k']=1 
-    k = random.randint(1000, 10000)
+    k = random.randint(1,3)
     m = random.randint(1000, 10000)
     
     slm = {}
@@ -56,7 +56,7 @@ def test_2():
     
 def test_3():
     # randomize slm['t'] and slm['df'], slm['k']
-    k = random.randint(1000, 10000)
+    k = random.randint(1,3)
     m = random.randint(1000, 10000)
     n = random.randint(50, 100)
 
@@ -68,7 +68,7 @@ def test_3():
 
 def test_4():
     # randomize slm['t'] and slm['df'], slm['k'], and a random mask (type bool)
-    k = random.randint(1000, 10000)
+    k = random.randint(1,3)
     m = random.randint(1000, 10000)
     n = random.randint(50, 100)
 
@@ -82,7 +82,7 @@ def test_4():
    
 def test_5():
     # randomize slm['t'] and slm['df'], slm['dfs'], slm['k']=1 
-    k = random.randint(1000, 10000)
+    k = random.randint(1,3)
     m = random.randint(1000, 10000)
     
     slm = {}
@@ -94,7 +94,7 @@ def test_5():
     
 def test_6():
     # randomize slm['t'] and slm['df'], slm['k'], slm['dfs'] and a random mask (type bool)
-    k = random.randint(1000, 10000)
+    k = random.randint(1,3)
     m = random.randint(1000, 10000)
     n = random.randint(50, 100)
 
@@ -109,7 +109,7 @@ def test_6():
     
 def test_7():
     # randomize slm['t'], slm['df'], slm['k'], slm['tri'], slm['dfs'], mask 
-    k = random.randint(1000, 10000)
+    k = random.randint(1,3)
     m = random.randint(1000, 10000)
     n = random.randint(50, 100)
     
@@ -125,7 +125,7 @@ def test_7():
     
 def test_8():
     # random slm['t'], slm['df'], slm['k'], slm['tri'], slm['resl'], slm['dfs']
-    k = random.randint(1000, 10000)
+    k = random.randint(1,3)
     m = random.randint(1000, 10000)
     n = random.randint(1,10)
 
@@ -141,7 +141,7 @@ def test_8():
 def test_9():
     # random slm['t'], slm['df'], slm['tri'], slm['resl'],
     # special input case: slm['dfs'] and slm['du']
-    k = random.randint(1000, 10000)
+    k = random.randint(1,3)
     m = random.randint(1000, 10000)
     n = random.randint(1,10)
 
