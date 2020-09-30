@@ -21,7 +21,7 @@ def py_SurfStatResels(slm, mask=None):
         slm['resl'] : a 2D numpy array of shape (e, k).
             Sum over observations of squares of differences of normalized 
             residuals along each edge.
-    mask : a 1D numpy array of shape (v,), dtype 'bool'.
+    mask : a 1D numpy array of shape (v), dtype 'bool'.
         v must be equal to int(slm['tri'].max()).
         Contains 1's and 0's (1's are included and 0's are excluded).
     
@@ -30,7 +30,7 @@ def py_SurfStatResels(slm, mask=None):
     resels : a 2D numpy array of shape (1, (D+1)).
         Array of 0,...,D dimensional resels of the mask, EC of the mask 
         if slm['resl'] is not given.
-    reselspvert : a 1D numpy array of shape (v,).
+    reselspvert : a 1D numpy array of shape (v).
         Array of D-dimensional resels per mask vertex.
     edg : a 2D numpy array of shape (e, 2).
         Array of edge indices.
@@ -98,7 +98,7 @@ def py_SurfStatResels(slm, mask=None):
                 reselspvert = reselspvert + \
                         np.bincount(tri[masktri,j], weights=r2, minlength=v)
             D = 2
-            reselspvert = reselspvert.T / (D+1) / np.sqrt(4*np.log(2)) ** D
+            reselspvert = reselspvert / (D+1) / np.sqrt(4*np.log(2)) ** D
         else:
             reselspvert = None
         
@@ -381,7 +381,7 @@ def py_SurfStatResels(slm, mask=None):
         ## Original MATLAB code has a if nargout>=2 here, 
         # ignore it as no equivalent exists in Python - RV. 
         D = 2 + (K>1)
-        reselspvert = reselspvert.T / (D+1) / np.sqrt(4*np.log(2)) ** D
+        reselspvert = reselspvert / (D+1) / np.sqrt(4*np.log(2)) ** D
     
     ## Compute resels - RV
     D1 = lkc.shape[0]-1
