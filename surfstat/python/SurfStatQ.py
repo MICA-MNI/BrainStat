@@ -17,7 +17,7 @@ def py_SurfStatQ(slm, mask=None):
         slm['k'] : int,
             number of variates.    
     Optional parameters:
-        mask : numpy array of shape (1,v), dtype 'bool',
+        mask : numpy array of shape (v), dtype 'bool',
             by default ones(1,v).        
         slm['dfs'] : numpy array of shape (1,v),
             effective degrees of freedom.
@@ -40,7 +40,7 @@ def py_SurfStatQ(slm, mask=None):
     l, v = np.shape(slm['t'])
     
     if mask is None:
-        mask = np.ones((1,v), dtype='bool')
+        mask = np.ones((v), dtype='bool')
     
     df = np.zeros((2,2))
     ndf = len(np.array([slm['df']]))
@@ -48,21 +48,21 @@ def py_SurfStatQ(slm, mask=None):
     df[1, 0:2] = slm['df'][ndf-1]
     
     if 'dfs' in slm:
-        df[0, ndf-1] = slm['dfs'][mask>0].mean()
+        df[0, ndf-1] = slm['dfs'][0,mask>0].mean()
 
     if 'du' in slm:
         resels, reselspvert, edg = py_SurfStatResels(slm, mask.flatten())
     else:
-        reselspvert = np.ones((1,v))
+        reselspvert = np.ones((v))
     
-    varA = np.append(10, slm['t'][0, mask.flatten().astype(bool)])
+    varA = np.append(10, slm['t'][0, mask.astype(bool)])
     P_val = stat_threshold(df = df, p_val_peak = varA,
                            nvar = float(slm['k']), nprint = 0)[0]
     P_val = P_val[1:len(P_val)]
     nx = len(P_val)
     index = P_val.argsort()
     P_sort = P_val[index]
-    r_sort = reselspvert[0, index]
+    r_sort = reselspvert[index]
     c_sort = np.cumsum(r_sort)
     P_sort = P_sort / (c_sort + (c_sort <= 0)) * (c_sort > 0) * r_sort.sum()
     m = 1
@@ -77,8 +77,8 @@ def py_SurfStatQ(slm, mask=None):
     Q[0,index] = Q_sort
     
     qval = {}
-    qval['Q'] = np.ones((1, mask.shape[1]))
-    qval['Q'][mask] = Q[0,:]
+    qval['Q'] = np.ones((1, mask.shape[0]))
+    qval['Q'][0,mask] = Q[0,:]
     qval['mask'] = mask
     
     return qval
