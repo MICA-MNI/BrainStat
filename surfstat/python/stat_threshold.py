@@ -200,8 +200,8 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
         for e in range(0,e_loop):
             s1 = 0
             cons = -((d+e)/2+1)*np.log(math.pi)+gammaln(d)+gammaln(e+1)
-            for k in np.arange(0,(d-1+e)/2+1):
-                i, j = np.meshgrid(np.arange(0,k+1),np.arange(0,k+1))
+            for k in colon(0,(d-1+e)/2):
+                j, i = np.meshgrid(np.arange(0,k+1),np.arange(0,k+1))
                 if df2 == math.inf:
                     q1 = np.log(math.pi)/2-((d+e-1)/2+i+j)*np.log(2)
                 else:
