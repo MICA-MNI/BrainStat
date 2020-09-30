@@ -54,7 +54,6 @@ def py_SurfStatQ(slm, mask=None):
         resels, reselspvert, edg = py_SurfStatResels(slm, mask.flatten())
     else:
         reselspvert = np.ones((1,v))
-    reselspvert[0, mask.flatten().astype(bool)]
     
     varA = np.append(10, slm['t'][0, mask.flatten().astype(bool)])
     P_val = stat_threshold(df = df, p_val_peak = varA,
