@@ -77,8 +77,8 @@ def py_SurfStatQ(slm, mask=None):
     Q[0,index] = Q_sort
     
     qval = {}
-    qval['Q'] = np.ones((1, mask.shape[0]))
-    qval['Q'][0,mask] = Q[0,:]
+    qval['Q'] = np.ones((mask.shape[0]))
+    qval['Q'][mask] = np.squeeze(Q[0,:])
     qval['mask'] = mask
     
     return qval
