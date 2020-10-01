@@ -17,10 +17,10 @@ def py_SurfStatLinMod(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
         Surface data.
     M : Term or Random
         Design matrix.
-    surf : dict, optional
+    surf : dict or BSPolyData, optional
         Surface triangles (surf['tri']) or volumetric data (surf['lat']).
         If 'tri', shape = (n_edges, 2). If 'lat', then it is a boolean 3D
-        array. Default is None.
+        array. Alternatively a BSPolyData object can be provided. Default is None.
     niter : int, optional
         Number of extra iterations of the Fisher scoring algorithm for fitting
         mixed effects models. Default is 1.
