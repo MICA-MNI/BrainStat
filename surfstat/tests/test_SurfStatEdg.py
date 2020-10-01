@@ -4,19 +4,23 @@ from SurfStatEdg import *
 import surfstat_wrap as sw
 import numpy as np
 import pytest
+from brainspace.datasets import load_conte69
+from brainspace.mesh.mesh_elements import get_cells
 
 sw.matlab_init_surfstat()
 
-def dummy_test(surf):
-
+def dummy_test(surf_py,surf_mat=None):
+    if surf_mat is None:
+        surf_mat = surf_py
+        
     try:
         # wrap matlab functions
-        Wrapped_edg = sw.matlab_SurfStatEdg(surf)
+        Wrapped_edg = sw.matlab_SurfStatEdg(surf_mat)
 
     except:
         pytest.skip("ORIGINAL MATLAB CODE DOES NOT WORK WITH THESE INPUTS...")
 
-    Python_edg = py_SurfStatEdg(surf) + 1 # +1 to match across implementations.
+    Python_edg = py_SurfStatEdg(surf_py) + 1 # +1 to match across implementations.
 
     # compare matlab-python outputs
     testout = np.allclose(Wrapped_edg, Python_edg, rtol=1e-05, equal_nan=True)
@@ -51,3 +55,8 @@ def test_surf_lat_ones_zeros():
     A['lat'] = np.random.choice([0, 1], size=(10,10,10))    
     dummy_test(A)
 
+# Test BSPolyData. 
+def test_bspolydata():
+    surf_py, _ = load_conte69()
+    surf_mat = {'tri': np.array(get_cells(surf_py))+1}
+    dummy_test(surf_py,surf_mat)
