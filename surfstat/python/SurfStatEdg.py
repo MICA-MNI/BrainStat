@@ -3,14 +3,17 @@ import numpy as np
 from matlab_functions import colon
 
 def py_SurfStatEdg(surf):
+	"""Converts the triangles or lattices of a mesh to edges. 
 
-	# Finds edges of a triangular mesh or lattice.
- 	# Inputs
-	# surf   = a dictionary with key 'tri' or 'lat'
-	#        = surf['tri'] = (t x 3) numpy array of triangle indices, t:#triangles, or,
-	#        = surf['lat'] = 3D numpy array of 1's and 0's (1:in, 0:out).
-	# Outputs
-	# edg    = (e x 2) numpy array of edge indices, e:#edges.
+	Args:
+		surf (dict): = a dictionary with key 'tri' or 'lat'
+	        surf['tri'] = (t x 3) numpy array of triangle indices, t:#triangles, or,
+	        surf['lat'] = 3D numpy array of 1's and 0's (1:in, 0:out).
+		
+	Returns:
+		edg (np.array): A e-by-2 numpy array containing the indices of the edges, where
+  			e is the number of edges. 
+	"""
 
 	if 'tri' in surf:
 		tri = np.sort(surf['tri'], axis=1)
@@ -87,5 +90,7 @@ def py_SurfStatEdg(surf):
 	else:
 		sys.exit('input "surf" must have "lat" or "tri" key !!!')
 
+	edg = edg - 1
+  
 	return edg
 

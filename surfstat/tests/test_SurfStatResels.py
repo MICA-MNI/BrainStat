@@ -34,7 +34,7 @@ def dummy_test(slm, mask=None):
     else:
         py_output = [resels_py,
                      reselspvert_py,
-                     edg_py]
+                     edg_py+1]
     
     # compare matlab-python outputs
     test_out = [] 
@@ -43,11 +43,11 @@ def dummy_test(slm, mask=None):
                             np.squeeze(np.asarray(mat)),
                             rtol=1e-05, equal_nan=True)
         test_out.append(result)
-
+    
     assert all(flag == True for (flag) in test_out)
 
 # Test with only slm.tri
-def test_1():
+def test_01():
     slm = {'tri': np.array(
                   [[1,2,3],
                    [2,3,4], 
@@ -56,7 +56,7 @@ def test_1():
     dummy_test(slm)
 
 # Test with slm.tri and slm.resl
-def test_2():
+def test_02():
     slm = {'tri': np.array(
                [[1,2,3],
                 [2,3,4], 
@@ -66,7 +66,7 @@ def test_2():
     dummy_test(slm)
 
 # Test with slm.tri, slm.resl, and mask
-def test_3():
+def test_03():
     slm = {'tri': np.array(
                [[1,2,3],
                 [2,3,4], 
@@ -77,30 +77,30 @@ def test_3():
     dummy_test(slm,mask)
 
 # Test with slm.lat, 1's only.
-def test_4():
+def test_04():
     slm = {'lat': np.ones((10,10,10))}
     dummy_test(slm)
 
 # Test with slm.lat, both 0's and 1's. 
-def test_5():
+def test_05():
     slm = {'lat': np.random.rand(10,10,10) > 0.5}
     dummy_test(slm)
 
 # Test with slm.lat, both 0's and 1's, and a mask.
-def test_6():
+def test_06():
     slm = {'lat': np.random.rand(10,10,10) > 0.5}
     mask = np.random.choice([False,True],np.sum(slm['lat']))
     dummy_test(slm,mask)
 
 # Test with slm.lat and slm.resl
-def test_7():
+def test_07():
     slm = {'lat': np.random.rand(10,10,10) > 0.5}
     edg = py_SurfStatEdg(slm)
     slm['resl'] = np.random.rand(edg.shape[0],1)
     dummy_test(slm)
 
 # Test with slm.lat, slm.resl, and a mask
-def test_8():
+def test_08():
     slm = {'lat': np.random.rand(10,10,10) > 0.5}
     mask = np.random.choice([False,True],np.sum(slm['lat']))
     edg = py_SurfStatEdg(slm)
@@ -108,7 +108,7 @@ def test_8():
     dummy_test(slm, mask) 
 
 # Test with slm.lat, slm.resl, and a fully false mask
-def test_9():
+def test_09():
     slm = {'lat': np.random.rand(10,10,10) > 0.5}
     mask = np.zeros(np.sum(slm['lat']), dtype=bool)
     edg = py_SurfStatEdg(slm)

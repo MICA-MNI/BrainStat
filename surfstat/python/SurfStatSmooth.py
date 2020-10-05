@@ -35,7 +35,7 @@ def py_SurfStatSmooth(Y, surf, FWHM):
             n, v, k = np.shape(Y)
             isnum = True
 
-    edg = py_SurfStatEdg(surf)
+    edg = py_SurfStatEdg(surf) + 1 
     agg_1 = aggregate(edg[:,0], 2, size=(v+1))
     agg_2 = aggregate(edg[:,1], 2, size=(v+1))
     Y1 = (agg_1 + agg_2)[1:]
@@ -45,18 +45,18 @@ def py_SurfStatSmooth(Y, surf, FWHM):
 
     n10 = np.floor(n/10)
 
-    for i in range(1, n+1):
+    for i in range(0, n):
 
-        if n10 != 0 and np.remainder(i, n10) == 0:
-            print('%s ' % str(int(100-i/n10*10)), end = '')
+        if n10 != 0 and np.remainder(i+1, n10) == 0:
+            print('%s ' % str(int(100-(i+1)/n10*10)), end = '')
         
-        for j in range(1, k+1):
+        for j in range(0, k):
             if isnum:
                 if np.ndim(Y) == 2:
-                    Ys = Y[(i-1),:]
+                    Ys = Y[i,:]
 
                 elif np.ndim(Y) == 3:
-                    Ys = Y[(i-1),:,(j-1)]
+                    Ys = Y[i,:,j]
 
                 for itera in range(1, niter+1):
                     Yedg = Ys[edg[:,0]-1] + Ys[edg[:,1]-1];    
@@ -65,10 +65,10 @@ def py_SurfStatSmooth(Y, surf, FWHM):
                     Ys = (agg_tmp1 + agg_tmp2) / Y1
 
                 if np.ndim(Y) == 2:
-                    Y[(i-1),:] = Ys
+                    Y[i,:] = Ys
                 
                 elif np.ndim(Y) == 3:
-                    Y[(i-1),:,(j-1)] = Ys
+                    Y[i,:,j] = Ys
     if n>1:
         print('Done')
 

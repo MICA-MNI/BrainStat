@@ -196,7 +196,7 @@ def test_11():
     slm['tri'] = slmdata['slm']['tri'][0,0]
 
     v = np.shape(slmdata['slm']['t'][0,0])[1]
-    Amask = np.random.choice([0, 1], size=(1,v))
+    Amask = np.random.choice([0, 1], size=(v))
     Amask = np.array(Amask, dtype=bool)
 
     dummy_test(slm, mask=Amask)
@@ -214,7 +214,7 @@ def test_12():
     slm['resl'] = slmdata['slm']['resl'][0,0]
     slm['tri'] = slmdata['slm']['tri'][0,0]
 
-    Amask = np.ones((1, slm['t'].shape[1]))
+    Amask = np.ones((slm['t'].shape[1]))
     Amask = np.array(Amask, dtype=bool)
     Aclusthresh = 0.3
     dummy_test(slm, Amask, Aclusthresh)
@@ -270,7 +270,6 @@ def test_15():
     
     dummy_test(slm)
 
-# BUG case
 def test_16():
     # data from Reinder, slm.k = 3    
 

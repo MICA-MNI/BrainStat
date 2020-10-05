@@ -4,7 +4,6 @@ from scipy.linalg import toeplitz
 from scipy.sparse import csr_matrix
 from matlab_functions import row_ismember, interp1
 from SurfStatEdg import py_SurfStatEdg
-import pdb
 
 def pacos(x):
     return np.arccos( np.minimum(np.abs(x),1) * np.sign(x) ) 
@@ -22,7 +21,7 @@ def py_SurfStatResels(slm, mask=None):
         slm['resl'] : a 2D numpy array of shape (e, k).
             Sum over observations of squares of differences of normalized 
             residuals along each edge.
-    mask : a 1D numpy array of shape (v,), dtype 'bool'.
+    mask : a 1D numpy array of shape (v), dtype 'bool'.
         v must be equal to int(slm['tri'].max()).
         Contains 1's and 0's (1's are included and 0's are excluded).
     
@@ -31,7 +30,7 @@ def py_SurfStatResels(slm, mask=None):
     resels : a 2D numpy array of shape (1, (D+1)).
         Array of 0,...,D dimensional resels of the mask, EC of the mask 
         if slm['resl'] is not given.
-    reselspvert : a 2D numpy array of shape (1,v).
+    reselspvert : a 1D numpy array of shape (v).
         Array of D-dimensional resels per mask vertex.
     edg : a 2D numpy array of shape (e, 2).
         Array of edge indices.
@@ -40,10 +39,11 @@ def py_SurfStatResels(slm, mask=None):
     if 'tri' in slm:
         # Get unique edges. Subtract 1 from edges to conform to Python's 
         # counting from 0 - RV
-        tri = np.sort(slm['tri']) - 1
+        tri = np.sort(slm['tri'])-1
         edg = np.unique(np.vstack((tri[:,(0,1)], tri[:,(0,2)], 
                                        tri[:,(1,2)])),axis=0)
 
+        
         # If no mask is provided, create one with all included vertices set to 
         # 1. If mask is provided, simply grab the number of vertices from mask. 
         if mask is None:
@@ -98,14 +98,12 @@ def py_SurfStatResels(slm, mask=None):
                 reselspvert = reselspvert + \
                         np.bincount(tri[masktri,j], weights=r2, minlength=v)
             D = 2
-            reselspvert = reselspvert.T / (D+1) / np.sqrt(4*np.log(2)) ** D
-            # from shape (v,) to (1,v)
-            reselspvert = np.reshape(reselspvert, (1,-1))
+            reselspvert = reselspvert / (D+1) / np.sqrt(4*np.log(2)) ** D
         else:
             reselspvert = None
         
     if 'lat' in slm:
-        edg = py_SurfStatEdg(slm)-1 # -1 because of Python starts from 0
+        edg = py_SurfStatEdg(slm) 
         # The lattice is filled with 5 alternating tetrahedra per cube
         I, J, K = np.shape(slm['lat'])
         IJ = I*J
@@ -383,9 +381,7 @@ def py_SurfStatResels(slm, mask=None):
         ## Original MATLAB code has a if nargout>=2 here, 
         # ignore it as no equivalent exists in Python - RV. 
         D = 2 + (K>1)
-        reselspvert = reselspvert.T / (D+1) / np.sqrt(4*np.log(2)) ** D
-        # from shape (v,) to (1,v)
-        reselspvert = np.reshape(reselspvert, (1,-1))
+        reselspvert = reselspvert / (D+1) / np.sqrt(4*np.log(2)) ** D
     
     ## Compute resels - RV
     D1 = lkc.shape[0]-1
@@ -396,7 +392,5 @@ def py_SurfStatResels(slm, mask=None):
     lkcs = np.atleast_2d(lkcs)
     D = lkcs.shape[1]-1
     resels = lkcs / np.sqrt(4*np.log(2))**np.arange(0,D+1)
-    # back to matlab indexing by +1, otherwise tests will fail
-    edg = (edg + 1).astype(int)
 
     return resels, reselspvert, edg

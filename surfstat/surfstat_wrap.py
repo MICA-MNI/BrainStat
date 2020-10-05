@@ -174,9 +174,7 @@ def matlab_SurfStatLinMod(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
     else:
         k = 'tri' if 'tri' in surf else 'lat'
         s = surf[k]
-        if k == 'tri':
-            s = s + 1  # +1 for matlab index
-
+        
         surf = {k: matlab.int64(s.tolist())}
 
     slm = surfstat_eng.SurfStatLinMod(Y, M, surf, niter, thetalim, drlim)
@@ -185,9 +183,7 @@ def matlab_SurfStatLinMod(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
             continue
         slm[key] = np.atleast_2d(slm[key])
     slm = {k: v if np.isscalar(v) else np.array(v) for k, v in slm.items()}
-    if k == 'tri':
-        slm[k] = slm[k] - 1  # -1 reset index from matlab
-
+   
     return slm
 
 
