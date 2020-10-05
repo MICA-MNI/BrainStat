@@ -16,8 +16,13 @@ def matlab_init_surfstat():
     return surfstat_eng
 
 # ==> SurfStatAvSurf.m <==
-def matlab_SurfStatAvSurf(filenames, fun):
-    sys.exit("Function matlab_SurfStatAvSurf is not implemented yet")
+def matlab_SurfStatAvSurf(filenames, fun=None):
+    if fun is None: 
+        fun = []
+    surf = surfstat_eng.SurfStatAvSurf(filenames, fun, True)
+    surf['tri'] = np.array(surf['tri'])
+    surf['coord'] = np.array(surf['coord'])
+    return surf
 
 # ==> SurfStatAvVol.m <==
 def matlab_SurfStatAvVol(filenames, fun, Nan):

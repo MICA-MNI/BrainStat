@@ -1,4 +1,4 @@
-function surf = SurfStatAvSurf( filenames, fun );
+function surf = SurfStatAvSurf( filenames, fun, py_test );
 
 %Average, minimum or maximum of surfaces.
 %
@@ -12,9 +12,21 @@ function surf = SurfStatAvSurf( filenames, fun );
 % surf.coord = 3 x v matrix of average coordinates, v=#vertices.
 % surf.tri   = t x 3 matrix of triangle indices, 1-based, t=#triangles.
 % The coordinates and triangle indices of the k files are concatenated. 
+%
+% RV: Added a py_test variable, if true transposes the input vector (necessary for Python/Matlab tests)
+% RV: Also added the option to provide an empty variable for fun. 
 
-if nargin<2
+if nargin<2 
     fun=@plus;
+elseif isempty(fun)
+    fun=@plus;
+end
+
+if nargin<3
+    py_test = false;
+end
+if py_test
+    filenames = filenames';
 end
 
 [n,k]=size(filenames);
