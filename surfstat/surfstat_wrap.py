@@ -16,10 +16,10 @@ def matlab_init_surfstat():
     return surfstat_eng
 
 # ==> SurfStatAvSurf.m <==
-def matlab_SurfStatAvSurf(filenames, fun=None):
+def matlab_SurfStatAvSurf(filenames, fun=None, transpose=False, dimensionality=[]):
     if fun is None: 
-        fun = []
-    surf = surfstat_eng.SurfStatAvSurf(filenames, fun, True)
+        fun = [] 
+    surf = surfstat_eng.SurfStatAvSurf(filenames, fun, transpose, dimensionality)
     surf['tri'] = np.array(surf['tri'])
     surf['coord'] = np.array(surf['coord'])
     return surf
