@@ -8,33 +8,43 @@ def py_SurfStatAvSurf(filenames, fun=lambda x, y: x+y):
     """Average, minimum, or maximum of surfaces.
 
     Args:
-        filenames (list, tuple): List/tuple of filenames of surfaces or BSPolyData objects.
+        filenames (2D numpy array): Numpy array of filenames of surfaces or BSPolyData objects.
         fun (lambda function): Lambda function to use on the surface coordinates. 
             Defaults to lambda x, y: x+y.
 
     Returns:
         surface [BSPolyData]: The output surface.
     """
-    
-    for i in range(0, len(filenames)):
-        # Check whether input is BSPolyData or a filename. 
-        if isinstance(filenames[i], BSPolyData):
-            s = filenames[i]    
-        else:
-            s = read_surface(filenames[i])
-        
-        # Grab the triangles only from the first surface, 
-        # apply function to coordinates.
+    if filenames.ndim is not 2:
+        raise ValueError('Filenames must be a 2-dimensional array.')
+      
+    for i in range(0, filenames.shape[0]):
+        surfaces = np.empty(filenames.shape[1], dtype=np.object)
+        for j in range(0, filenames.shape[1]):
+            
+            # Check whether input is BSPolyData or a filename. 
+            if isinstance(filenames[i,j], BSPolyData):
+                surfaces[j] = filenames[i,j]    
+            else:
+                surfaces[j] = read_surface(filenames[i,j])
+            
+            # Concatenate second dimension of filenames. 
+            if j is 0:
+                tri = get_cells(surfaces[j]) 
+                coord = get_points(surfaces[j])
+            else:
+                tri = np.concatenate((tri, get_cells(surfaces[j]) + coord.shape[0]), axis=0)
+                coord = np.concatenate((coord, get_points(surfaces[j])), axis=0)
+            
         if i is 0:
-            tri = get_cells(s) 
-            coord = get_points(s)
             m = 1
+            coord_all = coord
         else:
-            coord = fun(get_points(s), coord)
+            coord_all = fun(coord_all,coord)
             m = fun(m,1)
     
-    coord = coord / m 
-    surface = build_polydata(coord, tri)
+    coord_all = coord_all / m 
+    surface = build_polydata(coord_all, tri)
     return surface
             
             
