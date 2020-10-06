@@ -4,17 +4,20 @@ from brainspace.mesh.mesh_creation import build_polydata
 from brainspace.mesh.mesh_elements import get_cells, get_points
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 
-def py_SurfStatAvSurf(filenames, fun=lambda x, y: x+y):
+def py_SurfStatAvSurf(filenames, fun=lambda x, y: x+y, output_surfstat=False):
     """Average, minimum, or maximum of surfaces.
 
     Args:
         filenames (2D numpy array): Numpy array of filenames of surfaces or BSPolyData objects.
         fun (lambda function): Lambda function to use on the surface coordinates. 
             Defaults to lambda x, y: x+y.
+        output_surfstat (boolean): If True, outputs the surface in SurfStat format. If false
+            outputs the surface as BSPolyData. Default is False.
 
     Returns:
-        surface [BSPolyData]: The output surface.
+        surface [BSPolyData, dict]: The output surface.
     """
+    
     if filenames.ndim is not 2:
         raise ValueError('Filenames must be a 2-dimensional array.')
       
@@ -44,7 +47,12 @@ def py_SurfStatAvSurf(filenames, fun=lambda x, y: x+y):
             m = fun(m,1)
     
     coord_all = coord_all / m 
-    surface = build_polydata(coord_all, tri)
+    
+    if output_surfstat:
+        surface = {'tri': np.array(tri) + 1, 'coord': np.array(coord_all).T}
+    else:
+        surface = build_polydata(coord_all, tri)
+        
     return surface
             
             
