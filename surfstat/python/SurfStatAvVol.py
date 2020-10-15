@@ -3,9 +3,28 @@ import nibabel as nb
 
 
 def py_SurfStatAvVol(filenames, fun = np.add, Nan = None):
+    """Average, minimum or maximum of NIFTI, ANALYZE volumes.
+    Parameters
+    ----------
+    filenames : a 1D list of filenames with extension *nii, *nii.gz, *img.
+    fun : function handle to apply to two volumes, e.g.
+        np.add (default) will give the average of the surfaces,
+        np.fmin or np.fmax will give the min or max, respectively.
 
-    #filenames = file name with extension .mnc, .img, .nii or .brik as above 
-    #        (n=1), or n x 1 cell array of file names.
+    Returns
+    -------
+    data : ndarray, shape = (nx,ny,nz) or (nx,ny,nz,1) of average, min or
+        max volume.
+    vol : dict
+        Dictionary with the following keys:
+
+        - 'lat' : ndarray, shape = (nx,ny,nz), dtype=bool
+        - 'vox' : ndarray, shape = (3,)
+            Vector of voxel sizes in mm.
+        - 'origin' : ndarray, shape = (3,)
+            Position in mm of the first voxel.
+
+    """
 
     n = np.shape(filenames)[0]
     file_01 = filenames[0]
