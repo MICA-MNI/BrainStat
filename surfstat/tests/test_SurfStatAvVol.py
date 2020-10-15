@@ -3,6 +3,7 @@ sys.path.append("python")
 from SurfStatAvVol import *
 import surfstat_wrap as sw
 import numpy as np
+import random
 import pytest
 
 sw.matlab_init_surfstat()
@@ -30,8 +31,6 @@ def dummy_test(filenames, fun = np.add, Nan = None, dimensionality = None):
 
     assert all(flag == True for (flag) in testout_SurfStatAvVol)
  
-
-
 def test_01():
     # ANALYZE format (*img)
     filenames = ['./tests/data/volfiles/Arandom1.img',
@@ -41,3 +40,43 @@ def test_01():
                  './tests/data/volfiles/Arandom5.img']
     dummy_test(filenames)
 
+    
+def test_02():
+    # ANALYZE format (*img)
+    filenames = ['./tests/data/volfiles/Arandom1.img',
+                 './tests/data/volfiles/Arandom2.img',
+                 './tests/data/volfiles/Arandom3.img',
+                 './tests/data/volfiles/Arandom4.img',
+                 './tests/data/volfiles/Arandom5.img']
+    dummy_test(filenames, fun=np.fmin)
+
+    
+def test_03():
+    # ANALYZE format (*img)
+    filenames = ['./tests/data/volfiles/Arandom1.img',
+                 './tests/data/volfiles/Arandom2.img',
+                 './tests/data/volfiles/Arandom3.img',
+                 './tests/data/volfiles/Arandom4.img',
+                 './tests/data/volfiles/Arandom5.img']
+    dummy_test(filenames, fun=np.fmax)
+
+
+def test_04():
+    # ANALYZE format (*img), image with NaN values
+    filenames = ['./tests/data/volfiles/Arandom1.img',
+                 './tests/data/volfiles/Arandom2.img',
+                 './tests/data/volfiles/Arandom3.img',
+                 './tests/data/volfiles/Arandom4.img',
+                 './tests/data/volfiles/Arandom5.img',
+                 './tests/data/volfiles/ArandomNaN.img']
+    dummy_test(filenames, fun=np.add)
+    
+def test_05():
+    # ANALYZE format (*img), image with NaN values, replace NaN
+    filenames = ['./tests/data/volfiles/Arandom1.img',
+                 './tests/data/volfiles/Arandom2.img',
+                 './tests/data/volfiles/Arandom3.img',
+                 './tests/data/volfiles/Arandom4.img',
+                 './tests/data/volfiles/Arandom5.img',
+                 './tests/data/volfiles/ArandomNaN.img']
+    dummy_test(filenames, fun=np.add, Nan = random.uniform(0, 50))

@@ -22,17 +22,20 @@ def py_SurfStatAvVol(filenames, fun = np.add, Nan = None):
                 data = np.array(d.get_fdata())
 
                 if Nan is not None:
-                    data[np.isnan(data)] = replace_nan
+                    data[np.isnan(data)] = Nan
 
                 if i == 0:
                     data_i = data
                     m = 1
                 else:
+                    # replace NaN with zeros for proper addition
+                    if fun == np.add:
+                        data[np.isnan(data)] = 0
+                        data_i[np.isnan(data_i)] = 0
                     data_i = fun(data_i, data)
                     m = fun(m, 1)
 
     data_i = data_i/float(m)
-
     vol = {}
     vol['lat'] = np.ones(d.shape[0:3], dtype=bool)
     vol['vox'] = np.array(d.header.get_zooms()[0:3])

@@ -42,6 +42,11 @@ def matlab_SurfStatAvVol(filenames, fun = np.add, Nan = None, dimensionality = N
 
     if fun == np.add:
         fun = []
+    elif fun == np.fmin:
+        fun = surfstat_eng.str2func('min')
+    elif fun == np.fmax:
+        fun = surfstat_eng.str2func('max')
+
     if Nan is None:
         Nan = float('NaN')
     if dimensionality is None:

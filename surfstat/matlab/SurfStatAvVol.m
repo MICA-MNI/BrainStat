@@ -45,7 +45,16 @@ else
         end
         d=SurfStatReadVol1(filenames{i});
         if ~isnan(Nan)
-            d.data(isnan(d.data))=Nan;
+            % analyze75read for a proper NaN-value reading
+            if filenames{i}(end-3:end) == '.img';    
+                d.data = analyze75read(filenames{i});
+                % transposing 3D array to match with python analyze reader
+                d.data = permute(d.data, [2,1,3]);
+                d.data(isnan(d.data))=Nan;
+            else
+                d.data(isnan(d.data))
+                d.data(isnan(d.data))=Nan;
+            end
         end
         if i==1
             data=d.data;
