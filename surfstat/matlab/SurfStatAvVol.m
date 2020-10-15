@@ -1,4 +1,4 @@
-function [ data, vol ] = SurfStatAvVol( filenames, fun, Nan );
+function [ data, vol ] = SurfStatAvVol( filenames, fun, Nan, dimensionality);
 
 %Average, minimum or maximum of MINC, ANALYZE, NIFTI or AFNI volumes.
 %
@@ -23,6 +23,14 @@ if nargin<3
     Nan=NaN;
 end
 
+if nargin<4
+    dimensionality = size(filenames);
+end
+if isempty(dimensionality)
+    dimensionality = size(filenames);
+end
+
+filenames = reshape(filenames, dimensionality);
 n=size(filenames,1);
 
 if n==1
