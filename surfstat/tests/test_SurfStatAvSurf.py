@@ -8,14 +8,14 @@ from brainspace.datasets import load_conte69
 from brainspace.mesh.mesh_elements import get_points, get_cells 
 from brainspace.mesh.mesh_io import write_surface
 import tempfile
+from itertools import chain
 
 surfstat_eng = sw.matlab_init_surfstat()
 
 # Test function
-def dummy_test(py_surfaces, mat_surfaces, fun = np.add,
-                dimensionality=[]):
+def dummy_test(py_surfaces, fun = np.add):
     # Run functions
-    mat_surf = sw.matlab_SurfStatAvSurf(mat_surfaces, fun, dimensionality)
+    mat_surf = sw.matlab_SurfStatAvSurf(py_surfaces, fun)
     py_out = py_SurfStatAvSurf(py_surfaces, fun)
     py_surf = {'tri': np.array(get_cells(py_out)+1), 
                'coord': np.array(get_points(py_out)).T}
@@ -49,8 +49,8 @@ def temp_surfaces(surfaces):
 def test_two_surfaces_column_plus():
     surfaces = load_conte69()
     t, names = temp_surfaces(surfaces)
-    dummy_test(np.array(names, ndmin=2).T, names, 
-               dimensionality=surfstat_eng.cell2mat([2,1]))
+    namesArr = np.array(names, ndmin=2).T
+    dummy_test(namesArr)
     for i in range(0,len(t)):
         t[i].close()
 
@@ -58,7 +58,8 @@ def test_two_surfaces_column_plus():
 def test_two_surfaces_row_plus():
     surfaces = load_conte69()
     t, names = temp_surfaces(surfaces)
-    dummy_test(np.array(names, ndmin=2), names)
+    namesArr = np.array(names, ndmin=2)
+    dummy_test(namesArr)
     for i in range(0,len(t)):
         t[i].close()
 
@@ -67,8 +68,8 @@ def test_four_surfaces_square_plus():
     surfaces_1 = load_conte69()
     surfaces_2 = load_conte69(as_sphere=True)
     t, names = temp_surfaces(surfaces_1 + surfaces_2)
-    dummy_test(np.reshape(np.array(names, ndmin=2),(2,2), order='F'), names,
-                dimensionality=surfstat_eng.cell2mat([2,2]))
+    namesArr = np.reshape(np.array(names, ndmin=2),(2,2))
+    dummy_test(namesArr)
     for i in range(0,len(t)):
         t[i].close()
 
@@ -77,9 +78,8 @@ def test_four_surfaces_square_min():
     surfaces_1 = load_conte69()
     surfaces_2 = load_conte69(as_sphere=True)
     t, names = temp_surfaces(surfaces_1 + surfaces_2)
-
-    dummy_test(np.reshape(np.array(names, ndmin=2),(2,2), order='F'), names, 
-               fun = np.fmin, dimensionality=surfstat_eng.cell2mat([2,2]))
+    namesArr = np.reshape(np.array(names, ndmin=2),(2,2))
+    dummy_test(namesArr, np.fmin)
     for i in range(0,len(t)):
         t[i].close()
 
@@ -88,8 +88,18 @@ def test_four_surfaces_square_max():
     surfaces_1 = load_conte69()
     surfaces_2 = load_conte69(as_sphere=True)
     t, names = temp_surfaces(surfaces_1 + surfaces_2)
+    namesArr = np.reshape(np.array(names, ndmin=2),(2,2))
+    dummy_test(namesArr, np.fmax)
+    for i in range(0,len(t)):
+        t[i].close()
 
-    dummy_test(np.reshape(np.array(names, ndmin=2),(2,2), order='F'), names,
-               fun = np.fmax, dimensionality=surfstat_eng.cell2mat([2,2]))
+# Six surfaces, 2-by-2 matrix, maximum.
+def test_six_surfaces_square_max():
+    surfaces_1 = load_conte69()
+    surfaces_2 = load_conte69(as_sphere=True)
+    surfaces_3 = load_conte69(as_sphere=True)
+    t, names = temp_surfaces(surfaces_1 + surfaces_2 + surfaces_3)
+    namesArr = np.reshape(np.array(names, ndmin=2),(3,2))
+    dummy_test(namesArr, np.fmax)
     for i in range(0,len(t)):
         t[i].close()
