@@ -1,4 +1,4 @@
-import sys, os
+import sys
 sys.path.append("python")
 import numpy as np
 import pytest
@@ -6,7 +6,7 @@ from SurfStatAvSurf import py_SurfStatAvSurf
 import surfstat_wrap as sw
 from brainspace.datasets import load_conte69
 from brainspace.mesh.mesh_elements import get_points, get_cells 
-from brainspace.mesh.mesh_io import read_surface, write_surface
+from brainspace.mesh.mesh_io import write_surface
 import tempfile
 
 surfstat_eng = sw.matlab_init_surfstat()
@@ -38,7 +38,6 @@ def dummy_test(py_surfaces, mat_surfaces, fun = np.add,
 def temp_surfaces(surfaces):
     t = []
     names = []
-    default_tmp_dir = tempfile._get_default_tempdir()
     for s in surfaces:
         t.append(tempfile.NamedTemporaryFile(suffix='.fs', delete=True))
         names.append(t[-1].name)
@@ -68,7 +67,6 @@ def test_four_surfaces_square_plus():
     surfaces_1 = load_conte69()
     surfaces_2 = load_conte69(as_sphere=True)
     t, names = temp_surfaces(surfaces_1 + surfaces_2)
-    py_surfaces = np.reshape(np.array(names), (2,2))
     dummy_test(np.reshape(np.array(names, ndmin=2),(2,2), order='F'), names,
                 dimensionality=surfstat_eng.cell2mat([2,2]))
     for i in range(0,len(t)):
@@ -79,8 +77,7 @@ def test_four_surfaces_square_min():
     surfaces_1 = load_conte69()
     surfaces_2 = load_conte69(as_sphere=True)
     t, names = temp_surfaces(surfaces_1 + surfaces_2)
-    
-    py_surfaces = np.reshape(np.array(names), (2,2))
+
     dummy_test(np.reshape(np.array(names, ndmin=2),(2,2), order='F'), names, 
                fun = np.fmin, dimensionality=surfstat_eng.cell2mat([2,2]))
     for i in range(0,len(t)):
@@ -92,7 +89,6 @@ def test_four_surfaces_square_max():
     surfaces_2 = load_conte69(as_sphere=True)
     t, names = temp_surfaces(surfaces_1 + surfaces_2)
 
-    py_surfaces = np.reshape(np.array(names), (2,2))
     dummy_test(np.reshape(np.array(names, ndmin=2),(2,2), order='F'), names,
                fun = np.fmax, dimensionality=surfstat_eng.cell2mat([2,2]))
     for i in range(0,len(t)):
