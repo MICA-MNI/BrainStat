@@ -16,8 +16,23 @@ def matlab_init_surfstat():
     return surfstat_eng
 
 # ==> SurfStatAvSurf.m <==
-def matlab_SurfStatAvSurf(filenames, fun):
-    sys.exit("Function matlab_SurfStatAvSurf is not implemented yet")
+def matlab_SurfStatAvSurf(filenames, fun, dimensionality=None):
+
+    filenames_mat = filenames.flatten(order='F').tolist()
+
+    if fun == np.add:
+        fun = []
+    elif fun == np.fmin:
+        fun = surfstat_eng.str2func('min')
+    elif fun == np.fmax:
+        fun = surfstat_eng.str2func('max')
+
+    dimensionality = surfstat_eng.cell2mat(filenames.shape)
+
+    surf = surfstat_eng.SurfStatAvSurf(filenames_mat, fun, dimensionality)
+    surf['tri'] = np.array(surf['tri'])
+    surf['coord'] = np.array(surf['coord'])
+    return surf
 
 # ==> SurfStatAvVol.m <==
 def matlab_SurfStatAvVol(filenames, fun, Nan):
