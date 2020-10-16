@@ -12,11 +12,11 @@ import tempfile
 surfstat_eng = sw.matlab_init_surfstat()
 
 # Test function
-def dummy_test(py_surfaces, mat_surfaces, py_fun=lambda x, y: x+y, mat_fun=None,
+def dummy_test(py_surfaces, mat_surfaces, fun = np.add,
                 dimensionality=[]):
     # Run functions
-    mat_surf = sw.matlab_SurfStatAvSurf(mat_surfaces, mat_fun, dimensionality)      
-    py_out = py_SurfStatAvSurf(py_surfaces, py_fun)   
+    mat_surf = sw.matlab_SurfStatAvSurf(mat_surfaces, fun, dimensionality)
+    py_out = py_SurfStatAvSurf(py_surfaces, fun)
     py_surf = {'tri': np.array(get_cells(py_out)+1), 
                'coord': np.array(get_points(py_out)).T}
     
@@ -81,12 +81,19 @@ def test_four_surfaces_square_min():
     t, names = temp_surfaces(surfaces_1 + surfaces_2)
     
     py_surfaces = np.reshape(np.array(names), (2,2))
-    py_fun = lambda x,y: np.minimum(x,y)
-    mat_fun = surfstat_eng.str2func('min')
-    
     dummy_test(np.reshape(np.array(names, ndmin=2),(2,2), order='F'), names, 
-               py_fun, mat_fun, dimensionality=surfstat_eng.cell2mat([2,2]))
+               fun = np.fmin, dimensionality=surfstat_eng.cell2mat([2,2]))
     for i in range(0,len(t)):
         t[i].close()
 
+# Four surfaces, 2-by-2 matrix, maximum.
+def test_four_surfaces_square_max():
+    surfaces_1 = load_conte69()
+    surfaces_2 = load_conte69(as_sphere=True)
+    t, names = temp_surfaces(surfaces_1 + surfaces_2)
 
+    py_surfaces = np.reshape(np.array(names), (2,2))
+    dummy_test(np.reshape(np.array(names, ndmin=2),(2,2), order='F'), names,
+               fun = np.fmax, dimensionality=surfstat_eng.cell2mat([2,2]))
+    for i in range(0,len(t)):
+        t[i].close()

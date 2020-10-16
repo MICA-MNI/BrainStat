@@ -16,9 +16,13 @@ def matlab_init_surfstat():
     return surfstat_eng
 
 # ==> SurfStatAvSurf.m <==
-def matlab_SurfStatAvSurf(filenames, fun=None, dimensionality=[]):
-    if fun is None: 
-        fun = [] 
+def matlab_SurfStatAvSurf(filenames, fun = np.add, dimensionality=[]):
+    if fun == np.add:
+        fun = []
+    elif fun == np.fmin:
+        fun = surfstat_eng.str2func('min')
+    elif fun == np.fmax:
+        fun = surfstat_eng.str2func('max')
     surf = surfstat_eng.SurfStatAvSurf(filenames, fun, dimensionality)
     surf['tri'] = np.array(surf['tri'])
     surf['coord'] = np.array(surf['coord'])
