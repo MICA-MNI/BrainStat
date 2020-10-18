@@ -6,10 +6,13 @@ def py_SurfStatAvVol(filenames, fun = np.add, Nan = None):
     """Average, minimum or maximum of NIFTI, ANALYZE volumes.
     Parameters
     ----------
-    filenames : a 1D list of filenames with extension *nii, *nii.gz, *img.
+    filenames : ndarray, shape (n,),
+        includes filenames with extension *nii, *nii.gz, or *img.
     fun : function handle to apply to two volumes, e.g.
         np.add (default) will give the average of the surfaces,
         np.fmin or np.fmax will give the min or max, respectively.
+    Nan : float,
+        value to replace NaN-values in data, by default no replacement.
 
     Returns
     -------
@@ -26,7 +29,7 @@ def py_SurfStatAvVol(filenames, fun = np.add, Nan = None):
 
     """
 
-    n = np.shape(filenames)[0]
+    n = len(filenames)
     file_01 = filenames[0]
 
     if file_01.endswith('.nii') or file_01.endswith('.nii.gz') or \

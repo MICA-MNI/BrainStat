@@ -38,7 +38,7 @@ def test_01():
                  './tests/data/volfiles/Arandom3.img',
                  './tests/data/volfiles/Arandom4.img',
                  './tests/data/volfiles/Arandom5.img']
-    dummy_test(filenames)
+    dummy_test(np.array(filenames))
 
     
 def test_02():
@@ -48,7 +48,7 @@ def test_02():
                  './tests/data/volfiles/Arandom3.img',
                  './tests/data/volfiles/Arandom4.img',
                  './tests/data/volfiles/Arandom5.img']
-    dummy_test(filenames, fun=np.fmin)
+    dummy_test(np.array(filenames), fun=np.fmin)
 
     
 def test_03():
@@ -58,7 +58,7 @@ def test_03():
                  './tests/data/volfiles/Arandom3.img',
                  './tests/data/volfiles/Arandom4.img',
                  './tests/data/volfiles/Arandom5.img']
-    dummy_test(filenames, fun=np.fmax)
+    dummy_test(np.array(filenames), fun=np.fmax)
 
 
 def test_04():
@@ -69,7 +69,7 @@ def test_04():
                  './tests/data/volfiles/Arandom4.img',
                  './tests/data/volfiles/Arandom5.img',
                  './tests/data/volfiles/ArandomNaN.img']
-    dummy_test(filenames, fun=np.add)
+    dummy_test(np.array(filenames), fun=np.add)
     
 def test_05():
     # ANALYZE format (*img), image with NaN values, replace NaN
@@ -79,7 +79,7 @@ def test_05():
                  './tests/data/volfiles/Arandom4.img',
                  './tests/data/volfiles/Arandom5.img',
                  './tests/data/volfiles/ArandomNaN.img']
-    dummy_test(filenames, fun=np.add, Nan = random.uniform(0, 50))
+    dummy_test(np.array(filenames), fun=np.add, Nan = random.uniform(0, 50))
 
 def test_06():
     # NIFTI files
@@ -88,7 +88,7 @@ def test_06():
                 './tests/data/volfiles/random3.nii',
                 './tests/data/volfiles/random4.nii',
                 './tests/data/volfiles/random5.nii']
-    dummy_test(filenames)
+    dummy_test(np.array(filenames))
 
 def test_07():
     # NIFTI files
@@ -97,7 +97,7 @@ def test_07():
                 './tests/data/volfiles/random3.nii',
                 './tests/data/volfiles/random4.nii',
                 './tests/data/volfiles/random5.nii']
-    dummy_test(filenames, fun=np.fmin)
+    dummy_test(np.array(filenames), fun=np.fmin)
 
 def test_08():
     # NIFTI files
@@ -106,7 +106,7 @@ def test_08():
                 './tests/data/volfiles/random3.nii',
                 './tests/data/volfiles/random4.nii',
                 './tests/data/volfiles/random5.nii']
-    dummy_test(filenames, fun=np.fmax)
+    dummy_test(np.array(filenames), fun=np.fmax)
 
 def test_09():
     # NIFTI files
@@ -116,7 +116,7 @@ def test_09():
                 './tests/data/volfiles/random4.nii',
                 './tests/data/volfiles/random5.nii',
                 './tests/data/volfiles/randomNaN.nii']
-    dummy_test(filenames)
+    dummy_test(np.array(filenames))
 
 def test_10():
     # NIFTI files
@@ -126,7 +126,7 @@ def test_10():
                  './tests/data/volfiles/random4.nii',
                  './tests/data/volfiles/random5.nii',
                  './tests/data/volfiles/randomNaN.nii']
-    dummy_test(filenames, fun=np.fmin)
+    dummy_test(np.array(filenames), fun=np.fmin)
 
 def test_11():
     # NIFTI files
@@ -136,4 +136,4 @@ def test_11():
                  './tests/data/volfiles/random4.nii',
                  './tests/data/volfiles/random5.nii',
                  './tests/data/volfiles/randomNaN.nii']
-    dummy_test(filenames, fun=np.add, Nan=3)
+    dummy_test(np.array(filenames), fun=np.add, Nan=3)
