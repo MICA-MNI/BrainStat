@@ -57,6 +57,8 @@ def py_SurfStatAvVol(filenames, fun = np.add, Nan = None):
                             data_i[np.isnan(data_i)] = 0
                     data_i = fun(data_i, data)
                     m = fun(m, 1)
+    else:
+        raise ValueError('Filenames must be NIFTI (*nii, *nii.gz) or ANALYZE (*img).')
     data_i = data_i/float(m)
     vol = {}
     vol['lat'] = np.ones(d.shape[0:3], dtype=bool)
