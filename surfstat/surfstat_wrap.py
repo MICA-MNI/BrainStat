@@ -156,6 +156,8 @@ def matlab_SurfStatInflate(surf, w, spherefile):
 def matlab_SurfStatLinMod(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
 
     from term import Term
+    from brainspace.mesh.mesh_elements import get_cells
+    from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 
     if isinstance(Y, np.ndarray):
         Y = matlab.double(Y.tolist())
@@ -176,13 +178,14 @@ def matlab_SurfStatLinMod(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
                                 surfstat_eng.cell(0), 1)
 
     # Only require 'tri' or 'lat'
-    if surf is None or ('tri' not in surf and 'lat' not in surf):
+    if surf is None:
         k = None
         surf = surfstat_eng.cell(0)
     else:
+        if isinstance(surf,BSPolyData):
+            surf = {'tri': np.array(get_cells(surf))+1}
         k = 'tri' if 'tri' in surf else 'lat'
         s = surf[k]
-        
         surf = {k: matlab.int64(s.tolist())}
 
     slm = surfstat_eng.SurfStatLinMod(Y, M, surf, niter, thetalim, drlim)
