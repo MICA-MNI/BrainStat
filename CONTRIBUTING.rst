@@ -93,7 +93,7 @@ the same page with the goal of the work you're going to carry out.
 is a nice explanation of why putting this work in up front is so useful to
 everyone involved.
 
-**2. Fork the BrainSpace repository to your profile.**
+**2. Fork the BrainStat repository to your profile.**
 
 This is now your own unique copy of the BrainStat repository.
 Changes here won't affect anyone else's work, so it's a safe space to explore edits to the code!
