@@ -7,15 +7,16 @@ import pytest
 
 sw.matlab_init_surfstat()
 
+
 def dummy_test(Y, mask, subtractordivide):
 
 	try:
 		# wrap matlab functions
-		Wrapped_Y, Wrapped_Ym = sw.matlab_SurfStatStand(Y, mask, subtractordivide) 
+		Wrapped_Y, Wrapped_Ym = sw.matlab_SurfStatStand(Y, mask, subtractordivide)
 
 	except:
 		pytest.skip("Original MATLAB code does not work with these inputs.")
-		
+
 
 	# python function
 	Python_Y, Python_Ym = py_SurfStatStand(Y, mask, subtractordivide)
@@ -44,6 +45,7 @@ def test_1d_row_vectors():
 	subtractordivide = 's'
 	dummy_test(Y, mask=mask, subtractordivide=subtractordivide)
 
+
 #### test 1b
 # 1D inputs --- row vectors & mask
 def test_1d_row_vectors_mask():
@@ -53,7 +55,7 @@ def test_1d_row_vectors_mask():
 	mask = np.array([1, 1, 0, 1, 1, 1, 1, 1, 1, 1], dtype=bool)
 	subtractordivide = 's'
 	dummy_test(Y, mask=mask, subtractordivide=subtractordivide)
-	
+
 
 #### test 2a
 # 2D inputs --- 2D arrays & mask
@@ -76,4 +78,3 @@ def test_3d_arrays_mask():
 	mask = np.array([1, 1, 0, 0], dtype=bool)
 	subtractordivide = 's'
 	dummy_test(Y, mask=mask, subtractordivide=subtractordivide)
-

@@ -8,6 +8,7 @@ python version of SurfStatColormap
 
 import numpy as np
 
+
 @deprecated("BrainSpace dependency")
 def py_SurfStatColormap(map):
     """Colormap function for SurfStatView.

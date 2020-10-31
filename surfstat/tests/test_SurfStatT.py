@@ -8,18 +8,19 @@ import pytest
 
 sw.matlab_init_surfstat()
 
+
 def dummy_test(slm, contrast):
 
 	try:
 		# wrap matlab functions
 		Wrapped_slm = sw.matlab_SurfStatT(slm, contrast)
-		
+
 	except:
 		pytest.skip("Original MATLAB code does not work with these inputs.")
-		
+
 	# run python functions
 	Python_slm = py_SurfStatT(slm, contrast)
-	
+
 	testout_SurfStatT = []
 
 	# compare matlab-python outputs
@@ -39,8 +40,9 @@ def test_1d_row_vectors():
 	A['coef'] = np.random.rand(1,a).reshape(1,a)
 	A['SSE'] = np.random.rand(1, a)
 	B = np.random.rand(1).reshape(1,1)
-	
+
 	dummy_test(A, B)
+
 
 #### Test 2  ### square matrices
 def test_2d_square_matrix():
@@ -53,7 +55,7 @@ def test_2d_square_matrix():
 	A['SSE']  = np.random.rand(1, a)
 	B = np.random.rand(1, a)
 	dummy_test(A, B)
-	
+
 
 #### Test 3a  ### slm.V & slm.r given
 def test_2d_fullslm():
@@ -85,5 +87,3 @@ def test_2d_partial_slm():
 	A['dr'] = np.array([np.random.randint(1,10)])
 	B = np.array([[1]])
 	dummy_test(A, B)
-
-

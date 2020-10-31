@@ -8,6 +8,7 @@ python version of SurfStatColLim
 
 import numpy as np
 
+
 @deprecated("BrainSpace dependency")
 def py_SurfStatColLim(map):
     """Sets the colour limits for SurfStatView.

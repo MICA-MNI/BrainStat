@@ -8,6 +8,7 @@ from brainspace.datasets import load_conte69
 
 sw.matlab_init_surfstat()
 
+
 def dummy_test(surf):
     try:
         # wrap matlab functions
@@ -23,13 +24,14 @@ def dummy_test(surf):
     assert testout
 
 
-#### Test 1 
+#### Test 1
 def test_surf_tri():
 	# take ax3 random arrays for surf['tri']
 	a = np.random.randint(4,100)
 	A = {}
 	A['tri'] = np.random.rand(a,3)
 	dummy_test(A)
+
 
 #### Test 2
 def test_surf_lat_2d():
@@ -38,6 +40,7 @@ def test_surf_lat_2d():
     A['lat'] = np.ones((10,10))
     dummy_test(A)
 
+
 #### Test 3
 def test_surf_lat_ones():
     # dummy 3D array for surf['lat']
@@ -45,13 +48,15 @@ def test_surf_lat_ones():
     A['lat'] = np.ones((10,10,10))
     dummy_test(A)
 
+
 ### Test 4
 def test_surf_lat_ones_zeros():
     A = {}
-    A['lat'] = np.random.choice([0, 1], size=(10,10,10))    
+    A['lat'] = np.random.choice([0, 1], size=(10,10,10))
     dummy_test(A)
 
-# Test BSPolyData. 
+
+# Test BSPolyData.
 def test_bspolydata():
     surf, _ = load_conte69()
     dummy_test(surf)

@@ -4,6 +4,7 @@ sys.path.append("python")
 from stat_threshold import stat_threshold
 from SurfStatResels import py_SurfStatResels
 
+
 def py_SurfStatQ(slm, mask=None):
     """Q-values for False Discovey Rate of resels.
 
@@ -15,20 +16,20 @@ def py_SurfStatQ(slm, mask=None):
         slm['df'] : numpy array of shape (1,1),
             degrees of freedom.
         slm['k'] : int,
-            number of variates.    
+            number of variates.
     Optional parameters:
         mask : numpy array of shape (v), dtype 'bool',
-            by default ones(1,v).        
+            by default ones(1,v).
         slm['dfs'] : numpy array of shape (1,v),
             effective degrees of freedom.
         slm['resl'] : numpy array of shape (e,v),
             matrix of sum over observations of squares of
             differences of normalized residuals along each edge.
         slm['tri'] : numpy array of shape (t,3),
-            triangle indices, 1-based, t is the number of triangles,    
+            triangle indices, 1-based, t is the number of triangles,
         or,
-        slm['lat'] : 3D numpy array of 1's and 0's (1:in, 0:out).            
-            
+        slm['lat'] : 3D numpy array of 1's and 0's (1:in, 0:out).
+
     Returns
     -------
     qval : a dictionary with keys 'Q' and 'mask'
@@ -36,17 +37,17 @@ def py_SurfStatQ(slm, mask=None):
             vector of Q-values.
         qval['mask'] : copy of mask.
 
-    """    
+    """
     l, v = np.shape(slm['t'])
-    
+
     if mask is None:
         mask = np.ones((v), dtype='bool')
-    
+
     df = np.zeros((2,2))
     ndf = len(np.array([slm['df']]))
     df[0, 0:ndf] = slm['df']
     df[1, 0:2] = slm['df'][ndf-1]
-    
+
     if 'dfs' in slm:
         df[0, ndf-1] = slm['dfs'][0,mask>0].mean()
 
@@ -54,7 +55,7 @@ def py_SurfStatQ(slm, mask=None):
         resels, reselspvert, edg = py_SurfStatResels(slm, mask.flatten())
     else:
         reselspvert = np.ones((v))
-    
+
     varA = np.append(10, slm['t'][0, mask.astype(bool)])
     P_val = stat_threshold(df = df, p_val_peak = varA,
                            nvar = float(slm['k']), nprint = 0)[0]
@@ -75,10 +76,10 @@ def py_SurfStatQ(slm, mask=None):
 
     Q = np.zeros((1,nx))
     Q[0,index] = Q_sort
-    
+
     qval = {}
     qval['Q'] = np.ones((mask.shape[0]))
     qval['Q'][mask] = np.squeeze(Q[0,:])
     qval['mask'] = mask
-    
+
     return qval

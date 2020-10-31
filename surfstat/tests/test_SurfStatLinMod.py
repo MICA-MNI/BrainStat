@@ -9,6 +9,7 @@ from brainspace.datasets import load_conte69
 
 surfstat_eng = sw.matlab_init_surfstat()
 
+
 def dummy_test(Y, model, surf=None):
 
     py_slm = py_SurfStatLinMod(Y, model, surf=surf)
@@ -31,8 +32,8 @@ def test_01():
 
     A = np.random.rand(n, n)
     B = np.random.rand(n, n)
-    B[:,0] = 1 # Constant term. 
-    
+    B[:,0] = 1 # Constant term.
+
     dummy_test(A, B, surf=None)
 
 
@@ -44,8 +45,8 @@ def test_02():
 
     A = np.random.rand(n, v)
     B = np.random.rand(n, p)
-    B[:,0] = 1 # Constant term. 
-    
+    B[:,0] = 1 # Constant term.
+
     dummy_test(A, B, surf=None)
 
 
@@ -57,8 +58,8 @@ def test_03():
 
     A = np.random.rand(n, v, k)
     B = np.random.rand(n, 2)
-    B[:,0] = 1 # Constant term. 
-    
+    B[:,0] = 1 # Constant term.
+
     dummy_test(A, B, surf=None)
 
 
@@ -71,8 +72,8 @@ def test_04():
 
     A = np.random.rand(n, v, k)
     B = np.random.rand(n, p)
-    B[:,0] = 1 # Constant term. 
-    
+    B[:,0] = 1 # Constant term.
+
     dummy_test(A, B, surf=None)
 
 
@@ -82,8 +83,8 @@ def test_05():
 
     A = np.random.rand(v, 1)
     B = np.random.rand(v, 2)
-    B[:,0] = 1 # Constant term. 
-    
+    B[:,0] = 1 # Constant term.
+
     dummy_test(A, B, surf=None)
 
 
@@ -95,9 +96,9 @@ def test_06():
 
     A = np.random.rand(n, p)
     B = np.random.rand(n,2)
-    B[:,0] = 1 # Constant term. 
-    B = Term(B)  
-    
+    B[:,0] = 1 # Constant term.
+    B = Term(B)
+
     dummy_test(A, B, surf=None)
 
 
@@ -110,9 +111,9 @@ def test_07():
 
     A = np.random.rand(n, v, k)
     B = np.random.rand(n,p)
-    B[:,0] = 1 # Constant term. 
-    B = Term(B)  
-    
+    B[:,0] = 1 # Constant term.
+    B = Term(B)
+
     dummy_test(A, B, surf=None)
 
 
@@ -123,8 +124,8 @@ def test_08():
 
     A = np.random.rand(n, v)
     B = np.random.rand(n, 2)
-    B[:,0] = 1 # Constant term. 
-    
+    B[:,0] = 1 # Constant term.
+
     surf = {'tri': np.random.randint(1, v, size=(n, 3))}
     dummy_test(A, B, surf)
 
@@ -138,9 +139,9 @@ def test_09():
 
     A = np.random.rand(n, v, k)
     B = np.random.rand(n,p)
-    B[:,0] = 1 # Constant term. 
-    B = Term(B)  
-    
+    B[:,0] = 1 # Constant term.
+    B = Term(B)
+
     surf = {'tri': np.random.randint(1, v, size=(k, 3))}
     dummy_test(A, B, surf=surf)
 
@@ -151,8 +152,8 @@ def test_10():
 
     A = np.random.rand(n, v)
     B = np.random.rand(n, 2)
-    B[:,0] = 1 # Constant term. 
-    
+    B[:,0] = 1 # Constant term.
+
     surf = {'lat': np.random.choice([0, 1], size=(3, 3, 3)).astype(bool)}
     dummy_test(A, B, surf=surf)
 
@@ -166,22 +167,22 @@ def test_11():
 
     A = np.random.rand(n, v, k)
     B = np.random.rand(n,p)
-    B[:,0] = 1 # Constant term. 
-    B = Term(B)  
-    
+    B[:,0] = 1 # Constant term.
+    B = Term(B)
+
     surf = {'lat': np.random.choice([0, 1], size=(3, 3, 3))}
     dummy_test(A, B, surf)
 
+
 def test_12():
     surf, _ = load_conte69()
-    
+
     p = np.random.randint(1, 10)
     n = np.random.randint(2, 10)
-    
+
     A = np.random.rand(n,32492)
     B = np.random.rand(n,p)
-    B[:,0] = 1 # Constant term. 
-    B = Term(B)  
-    
-    dummy_test(A, B, surf)
+    B[:,0] = 1 # Constant term.
+    B = Term(B)
 
+    dummy_test(A, B, surf)

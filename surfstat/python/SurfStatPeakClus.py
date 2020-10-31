@@ -4,6 +4,7 @@ from SurfStatEdg import py_SurfStatEdg
 from matlab_functions import interp1, ismember
 import copy
 
+
 def py_SurfStatPeakClus(slm, mask, thresh, reselspvert=None, edg=None):
     """ Finds peaks (local maxima) and clusters for surface data.
     Parameters
@@ -68,7 +69,7 @@ def py_SurfStatPeakClus(slm, mask, thresh, reselspvert=None, edg=None):
     lmvox = np.argwhere(islm)[:,1] + 1
     excurset = np.array(slm_t[0,:] >= thresh, dtype=int)
     n = excurset.sum()
-    
+
     if n < 1:
         peak = []
         clus = []
@@ -89,15 +90,15 @@ def py_SurfStatPeakClus(slm, mask, thresh, reselspvert=None, edg=None):
             k = nf[k-1]
         if j != k:
             nf[j-1] = k
-            
+
     for j in range(1, n+1):
          while nf[j-1] != nf[nf[j-1]-1]:
              nf[j-1] =  nf[nf[j-1]-1]
- 
+
     vox = np.argwhere(excurset) + 1
-    ivox = np.argwhere(np.in1d(vox, lmvox)) + 1  
+    ivox = np.argwhere(np.in1d(vox, lmvox)) + 1
     clmid = nf[ivox-1]
-    uclmid, iclmid, jclmid = np.unique(clmid, 
+    uclmid, iclmid, jclmid = np.unique(clmid,
                                        return_index=True, return_inverse=True)
     iclmid = iclmid +1
     jclmid = jclmid +1
@@ -106,16 +107,16 @@ def py_SurfStatPeakClus(slm, mask, thresh, reselspvert=None, edg=None):
     # implementing matlab's histc function ###
     bin_edges   = np.r_[-np.Inf, 0.5 * (ucid[:-1] + ucid[1:]), np.Inf]
     ucvol, ucvol_edges = np.histogram(nf, bin_edges)
-    
+
     if reselspvert is None:
         reselsvox = np.ones(np.shape(vox))
     else:
         reselsvox = reselspvert[vox-1]
-        
+
     # calling matlab-python version for scipy's interp1d
-    nf1 = interp1(np.append(0, ucid), np.arange(0,nclus+1), nf, 
+    nf1 = interp1(np.append(0, ucid), np.arange(0,nclus+1), nf,
                       kind='nearest')
-    
+
     # if k>1, find volume of cluster in added sphere
     if 'k' not in slm or slm['k'] == 1:
         ucrsl = np.bincount(nf1.astype(int), reselsvox.flatten())
@@ -144,14 +145,14 @@ def py_SurfStatPeakClus(slm, mask, thresh, reselspvert=None, edg=None):
                                             slm_t[0, vox-1].T -
                                             s ))).mean(axis=0)
         ucrsl = np.bincount(nf1.astype(int), (r.T * reselsvox.T).flatten())
-    
+
     # and their ranks (in ascending order)
     iucrls = sorted(range(len(ucrsl[1:])), key=lambda k: ucrsl[1:][k])
     rankrsl = np.zeros((1, nclus))
     rankrsl[0, iucrls] =  np.arange(nclus,0,-1)
-    
+
     lmid = lmvox[ismember(lmvox, vox)[0]]
-       
+
     varA = slm_t[0, (lmid-1)]
     varB = lmid
     varC = rankrsl[0,jclmid-1]
@@ -172,7 +173,7 @@ def py_SurfStatPeakClus(slm, mask, thresh, reselspvert=None, edg=None):
     peak['clusid'] = lm[:,2].reshape(len(lm[:,2]), 1)
     clus = {}
     clus['clusid'] = cl[:,0].reshape(len(cl[:,0]), 1)
-    clus['nverts'] = cl[:,1].reshape(len(cl[:,1]), 1) 
+    clus['nverts'] = cl[:,1].reshape(len(cl[:,1]), 1)
     clus['resels'] = cl[:,2] .reshape(len(cl[:,2]), 1)
-    
+
     return peak, clus, clusid
