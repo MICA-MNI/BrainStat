@@ -70,9 +70,9 @@ def py_SurfStatQ(slm, mask=None):
     Q_sort = np.zeros((1,nx))
 
     for i in np.arange(nx,0,-1):
-         if P_sort[i-1] < m :
-             m = P_sort[i-1]
-         Q_sort[0, i-1] = m
+        if P_sort[i-1] < m :
+            m = P_sort[i-1]
+        Q_sort[0, i-1] = m
 
     Q = np.zeros((1,nx))
     Q[0,index] = Q_sort

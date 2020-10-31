@@ -202,7 +202,7 @@ def matlab_SurfStatMaskCut(surf):
 
 # ==> SurfStatNorm.m <==
 def matlab_SurfStatNorm(Y, mask=None, subdiv='s'):
-	# Normalizes by subtracting the global mean, or dividing it.
+    # Normalizes by subtracting the global mean, or dividing it.
     # Inputs
     # Y      = numpy array of shape (n x v) or (n x v x k).
     #          v=#vertices.
@@ -465,16 +465,16 @@ def matlab_SurfStatSmooth(Y, surf, FWHM):
 # ==> SurfStatStand.m <==
 def matlab_SurfStatStand(Y, mask=None, subtractordivide='s'):
 
-	# Standardizes by subtracting the global mean, or dividing it.
- 	# Inputs
-	# Y      = numpy array of shape (n x v), v=#vertices.
-	#        = NEED TO BE DISCUSSED: it works for (n x v x k) now, DO WE NEED THAT?
-	# mask   = numpy boolean array of shape (1 x v).
+    # Standardizes by subtracting the global mean, or dividing it.
+    # Inputs
+    # Y      = numpy array of shape (n x v), v=#vertices.
+    #        = NEED TO BE DISCUSSED: it works for (n x v x k) now, DO WE NEED THAT?
+    # mask   = numpy boolean array of shape (1 x v).
     #          True=inside the mask, False=outside.
-	# subdiv = 's' for Y=Y-Ymean or 'd' for Y=(Y/Ymean -1)*100.
-	# Outputs
-	# Y      = standardized data, numpy array of shape (n x v).
-	# Ym     = mean of input Y along the mask, numpy array of shape (n x 1).
+    # subdiv = 's' for Y=Y-Ymean or 'd' for Y=(Y/Ymean -1)*100.
+    # Outputs
+    # Y      = standardized data, numpy array of shape (n x v).
+    # Ym     = mean of input Y along the mask, numpy array of shape (n x 1).
 
     Y = matlab.double(Y.tolist())
     if mask is None and subtractordivide=='s':
@@ -587,7 +587,7 @@ def matlab_SurfStatWriteVol(d, Z, T):
 
 # ==> stat_threshold.m <==
 def matlab_stat_threshold(search_volume, num_voxels, fwhm, df, p_val_peak,
-    cluster_threshold, p_val_extent, nconj, nvar):
+        cluster_threshold, p_val_extent, nconj, nvar):
 
     def var2mat(var):
         # Brings the input variables to matlab format.

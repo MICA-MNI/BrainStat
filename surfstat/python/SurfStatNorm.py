@@ -4,7 +4,7 @@ import numpy as np
 
 def py_SurfStatNorm(Y, mask=None, subdiv='s'):
 
-	# Normalizes by subtracting the global mean, or dividing it.
+    # Normalizes by subtracting the global mean, or dividing it.
     # Inputs
     # Y      = numpy array of shape (n x v) or (n x v x k).
     #          v=#vertices.

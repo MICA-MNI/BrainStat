@@ -37,8 +37,8 @@ def minterp1(x,y,ix):
 
 
 def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
-    p_val_peak=0.05, cluster_threshold=0.001, p_val_extent=0.05, nconj=1,
-    nvar=1, EC_file=None, expr=None, nprint=5):
+        p_val_peak=0.05, cluster_threshold=0.001, p_val_extent=0.05, nconj=1,
+        nvar=1, EC_file=None, expr=None, nprint=5):
     """Thresholds and P-values of peaks and clusters of random fields in any D.
 
     Parameters

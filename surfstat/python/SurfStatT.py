@@ -47,16 +47,16 @@ def py_SurfStatT(slm, contrast):
     # slm['dfs']  = numpy array of shape (1 x v), effective degrees of freedom.
     #             Absent if q=1.
 
-	#% Note that the contrast in the observations is used to determine the
-	#% intended contrast in the model coefficients, slm.c. However there is some
-	#% ambiguity in this when the model contains redundant terms. An example of
-	#% such a model is 1 + Gender (Gender by itself does not contain redundant
-	#% terms). Only one of the ambiguous contrasts is estimable (i.e. has slm.sd
-	#% < Inf), and this is the one chosen, though it may not be the contrast
-	#% that you intended. To check this, compare the contrast in the
-	#% coefficients slm.c to the actual design matrix in slm.X. Note that the
-	#% redundant columns of the design matrix have weights given by the rows of
-	#% null(slm.X,'r')'
+    #% Note that the contrast in the observations is used to determine the
+    #% intended contrast in the model coefficients, slm.c. However there is some
+    #% ambiguity in this when the model contains redundant terms. An example of
+    #% such a model is 1 + Gender (Gender by itself does not contain redundant
+    #% terms). Only one of the ambiguous contrasts is estimable (i.e. has slm.sd
+    #% < Inf), and this is the one chosen, though it may not be the contrast
+    #% that you intended. To check this, compare the contrast in the
+    #% coefficients slm.c to the actual design matrix in slm.X. Note that the
+    #% redundant columns of the design matrix have weights given by the rows of
+    #% null(slm.X,'r')'
 
     [n, p] = np.shape(slm['X'])
     pinvX  = np.linalg.pinv(slm['X'])
@@ -100,13 +100,13 @@ def py_SurfStatT(slm, contrast):
             irs = np.zeros((q1, v))
 
             for ic in range(1, nc+1):
-            	v1 = 1 + (ic - 1) * chunck
-            	v2 = np.min((v1 + chunck - 1, v))
-            	vc = v2 - v1 + 1
+                v1 = 1 + (ic - 1) * chunck
+                v2 = np.min((v1 + chunck - 1, v))
+                vc = v2 - v1 + 1
 
-            	irs[:, int(v1-1):int(v2)] = np.around(np.multiply(\
-            	 slm['r'][:, int(v1-1):int(v2)], \
-            	 np.tile(1/slm['dr'][:,(ic-1)], (1,vc))))
+                irs[:, int(v1-1):int(v2)] = np.around(np.multiply(\
+                     slm['r'][:, int(v1-1):int(v2)], \
+                     np.tile(1/slm['dr'][:,(ic-1)], (1,vc))))
 
             ur, ir, jr = np.unique(irs, axis=0, return_index=True, return_inverse=True)
             ir = ir + 1
@@ -129,10 +129,10 @@ def py_SurfStatT(slm, contrast):
                 Vbeta = np.linalg.pinv(np.dot(slm['X'].T, VinvX))
                 G = np.dot(Vbeta, VinvX.T)
                 Gc = np.dot(G.T, c)
-               	R = Vinv - np.dot(VinvX, G)
-               	E = np.zeros((q,1))
-               	RVV = np.zeros((np.shape(slm['V'])))
-               	M = np.zeros((q,q))
+                R = Vinv - np.dot(VinvX, G)
+                E = np.zeros((q,1))
+                RVV = np.zeros((np.shape(slm['V'])))
+                M = np.zeros((q,q))
 
                 for j in range(1, q+1):
                     E[(j-1)] = np.dot(Gc.T, np.dot(slm['V'][:,:,(j-1)], Gc))

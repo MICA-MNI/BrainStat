@@ -54,9 +54,9 @@ def py_SurfStatResels(slm, mask=None):
             mask[edg-1] = True
         else:
             #if np.ndim(mask) > 1:
-                #mask = np.squeeze(mask)
-                #if mask.shape[0] > 1:
-                #    mask = mask.T
+            #    mask = np.squeeze(mask)
+            #    if mask.shape[0] > 1:
+            #        mask = mask.T
             v = mask.size
 
         ## Compute the Lipschitz–Killing curvatures (LKC)

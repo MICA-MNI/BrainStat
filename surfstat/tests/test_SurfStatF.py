@@ -11,23 +11,23 @@ sw.matlab_init_surfstat()
 
 def dummy_test(A, B):
 
-	try:
-		# wrap matlab functions
-		Wrapped_slm = sw.matlab_SurfStatF(A, B)
+    try:
+        # wrap matlab functions
+        Wrapped_slm = sw.matlab_SurfStatF(A, B)
 
-	except:
-		pytest.skip("Original MATLAB code does not work with these inputs.")
+    except:
+        pytest.skip("Original MATLAB code does not work with these inputs.")
 
 
-	# run python functions
-	Python_slm = py_SurfStatF(A, B)
+    # run python functions
+    Python_slm = py_SurfStatF(A, B)
 
-	testout_SurfStatF = []
-	# compare matlab-python outputs
-	for key in Wrapped_slm:
-		testout_SurfStatF.append(np.allclose(Python_slm[key], Wrapped_slm[key], \
-					   		     rtol=1e-05, equal_nan=True))
-	assert all(flag == True for (flag) in testout_SurfStatF)
+    testout_SurfStatF = []
+    # compare matlab-python outputs
+    for key in Wrapped_slm:
+        testout_SurfStatF.append(np.allclose(Python_slm[key], Wrapped_slm[key], \
+                                 rtol=1e-05, equal_nan=True))
+    assert all(flag == True for (flag) in testout_SurfStatF)
 
 
 #### Test 1

@@ -54,7 +54,7 @@ def py_SurfStatPeakClus(slm, mask, thresh, reselspvert=None, edg=None):
             array of resels in the cluster.
     clusid : numpy array of shape (1,v),
         array of cluster id's for each vertex.
-	"""
+    """
     if edg is None:
         edg = py_SurfStatEdg(slm)
 
@@ -92,8 +92,8 @@ def py_SurfStatPeakClus(slm, mask, thresh, reselspvert=None, edg=None):
             nf[j-1] = k
 
     for j in range(1, n+1):
-         while nf[j-1] != nf[nf[j-1]-1]:
-             nf[j-1] =  nf[nf[j-1]-1]
+        while nf[j-1] != nf[nf[j-1]-1]:
+            nf[j-1] =  nf[nf[j-1]-1]
 
     vox = np.argwhere(excurset) + 1
     ivox = np.argwhere(np.in1d(vox, lmvox)) + 1

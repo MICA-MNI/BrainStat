@@ -26,11 +26,11 @@ def dummy_test(surf):
 
 #### Test 1
 def test_surf_tri():
-	# take ax3 random arrays for surf['tri']
-	a = np.random.randint(4,100)
-	A = {}
-	A['tri'] = np.random.rand(a,3)
-	dummy_test(A)
+    # take ax3 random arrays for surf['tri']
+    a = np.random.randint(4,100)
+    A = {}
+    A['tri'] = np.random.rand(a,3)
+    dummy_test(A)
 
 
 #### Test 2
