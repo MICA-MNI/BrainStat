@@ -4,11 +4,11 @@ from SurfStatEdg import *
 import surfstat_wrap as sw
 import numpy as np
 import pytest
+from brainspace.datasets import load_conte69
 
 sw.matlab_init_surfstat()
 
 def dummy_test(surf):
-
     try:
         # wrap matlab functions
         Wrapped_edg = sw.matlab_SurfStatEdg(surf)
@@ -51,3 +51,7 @@ def test_surf_lat_ones_zeros():
     A['lat'] = np.random.choice([0, 1], size=(10,10,10))    
     dummy_test(A)
 
+# Test BSPolyData. 
+def test_bspolydata():
+    surf, _ = load_conte69()
+    dummy_test(surf)

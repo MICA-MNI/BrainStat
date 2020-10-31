@@ -1,6 +1,8 @@
 import sys
 import numpy as np
 from matlab_functions import colon
+from brainspace.mesh.mesh_elements import get_edges
+from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 
 def py_SurfStatEdg(surf):
 	"""Converts the triangles or lattices of a mesh to edges. 
@@ -9,17 +11,24 @@ def py_SurfStatEdg(surf):
 		surf (dict): = a dictionary with key 'tri' or 'lat'
 	        surf['tri'] = (t x 3) numpy array of triangle indices, t:#triangles, or,
 	        surf['lat'] = 3D numpy array of 1's and 0's (1:in, 0:out).
-		
+		or
+		surf (BSPolyData) = a BrainSpace surface object. 
 	Returns:
 		edg (np.array): A e-by-2 numpy array containing the indices of the edges, where
   			e is the number of edges. 
 	"""
 
-	if 'tri' in surf:
+	# For BSPolyData, simply use BrainSpace's functionality to grab edges.
+	if isinstance(surf,BSPolyData):
+		edg = get_edges(surf)
+  
+	# Convert triangles to edges by grabbing all unique edges within triangles. 
+	elif 'tri' in surf:
 		tri = np.sort(surf['tri'], axis=1)
 		edg =  np.unique(np.concatenate((np.concatenate((tri[:,[0, 1]], \
 		                 tri[:,[0, 2]])),  tri[:,[1, 2]] )) , axis=0) 
-		
+		edg = edg - 1
+  
 	elif 'lat' in surf:
 		# See the comments of SurfStatResels for a full explanation.
 		if surf['lat'].ndim == 2:
@@ -86,11 +95,10 @@ def py_SurfStatEdg(surf):
 			[surf['lat'].T.flatten()[edg[:,1] -1]]]).T, axis=1)
 
 		edg = vid[edg[all_idx,:]-1].reshape(np.shape(edg[all_idx,:]-1))
+		edg = edg - 1
 		
 	else:
-		sys.exit('input "surf" must have "lat" or "tri" key !!!')
+		sys.exit('Input "surf" must have "lat" or "tri" key, or be a mesh object.')
 
-	edg = edg - 1
-  
 	return edg
 

@@ -11,7 +11,7 @@ def py_SurfStatSmooth(Y, surf, FWHM):
     ----------
     Y : numpy array of shape (n,v) or (n,v,k)
         surface data, v=#vertices, n=#observations, k=#variates.
-    surf : a dictionary with key 'tri' or 'lat'
+    surf : a dictionary with key 'tri' or 'lat', or a BSPolyData object.
         surf['tri'] = numpy array of shape (t,3), triangle indices, or
         surf['lat'] = numpy array of shape (nx,ny,nz), 1=in, 0=out,
         (nx,ny,nz) = size(volume).
