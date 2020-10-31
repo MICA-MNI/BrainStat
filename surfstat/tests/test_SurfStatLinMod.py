@@ -27,7 +27,7 @@ def dummy_test(Y, model, surf=None, resl_check=True):
             assert mat_slm[k].shape == py_slm[k].shape, \
                 "Different shape: %s" % k
 
-        assert np.allclose(mat_slm[k], py_slm[k]), "Not equal: %s" % k
+        assert np.allclose(mat_slm[k], py_slm[k], rtol=1e-05, equal_nan=True), "Not equal: %s" % k
 
 # 2D inputs --- square matrices
 def test_01():
@@ -130,7 +130,7 @@ def test_08():
     B[:,0] = 1 # Constant term. 
     
     surf = {'tri': np.random.randint(1, v, size=(n, 3))}
-    dummy_test(A, B, surf)
+    dummy_test(A, B, surf, resl_check=False)
 
 
 # 3D inputs --- A is a 3D input, B is Term
@@ -176,6 +176,7 @@ def test_11_fixed():
     surf = {'lat': np.random.choice([0, 1], size=(3, 3, 3))}
     dummy_test(A, B, surf, resl_check=False)
 
+
 def test_12_fixed():
     surf, _ = load_conte69()
     
@@ -188,4 +189,19 @@ def test_12_fixed():
     B = Term(B)  
     
     dummy_test(A, B, surf, resl_check=False)
+
+
+# real thickness data for 10 subjects
+def test_13():
+    fname = './tests/data/thickness.mat'
+    f = loadmat(fname)
+
+    A = f['T']
+    AGE = Term(np.array(f['AGE']), 'AGE')
+    B = 1 + AGE
+    surf = {}
+    surf['tri'] = f['tri']
+    surf['coord'] = f['coord']
+    dummy_test(A, B, surf)
+
 
