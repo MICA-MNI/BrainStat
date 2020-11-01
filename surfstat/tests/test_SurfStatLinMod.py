@@ -205,3 +205,39 @@ def test_13():
     dummy_test(A, B, surf)
 
 
+# real thickness data for 10 subjects --> shuffle "Y" values
+def test_14():
+    fname = './tests/data/thickness.mat'
+    f = loadmat(fname)
+
+    A = f['T']
+    np.random.shuffle(A)
+
+    AGE = Term(np.array(f['AGE']), 'AGE')
+    B = 1 + AGE
+    surf = {}
+    surf['tri'] = f['tri']
+    surf['coord'] = f['coord']
+    dummy_test(A, B, surf)
+
+
+
+# real thickness data for 10 subjects --> shuffle "Y" values, shuffle surf['tri']
+def test_15():
+    fname = './tests/data/thickness.mat'
+    f = loadmat(fname)
+
+    A = f['T']
+    np.random.shuffle(A)
+
+    AGE = Term(np.array(f['AGE']), 'AGE')
+    B = 1 + AGE
+    surf = {}
+    surf['tri'] = f['tri']
+
+    np.random.shuffle(surf['tri'])
+
+    surf['coord'] = f['coord']
+    dummy_test(A, B, surf)
+
+
