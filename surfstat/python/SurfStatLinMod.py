@@ -8,6 +8,7 @@ from SurfStatEdg import py_SurfStatEdg
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 from brainspace.mesh.mesh_elements import get_cells
 
+
 def py_SurfStatLinMod(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
     """ Fits linear mixed effects models to surface data and estimates resels.
 

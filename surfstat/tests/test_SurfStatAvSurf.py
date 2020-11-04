@@ -5,25 +5,26 @@ import pytest
 from SurfStatAvSurf import py_SurfStatAvSurf
 import surfstat_wrap as sw
 from brainspace.datasets import load_conte69
-from brainspace.mesh.mesh_elements import get_points, get_cells 
+from brainspace.mesh.mesh_elements import get_points, get_cells
 from brainspace.mesh.mesh_io import write_surface
 import tempfile
 from itertools import chain
 
 surfstat_eng = sw.matlab_init_surfstat()
 
+
 # Test function
 def dummy_test(py_surfaces, fun = np.add):
     # Run functions
     mat_surf = sw.matlab_SurfStatAvSurf(py_surfaces, fun)
     py_out = py_SurfStatAvSurf(py_surfaces, fun)
-    py_surf = {'tri': np.array(get_cells(py_out)+1), 
+    py_surf = {'tri': np.array(get_cells(py_out)+1),
                'coord': np.array(get_points(py_out)).T}
-    
-    # Sort triangles. 
+
+    # Sort triangles.
     py_surf['tri'] = np.sort(py_surf['tri'], axis=1)
     mat_surf['tri'] = np.sort(mat_surf['tri'], axis=1)
-    
+
     # Check equality.
     for k in set.union(set(py_surf.keys()), set(mat_surf.keys())):
         assert k in mat_surf, "'%s' missing from MATLAB slm." % k
@@ -34,7 +35,8 @@ def dummy_test(py_surfaces, fun = np.add):
                 "Different shape: %s" % k
         assert np.allclose(mat_surf[k], py_surf[k]), "Not equal: %s" % k
 
-# Write surfaces to temporary files. 
+
+# Write surfaces to temporary files.
 def temp_surfaces(surfaces):
     t = []
     names = []
@@ -43,6 +45,7 @@ def temp_surfaces(surfaces):
         names.append(t[-1].name)
         write_surface(s, names[-1], otype='fs')
     return t, names
+
 
 ## Tests
 # Two surfaces, column vector.
@@ -54,6 +57,7 @@ def test_two_surfaces_column_plus():
     for i in range(0,len(t)):
         t[i].close()
 
+
 # Two surfaces, row vector.
 def test_two_surfaces_row_plus():
     surfaces = load_conte69()
@@ -62,6 +66,7 @@ def test_two_surfaces_row_plus():
     dummy_test(namesArr)
     for i in range(0,len(t)):
         t[i].close()
+
 
 # Four surfaces, 2-by-2 matrix.
 def test_four_surfaces_square_plus():
@@ -73,6 +78,7 @@ def test_four_surfaces_square_plus():
     for i in range(0,len(t)):
         t[i].close()
 
+
 # Four surfaces, 2-by-2 matrix, minimum.
 def test_four_surfaces_square_min():
     surfaces_1 = load_conte69()
@@ -83,6 +89,7 @@ def test_four_surfaces_square_min():
     for i in range(0,len(t)):
         t[i].close()
 
+
 # Four surfaces, 2-by-2 matrix, maximum.
 def test_four_surfaces_square_max():
     surfaces_1 = load_conte69()
@@ -92,6 +99,7 @@ def test_four_surfaces_square_max():
     dummy_test(namesArr, np.fmax)
     for i in range(0,len(t)):
         t[i].close()
+
 
 # Six surfaces, 2-by-2 matrix, maximum.
 def test_six_surfaces_square_max():

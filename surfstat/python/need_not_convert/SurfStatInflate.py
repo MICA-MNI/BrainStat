@@ -8,6 +8,7 @@ global eng
 eng = matlab.engine.start_matlab()
 addpath = eng.addpath('matlab')
 
+
 def py_SurfStatInflate(surf, w=0.5, spherefile=None):
     """Inflates a surface mesh to hemi-ellipsoids.
 
@@ -19,12 +20,12 @@ def py_SurfStatInflate(surf, w=0.5, spherefile=None):
     w : a float, by default 0.5,
         Weight in [0,1] given to hemi-ellipsoids.
     spherefile : string (a filename)
-        Filename of a sphere surface for the left or right hemisphere. If 
-        spherefile is None, and v=40962 (or v=81924), by default 'sphere.obj'. 
-        If spherefile is None, and v=163842 (or v=327684), by default 
-        'lh.sphere'. If spherefile is an *.obj file, it assumes that the 
-        triangulation of the right hemisphere is a mirror image; if it is an 
-        FS file, then it assumes it is identical. 
+        Filename of a sphere surface for the left or right hemisphere. If
+        spherefile is None, and v=40962 (or v=81924), by default 'sphere.obj'.
+        If spherefile is None, and v=163842 (or v=327684), by default
+        'lh.sphere'. If spherefile is an *.obj file, it assumes that the
+        triangulation of the right hemisphere is a mirror image; if it is an
+        FS file, then it assumes it is identical.
 
     Returns
     -------
@@ -32,18 +33,18 @@ def py_SurfStatInflate(surf, w=0.5, spherefile=None):
         surfw['coord'] : 2D numpy array of shape (3,v),
             matrix of inflated coordinates.
     """
-    
+
     v = surf['coord'].shape[1]
-    
+
     if v <= 81924:
         # MATLAB RAPPING FOR *obj FILE READ IN --> has to be changed...
         if spherefile is None:
             spherefile = 'sphere.obj'
         sphere_mat = eng.SurfStatReadSurf(spherefile)
         sphere = {}
-        sphere['tri'] = np.array(sphere_mat['tri']) 
+        sphere['tri'] = np.array(sphere_mat['tri'])
         sphere['coord'] = np.array(sphere_mat['coord'])
-    
+
         if v == 81924:
             sphere['tri'] = np.concatenate((sphere['tri'],
                                             sphere['tri']+v), axis=1)
@@ -61,7 +62,7 @@ def py_SurfStatInflate(surf, w=0.5, spherefile=None):
                 sphere['coord'] = np.concatenate((row1,
                                                   sphere['coord'][1:3,:]))
             else:
-                row1 = -sphere['coord'][0,:] * (sphere['coord'][0,:] < 0)                                                   
+                row1 = -sphere['coord'][0,:] * (sphere['coord'][0,:] < 0)
                 row1 = row1.reshape(1, len(row1))
                 sphere['coord'] = np.concatenate((row1,
                                                   sphere['coord'][1:3,:]))
@@ -73,7 +74,7 @@ def py_SurfStatInflate(surf, w=0.5, spherefile=None):
         sphere = {}
         sphere['tri'] = np.array(sphere_mat['tri'])
         sphere['coord'] = np.array(sphere_mat['coord'])
-        
+
         if v == 327684:
             sphere['tri'] = np.concatenate((sphere['tri'],
                                             sphere['tri']+v), axis=1)
@@ -101,9 +102,9 @@ def py_SurfStatInflate(surf, w=0.5, spherefile=None):
     minsp = sphere['coord'].min(1)
     surfw = surf
 
-    for i in range(0,3): 
+    for i in range(0,3):
         surfw['coord'][i,:] = ((sphere['coord'][i,:] - minsp[i]) / \
         (maxsp[i]-minsp[i]) * (maxs[i]-mins[i]) + mins[i]) * w + \
-        surf['coord'][i,:]*(1-w) 
+        surf['coord'][i,:]*(1-w)
 
     return surfw

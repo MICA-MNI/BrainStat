@@ -8,19 +8,20 @@ import pytest
 
 sw.matlab_init_surfstat()
 
+
 def dummy_test(slm, mask=None, clusthresh=0.001):
 
     try:
         # wrap matlab functions
-        M_pval, M_peak, M_clus, M_clusid = sw.matlab_SurfStatP(slm, 
-                                                               mask, 
+        M_pval, M_peak, M_clus, M_clusid = sw.matlab_SurfStatP(slm,
+                                                               mask,
                                                                clusthresh)
 
     except:
         pytest.skip("Original MATLAB code does not work with these inputs.")
 
     # run python equivalent
-    PY_pval, PY_peak, PY_clus, PY_clusid = py_SurfStatP(slm, 
+    PY_pval, PY_peak, PY_clus, PY_clusid = py_SurfStatP(slm,
                                                         mask,
                                                         clusthresh)
 
@@ -28,19 +29,20 @@ def dummy_test(slm, mask=None, clusthresh=0.001):
     testout_SurfStatP = []
 
     for key in M_pval:
-        testout_SurfStatP.append(np.allclose(M_pval[key], PY_pval[key], 
+        testout_SurfStatP.append(np.allclose(M_pval[key], PY_pval[key],
                                       rtol=1e-05, equal_nan=True))
     for key in M_peak:
-        testout_SurfStatP.append(np.allclose(M_peak[key], PY_peak[key], 
+        testout_SurfStatP.append(np.allclose(M_peak[key], PY_peak[key],
                                       rtol=1e-05, equal_nan=True))
     for key in M_clus:
-        testout_SurfStatP.append(np.allclose(M_clus[key], PY_clus[key], 
+        testout_SurfStatP.append(np.allclose(M_clus[key], PY_clus[key],
                                       rtol=1e-05, equal_nan=True))
-    testout_SurfStatP.append(np.allclose(M_clusid, PY_clusid, 
+    testout_SurfStatP.append(np.allclose(M_clusid, PY_clusid,
                               rtol=1e-05, equal_nan=True))
 
 
     assert (all(flag == True for (flag) in testout_SurfStatP))
+
 
 def test_1():
     # special case, v =1, l=1
@@ -57,6 +59,7 @@ def test_1():
     slm['dfs'] =  np.array([[np.random.randint(1,10)]])
     dummy_test(slm)
 
+
 def test_2():
     # special case, v=1, l>1
     l = np.random.randint(1,10000)
@@ -71,6 +74,7 @@ def test_2():
     slm['tri'] = slmdata['slm']['tri'][0,0]
     slm['dfs'] =  np.array([[np.random.randint(1,10)]])
     py_SurfStatP(slm)
+
 
 def test_3():
     #special case, v=1, l>1, other input more randomized
@@ -90,6 +94,7 @@ def test_3():
     slm['dfs'] =  np.array([[np.random.randint(1,10)]])
     dummy_test(slm)
 
+
 def test_4():
     # v >1 and clusthresh < 1 (default clusthresh)
     slmfile = './tests/data/slm.mat'
@@ -101,6 +106,7 @@ def test_4():
     slm['resl'] = slmdata['slm']['resl'][0,0]
     slm['tri'] = slmdata['slm']['tri'][0,0]
     dummy_test(slm,  mask=None, clusthresh=0.001)
+
 
 def test_5():
     # v >1 and clusthresh < 1 (default clusthresh)
@@ -116,7 +122,8 @@ def test_5():
     slm['resl'] = np.random.rand(e,k)
     slm['tri'] = np.random.randint(low=1, high=64984+1, size=(129960, 3))
     dummy_test(slm,  mask=None, clusthresh=0.001)
-    
+
+
 def test_6():
     # v >1 and clusthresh < 1 (default clusthresh)
     l = 1
@@ -133,7 +140,8 @@ def test_6():
     slm['resl'] = slmdata['slm']['resl'][0,0]
     slm['tri'] = slmdata['slm']['tri'][0,0]
     dummy_test(slm,  mask=None, clusthresh=0.001)
-    
+
+
 def test_7():
     # special case np.max(slm['t'][0, mask.flatten()]) < thresh
     slmfile = './tests/data/slm.mat'
@@ -145,7 +153,8 @@ def test_7():
     slm['resl'] = slmdata['slm']['resl'][0,0]
     slm['tri'] = slmdata['slm']['tri'][0,0]
     dummy_test(slm)
-    
+
+
 def test_8():
     # special case np.max(slm['t'][0, mask.flatten()]) < thresh
     # make slm['df'] a random integer
@@ -160,6 +169,7 @@ def test_8():
     slm['tri'] = slmdata['slm']['tri'][0,0]
     dummy_test(slm)
 
+
 def test_9():
     # special case case np.max(slm['t'][0, mask.flatten()]) > thresh
     slmfile = './tests/data/slm.mat'
@@ -172,6 +182,7 @@ def test_9():
     slm['tri'] = slmdata['slm']['tri'][0,0]
     dummy_test(slm)
 
+
 def test_10():
     # data from Sofie
     slmfile = './tests/data/slm.mat'
@@ -183,6 +194,7 @@ def test_10():
     slm['resl'] = slmdata['slm']['resl'][0,0]
     slm['tri'] = slmdata['slm']['tri'][0,0]
     dummy_test(slm)
+
 
 def test_11():
     # data from Sofie + a random mask
@@ -200,6 +212,7 @@ def test_11():
     Amask = np.array(Amask, dtype=bool)
 
     dummy_test(slm, mask=Amask)
+
 
 def test_12():
     # data from Sofie + clusthresh is a random value
@@ -219,6 +232,7 @@ def test_12():
     Aclusthresh = 0.3
     dummy_test(slm, Amask, Aclusthresh)
 
+
 def test_13():
     # randomize Sofie's data a little bit
     v = int(64984)
@@ -237,6 +251,7 @@ def test_13():
 
     dummy_test(slm)
 
+
 def test_14():
     # data from Sofie, slm['t'] is array of shape (1,1)
     slmfile = './tests/data/slm.mat'
@@ -251,6 +266,7 @@ def test_14():
     slm['tri'] = slmdata['slm']['tri'][0,0]
 
     dummy_test(slm)
+
 
 def test_15():
     # data from Sofie + add a random slm['dfs']
@@ -267,11 +283,12 @@ def test_15():
     slm['resl'] = slmdata['slm']['resl'][0,0]
     slm['tri'] = slmdata['slm']['tri'][0,0]
     slm['dfs'] = np.random.randint(1,10, (1,v))
-    
+
     dummy_test(slm)
 
+
 def test_16():
-    # data from Reinder, slm.k = 3    
+    # data from Reinder, slm.k = 3
 
     slmfile = './tests/data/slmk3.mat'
     slmdata = loadmat(slmfile)
@@ -284,12 +301,3 @@ def test_16():
 
 
     dummy_test(slm)
-
-
-
-
-
-
-
-
-

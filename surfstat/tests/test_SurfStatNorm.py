@@ -7,6 +7,7 @@ import pytest
 
 sw.matlab_init_surfstat()
 
+
 def dummy_test(Y, mask, subdiv):
 
     try:
@@ -25,7 +26,6 @@ def dummy_test(Y, mask, subdiv):
 
 
 #### test 1a
-
 # 1D inputs --- row vectors
 def test_1d_row_vectors():
     v = np.random.randint(1,9)
@@ -39,8 +39,8 @@ def test_1d_row_vectors():
 
     dummy_test(Y, mask, subdiv)
 
-#### test 1b
 
+#### test 1b
 # 1D inputs --- row vectors & mask
 def test_1d_row_vectors_mask():
     a = np.arange(1,11)
@@ -52,7 +52,6 @@ def test_1d_row_vectors_mask():
 
 
 #### test 2a
-
 # 1D inputs --- 2D arrays & mask
 def test_1d_2d_array_vectors_mask():
     a = np.arange(1,11)
@@ -64,7 +63,6 @@ def test_1d_2d_array_vectors_mask():
 
 
 #### test 3a
-
 # 1D inputs --- 3D arrays & mask
 def test_1d_3d_array_mask():
 
@@ -75,4 +73,3 @@ def test_1d_3d_array_mask():
     mask = np.array([1, 1, 0, 0], dtype=bool)
     subdiv = 's'
     dummy_test(Y, mask, subdiv)
-
