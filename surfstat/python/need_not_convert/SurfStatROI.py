@@ -8,6 +8,7 @@ python version of SurfStatROI.
 
 import numpy as np
 
+
 def py_SurfStatROI(centre, radius, surf):
     """ROI on the surface or volume with a given centre and radius
 

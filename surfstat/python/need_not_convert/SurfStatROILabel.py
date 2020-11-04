@@ -8,6 +8,7 @@ python version of SufStatROILabel
 
 import numpy as np
 
+
 def py_SurfStatROILabel(lhlabel, rhlabel, nl, nr):
     """ROI from a FreeSurfer .label file.
 

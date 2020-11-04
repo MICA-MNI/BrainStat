@@ -8,6 +8,7 @@ python version of SurfStatViewData
 
 import numpy as np
 
+
 @deprecated("BrainSpace dependency")
 def py_SurfStatViewData(data, surf, title, background):
     """Basic viewer for surface data.

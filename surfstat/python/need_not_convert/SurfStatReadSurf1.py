@@ -8,6 +8,7 @@ python version of SurfStatReadSurf1
 
 import numpy as np
 
+
 @deprecated("BrainSpace dependency")
 def py_SurfStatReadSurf1(filename, ab='a', numfields=4):
     """Reads coordinates and triangles from a single .obj or FreeSurfer file (mgz, gii, obj).
