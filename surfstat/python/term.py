@@ -141,7 +141,7 @@ def remove_duplicate_columns(df, tol=1e-8):
     df *= 1 / tol
     # keep = df.round().T.drop_duplicates(keep='last').T.columns  # Slow!!
     idx = np.unique(df.round().values, axis=1, return_index=True)[-1]
-    keep = df.columns[idx]
+    keep = df.columns[np.flipud(idx)]
     return keep
 
 
@@ -210,7 +210,7 @@ class Term:
                              '{}.'.format(df.shape, self.shape))
         return df
 
-    def _add(self, t, side='left'):
+    def _add(self, t, side='right'):
         if isinstance(t, Random):
             return NotImplemented
 
@@ -409,7 +409,7 @@ class Random:
             return Term(v.ravel(), names='I')
         return r1.variance
 
-    def _add(self, r, side='left'):
+    def _add(self, r, side='right'):
         if not isinstance(r, Random):
             r = Random(fix=r)
 
