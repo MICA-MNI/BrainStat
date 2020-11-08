@@ -10,6 +10,7 @@ from scipy.io import loadmat
 
 surfstat_eng = sw.matlab_init_surfstat()
 
+
 def dummy_test(Y, model, surf=None, resl_check=True):
 
     py_slm = py_SurfStatLinMod(Y, model, surf=surf)
@@ -28,6 +29,7 @@ def dummy_test(Y, model, surf=None, resl_check=True):
                 "Different shape: %s" % k
 
         assert np.allclose(mat_slm[k], py_slm[k], rtol=1e-05, equal_nan=True), "Not equal: %s" % k
+
 
 # 2D inputs --- square matrices
 def test_01():
@@ -185,9 +187,9 @@ def test_12_fixed():
 
     A = np.random.rand(n,32492)
     B = np.random.rand(n,p)
-    B[:,0] = 1 # Constant term. 
-    B = Term(B)  
-    
+    B[:,0] = 1 # Constant term.
+    B = Term(B)
+
     dummy_test(A, B, surf, resl_check=False)
 
 
@@ -219,7 +221,6 @@ def test_14():
     surf['tri'] = f['tri']
     surf['coord'] = f['coord']
     dummy_test(A, B, surf)
-
 
 
 # real thickness data for 10 subjects --> shuffle "Y" values, shuffle surf['tri']

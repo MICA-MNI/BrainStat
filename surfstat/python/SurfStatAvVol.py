@@ -33,7 +33,7 @@ def py_SurfStatAvVol(filenames, fun = np.add, Nan = None):
     file_01 = filenames[0]
 
     if file_01.endswith('.nii') or file_01.endswith('.nii.gz') or \
-        file_01.endswith('.img'):
+            file_01.endswith('.img'):
 
         if n == 1:
             data_i = np.array(nb.load(file_01).get_fdata())
@@ -67,7 +67,7 @@ def py_SurfStatAvVol(filenames, fun = np.add, Nan = None):
     # read the origin from analyze header
     if file_01.endswith('.img'):
         vol['origin'] = d.header['origin'][0:3]
-    
+
     # read the origin from nifti header
     elif file_01.endswith('.nii') or file_01.endswith('.nii.gz'):
         if d.header['qform_code'] > 0:

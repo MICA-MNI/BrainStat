@@ -63,12 +63,6 @@ def matlab_SurfStatAvVol(filenames, fun = np.add, Nan = None, dimensionality = N
     return data, vol
 
 
-
-
-
-
-
-
 # ==> SurfStatColLim.m <==
 def matlab_SurfStatColLim(clim):
     sys.exit("Function matlab_SurfStatColLim is not implemented yet")
