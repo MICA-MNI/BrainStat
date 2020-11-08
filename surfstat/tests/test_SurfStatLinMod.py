@@ -240,3 +240,39 @@ def test_15():
 
     surf['coord'] = f['coord']
     dummy_test(A, B, surf)
+
+
+# real data from sofopofo
+def test_16():
+    fname = './tests/data/sofopofo1.mat'
+    f = loadmat(fname)
+    T = f['sofie']['T'][0,0]
+
+    params = f['sofie']['model'][0,0]
+    colnames = ['1', 'ak', 'female', 'male', 'Affect', 'Control1', 'Perspective',
+    'Presence', 'ink']
+
+    M = Term(params, colnames)
+
+    SW = {}
+    SW['tri'] = f['sofie']['SW'][0,0]['tri'][0,0]
+    SW['coord'] = f['sofie']['SW'][0,0]['coord'][0,0]
+
+    dummy_test(T, M, SW)
+
+
+# real data from sofopofo, no column naming in the model Term
+def test_17():
+    fname = './tests/data/sofopofo1.mat'
+    f = loadmat(fname)
+    T = f['sofie']['T'][0,0]
+
+    params = f['sofie']['model'][0,0]
+
+    M = Term(params)
+
+    SW = {}
+    SW['tri'] = f['sofie']['SW'][0,0]['tri'][0,0]
+    SW['coord'] = f['sofie']['SW'][0,0]['coord'][0,0]
+
+    dummy_test(T, M, SW)
