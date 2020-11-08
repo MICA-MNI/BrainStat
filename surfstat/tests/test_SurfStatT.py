@@ -3,6 +3,7 @@ sys.path.append("python")
 from SurfStatT import *
 import surfstat_wrap as sw
 import numpy as np
+from scipy.io import loadmat
 import sys
 import pytest
 
@@ -32,7 +33,7 @@ def dummy_test(slm, contrast):
 
 
 #### Test 1
-def test_1d_row_vectors():
+def test_01():
     a = np.random.randint(1,10)
     A = {}
     A['X']  = np.random.rand(a,1)
@@ -45,7 +46,7 @@ def test_1d_row_vectors():
 
 
 #### Test 2  ### square matrices
-def test_2d_square_matrix():
+def test_02():
     a = np.random.randint(1,10)
     b = np.random.randint(1,10)
     A = {}
@@ -57,8 +58,8 @@ def test_2d_square_matrix():
     dummy_test(A, B)
 
 
-#### Test 3a  ### slm.V & slm.r given
-def test_2d_fullslm():
+#### Test 3  ### slm.V & slm.r given
+def test_03():
     a = np.array([ [4,4,4], [5,5,5], [6,6,6] ])
     b = np.array([[1,0,0], [0,1,0], [0,0,1]])
     Z = np.zeros((3,3,2))
@@ -76,8 +77,8 @@ def test_2d_fullslm():
     dummy_test(A, B)
 
 
-#### Test 3b #### slm.V given, slm.r not
-def test_2d_partial_slm():
+#### Test 4 #### slm.V given, slm.r not
+def test_04():
     A = {}
     A['X'] = np.random.rand(3,2)
     A['V'] = np.array([ [4,4,4], [5,5,5], [6,6,6] ])
@@ -87,3 +88,20 @@ def test_2d_partial_slm():
     A['dr'] = np.array([np.random.randint(1,10)])
     B = np.array([[1]])
     dummy_test(A, B)
+
+
+def test_05():
+    fname = './tests/data/thickness_slm.mat'
+    f = loadmat(fname)
+
+    slm = {}
+    slm['X'] = f['slm']['X'][0,0]
+    slm['df'] = f['slm']['df'][0,0][0,0]
+    slm['coef'] = f['slm']['coef'][0,0]
+    slm['SSE'] = f['slm']['SSE'][0,0]
+    slm['tri'] = f['slm']['tri'][0,0]
+    slm['resl'] = f['slm']['resl'][0,0]
+
+    AGE = f['slm']['AGE'][0,0]
+
+    dummy_test(slm, AGE)

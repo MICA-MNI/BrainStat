@@ -19,7 +19,7 @@ def py_SurfStatT(slm, contrast):
     # Inputs
     # slm         = a dict with mandatory keys 'X', 'df', 'coef', 'SSE'
     # slm['X']    = numpy array of shape (n x p), design matrix.
-    # slm['df']   = numpy array of shape (a,), dtype=float64, degrees of freedom
+    # slm['df']   = int, float or numpy array of shape (a,), degrees of freedom
     # slm['coef'] = numpy array of shape (p x v) or (p x v x k)
     #             = array of coefficients of the linear model.
     #             = if (p x v), then k is assigned to 1 here.
@@ -30,7 +30,7 @@ def py_SurfStatT(slm, contrast):
     #             and slm.V=eye(n).
     # slm['r']    = numpy array of shape ((q-1) x v), coefficients of the
     #             first (q-1) components of slm['V'] divided by their sum.
-    # slm['dr']   = numpy array of shape ((q-1) x 1), increments in slm['r']
+    # slm['dr']   = numpy array of shape ((q-1), ), increments in slm['r']
     # contrast    = numpy array of shape (n x 1), contrasts in the observations, ie.,
     #             = slm['X']*slm['c'].T, where slm['c'] is a contrast in slm.coef, or,
     #             = numpy array of shape (1 x p), of slm.c,
@@ -57,6 +57,12 @@ def py_SurfStatT(slm, contrast):
     #% coefficients slm.c to the actual design matrix in slm.X. Note that the
     #% redundant columns of the design matrix have weights given by the rows of
     #% null(slm.X,'r')'
+
+    if not isinstance(slm['df'], np.ndarray):
+        slm['df'] =np.array([slm['df']])
+
+    if contrast.ndim == 1:
+        contrast = np.reshape(contrast, (-1, 1))
 
     [n, p] = np.shape(slm['X'])
     pinvX  = np.linalg.pinv(slm['X'])
