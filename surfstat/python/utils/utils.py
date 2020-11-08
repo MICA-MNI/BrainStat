@@ -2,7 +2,7 @@ import warnings
 from pathlib import Path
 import pandas as pd
 from sklearn.utils import Bunch
-from nilearn.datasets.utils import (_get_dataset_dir, _fetch_files)
+from nilearn.datasets.utils import _fetch_files
 
 
 def fetch_tutorial_data(n_subjects=20, data_dir=None, resume=True, verbose=1):
@@ -43,11 +43,6 @@ def fetch_tutorial_data(n_subjects=20, data_dir=None, resume=True, verbose=1):
     # set data_dir, if not directly set use ~ as default
     if data_dir is None:
         data_dir = str(Path.home())
-
-    # set dataset name and get its corresponding directory
-    dataset_name = "brainstat_tutorial"
-    data_dir = _get_dataset_dir(dataset_name, data_dir=data_dir,
-                                verbose=verbose)
 
     # set download information for demographic file
     files = [
