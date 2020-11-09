@@ -1,6 +1,7 @@
 import sys
 sys.path.append("python")
 from SurfStatT import *
+from SurfStatLinMod import *
 import surfstat_wrap as sw
 import numpy as np
 from scipy.io import loadmat
@@ -105,3 +106,76 @@ def test_05():
     AGE = f['slm']['AGE'][0,0]
 
     dummy_test(slm, AGE)
+
+
+def test_06():
+    fname = './tests/data/thickness_slm.mat'
+    f = loadmat(fname)
+
+    slm = {}
+    slm['X'] = f['slm']['X'][0,0]
+    slm['df'] = f['slm']['df'][0,0][0,0]
+    slm['coef'] = f['slm']['coef'][0,0]
+    slm['SSE'] = f['slm']['SSE'][0,0]
+    slm['tri'] = f['slm']['tri'][0,0]
+    slm['resl'] = f['slm']['resl'][0,0]
+
+    AGE = f['slm']['AGE'][0,0]
+
+    dummy_test(slm, -1*AGE)
+
+
+def test_07():
+    fname = './tests/data/thickness.mat'
+    f = loadmat(fname)
+
+    A = f['T']
+    np.random.shuffle(A)
+
+    AGE = Term(np.array(f['AGE']), 'AGE')
+    B = 1 + AGE
+    surf = {}
+    surf['tri'] = f['tri']
+    surf['coord'] = f['coord']
+    slm = py_SurfStatLinMod(A, B, surf)
+
+    contrast = np.array(f['AGE']).T
+
+    dummy_test(slm, contrast)
+
+
+def test_08():
+    fname = './tests/data/sofopofo1_slm.mat'
+    f = loadmat(fname)
+    slm = {}
+    slm['X'] = f['slm']['X'][0,0]
+    slm['df'] = f['slm']['df'][0,0][0,0]
+    slm['coef'] = f['slm']['coef'][0,0]
+    slm['SSE'] = f['slm']['SSE'][0,0]
+    slm['tri'] = f['slm']['tri'][0,0]
+    slm['resl'] = f['slm']['resl'][0,0]
+
+    contrast = np.random.randint(20,50, size=(slm['X'].shape[0],1))
+
+    dummy_test(slm, contrast)
+
+
+def test_09():
+    fname = './tests/data/sofopofo1.mat'
+    f = loadmat(fname)
+    T = f['sofie']['T'][0,0]
+
+    params = f['sofie']['model'][0,0]
+    colnames = ['1', 'ak', 'female', 'male', 'Affect', 'Control1', 'Perspective',
+    'Presence', 'ink']
+
+    M = Term(params, colnames)
+
+    SW = {}
+    SW['tri'] = f['sofie']['SW'][0,0]['tri'][0,0]
+    SW['coord'] = f['sofie']['SW'][0,0]['coord'][0,0]
+    slm = py_SurfStatLinMod(T, M, SW)
+
+    contrast = np.random.randint(20,50, size=(slm['X'].shape[0],1))
+
+    dummy_test(slm, contrast)
