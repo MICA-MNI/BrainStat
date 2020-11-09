@@ -4,6 +4,9 @@ from SurfStatEdg import *
 import surfstat_wrap as sw
 import numpy as np
 import pytest
+from scipy.io import loadmat
+from nibabel.freesurfer.io import read_geometry
+from nilearn.plotting.surf_plotting import load_surf_mesh
 from brainspace.datasets import load_conte69
 
 sw.matlab_init_surfstat()
@@ -53,6 +56,33 @@ def test_04():
 
 
 def test_05():
+    # load freesurfer data lh.white & rh.white
+    SW_surf_L = read_geometry('./tests/data/lh.white')
+    SW_surf_R = read_geometry('./tests/data/rh.white')
+    SW = {}
+    SW['tri'] = np.concatenate((SW_surf_L[1]+1, 10242 + SW_surf_R[1]+1))
+    dummy_test(SW)
+
+
+def test_06():
+    # load freesurfer data lh.pial & rh.pial
+    Pial_Mesh_Left  = load_surf_mesh('./tests/data/lh.pial')
+    Pial_Mesh_Right = load_surf_mesh('./tests/data/rh.pial')
+    Pial_Mesh = {}
+    Pial_Mesh['tri'] = np.concatenate((Pial_Mesh_Left[1]+1,
+                                       10242 + Pial_Mesh_Right[1]+1))
+    dummy_test(Pial_Mesh)
+
+
+def test_07():
+    fname = './tests/data/surf_lsub.mat'
+    f = loadmat(fname)
+    subiculum_left = {}
+    subiculum_left['tri'] = f['ave_lsub']['tri'][0,0]
+    dummy_test(subiculum_left)
+
+
+def test_08():
     # Test BSPolyData.
     surf, _ = load_conte69()
     dummy_test(surf)
