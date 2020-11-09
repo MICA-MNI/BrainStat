@@ -100,8 +100,8 @@ eng = matlab.engine.start_matlab()
 eng.addpath('matlab/')
 
 
-# Test 1 --> search_volume is "a float"  (rest is default-values)
-def test_1():
+def test_01():
+    # search_volume is "a float"  (rest is default-values)
     search_volume     = np.random.uniform(0,10)
     num_voxels        = 1
     fwhm              = 0.0
@@ -119,8 +119,8 @@ def test_1():
             cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
 
 
-#Test 2 --> search_volume is a list  (rest is default-values)
-def test_2():
+def test_02():
+    # search_volume is a list  (rest is default-values)
     m = np.random.uniform(0,10)
     n = np.random.uniform(0,10)
     k = np.random.uniform(0,10)
@@ -142,8 +142,8 @@ def test_2():
             cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
 
 
-#Test 3 --> search_volume is a 1D numpy array (rest is default-values)
-def test_3():
+def test_03():
+    # search_volume is a 1D numpy array (rest is default-values)
     m = np.random.uniform(0,10)
     n = np.random.uniform(0,10)
     k = np.random.uniform(0,10)
@@ -165,8 +165,8 @@ def test_3():
             cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
 
 
-#Test 4 --> search_volume is a 2D numpy array (rest is default-values)
-def test_4():
+def test_04():
+    # search_volume is a 2D numpy array (rest is default-values)
     m = np.random.uniform(0,10)
     n = np.random.uniform(0,10)
 
@@ -187,8 +187,8 @@ def test_4():
             cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
 
 
-#Test 5 --> search_volume a float, num_voxels: an int
-def test_5():
+def test_05():
+    # search_volume a float, num_voxels: an int
     search_volume     = np.random.uniform(0,10)
     num_voxels        = np.random.randint(1,1000)
     fwhm              = 0.0
@@ -206,8 +206,8 @@ def test_5():
             cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
 
 
-#Test 6 --> search_volume 2D numpy array, num_voxels: a list
-def test_6():
+def test_06():
+    # search_volume 2D numpy array, num_voxels: a list
     m = np.random.randint(1,10000)
     n = np.random.randint(1,10000)
     k = np.random.randint(1,10000)
@@ -229,9 +229,8 @@ def test_6():
             cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
 
 
-#Test 7 --> search_volume 2D array, num_voxels: 2D array of shape (k,1),
-# fwhm float, df: int
-def test_7():
+def test_07():
+    # search_volume 2D array, num_voxels: 2D array of shape (k,1), fwhm float, df: int
     m = np.random.randint(3,100)
     n = np.random.randint(1,100)
     k = np.random.randint(1,100)
@@ -253,9 +252,8 @@ def test_7():
             cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
 
 
-#Test 8 --> search_volume 2D array, num_voxels: 2D array of shape (k,1),
-# fwhm float, df: math.inf
 def test_8():
+    # search_volume 2D array, num_voxels: 2D array of shape (k,1), fwhm float, df: math.inf
     m = np.random.randint(1,100)
     n = np.random.randint(1,100)
     k = np.random.randint(1,100)
@@ -279,9 +277,9 @@ def test_8():
             cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
 
 
-#Test 9 --> search_volume float, num_voxels: 2D array of shape (1,k),
-# fwhm float, df: int, p_val_peak: float
-def test_9():
+def test_09():
+    # search_volume float, num_voxels: 2D array of shape (1,k),
+    # fwhm float, df: int, p_val_peak: float
     m = np.random.randint(1,100)
     n = np.random.randint(1,100)
     k = np.random.randint(1,10)
@@ -305,9 +303,9 @@ def test_9():
             cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
 
 
-#Test 10 --> search_volume float, num_voxels: 2D array of shape (1,k),
-# fwhm float, df: int, p_val_peak: list
 def test_10():
+    # search_volume float, num_voxels: 2D array of shape (1,k),
+    # fwhm float, df: int, p_val_peak: list
     m = np.random.uniform(0,1)
     n = np.random.uniform(0,1)
     k = np.random.randint(1,10)
@@ -331,9 +329,9 @@ def test_10():
             cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
 
 
-#Test 11 --> search_volume float, num_voxels: 2D array of shape (1,k),
-# fwhm float, df: int, p_val_peak: 1D array
 def test_11():
+    # search_volume float, num_voxels: 2D array of shape (1,k),
+    # fwhm float, df: int, p_val_peak: 1D array
     m = np.random.uniform(0,1)
     k = np.random.randint(1,10)
 
@@ -356,9 +354,9 @@ def test_11():
             cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
 
 
-# Test 12 --> search_volume float, num_voxels: 2D array of shape (1,k),
-# fwhm float, df: int, p_val_peak: 1D array, cluster_threshold: float
 def test_12():
+    # search_volume float, num_voxels: 2D array of shape (1,k),
+    # fwhm float, df: int, p_val_peak: 1D array, cluster_threshold: float
     m = np.random.randint(1,10)
     k = np.random.randint(1,100)
 
@@ -381,10 +379,10 @@ def test_12():
             cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
 
 
-# Test 13 --> search_volume float, num_voxels: int,
-# fwhm float, df: int, p_val_peak: 1D array, cluster_threshold: float,
-# p_val_extent 1D array
 def test_13():
+    # search_volume float, num_voxels: int,
+    # fwhm float, df: int, p_val_peak: 1D array, cluster_threshold: float,
+    # p_val_extent 1D array
     m = np.random.randint(3,10)
     n = np.random.randint(1,100)
     k = np.random.randint(1,100)
@@ -406,10 +404,10 @@ def test_13():
             cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
 
 
-# Test 14 --> search_volume float, num_voxels: int,
-# fwhm float, df: int, p_val_peak: 1D array, cluster_threshold: float,
-# p_val_extent 1D array, nconj: int
 def test_14():
+    # search_volume float, num_voxels: int,
+    # fwhm float, df: int, p_val_peak: 1D array, cluster_threshold: float,
+    # p_val_extent 1D array, nconj: int
     m = np.random.randint(3,100)
     n = np.random.randint(1,100)
     k = np.random.randint(1,100)
@@ -432,7 +430,6 @@ def test_14():
             cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
 
 
-# Test 15 -->
 def test_15():
     search_volume     = [5.7, 8, 9]
     num_voxels        = 100
@@ -451,9 +448,7 @@ def test_15():
             cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
 
 
-# Test 16
 def test_16():
-    #slmdata = loadmat('./tests/data/someresels.mat')
     resels = np.array([[4.00000000e+00,  np.NaN, 6.59030991e+03]])
     N = 64984
     df = np.array([[1111, 0], [1111, 1111]])
@@ -476,7 +471,6 @@ def test_16():
             cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
 
 
-# Test 17
 def test_17():
     somedata = loadmat('./tests/data/varA.mat')
     varA = somedata['varA']
@@ -501,7 +495,6 @@ def test_17():
             cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
 
 
-# Test 18 ### BUG --> important for SurfStatP.py
 def test_18():
 
     # this is from some real test data

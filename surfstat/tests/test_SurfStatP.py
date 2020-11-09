@@ -44,7 +44,7 @@ def dummy_test(slm, mask=None, clusthresh=0.001):
     assert (all(flag == True for (flag) in testout_SurfStatP))
 
 
-def test_1():
+def test_01():
     # special case, v =1, l=1
     l = int(1)
     v = int(1)
@@ -60,7 +60,7 @@ def test_1():
     dummy_test(slm)
 
 
-def test_2():
+def test_02():
     # special case, v=1, l>1
     l = np.random.randint(1,10000)
     v = int(1)
@@ -76,7 +76,7 @@ def test_2():
     py_SurfStatP(slm)
 
 
-def test_3():
+def test_03():
     #special case, v=1, l>1, other input more randomized
     l = np.random.randint(1,10000)
     v = int(1)
@@ -95,7 +95,7 @@ def test_3():
     dummy_test(slm)
 
 
-def test_4():
+def test_04():
     # v >1 and clusthresh < 1 (default clusthresh)
     slmfile = './tests/data/slm.mat'
     slmdata = loadmat(slmfile)
@@ -108,7 +108,7 @@ def test_4():
     dummy_test(slm,  mask=None, clusthresh=0.001)
 
 
-def test_5():
+def test_05():
     # v >1 and clusthresh < 1 (default clusthresh)
     l = 1
     v = 64984
@@ -124,7 +124,7 @@ def test_5():
     dummy_test(slm,  mask=None, clusthresh=0.001)
 
 
-def test_6():
+def test_06():
     # v >1 and clusthresh < 1 (default clusthresh)
     l = 1
     v = 64984
@@ -142,7 +142,7 @@ def test_6():
     dummy_test(slm,  mask=None, clusthresh=0.001)
 
 
-def test_7():
+def test_07():
     # special case np.max(slm['t'][0, mask.flatten()]) < thresh
     slmfile = './tests/data/slm.mat'
     slmdata = loadmat(slmfile)
@@ -155,7 +155,7 @@ def test_7():
     dummy_test(slm)
 
 
-def test_8():
+def test_08():
     # special case np.max(slm['t'][0, mask.flatten()]) < thresh
     # make slm['df'] a random integer
     d = np.random.randint(1111, 2000)
@@ -170,7 +170,7 @@ def test_8():
     dummy_test(slm)
 
 
-def test_9():
+def test_09():
     # special case case np.max(slm['t'][0, mask.flatten()]) > thresh
     slmfile = './tests/data/slm.mat'
     slmdata = loadmat(slmfile)
@@ -289,7 +289,6 @@ def test_15():
 
 def test_16():
     # data from Reinder, slm.k = 3
-
     slmfile = './tests/data/slmk3.mat'
     slmdata = loadmat(slmfile)
     slm = {}

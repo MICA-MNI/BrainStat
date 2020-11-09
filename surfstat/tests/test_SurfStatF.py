@@ -30,12 +30,9 @@ def dummy_test(A, B):
     assert all(flag == True for (flag) in testout_SurfStatF)
 
 
-#### Test 1
-def test_slm1_slm2_easy_int():
-
+def test_01():
     # slm1['coef'] is 2D array of integers
     # slm1['X'] and slm2['X'] are the SAME, 2D array of integers
-
     n = 5
     p = 6
     k = 2
@@ -58,12 +55,9 @@ def test_slm1_slm2_easy_int():
     dummy_test(slm1, slm2)
 
 
-#### Test 2
-def test_slm1_slm2_middle_int():
-
+def test_02():
     # slm1['coef'] is 2D array of integers
     # slm1['X'] and slm2['X'] are the SAME, 2D array of integers
-
     n = np.random.randint(3,100)
     p = np.random.randint(3,100)
     k = np.random.randint(3,100)
@@ -86,9 +80,7 @@ def test_slm1_slm2_middle_int():
     dummy_test(slm1, slm2)
 
 
-#### Test 3
-def test_slm1_slm2_easy_random():
-
+def test_03():
     # slm1['coef'] is 2D random array
     # slm1['X'] and slm2['X'] are the SAME, 2D random arrays
 
@@ -114,9 +106,7 @@ def test_slm1_slm2_easy_random():
     dummy_test(slm1, slm2)
 
 
-#### Test 4
-def test_slm1_slm2_coef3D_int_k3():
-
+def test_04():
     # k= 3
     # slm1['coef'] is 3D array of integers
     # slm1['X'] and slm2['X'] are the SAME, 2D arrays of integers
@@ -143,9 +133,7 @@ def test_slm1_slm2_coef3D_int_k3():
     dummy_test(slm1, slm2)
 
 
-#### Test 5
-def test_slm1_slm2_coef3D_int_k2():
-
+def test_05():
     # k = 2
     # slm1['coef'] is 3D array of integers
     # slm1['X'] and slm2['X'] are the SAME, 2D arrays of integers
@@ -172,9 +160,7 @@ def test_slm1_slm2_coef3D_int_k2():
     dummy_test(slm1, slm2)
 
 
-#### Test 6
-def test_slm1_slm2_coef3D_int_k1():
-
+def test_06():
     # k = 1
     # slm1['coef'] is 3D array of integers
     # slm1['X'] and slm2['X'] are the SAME, 2D arrays of integers
@@ -201,9 +187,7 @@ def test_slm1_slm2_coef3D_int_k1():
     dummy_test(slm1, slm2)
 
 
-#### Test 7
-def test_slm1_slm2_coef3D_random_k3():
-
+def test_07():
     # k= 3
     # slm1['coef'] is 3D random array
     # slm1['X'] and slm2['X'] are the SAME, 2D random array
@@ -228,9 +212,7 @@ def test_slm1_slm2_coef3D_random_k3():
     dummy_test(slm1, slm2)
 
 
-#### Test 8
-def test_slm1_slm2_coef3D_random_k2():
-
+def test_08():
     # k = 2
     # slm1['coef'] is 3D random array
     # slm1['X'] and slm2['X'] are the SAME, 2D random array
@@ -255,9 +237,7 @@ def test_slm1_slm2_coef3D_random_k2():
     dummy_test(slm1, slm2)
 
 
-#### Test 9
-def test_slm1_slm2_coef3D_random_k1():
-
+def test_09():
     # k = 1
     # slm1['coef'] is 3D random array
     # slm1['X'] and slm2['X'] are the SAME, 2D random array

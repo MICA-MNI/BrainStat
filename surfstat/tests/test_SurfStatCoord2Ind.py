@@ -24,8 +24,7 @@ def dummy_test(coord, surf):
     assert testout
 
 
-#### Test 1
-def test_surf_coord():
+def test_01():
     # coord is 2D array, surf['coord'] is 2D array
     m = np.random.randint(1,100)
     n = np.random.randint(1,100)
@@ -36,8 +35,7 @@ def test_surf_coord():
     dummy_test(coord, surf)
 
 
-### Test 2
-def test_surf_lat_easy():
+def test_02():
     # coord is 2D array, surf['lat'] is 3D array of ones
     m = np.random.randint(1,100)
 
@@ -47,8 +45,7 @@ def test_surf_lat_easy():
     dummy_test(coord, surf)
 
 
-### Test 3
-def test_surf_lat_middle():
+def test_03():
     # coord is 2D array, surf['lat'] is 3D array of ones and zeros
     m = np.random.randint(1,100)
     coord = np.random.rand(m,3)
@@ -57,8 +54,7 @@ def test_surf_lat_middle():
     dummy_test(coord, surf)
 
 
-### Test 4
-def test_surf_lat_hard():
+def test_04():
     # coord is 2D array, surf['lat'] is 3D array of ones and zeros
     n = np.random.randint(1,100)
     k = np.random.randint(1,100)
@@ -74,8 +70,7 @@ def test_surf_lat_hard():
     dummy_test(coord, surf)
 
 
-### Test 5
-def test_surf_lat_complex():
+def test_05():
     # coord is 2D array, surf['lat'] is 3D array of ones and zeros
     m = np.random.randint(1,100)
     n = np.random.randint(1,100)
@@ -88,8 +83,7 @@ def test_surf_lat_complex():
     dummy_test(coord, surf)
 
 
-### Test 6
-def test_surf_lat_vox_easy():
+def test_06():
     # coord is 2D array, surf['lat'] is 3D array of ones, surf['vox'] is 2D
     m = np.random.randint(1,100)
     n = np.random.randint(1,100)
@@ -103,8 +97,7 @@ def test_surf_lat_vox_easy():
     dummy_test(coord, surf)
 
 
-### Test 7
-def test_surf_lat_vox_middle():
+def test_07():
     # coord is 2D array, surf['lat'] is 3D.. of ones & zeros, surf['vox'] is 2D
     m = np.random.randint(1,100)
     n = np.random.randint(1,100)
@@ -118,8 +111,7 @@ def test_surf_lat_vox_middle():
     dummy_test(coord, surf)
 
 
-### Test 8
-def test_surf_lat_vox_complex():
+def test_08():
     # coord is 2D array, surf['lat'] is 3D.. of ones & zeros, surf['vox'] is 2D
     m = np.random.randint(1,100)
     n = np.random.randint(1,100)
@@ -133,8 +125,7 @@ def test_surf_lat_vox_complex():
     dummy_test(coord, surf)
 
 
-### Test 9
-def test_surf_lat_vox_origin_easy():
+def test_09():
     # coord is 2D array, surf['lat'] 3D, surf['vox'] 2D, surf[orig] 2D
     m = np.random.randint(1,100)
     n = np.random.randint(1,100)
@@ -149,8 +140,7 @@ def test_surf_lat_vox_origin_easy():
     dummy_test(coord, surf)
 
 
-### Test 10
-def test_surf_lat_vox_origin_middle():
+def test_10():
     # coord is 2D array, surf['lat'] 3D, surf['vox'] 2D, surf[orig] 2D
     m = np.random.randint(1,100)
     n = np.random.randint(1,100)
@@ -165,8 +155,7 @@ def test_surf_lat_vox_origin_middle():
     dummy_test(coord, surf)
 
 
-### Test 11
-def test_surf_lat_vox_origin_complex():
+def test_11():
     # coord is 2D array, surf['lat'] 3D, surf['vox'] 2D, surf[orig] 2D
     m = np.random.randint(1,100)
     n = np.random.randint(1,100)

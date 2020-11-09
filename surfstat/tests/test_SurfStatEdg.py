@@ -24,8 +24,7 @@ def dummy_test(surf):
     assert testout
 
 
-#### Test 1
-def test_surf_tri():
+def test_01():
     # take ax3 random arrays for surf['tri']
     a = np.random.randint(4,100)
     A = {}
@@ -33,30 +32,27 @@ def test_surf_tri():
     dummy_test(A)
 
 
-#### Test 2
-def test_surf_lat_2d():
+def test_02():
     # dummy 3D array for surf['lat']
     A = {}
     A['lat'] = np.ones((10,10))
     dummy_test(A)
 
 
-#### Test 3
-def test_surf_lat_ones():
+def test_03():
     # dummy 3D array for surf['lat']
     A = {}
     A['lat'] = np.ones((10,10,10))
     dummy_test(A)
 
 
-### Test 4
-def test_surf_lat_ones_zeros():
+def test_04():
     A = {}
     A['lat'] = np.random.choice([0, 1], size=(10,10,10))
     dummy_test(A)
 
 
-# Test BSPolyData.
-def test_bspolydata():
+def test_05():
+    # Test BSPolyData.
     surf, _ = load_conte69()
     dummy_test(surf)

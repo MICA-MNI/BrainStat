@@ -23,8 +23,7 @@ def dummy_test(Y, surf, FWHM):
     assert np.allclose(Wrapped_Y, Python_Y, rtol=1e-05, equal_nan=True)
 
 
-# Test 1a
-def test_2D_small_array():
+def test_01():
     n = np.random.randint(1,100)
     Y = np.random.rand(n,n)
     surf = {}
@@ -33,8 +32,7 @@ def test_2D_small_array():
     dummy_test(Y, surf, FWHM)
 
 
-# Test 1b
-def test_2D_small_array_complex_surf_tri():
+def test_02():
     n = np.random.randint(1,100)
     Y = np.random.rand(n,n)
     m = np.random.randint(1,100)
@@ -44,8 +42,7 @@ def test_2D_small_array_complex_surf_tri():
     dummy_test(Y, surf, FWHM)
 
 
-# Test 1c
-def test_2D_small_array_complex_surf_lat():
+def test_03():
     n = np.random.randint(1,100)
     Y = np.random.rand(n,n)
     m = np.random.randint(1,100)
@@ -55,8 +52,7 @@ def test_2D_small_array_complex_surf_lat():
     dummy_test(Y, surf, FWHM)
 
 
-# Test 2a
-def test_3D_small_array():
+def test_04():
     n = np.random.randint(1,100)
     a = np.random.rand(n,3)
     b = np.random.rand(n,3)
