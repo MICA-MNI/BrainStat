@@ -1,9 +1,12 @@
 import sys
 sys.path.append("python")
-from SurfStatF import *
 import surfstat_wrap as sw
+from SurfStatF import *
+from SurfStatT import *
+from SurfStatLinMod import *
+from term import Term
+from scipy.io import loadmat
 import numpy as np
-import sys
 import pytest
 
 sw.matlab_init_surfstat()
@@ -260,3 +263,68 @@ def test_09():
     slm2['coef'] = np.random.rand(p,v,k)
 
     dummy_test(slm1, slm2)
+
+
+def test_10():
+    fname = './tests/data/thickness_slm.mat'
+    f = loadmat(fname)
+    slm = {}
+    slm['X'] = f['slm']['X'][0,0]
+    slm['df'] = f['slm']['df'][0,0][0,0]
+    slm['coef'] = f['slm']['coef'][0,0]
+    slm['SSE'] = f['slm']['SSE'][0,0]
+    slm['tri'] = f['slm']['tri'][0,0]
+    slm['resl'] = f['slm']['resl'][0,0]
+    AGE = f['slm']['AGE'][0,0]
+    slm = py_SurfStatT(slm, -1*AGE)
+
+    slm1 = slm.copy()
+    slm1['t'] = slm1['t'] + np.random.rand()
+
+    dummy_test(slm, slm1)
+
+
+def test_11():
+    fname = './tests/data/thickness_slm.mat'
+    f = loadmat(fname)
+    slm = {}
+    slm['X'] = f['slm']['X'][0,0]
+    slm['df'] = f['slm']['df'][0,0][0,0]
+    slm['coef'] = f['slm']['coef'][0,0]
+    slm['SSE'] = f['slm']['SSE'][0,0]
+    slm['tri'] = f['slm']['tri'][0,0]
+    slm['resl'] = f['slm']['resl'][0,0]
+    AGE = f['slm']['AGE'][0,0]
+    slm = py_SurfStatT(slm, -1*AGE)
+
+    slm1 = slm.copy()
+    slm1['X'] = slm['X'] + 2
+    slm1['t'] = slm1['t'] + 0.2
+    slm1['df'] = slm1['df'] + 2
+    slm1['coef'] = slm1['coef'] + 0.2
+
+
+    dummy_test(slm, slm1)
+
+
+def test_12():
+    fname = './tests/data/sofopofo1.mat'
+    f = loadmat(fname)
+    T = f['sofie']['T'][0,0]
+    params = f['sofie']['model'][0,0]
+    colnames = ['1', 'ak', 'female', 'male', 'Affect', 'Control1',
+                'Perspective', 'Presence', 'ink']
+    M = Term(params, colnames)
+    SW = {}
+    SW['tri'] = f['sofie']['SW'][0,0]['tri'][0,0]
+    SW['coord'] = f['sofie']['SW'][0,0]['coord'][0,0]
+    slm = py_SurfStatLinMod(T, M, SW)
+    contrast = np.array([[37], [41], [24], [37], [26], [28], [44], [26], [22],
+                         [32], [34], [33], [35], [25], [22], [27], [22], [29],
+                         [29], [24]])
+    slm = py_SurfStatT(slm, contrast)
+
+    slm1 = slm.copy()
+    slm1['t'] = slm1['t'] + np.random.rand()
+
+    dummy_test(slm, slm1)

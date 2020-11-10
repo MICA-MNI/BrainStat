@@ -129,17 +129,25 @@ def matlab_SurfStatF(slm1, slm2):
 
     slm1_mat = slm1.copy()
     for key in slm1_mat.keys():
-        if np.ndim(slm1_mat[key]) == 0:
-            slm1_mat[key] = surfstat_eng.double(slm1_mat[key])
-        else:
+        if isinstance(slm1_mat[key], np.ndarray):
             slm1_mat[key] = matlab.double(slm1_mat[key].tolist())
+        else:
+            try:
+                slm1_mat[key] = slm1_mat[key].item()
+            except:
+                slm1_mat[key] = slm1_mat[key]
+            slm1_mat[key] = surfstat_eng.double(slm1_mat[key])
 
     slm2_mat = slm2.copy()
     for key in slm2_mat.keys():
-        if np.ndim(slm2_mat[key]) == 0:
-            slm2_mat[key] = surfstat_eng.double(slm2_mat[key])
-        else:
+        if isinstance(slm2_mat[key], np.ndarray):
             slm2_mat[key] = matlab.double(slm2_mat[key].tolist())
+        else:
+            try:
+                slm2_mat[key] = slm2_mat[key].item()
+            except:
+                slm2_mat[key] = slm2_mat[key]
+            slm2_mat[key] = surfstat_eng.double(slm2_mat[key])
 
     result_mat = (surfstat_eng.SurfStatF(slm1_mat, slm2_mat))
 
