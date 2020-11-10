@@ -1,6 +1,9 @@
 import sys
 sys.path.append("python")
 from SurfStatP import *
+from SurfStatT import *
+from SurfStatLinMod import *
+from term import Term
 import surfstat_wrap as sw
 from scipy.io import loadmat
 import numpy as np
@@ -300,3 +303,89 @@ def test_16():
 
 
     dummy_test(slm)
+
+
+def test_17():
+    # load tutorial data (for n=10 subjects)
+    fname = './tests/data/thickness.mat'
+    f = loadmat(fname)
+    SW = {}
+    SW['tri'] = f['tri']
+    SW['coord'] = f['coord']
+    Y = f['T']
+    AGE = np.array(f['AGE'])
+    AGE = AGE.reshape(AGE.shape[1], 1)
+    A = Term(AGE, 'AGE')
+    M = 1 + A
+    slm = py_SurfStatLinMod(Y, M, SW)
+    slm = py_SurfStatT(slm, -1*AGE)
+    dummy_test(slm)
+
+
+def test_18():
+    fname = './tests/data/thickness_slm.mat'
+    f = loadmat(fname)
+    slm = {}
+    slm['X'] = f['slm']['X'][0,0]
+    slm['df'] = f['slm']['df'][0,0][0,0]
+    slm['coef'] = f['slm']['coef'][0,0]
+    slm['SSE'] = f['slm']['SSE'][0,0]
+    slm['tri'] = f['slm']['tri'][0,0]
+    slm['resl'] = f['slm']['resl'][0,0]
+    AGE = f['slm']['AGE'][0,0]
+    slm = py_SurfStatT(slm, -1*AGE)
+    dummy_test(slm)
+
+
+def test_19():
+    fname = './tests/data/thickness_slm.mat'
+    f = loadmat(fname)
+    slm = {}
+    slm['X'] = f['slm']['X'][0,0]
+    slm['df'] = f['slm']['df'][0,0][0,0]
+    slm['coef'] = f['slm']['coef'][0,0]
+    slm['SSE'] = f['slm']['SSE'][0,0]
+    slm['tri'] = f['slm']['tri'][0,0]
+    slm['resl'] = f['slm']['resl'][0,0]
+    AGE = f['slm']['AGE'][0,0]
+    slm = py_SurfStatT(slm, -1*AGE)
+    mname = './tests/data/mask.mat'
+    m = loadmat(mname)
+    mask = m['mask'].astype(bool).flatten()
+    dummy_test(slm, mask)
+
+
+def test_20():
+    fname = './tests/data/sofopofo1.mat'
+    f = loadmat(fname)
+    T = f['sofie']['T'][0,0]
+    params = f['sofie']['model'][0,0]
+    colnames = ['1', 'ak', 'female', 'male', 'Affect', 'Control1',
+                'Perspective', 'Presence', 'ink']
+    M = Term(params, colnames)
+    SW = {}
+    SW['tri'] = f['sofie']['SW'][0,0]['tri'][0,0]
+    SW['coord'] = f['sofie']['SW'][0,0]['coord'][0,0]
+    slm = py_SurfStatLinMod(T, M, SW)
+    contrast = np.array([[37], [41], [24], [37], [26], [28], [44], [26], [22],
+                         [32], [34], [33], [35], [25], [22], [27], [22], [29],
+                         [29], [24]])
+    slm = py_SurfStatT(slm, contrast)
+    dummy_test(slm)
+
+
+def test_21():
+    fname = './tests/data/sofopofo1_slm.mat'
+    f = loadmat(fname)
+    slm = {}
+    slm['X'] = f['slm']['X'][0,0]
+    slm['df'] = f['slm']['df'][0,0][0,0]
+    slm['coef'] = f['slm']['coef'][0,0]
+    slm['SSE'] = f['slm']['SSE'][0,0]
+    slm['tri'] = f['slm']['tri'][0,0]
+    slm['resl'] = f['slm']['resl'][0,0]
+    contrast = np.random.randint(20,50, size=(slm['X'].shape[0],1))
+    slm = py_SurfStatT(slm, contrast)
+    mask = np.random.choice([0, 1], size=(slm['t'].shape[1]))
+    mask = mask.astype(bool).flatten()
+    dummy_test(slm, mask)

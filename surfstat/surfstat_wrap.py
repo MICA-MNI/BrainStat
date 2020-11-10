@@ -260,6 +260,10 @@ def matlab_SurfStatP(slm, mask=None, clusthresh=0.001):
         if isinstance(slm_mat[key], np.ndarray):
             slm_mat[key] = matlab.double(slm_mat[key].tolist())
         else:
+            try:
+                slm_mat[key] = slm_mat[key].item()
+            except:
+                slm_mat[key] = slm_mat[key]
             slm_mat[key] = surfstat_eng.double(slm_mat[key])
 
     if mask is None:
