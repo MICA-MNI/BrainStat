@@ -4,6 +4,9 @@ from SurfStatSmooth import *
 import surfstat_wrap as sw
 import numpy as np
 import pytest
+from scipy.io import loadmat
+from nilearn.plotting.surf_plotting import load_surf_mesh
+from nibabel.freesurfer.io import read_geometry
 
 sw.matlab_init_surfstat()
 
@@ -63,3 +66,72 @@ def test_04():
     surf['tri'] = np.array([[1,2,3]])
     FWHM = 3.0
     dummy_test(Y, surf, FWHM)
+
+
+def test_05():
+    fname = './tests/data/surf_lsub.mat'
+    f = loadmat(fname)
+    surf = {}
+    surf['tri'] = f['ave_lsub']['tri'][0,0]
+    Y = np.random.rand(1, 1024)
+    FWHM = 5.0
+    dummy_test(Y, surf, FWHM)
+
+
+def test_06():
+    fname = './tests/data/surf_lsub.mat'
+    f = loadmat(fname)
+    surf = {}
+    surf['tri'] = f['ave_lsub']['tri'][0,0]
+    n = np.random.randint(1,100)
+    Y = np.random.rand(n, 1024)
+    FWHM = 5.0
+    dummy_test(Y, surf, FWHM)
+
+
+def test_07():
+    # load freesurfer data lh.pial & rh.pial
+    Pial_Mesh_Left  = load_surf_mesh('./tests/data/lh.pial')
+    Pial_Mesh_Right = load_surf_mesh('./tests/data/rh.pial')
+    Pial_Mesh = {}
+    Pial_Mesh['tri'] = np.concatenate((Pial_Mesh_Left[1]+1,
+                                       10242 + Pial_Mesh_Right[1]+1))
+    Y = np.random.rand(1, 10242*2)
+    FWHM = 2
+    dummy_test(Y, Pial_Mesh, FWHM)
+
+
+def test_08():
+    # load freesurfer data lh.pial & rh.pial
+    Pial_Mesh_Left  = load_surf_mesh('./tests/data/lh.pial')
+    Pial_Mesh_Right = load_surf_mesh('./tests/data/rh.pial')
+    Pial_Mesh = {}
+    Pial_Mesh['tri'] = np.concatenate((Pial_Mesh_Left[1]+1,
+                                       10242 + Pial_Mesh_Right[1]+1))
+    n = np.random.randint(1,100)
+    Y = np.random.rand(n, 10242*2)
+    FWHM = 2
+    dummy_test(Y, Pial_Mesh, FWHM)
+
+
+def test_09():
+    # load freesurfer data lh.white & rh.white
+    SW_surf_L = read_geometry('./tests/data/lh.white')
+    SW_surf_R = read_geometry('./tests/data/rh.white')
+    SW = {}
+    SW['tri'] = np.concatenate((SW_surf_L[1]+1, 10242 + SW_surf_R[1]+1))
+    Y = np.random.rand(1, 10242*2)
+    FWHM = 2
+    dummy_test(Y, SW, FWHM)
+
+
+def test_10():
+    # load freesurfer data lh.white & rh.white
+    SW_surf_L = read_geometry('./tests/data/lh.white')
+    SW_surf_R = read_geometry('./tests/data/rh.white')
+    SW = {}
+    SW['tri'] = np.concatenate((SW_surf_L[1]+1, 10242 + SW_surf_R[1]+1))
+    n = np.random.randint(1,100)
+    Y = np.random.rand(n, 10242*2)
+    FWHM = np.random.rand() * 2
+    dummy_test(Y, SW, FWHM)
