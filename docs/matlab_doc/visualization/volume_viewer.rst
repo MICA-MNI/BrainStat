@@ -9,7 +9,7 @@ Synopsis
 ------------------
 
 Plots data in a volume (`source code
-<https://github.com/MICA-MNI/BrainSpace/blob/master/matlab/plot_data/volume_viewer.m>`_).
+<https://github.com/MICA-MNI/BrainStat/blob/master/matlab/visualization/volume_viewer/%40volume_viewer/volume_viewer.m>`_).
 
 
 ------------------
@@ -20,7 +20,7 @@ Usage
 
    obj = volume_viewer(structural,overlay,varargin);
 
-- *image*: volume of a structural image. 
+- *structural*: volume of a structural image. 
 - *overlay*: (Optional argument) an overlay to plot over the image volume, must have identical dimensions. 
 - *varargin*: Name-Value Pairs (see below).
 - *obj*: an object used for the manipulation of the volume viewer.
