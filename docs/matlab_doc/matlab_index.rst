@@ -17,4 +17,4 @@ Visualization
    :maxdepth: 1
    
    visualization/plot_hemispheres
-
+   visualization/volume_viewer
