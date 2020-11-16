@@ -38,8 +38,29 @@ def matlab_SurfStatAvSurf(filenames, fun, dimensionality=None):
 
 
 # ==> SurfStatAvVol.m <==
-def matlab_SurfStatAvVol(filenames, fun, Nan):
-    sys.exit("Function matlab_SurfStatAvVol is not implemented yet")
+def matlab_SurfStatAvVol(filenames, fun = np.add, Nan = None, dimensionality = None):
+
+    if fun == np.add:
+        fun = []
+    elif fun == np.fmin:
+        fun = surfstat_eng.str2func('min')
+    elif fun == np.fmax:
+        fun = surfstat_eng.str2func('max')
+
+    if Nan is None:
+        Nan = float('NaN')
+    if dimensionality is None:
+        dimensionality = surfstat_eng.cell2mat([len(filenames),1])
+
+    data_mat, vol_mat = surfstat_eng.SurfStatAvVol(filenames.tolist(), fun, Nan,
+                                                   dimensionality, nargout=2)
+    data = np.array(data_mat)
+    vol = {}
+    vol['lat'] = np.array(vol_mat['lat'])
+    vol['vox'] = np.array(vol_mat['vox'][0])
+    vol['origin'] = np.array(vol_mat['origin'][0])
+
+    return data, vol
 
 
 # ==> SurfStatColLim.m <==

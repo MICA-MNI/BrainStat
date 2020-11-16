@@ -1,4 +1,4 @@
-function [ data, vol ] = SurfStatAvVol( filenames, fun, Nan );
+function [ data, vol ] = SurfStatAvVol( filenames, fun, Nan, dimensionality);
 
 %Average, minimum or maximum of MINC, ANALYZE, NIFTI or AFNI volumes.
 %
@@ -23,6 +23,14 @@ if nargin<3
     Nan=NaN;
 end
 
+if nargin<4
+    dimensionality = size(filenames);
+end
+if isempty(dimensionality)
+    dimensionality = size(filenames);
+end
+
+filenames = reshape(filenames, dimensionality);
 n=size(filenames,1);
 
 if n==1
@@ -36,12 +44,32 @@ else
             fprintf(1,'%s',[num2str(round(100*(1-i/n))) ' ']);
         end
         d=SurfStatReadVol1(filenames{i});
-        if ~isnan(Nan)
-            d.data(isnan(d.data))=Nan;
+
+        %  niftiread for a proper *nii or *nii.gz data read-in
+        if filenames{i}(end-3:end) == '.nii' 
+            d.data = niftiread(filenames{i});
         end
+
+        if ~isnan(Nan)
+            % analyze75read for a proper NaN-value reading
+            if filenames{i}(end-3:end) == '.img'
+                d.data = analyze75read(filenames{i});
+                % transposing 3D array to match with python analyze reader
+                d.data = permute(d.data, [2,1,3]);
+                d.data(isnan(d.data))=Nan;
+            elseif filenames{i}(end-3:end) == '.nii' 
+                d.data(isnan(d.data))
+                d.data(isnan(d.data))=Nan;
+            end
+        end
+
         if i==1
-            data=d.data;
-            m=1;
+            if filenames{i}(end-3:end) == '.img'
+                data = d.data;
+            elseif filenames{i}(end-3:end) == '.nii'
+                data = niftiread(filenames{i});
+            end
+            m = 1;
         else
             data=fun(data,d.data);
             m=fun(m,1);
