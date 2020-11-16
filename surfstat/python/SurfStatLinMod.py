@@ -1,10 +1,12 @@
 import warnings
-
 import numpy as np
 import numpy.linalg as la
-
-from .term import Term, Random
-from .SurfStatEdg import py_SurfStatEdg
+import sys
+sys.path.append("python")
+from term import Term, Random
+from SurfStatEdg import py_SurfStatEdg
+from brainspace.vtk_interface.wrappers.data_object import BSPolyData
+from brainspace.mesh.mesh_elements import get_cells
 
 
 def py_SurfStatLinMod(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
@@ -16,10 +18,10 @@ def py_SurfStatLinMod(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
         Surface data.
     M : Term or Random
         Design matrix.
-    surf : dict, optional
+    surf : dict or BSPolyData, optional
         Surface triangles (surf['tri']) or volumetric data (surf['lat']).
         If 'tri', shape = (n_edges, 2). If 'lat', then it is a boolean 3D
-        array. Default is None.
+        array. Alternatively a BSPolyData object can be provided. Default is None.
     niter : int, optional
         Number of extra iterations of the Fisher scoring algorithm for fitting
         mixed effects models. Default is 1.
@@ -247,13 +249,15 @@ def py_SurfStatLinMod(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
     if V is not None:
         slm['V'] = V
 
-    if surf is not None and ('tri' in surf or 'lat' in surf):
-        key = 'tri' if 'tri' in surf else 'lat'
-        slm[key] = surf[key]
+    if surf is not None and (isinstance(surf,BSPolyData) or ('tri' in surf or 'lat' in surf)):
+        if isinstance(surf,BSPolyData):
+            slm['tri'] = np.array(get_cells(surf)) + 1
+        else:
+            key = 'tri' if 'tri' in surf else 'lat'
+            slm[key] = surf[key]
 
-        edges = py_SurfStatEdg(surf)  # should start from 0?
-        if key == 'lat':
-            edges -= 1
+        edges = py_SurfStatEdg(surf)
+
         n_edges = edges.shape[0]
 
         resl = np.zeros((n_edges, k))
@@ -264,7 +268,6 @@ def py_SurfStatLinMod(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
             for i in range(n):
                 u = Y[i, :, j] / normr
                 resl[:, j] += np.diff(u[edges], axis=1).ravel()**2
-
         slm['resl'] = resl
 
     return slm

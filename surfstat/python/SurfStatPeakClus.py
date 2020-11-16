@@ -1,7 +1,9 @@
 import numpy as np
 import math
 from SurfStatEdg import py_SurfStatEdg
-from matlab_functions import interp1, accum, ismember
+from matlab_functions import interp1, ismember
+import copy
+
 
 def py_SurfStatPeakClus(slm, mask, thresh, reselspvert=None, edg=None):
     """ Finds peaks (local maxima) and clusters for surface data.
@@ -20,12 +22,12 @@ def py_SurfStatPeakClus(slm, mask, thresh, reselspvert=None, edg=None):
         slm['lat'] : numpy array of shape (nx,nx,nz),
             values should be either 0 or 1.
             note that [nx,ny,nz]=size(volume).
-        mask : numpy array of shape (1,v), dytpe=int,
+        mask : numpy array of shape (v), dytpe=int,
             values should be either 0 or 1.
         thresh : float,
             clusters are vertices where slm['t'][0,mask]>=thresh.
-        reselspvert : numpy array of shape (1,v),
-            resels per vertex, by default: np.ones((1,v)).
+        reselspvert : numpy array of shape (v),
+            resels per vertex, by default: np.ones(v).
         edg :  numpy array of shape (e,2), dtype=int,
             edge indices, by default computed from SurfStatEdg function.
         slm['df'] : int,
@@ -52,21 +54,22 @@ def py_SurfStatPeakClus(slm, mask, thresh, reselspvert=None, edg=None):
             array of resels in the cluster.
     clusid : numpy array of shape (1,v),
         array of cluster id's for each vertex.
-	"""
+    """
     if edg is None:
         edg = py_SurfStatEdg(slm)
 
     l, v = np.shape(slm['t'])
-    slm['t'][0, ~mask.flatten().astype(bool)] = slm['t'][0,:].min()
-    t1 = slm['t'][0, edg[:,0]-1]
-    t2 = slm['t'][0, edg[:,1]-1]
+    slm_t = copy.deepcopy(slm['t'])
+    slm_t[0, ~mask.astype(bool)] = slm_t[0,:].min()
+    t1 = slm_t[0, edg[:,0]]
+    t2 = slm_t[0, edg[:,1]]
     islm = np.ones((1,v))
-    islm[0, [edg[t1 < t2, 0]-1]] = 0
-    islm[0, [edg[t2 < t1, 1]-1]] = 0
+    islm[0, edg[t1 < t2, 0]] = 0
+    islm[0, edg[t2 < t1, 1]] = 0
     lmvox = np.argwhere(islm)[:,1] + 1
-    excurset = np.array(slm['t'][0,:] >= thresh, dtype=int)
+    excurset = np.array(slm_t[0,:] >= thresh, dtype=int)
     n = excurset.sum()
-    
+
     if n < 1:
         peak = []
         clus = []
@@ -74,7 +77,7 @@ def py_SurfStatPeakClus(slm, mask, thresh, reselspvert=None, edg=None):
         return peak, clus, clusid
 
     voxid = np.cumsum(excurset)
-    edg = voxid[edg[np.all(excurset[edg-1],1), :]-1]
+    edg = voxid[edg[np.all(excurset[edg],1), :]]
     nf = np.arange(1,n+1)
 
     # Find cluster id's in nf (from Numerical Recipes in C, page 346):
@@ -87,15 +90,15 @@ def py_SurfStatPeakClus(slm, mask, thresh, reselspvert=None, edg=None):
             k = nf[k-1]
         if j != k:
             nf[j-1] = k
-            
+
     for j in range(1, n+1):
-         while nf[j-1] != nf[nf[j-1]-1]:
-             nf[j-1] =  nf[nf[j-1]-1]
- 
+        while nf[j-1] != nf[nf[j-1]-1]:
+            nf[j-1] =  nf[nf[j-1]-1]
+
     vox = np.argwhere(excurset) + 1
-    ivox = np.argwhere(np.in1d(vox, lmvox)) + 1  
+    ivox = np.argwhere(np.in1d(vox, lmvox)) + 1
     clmid = nf[ivox-1]
-    uclmid, iclmid, jclmid = np.unique(clmid, 
+    uclmid, iclmid, jclmid = np.unique(clmid,
                                        return_index=True, return_inverse=True)
     iclmid = iclmid +1
     jclmid = jclmid +1
@@ -104,56 +107,53 @@ def py_SurfStatPeakClus(slm, mask, thresh, reselspvert=None, edg=None):
     # implementing matlab's histc function ###
     bin_edges   = np.r_[-np.Inf, 0.5 * (ucid[:-1] + ucid[1:]), np.Inf]
     ucvol, ucvol_edges = np.histogram(nf, bin_edges)
-    
+
     if reselspvert is None:
         reselsvox = np.ones(np.shape(vox))
     else:
-        reselsvox = reselspvert[0, vox-1]
-        
+        reselsvox = reselspvert[vox-1]
+
     # calling matlab-python version for scipy's interp1d
-    nf1 = interp1(np.append(0, ucid), np.arange(0,nclus+1), nf, 
+    nf1 = interp1(np.append(0, ucid), np.arange(0,nclus+1), nf,
                       kind='nearest')
-    
+
     # if k>1, find volume of cluster in added sphere
     if 'k' not in slm or slm['k'] == 1:
-        ucrsl = accum(nf1.astype(int).reshape(reselsvox.shape),
-                      reselsvox)
+        ucrsl = np.bincount(nf1.astype(int), reselsvox.flatten())
     if 'k' in slm and slm['k'] == 2:
         if l == 1:
             ndf = len(np.array([slm['df']]))
-            r = 2 * np.arccos((thresh / slm['t'][0, vox-1])**(float(1)/ndf))
+            r = 2 * np.arccos((thresh / slm_t[0, vox-1])**(float(1)/ndf))
         else:
-            r = 2 * np.arccos(np.sqrt((thresh - slm['t'][1,vox-1]) *
-                                      (thresh >= slm['t'][1,vox-1]) /
-                                      (slm['t'][0,vox-1] - slm['t'][1,vox-1])))
-        ucrsl = accum(nf1.astype(int).reshape(reselsvox.shape).T,
-                      r.T * reselsvox.T)
+            r = 2 * np.arccos(np.sqrt((thresh - slm_t[1,vox-1]) *
+                                      (thresh >= slm_t[1,vox-1]) /
+                                      (slm_t[0,vox-1] - slm_t[1,vox-1])))
+        ucrsl =  np.bincount(nf1.astype(int), (r.T * reselsvox.T).flatten())
     if 'k' in slm and slm['k'] == 3:
         if l == 1:
             ndf = len(np.array([slm['df']]))
-            r = 2 * math.pi * (1 - (thresh / slm['t'][0, vox-1])**
+            r = 2 * math.pi * (1 - (thresh / slm_t[0, vox-1])**
                                 (float(1)/ndf))
         else:
             nt = 20
             theta = (np.arange(1,nt+1,1) - 1/2) / nt * math.pi / 2
-            s = (np.cos(theta)**2 * slm['t'][1, vox-1]).T
+            s = (np.cos(theta)**2 * slm_t[1, vox-1]).T
             if l == 3:
-                s =  s + ((np.sin(theta)**2) * slm['t'][2,vox-1]).T
+                s =  s + ((np.sin(theta)**2) * slm_t[2,vox-1]).T
             r = 2 * math.pi * (1 - np.sqrt((thresh-s)*(thresh>=s) /
                                            (np.ones((nt,1)) *
-                                            slm['t'][0, vox-1].T -
+                                            slm_t[0, vox-1].T -
                                             s ))).mean(axis=0)
-        ucrsl = accum(nf1.astype(int).reshape(reselsvox.shape).T,
-                      r.T * reselsvox.T)
-        
+        ucrsl = np.bincount(nf1.astype(int), (r.T * reselsvox.T).flatten())
+
     # and their ranks (in ascending order)
     iucrls = sorted(range(len(ucrsl[1:])), key=lambda k: ucrsl[1:][k])
     rankrsl = np.zeros((1, nclus))
     rankrsl[0, iucrls] =  np.arange(nclus,0,-1)
-    
+
     lmid = lmvox[ismember(lmvox, vox)[0]]
-       
-    varA = slm['t'][0, (lmid-1)]
+
+    varA = slm_t[0, (lmid-1)]
     varB = lmid
     varC = rankrsl[0,jclmid-1]
     varALL = np.concatenate((varA.reshape(len(varA),1),
@@ -173,7 +173,7 @@ def py_SurfStatPeakClus(slm, mask, thresh, reselspvert=None, edg=None):
     peak['clusid'] = lm[:,2].reshape(len(lm[:,2]), 1)
     clus = {}
     clus['clusid'] = cl[:,0].reshape(len(cl[:,0]), 1)
-    clus['nverts'] = cl[:,1].reshape(len(cl[:,1]), 1) 
+    clus['nverts'] = cl[:,1].reshape(len(cl[:,1]), 1)
     clus['resels'] = cl[:,2] .reshape(len(cl[:,2]), 1)
-    
+
     return peak, clus, clusid

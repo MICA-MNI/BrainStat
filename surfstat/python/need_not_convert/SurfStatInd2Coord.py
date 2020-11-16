@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def py_SurfStatInd2Coord(ind, surf):
     """Converts a vertex index to x,y,z coordinates
 
@@ -34,20 +35,19 @@ def py_SurfStatInd2Coord(ind, surf):
             surf['origin'] = np.zeros((1,3))
 
         vid = np.cumsum(surf['lat'].T.flatten()) * surf['lat'].T.flatten()
-        
+
         # implement matlab-ismember
         loc = []
         for i in range(0, ind.shape[1]):
             loc.append(np.where(vid == ind[0,i])[0].tolist())
-        loc_flat = [item for sublist in loc for item in sublist]        
+        loc_flat = [item for sublist in loc for item in sublist]
 
         dim = np.shape(surf['lat'])
         i, j, k = np.unravel_index(loc_flat, dim, order='F')
-        
+
         coord = np.zeros((3,  ind.shape[1]))
         coord[0,:] = surf['origin'][0,0] + np.multiply(i, surf['vox'][0,0])
         coord[1,:] = surf['origin'][0,1] + np.multiply(j, surf['vox'][0,1])
         coord[2,:] = surf['origin'][0,2] + np.multiply(k, surf['vox'][0,2])
 
     return coord
-

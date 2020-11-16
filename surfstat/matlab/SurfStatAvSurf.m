@@ -1,4 +1,4 @@
-function surf = SurfStatAvSurf( filenames, fun );
+function surf = SurfStatAvSurf( filenames, fun, dimensionality );
 
 %Average, minimum or maximum of surfaces.
 %
@@ -12,10 +12,27 @@ function surf = SurfStatAvSurf( filenames, fun );
 % surf.coord = 3 x v matrix of average coordinates, v=#vertices.
 % surf.tri   = t x 3 matrix of triangle indices, 1-based, t=#triangles.
 % The coordinates and triangle indices of the k files are concatenated. 
+%
+% RV: Also added the option to provide an empty variable for fun. 
+% RV: Added a dimensionality variable required for testing input of 2D cell arrays through Python.
 
-if nargin<2
+if nargin > 2
+    warning('Input arguments beyond the second are intended only for interal diagnostic purposes.');
+end 
+
+if nargin<2 
+    fun=@plus;
+elseif isempty(fun)
     fun=@plus;
 end
+
+if nargin<3 
+    dimensionality = size(filenames);
+end
+if isempty(dimensionality)
+    dimensionality = size(filenames);
+end
+filenames = reshape(filenames, dimensionality);
 
 [n,k]=size(filenames);
 fprintf(1,'%s',[num2str(n) ' x ' num2str(k) ' files to read, % remaining: 100 ']);

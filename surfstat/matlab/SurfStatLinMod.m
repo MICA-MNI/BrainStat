@@ -86,6 +86,7 @@ if isa(M, 'struct')
         M = random(M.variance.matrix, M.mean.matrix, M.variance.names, ...
                M.mean.names, 1);
     end
+end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if isa(M,'random')

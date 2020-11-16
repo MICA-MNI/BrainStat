@@ -3,10 +3,12 @@ import numpy as np
 from scipy.special import betaln, gammaln, gamma
 from matlab_functions import interp1, colon
 
+
 def gammalni(n):
     x = math.inf * np.ones(n.shape)
     x[n>=0] = gammaln(n[n>=0])
     return x
+
 
 def minterp1(x,y,ix):
     # interpolates only the monotonically increasing values of x at ix
@@ -14,7 +16,7 @@ def minterp1(x,y,ix):
     ix = np.array(ix)
     ix_shape = ix.shape
     ix = ix.flatten('F')
-    
+
     mx = np.array(x[0],ndmin=1)
     my = np.array(y[0],ndmin=1)
     xx = x[0]
@@ -23,7 +25,7 @@ def minterp1(x,y,ix):
             xx = x[i]
             mx = np.append(mx, xx)
             my = np.append(my, y[i])
-  
+
     out = []
     for i in range(0,ix.size):
         if ix[i] < mx[0] or ix[i] > mx[-1]:
@@ -33,16 +35,17 @@ def minterp1(x,y,ix):
     out = np.reshape(out,ix_shape,order='F')
     return out
 
-def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf, 
-    p_val_peak=0.05, cluster_threshold=0.001, p_val_extent=0.05, nconj=1, 
-    nvar=1, EC_file=None, expr=None, nprint=5):
+
+def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
+        p_val_peak=0.05, cluster_threshold=0.001, p_val_extent=0.05, nconj=1,
+        nvar=1, EC_file=None, expr=None, nprint=5):
     """Thresholds and P-values of peaks and clusters of random fields in any D.
 
     Parameters
     ----------
     search_volume : a float, or a list, or a numpy array
         volume of the search region in mm^3.
-    num_voxels : a float, or int, or list, or 1D numpy array 
+    num_voxels : a float, or int, or list, or 1D numpy array
         number of voxels (3D) or pixels (2D) in the search volume.
     fwhm : a float, or int.
         fwhm in mm of a smoothing kernel applied to the data.
@@ -66,13 +69,13 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
     peak_threshold :
         thresholds for local maxima or peaks
     extent_threshold :
-        
+
     peak_threshold_1
         height of a single peak chosen in advance
     extent_threshold_1
         extent of a single cluster chosen in advance
     t :
-    
+
     rho :
     """
     ## Deal with the input
@@ -85,7 +88,7 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
     nvar = np.array(nvar,dtype=int)
     p_val_peak = np.array(p_val_peak,ndmin=1)
     p_val_extent = np.array(p_val_extent,ndmin=1)
-    
+
     # Set the FWHM
     if fwhm.ndim == 1:
         fwhm = np.expand_dims(fwhm,axis=0)
@@ -100,7 +103,7 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
     # Set the number of voxels
     if num_voxels.size == 1:
         num_voxels = np.append(num_voxels,1)
-    
+
     # Set the search volume.
     if search_volume.shape[1] == 1:
         radius = (search_volume / (4/3*math.pi)) ** (1/3)
@@ -108,12 +111,12 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
                               4 * radius,
                               2 * radius ** 2 * math.pi,
                              search_volume]
-    
+
     if search_volume.shape[0] == 1:
-        search_volume = np.concatenate((search_volume, 
+        search_volume = np.concatenate((search_volume,
                                         np.concatenate((np.ones((1,1)),np.zeros((1,search_volume.size-1))),axis=1)),
                                         axis=0)
-    
+
     lsv = search_volume.shape[1]
     if all(fwhm>0):
         fwhm_inv = all(fwhm>0) / fwhm + any(fwhm<=0)
@@ -121,13 +124,13 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
         fwhm_inv = np.zeros(fwhm.shape)
     if fwhm_inv.ndim == 1:
         fwhm_inv = np.expand_dims(fwhm_inv,axis=1)
-        
+
     resels = search_volume * fwhm_inv ** np.arange(0,lsv)
     invol = resels * (4*np.log(2)) ** (np.arange(0,lsv)/2)
 
     D = np.sum(invol != 0, axis=1) - 1
 
-    # determines which method was used to estimate fwhm (see fmrilm or multistat): 
+    # determines which method was used to estimate fwhm (see fmrilm or multistat):
     df_limit=4
 
     if df.size == 1:
@@ -169,7 +172,7 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
     Dlim = D + np.array([scale > 1, 0])
     DD = Dlim + nvar - 1
 
-    # Values of the F statistic: 
+    # Values of the F statistic:
     t = (np.arange(1000,0,-1)/100) ** 4
 
     # Find the upper tail probs cumulating the F density using Simpson's rule:
@@ -182,7 +185,7 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
 
     t = np.r_[t,0]
     b = np.r_[b,0]
-    n = t.size 
+    n = t.size
     sb = np.cumsum(b)
     sb1 = np.cumsum(b * (-1) ** np.arange(1,n+1))
     pt1 = sb + sb1/3 - b/3
@@ -200,8 +203,8 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
         for e in range(0,e_loop):
             s1 = 0
             cons = -((d+e)/2+1)*np.log(math.pi)+gammaln(d)+gammaln(e+1)
-            for k in np.arange(0,(d-1+e)/2+1):
-                i, j = np.meshgrid(np.arange(0,k+1),np.arange(0,k+1))
+            for k in colon(0,(d-1+e)/2):
+                j, i = np.meshgrid(np.arange(0,k+1),np.arange(0,k+1))
                 if df2 == math.inf:
                     q1 = np.log(math.pi)/2-((d+e-1)/2+i+j)*np.log(2)
                 else:
@@ -210,12 +213,12 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
                 s2 = np.sum(np.exp(q1+q2))
                 if s2 > 0:
                     s1=s1+(-1)**k*u**((d+e-1)/2-k)*s2
-            
+
             if df2 == math.inf:
                 s1 = s1 * np.exp(-u/2)
             else:
                 s1 = s1 * np.exp(-(df0-2)/2*np.log(1+u/df2))
-            
+
             if DD[0] >= DD[1]:
                 tau[:,d,e] = s1
                 if d <= np.min(DD):
@@ -229,7 +232,7 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
     a = np.zeros((2,np.max(nvar)))
     for k in range(0,2):
         j = colon((nvar[k]-1),0,-2)
-        a[k,j] = np.exp(j*np.log(2)+j/2*np.log(math.pi) + 
+        a[k,j] = np.exp(j*np.log(2)+j/2*np.log(math.pi) +
             gammaln((nvar[k]+1)/2)-gammaln((nvar[k]+1-j)/2)-gammaln(j+1))
 
     rho = np.zeros((n, Dlim[0]+1, Dlim[1]+1))
@@ -249,7 +252,7 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
             n = 2 * n-1
         else:
             t = np.sqrt(t)
-    
+
     # For scale space.
     if scale > 1:
         kappa = D[0]/2
@@ -265,7 +268,7 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
                 cons = (1-1/scale**d)/d
             tau[:,d] = rho[:,d,1] * (1+1/scale**d) / 2 + s1 * cons
         rho[:,0:D[1],0] = tau
-    
+
     if D[1] == 0:
         d = D[0]
         if nconj > 1:
@@ -295,11 +298,11 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
                 pval_rf = pval_rf + invol[0,i] * invol[1,j] * rho[:,i,j]
     else:
         pval_rf = math.inf
-    
+
     # Bonferonni
     pt = rho[:,0,0]
     pval_bon = abs(np.prod(num_voxels)) * pt
-    
+
     # Minimum of the two
     if type(pval_rf) != type(pval_bon):
         pval = np.minimum(pval_rf,pval_bon)
@@ -325,13 +328,13 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
         peak_threshold = P_val_peak
         if p_val_peak.size <= nprint:
             print(P_val_peak)
-    
+
     if np.all(fwhm<=0) or np.any(num_voxels < 0):
         peak_threshold_1 = p_val_peak + float('nan')
         extent_threshold = p_val_extent + float('nan')
         extent_threshold_1 = extent_threshold + float('nan')
         return peak_threshold, extent_threshold,peak_threshold_1, extent_threshold_1, t, rho
-    
+
     # Cluster threshold:
 
     if cluster_threshold > tlim:
@@ -341,7 +344,7 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
         tt = minterp1(pt,t,cluster_threshold)
         if nprint>0:
             Cluster_threshold = tt
-    
+
     d = np.sum(D)
     rhoD = interp1(t, rho[:,D[0],D[1]], tt)
     p=interp1(t,pt,tt)
@@ -368,7 +371,7 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
             print(extent_threshold)
             print(extent_threshold_1)
         return peak_threshold, extent_threshold,peak_threshold_1, extent_threshold_1, t, rho
-    
+
     # Expected number of clusters
     EL = invol[0,D[0]] * invol[1,D[1]] * rhoD
     cons = gamma(d/2+1)*(4*np.log(2))**(d/2)/fwhm[0]**D[0]/fwhm[1]**D[1]*rhoD/p
@@ -376,7 +379,7 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
     if df2 == math.inf and dfw1[0] == math.inf and dfw1[1] == math.inf:
         if p_val_extent.flatten()[0] <= tlim:
             pS = -np.log(1-p_val_extent)/EL
-            extent_threshold = (-np.log(pS))**(d/2)/cons 
+            extent_threshold = (-np.log(pS))**(d/2)/cons
             pS = -np.log(1-p_val_extent)
             extent_threshold_1 = (-np.log(pS))**(d/2)/cons
             if p_val_extent.size <= nprint:
@@ -405,8 +408,8 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
         dy = (b2-b1)/ny
         b1 = round(b1/dy)*dy
         y = np.arange(0,ny) * dy + b1
-        numrv=( 1+(d+(D[0]>0)+(D[1]>0))*(df2 < math.inf) + 
-            (D[0]*(dfw1[0] < math.inf)+(dfw2[0] < math.inf))*(D[0]>0) + 
+        numrv=( 1+(d+(D[0]>0)+(D[1]>0))*(df2 < math.inf) +
+            (D[0]*(dfw1[0] < math.inf)+(dfw2[0] < math.inf))*(D[0]>0) +
             (D[1]*(dfw1[1] < math.inf)+(dfw2[1] < math.inf))*(D[1]>0) )
         f = np.zeros((ny,numrv))
         if f.ndim == 1:
@@ -423,7 +426,7 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
             yy = np.exp(y / a)
             f[:,0] = np.exp(-yy) * yy / a
             mu[0] = np.exp(gammaln(a+1))
-        
+
         nuv = np.array([])
         aav = np.array([])
         if df2 < math.inf:
@@ -433,7 +436,7 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
                 if D[k] > 0:
                     nuv = np.append(df1+df2-D[k], nuv)
                     aav = np.append(D[k]/2, aav)
-        
+
         for k in range(0,2):
             if dfw1[k] < math.inf and D[k] > 0:
                 if dfw1[k] > df_limit:
@@ -452,9 +455,9 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
             # Density of log((chi^2_nu/nu)^aa):
             f[:,i+1] = np.exp(nu/2*yy-np.exp(yy)/2-(nu/2)*np.log(2)-gammaln(nu/2))/abs(aa)
             mu[i+1] = np.exp(gammaln(nu/2+aa)-gammaln(nu/2)-aa*np.log(nu/2))
-        
+
         # Check: plot(y,f); sum(f*dy,1) should be 1
-        
+
         omega = 2*math.pi*np.arange(0,ny)/ny/dy
         shift = (np.cos(-b1*omega) + np.sin(-b1*omega)*1j) * dy
         prodfft = np.prod(np.fft.fft(f,axis=0),axis=1) * shift ** (numrv-1)
@@ -463,7 +466,7 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
         ff = np.real(np.fft.ifft(prodfft,axis=0))
         # Check: plot(y,ff); sum(ff*dy) should be 1
         mu0 = np.prod(mu)
-        # Check: plot(y,ff.*exp(y)); sum(ff.*exp(y)*dy.*(y<10)) should equal mu0   
+        # Check: plot(y,ff.*exp(y)); sum(ff.*exp(y)*dy.*(y<10)) should equal mu0
         alpha=p/rhoD/mu0*fwhm[0]**D[0]*fwhm[1]**D[1]/(4*np.log(2))**(d/2)
 
         # Integrate the density to get the p-value for one cluster:
@@ -493,8 +496,5 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
             if p_val_extent.size<=nprint:
                 print(P_val_extent)
                 print(P_val_extent_1)
-    
+
     return peak_threshold, extent_threshold,peak_threshold_1, extent_threshold_1, t, rho
-
-
-
