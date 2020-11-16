@@ -29,11 +29,9 @@ Usage
 Description
 ------------------
 
-BrainSpace's volume viewer allows for the viewing of gradients in volume space.
+BrainStat's volume viewer allows for the viewing of statistcal maps in volume space.
 The volume viewer allows for scrolling and clicking through the volume. Note
 that slice orientation is currently hardcoded and cannot be modified. 
-
-To convert a gradient vector a volume, use :ref:`parcel2full_matlab`.
 
 Name-Value Pairs
 ^^^^^^^^^^^^^^^^^
