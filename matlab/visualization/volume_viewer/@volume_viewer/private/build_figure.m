@@ -71,7 +71,7 @@ obj.handles = handles;
 % Modify some figure parameters. 
 set(obj.handles.figure1                 , ...
     'Units'             , 'pixels'      , ... % Needed to detect cursor location. 
-    'Name'              , 'BrainSpace Volume Viewer'); % Default name set to BrainSpace Volume Viewer.
+    'Name'              , 'BrainStat Volume Viewer'); % Default name set to BrainStat Volume Viewer.
 
 % Initialize images. 
 for ii = 1:3
