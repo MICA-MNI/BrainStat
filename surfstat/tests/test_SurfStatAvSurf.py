@@ -47,9 +47,8 @@ def temp_surfaces(surfaces):
     return t, names
 
 
-## Tests
-# Two surfaces, column vector.
-def test_two_surfaces_column_plus():
+def test_01():
+    # Two surfaces, column vector.
     surfaces = load_conte69()
     t, names = temp_surfaces(surfaces)
     namesArr = np.array(names, ndmin=2).T
@@ -58,8 +57,8 @@ def test_two_surfaces_column_plus():
         t[i].close()
 
 
-# Two surfaces, row vector.
-def test_two_surfaces_row_plus():
+def test_02():
+    # Two surfaces, row vector.
     surfaces = load_conte69()
     t, names = temp_surfaces(surfaces)
     namesArr = np.array(names, ndmin=2)
@@ -68,8 +67,8 @@ def test_two_surfaces_row_plus():
         t[i].close()
 
 
-# Four surfaces, 2-by-2 matrix.
-def test_four_surfaces_square_plus():
+def test_03():
+    # Four surfaces, 2-by-2 matrix.
     surfaces_1 = load_conte69()
     surfaces_2 = load_conte69(as_sphere=True)
     t, names = temp_surfaces(surfaces_1 + surfaces_2)
@@ -79,8 +78,8 @@ def test_four_surfaces_square_plus():
         t[i].close()
 
 
-# Four surfaces, 2-by-2 matrix, minimum.
-def test_four_surfaces_square_min():
+def test_04():
+    # Four surfaces, 2-by-2 matrix, minimum.
     surfaces_1 = load_conte69()
     surfaces_2 = load_conte69(as_sphere=True)
     t, names = temp_surfaces(surfaces_1 + surfaces_2)
@@ -90,8 +89,8 @@ def test_four_surfaces_square_min():
         t[i].close()
 
 
-# Four surfaces, 2-by-2 matrix, maximum.
-def test_four_surfaces_square_max():
+def test_05():
+    # Four surfaces, 2-by-2 matrix, maximum.
     surfaces_1 = load_conte69()
     surfaces_2 = load_conte69(as_sphere=True)
     t, names = temp_surfaces(surfaces_1 + surfaces_2)
@@ -101,8 +100,8 @@ def test_four_surfaces_square_max():
         t[i].close()
 
 
-# Six surfaces, 2-by-2 matrix, maximum.
-def test_six_surfaces_square_max():
+def test_06():
+    # Six surfaces, 2-by-2 matrix, maximum.
     surfaces_1 = load_conte69()
     surfaces_2 = load_conte69(as_sphere=True)
     surfaces_3 = load_conte69(as_sphere=True)

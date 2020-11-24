@@ -1,9 +1,12 @@
 import sys
 sys.path.append("python")
-from SurfStatF import *
 import surfstat_wrap as sw
+from SurfStatF import *
+from SurfStatT import *
+from SurfStatLinMod import *
+from term import Term
+from scipy.io import loadmat
 import numpy as np
-import sys
 import pytest
 
 sw.matlab_init_surfstat()
@@ -30,12 +33,9 @@ def dummy_test(A, B):
     assert all(flag == True for (flag) in testout_SurfStatF)
 
 
-#### Test 1
-def test_slm1_slm2_easy_int():
-
+def test_01():
     # slm1['coef'] is 2D array of integers
     # slm1['X'] and slm2['X'] are the SAME, 2D array of integers
-
     n = 5
     p = 6
     k = 2
@@ -58,12 +58,9 @@ def test_slm1_slm2_easy_int():
     dummy_test(slm1, slm2)
 
 
-#### Test 2
-def test_slm1_slm2_middle_int():
-
+def test_02():
     # slm1['coef'] is 2D array of integers
     # slm1['X'] and slm2['X'] are the SAME, 2D array of integers
-
     n = np.random.randint(3,100)
     p = np.random.randint(3,100)
     k = np.random.randint(3,100)
@@ -86,9 +83,7 @@ def test_slm1_slm2_middle_int():
     dummy_test(slm1, slm2)
 
 
-#### Test 3
-def test_slm1_slm2_easy_random():
-
+def test_03():
     # slm1['coef'] is 2D random array
     # slm1['X'] and slm2['X'] are the SAME, 2D random arrays
 
@@ -114,9 +109,7 @@ def test_slm1_slm2_easy_random():
     dummy_test(slm1, slm2)
 
 
-#### Test 4
-def test_slm1_slm2_coef3D_int_k3():
-
+def test_04():
     # k= 3
     # slm1['coef'] is 3D array of integers
     # slm1['X'] and slm2['X'] are the SAME, 2D arrays of integers
@@ -143,9 +136,7 @@ def test_slm1_slm2_coef3D_int_k3():
     dummy_test(slm1, slm2)
 
 
-#### Test 5
-def test_slm1_slm2_coef3D_int_k2():
-
+def test_05():
     # k = 2
     # slm1['coef'] is 3D array of integers
     # slm1['X'] and slm2['X'] are the SAME, 2D arrays of integers
@@ -172,9 +163,7 @@ def test_slm1_slm2_coef3D_int_k2():
     dummy_test(slm1, slm2)
 
 
-#### Test 6
-def test_slm1_slm2_coef3D_int_k1():
-
+def test_06():
     # k = 1
     # slm1['coef'] is 3D array of integers
     # slm1['X'] and slm2['X'] are the SAME, 2D arrays of integers
@@ -201,9 +190,7 @@ def test_slm1_slm2_coef3D_int_k1():
     dummy_test(slm1, slm2)
 
 
-#### Test 7
-def test_slm1_slm2_coef3D_random_k3():
-
+def test_07():
     # k= 3
     # slm1['coef'] is 3D random array
     # slm1['X'] and slm2['X'] are the SAME, 2D random array
@@ -228,9 +215,7 @@ def test_slm1_slm2_coef3D_random_k3():
     dummy_test(slm1, slm2)
 
 
-#### Test 8
-def test_slm1_slm2_coef3D_random_k2():
-
+def test_08():
     # k = 2
     # slm1['coef'] is 3D random array
     # slm1['X'] and slm2['X'] are the SAME, 2D random array
@@ -255,9 +240,7 @@ def test_slm1_slm2_coef3D_random_k2():
     dummy_test(slm1, slm2)
 
 
-#### Test 9
-def test_slm1_slm2_coef3D_random_k1():
-
+def test_09():
     # k = 1
     # slm1['coef'] is 3D random array
     # slm1['X'] and slm2['X'] are the SAME, 2D random array
@@ -280,3 +263,68 @@ def test_slm1_slm2_coef3D_random_k1():
     slm2['coef'] = np.random.rand(p,v,k)
 
     dummy_test(slm1, slm2)
+
+
+def test_10():
+    fname = './tests/data/thickness_slm.mat'
+    f = loadmat(fname)
+    slm = {}
+    slm['X'] = f['slm']['X'][0,0]
+    slm['df'] = f['slm']['df'][0,0][0,0]
+    slm['coef'] = f['slm']['coef'][0,0]
+    slm['SSE'] = f['slm']['SSE'][0,0]
+    slm['tri'] = f['slm']['tri'][0,0]
+    slm['resl'] = f['slm']['resl'][0,0]
+    AGE = f['slm']['AGE'][0,0]
+    slm = py_SurfStatT(slm, -1*AGE)
+
+    slm1 = slm.copy()
+    slm1['t'] = slm1['t'] + np.random.rand()
+
+    dummy_test(slm, slm1)
+
+
+def test_11():
+    fname = './tests/data/thickness_slm.mat'
+    f = loadmat(fname)
+    slm = {}
+    slm['X'] = f['slm']['X'][0,0]
+    slm['df'] = f['slm']['df'][0,0][0,0]
+    slm['coef'] = f['slm']['coef'][0,0]
+    slm['SSE'] = f['slm']['SSE'][0,0]
+    slm['tri'] = f['slm']['tri'][0,0]
+    slm['resl'] = f['slm']['resl'][0,0]
+    AGE = f['slm']['AGE'][0,0]
+    slm = py_SurfStatT(slm, -1*AGE)
+
+    slm1 = slm.copy()
+    slm1['X'] = slm['X'] + 2
+    slm1['t'] = slm1['t'] + 0.2
+    slm1['df'] = slm1['df'] + 2
+    slm1['coef'] = slm1['coef'] + 0.2
+
+
+    dummy_test(slm, slm1)
+
+
+def test_12():
+    fname = './tests/data/sofopofo1.mat'
+    f = loadmat(fname)
+    T = f['sofie']['T'][0,0]
+    params = f['sofie']['model'][0,0]
+    colnames = ['1', 'ak', 'female', 'male', 'Affect', 'Control1',
+                'Perspective', 'Presence', 'ink']
+    M = Term(params, colnames)
+    SW = {}
+    SW['tri'] = f['sofie']['SW'][0,0]['tri'][0,0]
+    SW['coord'] = f['sofie']['SW'][0,0]['coord'][0,0]
+    slm = py_SurfStatLinMod(T, M, SW)
+    contrast = np.array([[37], [41], [24], [37], [26], [28], [44], [26], [22],
+                         [32], [34], [33], [35], [25], [22], [27], [22], [29],
+                         [29], [24]])
+    slm = py_SurfStatT(slm, contrast)
+
+    slm1 = slm.copy()
+    slm1['t'] = slm1['t'] + np.random.rand()
+
+    dummy_test(slm, slm1)

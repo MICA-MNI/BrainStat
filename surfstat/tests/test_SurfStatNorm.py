@@ -25,9 +25,8 @@ def dummy_test(Y, mask, subdiv):
     assert np.allclose(Wrapped_Yav, Python_Yav, rtol=1e-05, equal_nan=True)
 
 
-#### test 1a
-# 1D inputs --- row vectors
-def test_1d_row_vectors():
+def test_01():
+    # 1D inputs --- row vectors
     v = np.random.randint(1,9)
 
     a = np.arange(1,v)
@@ -40,9 +39,8 @@ def test_1d_row_vectors():
     dummy_test(Y, mask, subdiv)
 
 
-#### test 1b
-# 1D inputs --- row vectors & mask
-def test_1d_row_vectors_mask():
+def test_02():
+    # 1D inputs --- row vectors & mask
     a = np.arange(1,11)
     a = a.reshape(1, len(a))
     Y = a
@@ -51,9 +49,8 @@ def test_1d_row_vectors_mask():
     dummy_test(Y, mask, subdiv)
 
 
-#### test 2a
-# 1D inputs --- 2D arrays & mask
-def test_1d_2d_array_vectors_mask():
+def test_03():
+    # 1D inputs --- 2D arrays & mask
     a = np.arange(1,11)
     a = a.reshape(1, len(a))
     Y = np.concatenate((a,a), axis=0)
@@ -62,10 +59,8 @@ def test_1d_2d_array_vectors_mask():
     dummy_test(Y, mask, subdiv)
 
 
-#### test 3a
-# 1D inputs --- 3D arrays & mask
-def test_1d_3d_array_mask():
-
+def test_04():
+    # 1D inputs --- 3D arrays & mask
     a = np.array([[1,2,3,4],[5,6,7,8],[9,10,11,12]])
     Y = np.zeros((3,4,2))
     Y[:,:,0] = a

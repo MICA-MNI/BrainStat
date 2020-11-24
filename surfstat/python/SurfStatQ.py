@@ -46,7 +46,7 @@ def py_SurfStatQ(slm, mask=None):
     df = np.zeros((2,2))
     ndf = len(np.array([slm['df']]))
     df[0, 0:ndf] = slm['df']
-    df[1, 0:2] = slm['df'][ndf-1]
+    df[1, 0:2] = np.array([slm['df']])[ndf-1]
 
     if 'dfs' in slm:
         df[0, ndf-1] = slm['dfs'][0,mask>0].mean()

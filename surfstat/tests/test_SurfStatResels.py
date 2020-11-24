@@ -48,8 +48,8 @@ def dummy_test(slm, mask=None):
     assert all(flag == True for (flag) in test_out)
 
 
-# Test with only slm.tri
 def test_01():
+    # Test with only slm.tri
     slm = {'tri': np.array(
                   [[1,2,3],
                    [2,3,4],
@@ -58,8 +58,8 @@ def test_01():
     dummy_test(slm)
 
 
-# Test with slm.tri and slm.resl
 def test_02():
+    # Test with slm.tri and slm.resl
     slm = {'tri': np.array(
                [[1,2,3],
                 [2,3,4],
@@ -69,8 +69,8 @@ def test_02():
     dummy_test(slm)
 
 
-# Test with slm.tri, slm.resl, and mask
 def test_03():
+    # Test with slm.tri, slm.resl, and mask
     slm = {'tri': np.array(
                [[1,2,3],
                 [2,3,4],
@@ -81,35 +81,35 @@ def test_03():
     dummy_test(slm,mask)
 
 
-# Test with slm.lat, 1's only.
 def test_04():
+    # Test with slm.lat, 1's only.
     slm = {'lat': np.ones((10,10,10))}
     dummy_test(slm)
 
 
-# Test with slm.lat, both 0's and 1's.
 def test_05():
+    # Test with slm.lat, both 0's and 1's.
     slm = {'lat': np.random.rand(10,10,10) > 0.5}
     dummy_test(slm)
 
 
-# Test with slm.lat, both 0's and 1's, and a mask.
 def test_06():
+    # Test with slm.lat, both 0's and 1's, and a mask.
     slm = {'lat': np.random.rand(10,10,10) > 0.5}
     mask = np.random.choice([False,True],np.sum(slm['lat']))
     dummy_test(slm,mask)
 
 
-# Test with slm.lat and slm.resl
 def test_07():
+    # Test with slm.lat and slm.resl
     slm = {'lat': np.random.rand(10,10,10) > 0.5}
     edg = py_SurfStatEdg(slm)
     slm['resl'] = np.random.rand(edg.shape[0],1)
     dummy_test(slm)
 
 
-# Test with slm.lat, slm.resl, and a mask
 def test_08():
+    # Test with slm.lat, slm.resl, and a mask
     slm = {'lat': np.random.rand(10,10,10) > 0.5}
     mask = np.random.choice([False,True],np.sum(slm['lat']))
     edg = py_SurfStatEdg(slm)
@@ -117,8 +117,8 @@ def test_08():
     dummy_test(slm, mask)
 
 
-# Test with slm.lat, slm.resl, and a fully false mask
 def test_09():
+    # Test with slm.lat, slm.resl, and a fully false mask
     slm = {'lat': np.random.rand(10,10,10) > 0.5}
     mask = np.zeros(np.sum(slm['lat']), dtype=bool)
     edg = py_SurfStatEdg(slm)
@@ -135,8 +135,8 @@ def test_10():
     dummy_test(slm)
 
 
-# real data & random mask
 def test_11():
+    # real data & random mask
     slmfile = './tests/data/slm.mat'
     slmdata = loadmat(slmfile)
     slm = {}
@@ -148,8 +148,8 @@ def test_11():
     dummy_test(slm, mask)
 
 
-# randomized (shuffled) real data
 def test_12():
+    # randomized (shuffled) real data
     slmfile = './tests/data/slm.mat'
     slmdata = loadmat(slmfile)
     slm = {}
@@ -160,8 +160,8 @@ def test_12():
     dummy_test(slm)
 
 
-# randomized (shuffled) real data & random mask
 def test_13():
+    # randomized (shuffled) real data & random mask
     slmfile = './tests/data/slm.mat'
     slmdata = loadmat(slmfile)
     slm = {}

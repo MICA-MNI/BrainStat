@@ -2,7 +2,6 @@ import numpy as np
 from cmath import sqrt
 import warnings
 
-
 def py_SurfStatF(slm1, slm2):
     """ F-statistics for comparing two uni- or nulti-variate fixed effects models.
     Parameters
@@ -66,7 +65,7 @@ def py_SurfStatF(slm1, slm2):
 
     if np.ndim(slm['coef']) == 2:
         slm['k'] = np.array(1)
-        slm['t'] =  np.dot((h / ((SSE2 + (SSE2<=0))*(SSE2>0))), (df2/(df1-df2)))
+        slm['t'] = np.dot(h / (SSE2 + (SSE2<=0)) * (SSE2>0), df2/(df1-df2))
     elif np.ndim(slm['coef']) > 2:
         k2, v = np.shape(SSE2)
         k = np.around((np.sqrt(1 + 8*k2) -1)/2)
