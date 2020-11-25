@@ -2,7 +2,7 @@ import numpy as np
 import nibabel as nb
 
 
-def py_SurfStatAvVol(filenames, fun = np.add, Nan = None):
+def AvVol(filenames, fun = np.add, Nan = None):
     """Average, minimum or maximum of NIFTI, ANALYZE volumes.
     Parameters
     ----------

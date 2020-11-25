@@ -1,6 +1,4 @@
-import sys
-sys.path.append("python")
-from SurfStatStand import *
+from brainstat.stats import *
 import surfstat_wrap as sw
 import numpy as np
 import pytest
@@ -12,26 +10,26 @@ def dummy_test(Y, mask, subtractordivide):
 
     try:
         # wrap matlab functions
-        Wrapped_Y, Wrapped_Ym = sw.matlab_SurfStatStand(Y, mask, subtractordivide)
+        Wrapped_Y, Wrapped_Ym = sw.matlab_Stand(Y, mask, subtractordivide)
 
     except:
         pytest.skip("Original MATLAB code does not work with these inputs.")
 
 
     # python function
-    Python_Y, Python_Ym = py_SurfStatStand(Y, mask, subtractordivide)
+    Python_Y, Python_Ym = Stand(Y, mask, subtractordivide)
 
     # compare matlab-python outputs
-    testout_SurfStatStand = []
+    testout_Stand = []
 
-    testout_SurfStatStand.append(np.allclose(Wrapped_Y, Python_Y, \
+    testout_Stand.append(np.allclose(Wrapped_Y, Python_Y, \
                                  rtol=1e-05, equal_nan=True))
 
-    testout_SurfStatStand.append(np.allclose(Wrapped_Ym, Python_Ym, \
+    testout_Stand.append(np.allclose(Wrapped_Ym, Python_Ym, \
                                  rtol=1e-05, equal_nan=True))
-    #result_SurfStatStand = all(flag == True for (flag) in testout_SurfStatStand)
+    #result_Stand = all(flag == True for (flag) in testout_Stand)
 
-    assert all(flag == True for (flag) in testout_SurfStatStand)
+    assert all(flag == True for (flag) in testout_Stand)
 
 
 def test_01():

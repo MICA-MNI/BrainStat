@@ -1,9 +1,7 @@
-import sys
-sys.path.append("python")
-from SurfStatP import *
-from SurfStatT import *
-from SurfStatLinMod import *
-from term import Term
+from brainstat.stats.LinMod import LinMod
+from brainstat.stats.T import T
+from brainstat.stats.term import Term
+from brainstat.stats.P import P
 import surfstat_wrap as sw
 from scipy.io import loadmat
 import numpy as np
@@ -16,7 +14,7 @@ def dummy_test(slm, mask=None, clusthresh=0.001):
 
     try:
         # wrap matlab functions
-        M_pval, M_peak, M_clus, M_clusid = sw.matlab_SurfStatP(slm,
+        M_pval, M_peak, M_clus, M_clusid = sw.matlab_P(slm,
                                                                mask,
                                                                clusthresh)
 
@@ -24,27 +22,27 @@ def dummy_test(slm, mask=None, clusthresh=0.001):
         pytest.skip("Original MATLAB code does not work with these inputs.")
 
     # run python equivalent
-    PY_pval, PY_peak, PY_clus, PY_clusid = py_SurfStatP(slm,
+    PY_pval, PY_peak, PY_clus, PY_clusid = P(slm,
                                                         mask,
                                                         clusthresh)
 
     # compare matlab-python outputs
-    testout_SurfStatP = []
+    testout_P = []
 
     for key in M_pval:
-        testout_SurfStatP.append(np.allclose(M_pval[key], PY_pval[key],
+        testout_P.append(np.allclose(M_pval[key], PY_pval[key],
                                       rtol=1e-05, equal_nan=True))
     for key in M_peak:
-        testout_SurfStatP.append(np.allclose(M_peak[key], PY_peak[key],
+        testout_P.append(np.allclose(M_peak[key], PY_peak[key],
                                       rtol=1e-05, equal_nan=True))
     for key in M_clus:
-        testout_SurfStatP.append(np.allclose(M_clus[key], PY_clus[key],
+        testout_P.append(np.allclose(M_clus[key], PY_clus[key],
                                       rtol=1e-05, equal_nan=True))
-    testout_SurfStatP.append(np.allclose(M_clusid, PY_clusid,
+    testout_P.append(np.allclose(M_clusid, PY_clusid,
                               rtol=1e-05, equal_nan=True))
 
 
-    assert (all(flag == True for (flag) in testout_SurfStatP))
+    assert (all(flag == True for (flag) in testout_P))
 
 
 def test_01():
@@ -76,7 +74,7 @@ def test_02():
     slm['resl'] = slmdata['slm']['resl'][0,0]
     slm['tri'] = slmdata['slm']['tri'][0,0]
     slm['dfs'] =  np.array([[np.random.randint(1,10)]])
-    py_SurfStatP(slm)
+    P(slm)
 
 
 def test_03():
@@ -317,8 +315,8 @@ def test_17():
     AGE = AGE.reshape(AGE.shape[1], 1)
     A = Term(AGE, 'AGE')
     M = 1 + A
-    slm = py_SurfStatLinMod(Y, M, SW)
-    slm = py_SurfStatT(slm, -1*AGE)
+    slm = LinMod(Y, M, SW)
+    slm = T(slm, -1*AGE)
     dummy_test(slm)
 
 
@@ -333,7 +331,7 @@ def test_18():
     slm['tri'] = f['slm']['tri'][0,0]
     slm['resl'] = f['slm']['resl'][0,0]
     AGE = f['slm']['AGE'][0,0]
-    slm = py_SurfStatT(slm, -1*AGE)
+    slm = T(slm, -1*AGE)
     dummy_test(slm)
 
 
@@ -348,7 +346,7 @@ def test_19():
     slm['tri'] = f['slm']['tri'][0,0]
     slm['resl'] = f['slm']['resl'][0,0]
     AGE = f['slm']['AGE'][0,0]
-    slm = py_SurfStatT(slm, -1*AGE)
+    slm = T(slm, -1*AGE)
     mname = './tests/data/mask.mat'
     m = loadmat(mname)
     mask = m['mask'].astype(bool).flatten()
@@ -358,7 +356,7 @@ def test_19():
 def test_20():
     fname = './tests/data/sofopofo1.mat'
     f = loadmat(fname)
-    T = f['sofie']['T'][0,0]
+    fT = f['sofie']['T'][0,0]
     params = f['sofie']['model'][0,0]
     colnames = ['1', 'ak', 'female', 'male', 'Affect', 'Control1',
                 'Perspective', 'Presence', 'ink']
@@ -366,11 +364,11 @@ def test_20():
     SW = {}
     SW['tri'] = f['sofie']['SW'][0,0]['tri'][0,0]
     SW['coord'] = f['sofie']['SW'][0,0]['coord'][0,0]
-    slm = py_SurfStatLinMod(T, M, SW)
+    slm = LinMod(fT, M, SW)
     contrast = np.array([[37], [41], [24], [37], [26], [28], [44], [26], [22],
                          [32], [34], [33], [35], [25], [22], [27], [22], [29],
                          [29], [24]])
-    slm = py_SurfStatT(slm, contrast)
+    slm = T(slm, contrast)
     dummy_test(slm)
 
 
@@ -385,7 +383,7 @@ def test_21():
     slm['tri'] = f['slm']['tri'][0,0]
     slm['resl'] = f['slm']['resl'][0,0]
     contrast = np.random.randint(20,50, size=(slm['X'].shape[0],1))
-    slm = py_SurfStatT(slm, contrast)
+    slm = T(slm, contrast)
     mask = np.random.choice([0, 1], size=(slm['t'].shape[1]))
     mask = mask.astype(bool).flatten()
     dummy_test(slm, mask)

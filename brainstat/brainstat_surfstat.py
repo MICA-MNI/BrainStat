@@ -7,8 +7,8 @@
 import sys
 sys.path.append("python")
 
-from SurfStatAvSurf import *
-from SurfStatAvVol import *
+from brainstat.stats import *
+from brainstat.stats import *
 from SurfStatColLim import *
 from SurfStatColormap import *
 from SurfStatCoord2Ind import *
@@ -16,19 +16,19 @@ from SurfStatDataCursor import *
 from SurfStatDataCursorP import *
 from SurfStatDataCursorQ import *
 from SurfStatDelete import *
-from SurfStatEdg import *
-from SurfStatF import *
+from brainstat.stats import *
+from brainstat.stats import *
 from SurfStatInd2Coord import *
 from SurfStatInflate import *
-from SurfStatLinMod import *
+from brainstat.stats import *
 from SurfStatListDir import *
 from SurfStatMaskCut import *
-from SurfStatNorm import *
-from SurfStatP import *
-from SurfStatPCA import *
-from SurfStatPeakClus import *
-from SurfStatPlot import *
-from SurfStatQ import *
+from brainstat.stats import *
+from brainstat.stats import *
+from PCA import *
+from brainstat.stats import *
+from Plot import *
+from brainstat.stats import *
 from SurfStatROI import *
 from SurfStatROILabel import *
 from SurfStatReadData import *
@@ -37,11 +37,11 @@ from SurfStatReadSurf import *
 from SurfStatReadSurf1 import *
 from SurfStatReadVol import *
 from SurfStatReadVol1 import *
-from SurfStatResels import *
-from SurfStatSmooth import *
-from SurfStatStand import *
+from brainstat.stats import *
+from brainstat.stats import *
+from brainstat.stats import *
 from SurfStatSurf2Vol import *
-from SurfStatT import *
+from brainstat.stats import *
 from SurfStatView import *
 from SurfStatView1 import *
 from SurfStatViewData import *
@@ -55,11 +55,11 @@ from SurfStatWriteVol1 import *
 
 
 def BrainStatAvSurf(filenames, fun):
-    return matlab_SurfStatAvSurf(filenames, fun)
+    return matlab_AvSurf(filenames, fun)
 
 
 def BrainStatAvVol(filenames, fun, Nan):
-    return matlab_SurfStatAvVol(filenames, fun, Nan)
+    return matlab_AvVol(filenames, fun, Nan)
 
 
 def BrainStatColLim(clim):
@@ -91,11 +91,11 @@ def BrainStatDelete(varargin):
 
 
 def BrainStatEdge(surf):
-    return matlab_SurfStatEdge(surf)
+    return matlab_Edge(surf)
 
 
 def BrainStatF(slm1, slm2):
-    return matlab_SurfStatF(slm1, slm2)
+    return matlab_F(slm1, slm2)
 
 
 def BrainStatInd2Coord(ind, surf):
@@ -107,7 +107,7 @@ def BrainStatInflate(surf, w, spherefile):
 
 
 def BrainStatLinMod(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
-    return py_SurfStatLinMod(Y, M, surf, niter, thetalim, drlim)
+    return LinMod(Y, M, surf, niter, thetalim, drlim)
 
 
 def BrainStatListDir(d, exclude):
@@ -119,27 +119,27 @@ def BrainStatMaskCut(surf):
 
 
 def BrainStatNorm(Y, mask, subdiv):
-    return matlab_SurfStatNorm(Y, mask, subdiv)
+    return matlab_Norm(Y, mask, subdiv)
 
 
 def BrainStatP(slm, mask, clusthresh):
-    return matlab_SurfStatP(slm, mask, clusthresh)
+    return matlab_P(slm, mask, clusthresh)
 
 
 def BrainStatPCA(Y, mask, X, k):
-    return matlab_SurfStatPCA(Y, mask, X, k)
+    return matlab_PCA(Y, mask, X, k)
 
 
 def BrainStatPeakClus(slm, mask, thresh, reselspvert, edg):
-    return matlab_SurfStatPeakClus(slm, mask, thresh, reselspvert, edg)
+    return matlab_PeakClus(slm, mask, thresh, reselspvert, edg)
 
 
 def BrainStatPlot(x, y, M, g, varargin):
-    return matlab_SurfStatPlot(x, y, M, g, varargin)
+    return matlab_Plot(x, y, M, g, varargin)
 
 
 def BrainStatQ(slm, mask):
-    return matlab_SurfStatQ(slm, mask)
+    return matlab_Q(slm, mask)
 
 
 def BrainStatROI(centre, radius, surf):
@@ -175,15 +175,15 @@ def BrainStatReadVol1(file, Z, T):
 
 
 def BrainStatResels(slm, mask):
-    return matlab_SurfStatResels(slm, mask)
+    return matlab_Resels(slm, mask)
 
 
 def BrainStatSmooth(Y, surf, FWHM):
-    return matlab_SurfStatSmooth(Y, surf, FWHM)
+    return matlab_Smooth(Y, surf, FWHM)
 
 
 def BrainStatStand(Y, mask, subtractordivide):
-    return matlab_SurfStatStand(Y, mask, subtractordivide)
+    return matlab_Stand(Y, mask, subtractordivide)
 
 
 def BrainStatSurf2Vol(s, surf, template):
@@ -191,7 +191,7 @@ def BrainStatSurf2Vol(s, surf, template):
 
 
 def BrainStatT(slm, contrast):
-    return matlab_SurfStatT(slm, contrast)
+    return matlab_T(slm, contrast)
 
 
 def BrainStatView(struct, surf, title, background):

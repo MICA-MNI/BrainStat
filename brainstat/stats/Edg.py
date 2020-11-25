@@ -1,11 +1,11 @@
 import sys
 import numpy as np
-from matlab_functions import colon
+from brainstat.utils.matlab_functions import colon
 from brainspace.mesh.mesh_elements import get_edges
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 
 
-def py_SurfStatEdg(surf):
+def Edg(surf):
     """Converts the triangles or lattices of a mesh to edges.
 
     Args:
@@ -32,7 +32,7 @@ def py_SurfStatEdg(surf):
         edg = edg - 1
 
     elif 'lat' in surf:
-        # See the comments of SurfStatResels for a full explanation.
+        # See the comments of Resels for a full explanation.
         if surf['lat'].ndim == 2:
             surf['lat'] = np.expand_dims(surf['lat'],axis=2)
 

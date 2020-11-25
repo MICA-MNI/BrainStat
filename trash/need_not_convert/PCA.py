@@ -1,7 +1,7 @@
 import sys
 import numpy as np
 import numpy.matlib
-from term import Term
+from brainstat.stats import Term
 import matlab.engine
 import matlab
 global eng
@@ -9,7 +9,7 @@ eng = matlab.engine.start_matlab()
 addpath = eng.addpath('../matlab')
 
 
-def py_SurfStatPCA(Y, mask=None, X=1, c=4):
+def PCA(Y, mask=None, X=1, c=4):
     """Principal Components Analysis (PCA).
 
     Parameters

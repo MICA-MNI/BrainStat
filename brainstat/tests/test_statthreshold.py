@@ -5,16 +5,14 @@
 # in real-world scenario's though as storing data from such a large number of
 # voxels is beyond reasonable computational capacities. - RV
 
-import sys
-sys.path.append("python")
-from stat_threshold import stat_threshold
+from brainstat.stats.stat_threshold import stat_threshold
 import numpy as np
 import matlab.engine
 import math
-import itertools
 import pytest
 from scipy.io import loadmat
-
+import os
+import brainstat
 
 def var2mat(var):
     # Brings the input variables to matlab format.
@@ -97,7 +95,8 @@ def dummy_test(eng, search_volume, num_voxels, fwhm, df, p_val_peak,
 
 
 eng = matlab.engine.start_matlab()
-eng.addpath('matlab/')
+eng.addpath( os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'utils' + os.path.sep + 'matlab')
 
 
 def test_01():
@@ -472,7 +471,8 @@ def test_16():
 
 
 def test_17():
-    somedata = loadmat('./tests/data/varA.mat')
+    somedata = loadmat( os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'varA.mat')
     varA = somedata['varA']
     df = somedata['df']
     k = somedata['k'][0]

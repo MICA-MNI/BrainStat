@@ -1,8 +1,6 @@
-import sys
-sys.path.append("python")
 import numpy as np
 import pytest
-from SurfStatAvSurf import py_SurfStatAvSurf
+from brainstat.stats import AvSurf
 import surfstat_wrap as sw
 from brainspace.datasets import load_conte69
 from brainspace.mesh.mesh_elements import get_points, get_cells
@@ -16,8 +14,8 @@ surfstat_eng = sw.matlab_init_surfstat()
 # Test function
 def dummy_test(py_surfaces, fun = np.add):
     # Run functions
-    mat_surf = sw.matlab_SurfStatAvSurf(py_surfaces, fun)
-    py_out = py_SurfStatAvSurf(py_surfaces, fun)
+    mat_surf = sw.matlab_AvSurf(py_surfaces, fun)
+    py_out = AvSurf(py_surfaces, fun)
     py_surf = {'tri': np.array(get_cells(py_out)+1),
                'coord': np.array(get_points(py_out)).T}
 

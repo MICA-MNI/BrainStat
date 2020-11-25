@@ -13,7 +13,7 @@ def null(A, eps=1e-15):
     return scipy.transpose(null_space)
 
 
-def py_SurfStatT(slm, contrast):
+def T(slm, contrast):
 
     # T statistics for a contrast in a univariate or multivariate model.
     # Inputs

@@ -1,10 +1,8 @@
-import sys
-sys.path.append("python")
 import numpy as np
 import pytest
-from SurfStatLinMod import py_SurfStatLinMod
+from brainstat.stats.LinMod import LinMod
 import surfstat_wrap as sw
-from term import Term
+from brainstat.stats.term import Term
 from brainspace.datasets import load_conte69
 from scipy.io import loadmat
 
@@ -13,8 +11,8 @@ surfstat_eng = sw.matlab_init_surfstat()
 
 def dummy_test(Y, model, surf=None, resl_check=True):
 
-    py_slm = py_SurfStatLinMod(Y, model, surf=surf)
-    mat_slm = sw.matlab_SurfStatLinMod(Y, model, surf=surf)
+    py_slm = LinMod(Y, model, surf=surf)
+    mat_slm = sw.matlab_LinMod(Y, model, surf=surf)
 
     if not resl_check:
         py_slm['resl'] = np.array([])
@@ -136,7 +134,7 @@ def test_08():
 
 
 # 3D inputs --- A is a 3D input, B is Term
-def test_09_fixed():
+def test_09():
     n = np.random.randint(3, 100)
     k = np.random.randint(3, 100)
     v = np.random.randint(3, 100)
@@ -164,7 +162,7 @@ def test_10():
 
 
 # 3D inputs --- A is a 3D input, B is Term
-def test_11_fixed():
+def test_11():
     n = np.random.randint(3, 100)
     k = np.random.randint(3, 10)
     v = np.random.randint(27, 28)
@@ -179,7 +177,7 @@ def test_11_fixed():
     dummy_test(A, B, surf, resl_check=False)
 
 
-def test_12_fixed():
+def test_12():
     surf, _ = load_conte69()
 
     p = np.random.randint(1, 10)

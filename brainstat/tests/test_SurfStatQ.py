@@ -1,10 +1,9 @@
-import sys
-sys.path.append("python")
-from SurfStatQ import *
-from SurfStatLinMod import *
-from SurfStatT import *
-from SurfStatEdg import *
-from term import Term
+from brainstat.stats.Q import Q
+from brainstat.stats.term import Term
+from brainstat.stats.Edg import Edg
+from brainstat.stats.LinMod import LinMod
+from brainstat.stats.T import T
+
 import surfstat_wrap as sw
 import numpy as np
 import pytest
@@ -18,23 +17,23 @@ def dummy_test(slm, mask=None):
 
     try:
         # wrap matlab functions
-        M_q_val = sw.matlab_SurfStatQ(slm, mask)
+        M_q_val = sw.matlab_Q(slm, mask)
 
     except:
         pytest.skip("Original MATLAB code does not work with these inputs.")
 
     # run python equivalent
-    P_q_val = py_SurfStatQ(slm, mask)
+    P_q_val = Q(slm, mask)
 
     # compare matlab-python outputs
-    testout_SurfStatQ = []
+    testout_Q = []
 
     for key in M_q_val :
-        testout_SurfStatQ.append(np.allclose(np.squeeze(M_q_val[key]),
+        testout_Q.append(np.allclose(np.squeeze(M_q_val[key]),
                                              np.squeeze(P_q_val[key]),
                                       rtol=1e-05, equal_nan=True))
 
-    assert all(flag == True for (flag) in testout_SurfStatQ)
+    assert all(flag == True for (flag) in testout_Q)
 
 sw.matlab_init_surfstat()
 
@@ -166,7 +165,7 @@ def test_09():
     slm['k'] = 1
     slm['du'] = n
     slm['tri'] = np.random.randint(1,k, size=(m,3))
-    edg = py_SurfStatEdg(slm)
+    edg = Edg(slm)
     slm['resl'] = np.random.rand(edg.shape[0],1)
     slm['dfs'] = np.ones((1, k))
     dummy_test(slm)
@@ -184,8 +183,8 @@ def test_10():
     AGE = AGE.reshape(AGE.shape[1], 1)
     A = Term(AGE, 'AGE')
     M = 1 + A
-    slm = py_SurfStatLinMod(Y, M, SW)
-    slm = py_SurfStatT(slm, -1*AGE)
+    slm = LinMod(Y, M, SW)
+    slm = T(slm, -1*AGE)
     dummy_test(slm)
 
 
@@ -201,8 +200,8 @@ def test_11():
     AGE = AGE.reshape(AGE.shape[1], 1)
     A = Term(AGE, 'AGE')
     M = 1 + A
-    slm = py_SurfStatLinMod(Y, M, SW)
-    slm = py_SurfStatT(slm, -1*AGE)
+    slm = LinMod(Y, M, SW)
+    slm = T(slm, -1*AGE)
     dummy_test(slm)
 
 
@@ -217,7 +216,7 @@ def test_12():
     slm['tri'] = f['slm']['tri'][0,0]
     slm['resl'] = f['slm']['resl'][0,0]
     AGE = f['slm']['AGE'][0,0]
-    slm = py_SurfStatT(slm, -1*AGE)
+    slm = T(slm, -1*AGE)
 
     mname = './tests/data/mask.mat'
     m = loadmat(mname)
@@ -229,7 +228,7 @@ def test_12():
 def test_13():
     fname = './tests/data/sofopofo1.mat'
     f = loadmat(fname)
-    T = f['sofie']['T'][0,0]
+    fT = f['sofie']['T'][0,0]
 
     params = f['sofie']['model'][0,0]
     colnames = ['1', 'ak', 'female', 'male', 'Affect', 'Control1',
@@ -238,9 +237,9 @@ def test_13():
     SW = {}
     SW['tri'] = f['sofie']['SW'][0,0]['tri'][0,0]
     SW['coord'] = f['sofie']['SW'][0,0]['coord'][0,0]
-    slm = py_SurfStatLinMod(T, M, SW)
+    slm = LinMod(fT, M, SW)
     contrast = np.random.randint(20,50, size=(slm['X'].shape[0],1))
-    slm = py_SurfStatT(slm, contrast)
+    slm = T(slm, contrast)
     dummy_test(slm)
 
 
@@ -255,7 +254,7 @@ def test_14():
     slm['tri'] = f['slm']['tri'][0,0]
     slm['resl'] = f['slm']['resl'][0,0]
     contrast = np.random.randint(20,50, size=(slm['X'].shape[0],1))
-    slm = py_SurfStatT(slm, contrast)
+    slm = T(slm, contrast)
     mask = np.random.choice([0, 1], size=(slm['t'].shape[1]))
     mask = mask.astype(bool).flatten()
     dummy_test(slm, mask)

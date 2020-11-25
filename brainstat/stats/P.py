@@ -1,15 +1,12 @@
-import sys
 import numpy as np
 from scipy.interpolate import interp1d
 from scipy.special import gammaln
 import math
-sys.path.append("python")
-from stat_threshold import stat_threshold
-from SurfStatPeakClus import py_SurfStatPeakClus
-from SurfStatResels import py_SurfStatResels
+from brainstat.stats.PeakClus import PeakClus
+from brainstat.stats.stat_threshold import stat_threshold
+from brainstat.stats.Resels import Resels
 
-
-def py_SurfStatP(slm, mask=None, clusthresh=0.001):
+def P(slm, mask=None, clusthresh=0.001):
     """Corrected P-values for vertices and clusters.
 
     Parameters
@@ -19,7 +16,7 @@ def py_SurfStatP(slm, mask=None, clusthresh=0.001):
         slm['t'] : 2D numpy array of shape (l,v).
             v is the number of vertices, slm['t'][0,:] is the test statistic,
             rest of the rows are used to calculate cluster resels if
-            slm['k']>1. See SurfStatF for the precise definition of extra rows.
+            slm['k']>1. See F for the precise definition of extra rows.
         surf['df'] : 2D numpy array of shape (1,1), dtype=int.
             Degrees of freedom.
         surf['k'] : an int.
@@ -106,7 +103,7 @@ def py_SurfStatP(slm, mask=None, clusthresh=0.001):
     else:
         thresh = clusthresh
 
-    resels, reselspvert, edg = py_SurfStatResels(slm, mask)
+    resels, reselspvert, edg = Resels(slm, mask)
     N = mask.sum()
 
     if np.max(slm['t'][0, mask]) < thresh:
@@ -121,7 +118,7 @@ def py_SurfStatP(slm, mask=None, clusthresh=0.001):
         clus = []
         clusid = []
     else:
-        peak, clus, clusid = py_SurfStatPeakClus(slm, mask, thresh,reselspvert, edg)
+        peak, clus, clusid = PeakClus(slm, mask, thresh,reselspvert, edg)
         slm['t'] = slm['t'].reshape(1, slm['t'].size)
         varA = np.concatenate((np.array([[10]]), peak['t'].T , slm['t']),
                               axis=1)

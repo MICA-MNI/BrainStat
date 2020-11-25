@@ -1,7 +1,7 @@
 import math
 import numpy as np
 from scipy.special import betaln, gammaln, gamma
-from matlab_functions import interp1, colon
+from brainstat.utils.matlab_functions import interp1, colon
 
 
 def gammalni(n):

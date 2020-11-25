@@ -2,7 +2,7 @@ import numpy as np
 import sys
 
 
-def py_SurfStatStand(Y, mask=None, subtractordivide='s'):
+def Stand(Y, mask=None, subtractordivide='s'):
 
     # Standardizes by subtracting the global mean, or dividing it.
     # Inputs

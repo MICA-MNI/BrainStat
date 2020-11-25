@@ -1,15 +1,13 @@
 import warnings
 import numpy as np
 import numpy.linalg as la
-import sys
-sys.path.append("python")
-from term import Term, Random
-from SurfStatEdg import py_SurfStatEdg
+from brainstat.stats.term import Term, Random
+from brainstat.stats.Edg import Edg
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 from brainspace.mesh.mesh_elements import get_cells
 
 
-def py_SurfStatLinMod(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
+def LinMod(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
     """ Fits linear mixed effects models to surface data and estimates resels.
 
     Parameters
@@ -256,7 +254,7 @@ def py_SurfStatLinMod(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
             key = 'tri' if 'tri' in surf else 'lat'
             slm[key] = surf[key]
 
-        edges = py_SurfStatEdg(surf)
+        edges = Edg(surf)
 
         n_edges = edges.shape[0]
 

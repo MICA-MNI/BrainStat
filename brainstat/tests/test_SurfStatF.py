@@ -1,10 +1,5 @@
-import sys
-sys.path.append("python")
 import surfstat_wrap as sw
-from SurfStatF import *
-from SurfStatT import *
-from SurfStatLinMod import *
-from term import Term
+from brainstat.stats import *
 from scipy.io import loadmat
 import numpy as np
 import pytest
@@ -16,21 +11,21 @@ def dummy_test(A, B):
 
     try:
         # wrap matlab functions
-        Wrapped_slm = sw.matlab_SurfStatF(A, B)
+        Wrapped_slm = sw.matlab_F(A, B)
 
     except:
         pytest.skip("Original MATLAB code does not work with these inputs.")
 
 
     # run python functions
-    Python_slm = py_SurfStatF(A, B)
+    Python_slm = F(A, B)
 
-    testout_SurfStatF = []
+    testout_F = []
     # compare matlab-python outputs
     for key in Wrapped_slm:
-        testout_SurfStatF.append(np.allclose(Python_slm[key], Wrapped_slm[key], \
+        testout_F.append(np.allclose(Python_slm[key], Wrapped_slm[key], \
                                  rtol=1e-05, equal_nan=True))
-    assert all(flag == True for (flag) in testout_SurfStatF)
+    assert all(flag == True for (flag) in testout_F)
 
 
 def test_01():
@@ -276,7 +271,7 @@ def test_10():
     slm['tri'] = f['slm']['tri'][0,0]
     slm['resl'] = f['slm']['resl'][0,0]
     AGE = f['slm']['AGE'][0,0]
-    slm = py_SurfStatT(slm, -1*AGE)
+    slm = T(slm, -1*AGE)
 
     slm1 = slm.copy()
     slm1['t'] = slm1['t'] + np.random.rand()
@@ -295,7 +290,7 @@ def test_11():
     slm['tri'] = f['slm']['tri'][0,0]
     slm['resl'] = f['slm']['resl'][0,0]
     AGE = f['slm']['AGE'][0,0]
-    slm = py_SurfStatT(slm, -1*AGE)
+    slm = T(slm, -1*AGE)
 
     slm1 = slm.copy()
     slm1['X'] = slm['X'] + 2
@@ -310,7 +305,7 @@ def test_11():
 def test_12():
     fname = './tests/data/sofopofo1.mat'
     f = loadmat(fname)
-    T = f['sofie']['T'][0,0]
+    fT = f['sofie']['T'][0,0]
     params = f['sofie']['model'][0,0]
     colnames = ['1', 'ak', 'female', 'male', 'Affect', 'Control1',
                 'Perspective', 'Presence', 'ink']
@@ -318,11 +313,11 @@ def test_12():
     SW = {}
     SW['tri'] = f['sofie']['SW'][0,0]['tri'][0,0]
     SW['coord'] = f['sofie']['SW'][0,0]['coord'][0,0]
-    slm = py_SurfStatLinMod(T, M, SW)
+    slm = LinMod(fT, M, SW)
     contrast = np.array([[37], [41], [24], [37], [26], [28], [44], [26], [22],
                          [32], [34], [33], [35], [25], [22], [27], [22], [29],
                          [29], [24]])
-    slm = py_SurfStatT(slm, contrast)
+    slm = T(slm, contrast)
 
     slm1 = slm.copy()
     slm1['t'] = slm1['t'] + np.random.rand()

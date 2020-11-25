@@ -1,11 +1,11 @@
 import numpy as np
 import math
-from SurfStatEdg import py_SurfStatEdg
-from matlab_functions import interp1, ismember
+from brainstat.stats.Edg import Edg
+from brainstat.utils.matlab_functions import interp1, ismember
 import copy
 
 
-def py_SurfStatPeakClus(slm, mask, thresh, reselspvert=None, edg=None):
+def PeakClus(slm, mask, thresh, reselspvert=None, edg=None):
     """ Finds peaks (local maxima) and clusters for surface data.
     Parameters
     ----------
@@ -14,7 +14,7 @@ def py_SurfStatPeakClus(slm, mask, thresh, reselspvert=None, edg=None):
         slm['t'] : numpy array of shape (l,v),
             v is the number of vertices, the first row slm['t'][0,:] is used
             for the clusters, and the other rows are used to calculate cluster
-            resels if slm['k']>1. See SurfStatF for the precise definition
+            resels if slm['k']>1. See F for the precise definition
             of the extra rows.
         slm['tri'] : numpy array of shape (t,3), dype=int,
             triangle indices, values should be 1 and v,
@@ -29,7 +29,7 @@ def py_SurfStatPeakClus(slm, mask, thresh, reselspvert=None, edg=None):
         reselspvert : numpy array of shape (v),
             resels per vertex, by default: np.ones(v).
         edg :  numpy array of shape (e,2), dtype=int,
-            edge indices, by default computed from SurfStatEdg function.
+            edge indices, by default computed from Edg function.
         slm['df'] : int,
             degrees of freedom, note that only the length (1 or 2) is used
             to determine if slm['t'] is Hotelling's T or T^2 when k>1.
@@ -56,7 +56,7 @@ def py_SurfStatPeakClus(slm, mask, thresh, reselspvert=None, edg=None):
         array of cluster id's for each vertex.
     """
     if edg is None:
-        edg = py_SurfStatEdg(slm)
+        edg = Edg(slm)
 
     l, v = np.shape(slm['t'])
     slm_t = copy.deepcopy(slm['t'])

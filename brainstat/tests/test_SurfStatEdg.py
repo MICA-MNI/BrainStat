@@ -1,6 +1,4 @@
-import sys
-sys.path.append("python")
-from SurfStatEdg import *
+from brainstat.stats import *
 import surfstat_wrap as sw
 import numpy as np
 import pytest
@@ -15,12 +13,12 @@ sw.matlab_init_surfstat()
 def dummy_test(surf):
     try:
         # wrap matlab functions
-        Wrapped_edg = sw.matlab_SurfStatEdg(surf)
+        Wrapped_edg = sw.matlab_Edg(surf)
 
     except:
         pytest.skip("ORIGINAL MATLAB CODE DOES NOT WORK WITH THESE INPUTS...")
 
-    Python_edg = py_SurfStatEdg(surf) + 1 # +1 to match across implementations.
+    Python_edg = Edg(surf) + 1 # +1 to match across implementations.
 
     # compare matlab-python outputs
     testout = np.allclose(Wrapped_edg, Python_edg, rtol=1e-05, equal_nan=True)

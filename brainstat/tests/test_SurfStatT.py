@@ -1,12 +1,10 @@
-import sys
-sys.path.append("python")
-from SurfStatT import *
-from SurfStatLinMod import *
+from brainstat.stats import *
 import surfstat_wrap as sw
 import numpy as np
 from scipy.io import loadmat
-import sys
 import pytest
+import os
+import brainstat
 
 sw.matlab_init_surfstat()
 
@@ -15,22 +13,22 @@ def dummy_test(slm, contrast):
 
     try:
         # wrap matlab functions
-        Wrapped_slm = sw.matlab_SurfStatT(slm, contrast)
+        Wrapped_slm = sw.matlab_T(slm, contrast)
 
     except:
         pytest.skip("Original MATLAB code does not work with these inputs.")
 
     # run python functions
-    Python_slm = py_SurfStatT(slm, contrast)
+    Python_slm = T(slm, contrast)
 
-    testout_SurfStatT = []
+    testout_T = []
 
     # compare matlab-python outputs
     for key in Wrapped_slm:
-        testout_SurfStatT.append(np.allclose(Python_slm[key], Wrapped_slm[key], \
+        testout_T.append(np.allclose(Python_slm[key], Wrapped_slm[key], \
                                  rtol=1e-05, equal_nan=True))
 
-    assert all(flag == True for (flag) in testout_SurfStatT)
+    assert all(flag == True for (flag) in testout_T)
 
 
 #### Test 1
@@ -92,7 +90,11 @@ def test_04():
 
 
 def test_05():
-    fname = './tests/data/thickness_slm.mat'
+    fname  = (
+        os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep +
+        'thickness_slm.mat'
+    )
     f = loadmat(fname)
 
     slm = {}
@@ -109,7 +111,11 @@ def test_05():
 
 
 def test_06():
-    fname = './tests/data/thickness_slm.mat'
+    fname  = (
+        os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep +
+        'thickness_slm.mat'
+    )
     f = loadmat(fname)
 
     slm = {}
@@ -126,9 +132,12 @@ def test_06():
 
 
 def test_07():
-    fname = './tests/data/thickness.mat'
+    fname  = (
+        os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep +
+        'thickness.mat'
+    )
     f = loadmat(fname)
-
     A = f['T']
     np.random.shuffle(A)
 
@@ -137,7 +146,7 @@ def test_07():
     surf = {}
     surf['tri'] = f['tri']
     surf['coord'] = f['coord']
-    slm = py_SurfStatLinMod(A, B, surf)
+    slm = LinMod(A, B, surf)
 
     contrast = np.array(f['AGE']).T
 
@@ -145,7 +154,11 @@ def test_07():
 
 
 def test_08():
-    fname = './tests/data/sofopofo1_slm.mat'
+    fname  = (
+        os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep +
+        'sofopofo1_slm.mat'
+    )
     f = loadmat(fname)
     slm = {}
     slm['X'] = f['slm']['X'][0,0]
@@ -161,7 +174,11 @@ def test_08():
 
 
 def test_09():
-    fname = './tests/data/sofopofo1.mat'
+    fname  = (
+        os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep +
+        'sofopofo1.mat'
+    )
     f = loadmat(fname)
     T = f['sofie']['T'][0,0]
 
@@ -174,7 +191,7 @@ def test_09():
     SW = {}
     SW['tri'] = f['sofie']['SW'][0,0]['tri'][0,0]
     SW['coord'] = f['sofie']['SW'][0,0]['coord'][0,0]
-    slm = py_SurfStatLinMod(T, M, SW)
+    slm = LinMod(T, M, SW)
 
     contrast = np.random.randint(20,50, size=(slm['X'].shape[0],1))
 

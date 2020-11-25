@@ -2,7 +2,7 @@ import sys
 import numpy as np
 
 
-def py_SurfStatNorm(Y, mask=None, subdiv='s'):
+def Norm(Y, mask=None, subdiv='s'):
 
     # Normalizes by subtracting the global mean, or dividing it.
     # Inputs

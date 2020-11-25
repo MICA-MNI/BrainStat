@@ -1,6 +1,4 @@
-import sys
-sys.path.append("python")
-from SurfStatNorm import *
+from brainstat.stats import *
 import surfstat_wrap as sw
 import numpy as np
 import pytest
@@ -12,11 +10,11 @@ def dummy_test(Y, mask, subdiv):
 
     try:
         # wrap matlab functions
-        Wrapped_Y, Wrapped_Yav = sw.matlab_SurfStatNorm(Y, mask, subdiv)
+        Wrapped_Y, Wrapped_Yav = sw.matlab_Norm(Y, mask, subdiv)
     except:
         pytest.skip("Original MATLAB code does not work with these inputs.")
 
-    Python_Y, Python_Yav = py_SurfStatNorm(Y, mask, subdiv)
+    Python_Y, Python_Yav = Norm(Y, mask, subdiv)
 
     # compare matlab-python outputs
 

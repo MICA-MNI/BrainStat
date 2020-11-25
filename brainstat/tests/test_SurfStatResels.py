@@ -1,11 +1,9 @@
-import sys
-sys.path.append("python")
-from SurfStatResels import py_SurfStatResels
-from SurfStatEdg import py_SurfStatEdg
+from brainstat.stats.Resels import Resels
+from brainstat.stats.Edg import Edg
 import surfstat_wrap as sw
 import numpy as np
-import math
-import itertools
+import os
+import brainstat
 import pytest
 from scipy.io import loadmat
 
@@ -16,7 +14,7 @@ def dummy_test(slm, mask=None):
 
     # Run MATLAB
     try:
-        mat_output = sw.matlab_SurfStatResels(slm,mask)
+        mat_output = sw.matlab_Resels(slm,mask)
         # Deal with either 1 or 3 output arguments.
         #if not isinstance(mat_output, np.ndarray):
         #    mat_output = mat_output[0].tolist()
@@ -29,7 +27,7 @@ def dummy_test(slm, mask=None):
         pytest.skip("Original MATLAB code does not work with these inputs.")
 
     # Run Python
-    resels_py,  reselspvert_py,  edg_py =  py_SurfStatResels(slm,mask)
+    resels_py,  reselspvert_py,  edg_py =  Resels(slm,mask)
     if len(mat_output) == 1:
         py_output = [resels_py]
     else:
@@ -103,7 +101,7 @@ def test_06():
 def test_07():
     # Test with slm.lat and slm.resl
     slm = {'lat': np.random.rand(10,10,10) > 0.5}
-    edg = py_SurfStatEdg(slm)
+    edg = Edg(slm)
     slm['resl'] = np.random.rand(edg.shape[0],1)
     dummy_test(slm)
 
@@ -112,7 +110,7 @@ def test_08():
     # Test with slm.lat, slm.resl, and a mask
     slm = {'lat': np.random.rand(10,10,10) > 0.5}
     mask = np.random.choice([False,True],np.sum(slm['lat']))
-    edg = py_SurfStatEdg(slm)
+    edg = Edg(slm)
     slm['resl'] = np.random.rand(edg.shape[0],1)
     dummy_test(slm, mask)
 
@@ -121,13 +119,15 @@ def test_09():
     # Test with slm.lat, slm.resl, and a fully false mask
     slm = {'lat': np.random.rand(10,10,10) > 0.5}
     mask = np.zeros(np.sum(slm['lat']), dtype=bool)
-    edg = py_SurfStatEdg(slm)
+    edg = Edg(slm)
     slm['resl'] = np.random.rand(edg.shape[0],1)
     dummy_test(slm, mask)
 
 
 def test_10():
-    slmfile = './tests/data/slm.mat'
+    slmfile = (os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep +
+        'slm.mat')
     slmdata = loadmat(slmfile)
     slm = {}
     slm['tri'] = slmdata['slm']['tri'][0,0]
@@ -137,7 +137,9 @@ def test_10():
 
 def test_11():
     # real data & random mask
-    slmfile = './tests/data/slm.mat'
+    slmfile = (os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep +
+        'slm.mat')
     slmdata = loadmat(slmfile)
     slm = {}
     slm['tri'] = slmdata['slm']['tri'][0,0]
@@ -150,7 +152,9 @@ def test_11():
 
 def test_12():
     # randomized (shuffled) real data
-    slmfile = './tests/data/slm.mat'
+    slmfile = (os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep +
+        'slm.mat')
     slmdata = loadmat(slmfile)
     slm = {}
     slm['tri'] = slmdata['slm']['tri'][0,0]
@@ -162,7 +166,9 @@ def test_12():
 
 def test_13():
     # randomized (shuffled) real data & random mask
-    slmfile = './tests/data/slm.mat'
+    slmfile = (os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep +
+        'slm.mat')
     slmdata = loadmat(slmfile)
     slm = {}
     slm['tri'] = slmdata['slm']['tri'][0,0]

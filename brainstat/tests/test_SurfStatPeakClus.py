@@ -1,7 +1,4 @@
-import sys
-sys.path.append("python")
-from SurfStatPeakClus import *
-from SurfStatEdg import *
+from brainstat.stats import *
 import surfstat_wrap as sw
 import numpy as np
 import random
@@ -18,27 +15,27 @@ def dummy_test(slm, mask, thresh, reselspvert=None, edg=None):
 
     try:
         # wrap matlab functions
-        M_peak, M_clus, M_clusid = sw.matlab_SurfStatPeakClus(slm, mask,
+        M_peak, M_clus, M_clusid = sw.matlab_PeakClus(slm, mask,
                                                               thresh,
                                                               reselspvert, mat_edg)
     except:
         pytest.skip("Original MATLAB code does not work with these inputs.")
 
     # call python functions
-    P_peak, P_clus, P_clusid = py_SurfStatPeakClus(slm, mask, thresh,
+    P_peak, P_clus, P_clusid = PeakClus(slm, mask, thresh,
                                                    reselspvert, edg)
     # compare matlab-python outputs
-    testout_SurfStatPeakClus = []
+    testout_PeakClus = []
     for key in M_peak:
-        testout_SurfStatPeakClus.append(np.allclose(M_peak[key], P_peak[key],
+        testout_PeakClus.append(np.allclose(M_peak[key], P_peak[key],
                                         rtol=1e-05, equal_nan=True))
     for key in M_clus:
-        testout_SurfStatPeakClus.append(np.allclose(M_clus[key], P_clus[key],
+        testout_PeakClus.append(np.allclose(M_clus[key], P_clus[key],
                                         rtol=1e-05, equal_nan=True))
-    testout_SurfStatPeakClus.append(np.allclose(M_clusid, P_clusid,
+    testout_PeakClus.append(np.allclose(M_clusid, P_clusid,
                                     rtol=1e-05, equal_nan=True))
 
-    assert all(flag == True for (flag) in testout_SurfStatPeakClus)
+    assert all(flag == True for (flag) in testout_PeakClus)
 
 sw.matlab_init_surfstat()
 
@@ -252,7 +249,7 @@ def test_15():
     reselspvert = np.random.rand(k)
     A = {}
     A['tri'] = np.random.randint(1,k, size=(m,3))
-    edg = py_SurfStatEdg(A)
+    edg = Edg(A)
     dummy_test(slm, mask, thresh, reselspvert, edg)
 
 
@@ -272,7 +269,7 @@ def test_16():
     reselspvert = np.random.rand(k)
     A = {}
     A['tri'] = np.random.randint(1,k, size=(m,3))
-    edg = py_SurfStatEdg(A)
+    edg = Edg(A)
     dummy_test(slm, mask, thresh, reselspvert, edg)
 
 
@@ -290,13 +287,13 @@ def test_17():
     reselspvert = np.random.rand(k)
     A = {}
     A['lat'] =np.random.choice([0, 1], size=(10,10,10))
-    edg = py_SurfStatEdg(A)
+    edg = Edg(A)
     dummy_test(slm, mask, thresh, reselspvert, edg)
 
 
 def test_18():
     # generate random data, small sized as 1000 points for slm['t'],
-    # extremely big threshold for n < 1 case in SurfStatPeakClus.py
+    # extremely big threshold for n < 1 case in PeakClus.py
     k = 1000
     m = 100
     slm = {}
@@ -334,5 +331,5 @@ def test_20():
     reselspvert = np.random.rand(k)
     A = {}
     A['lat'] =np.random.choice([0, 1], size=(10,10,10))
-    edg = py_SurfStatEdg(A)
+    edg = Edg(A)
     dummy_test(slm, mask, thresh, reselspvert, edg)

@@ -1,6 +1,4 @@
-import sys
-sys.path.append("python")
-from SurfStatAvVol import *
+from brainstat.stats import *
 import surfstat_wrap as sw
 import numpy as np
 import random
@@ -12,25 +10,25 @@ sw.matlab_init_surfstat()
 def dummy_test(filenames, fun = np.add, Nan = None, dimensionality = None):
 
     # wrap matlab functions
-    M_data, M_vol = sw.matlab_SurfStatAvVol(filenames, fun, Nan, dimensionality)
+    M_data, M_vol = sw.matlab_AvVol(filenames, fun, Nan, dimensionality)
 
     # run python equivalent
-    P_data, P_vol = py_SurfStatAvVol(filenames, fun, Nan)
+    P_data, P_vol = AvVol(filenames, fun, Nan)
 
     if filenames[0].endswith('.img'):
         P_data = P_data[:,:,:,0]
 
     # compare matlab-python outputs
-    testout_SurfStatAvVol = []
+    testout_AvVol = []
 
     for key in M_vol:
-        testout_SurfStatAvVol.append(np.allclose(np.squeeze(M_vol[key]),
+        testout_AvVol.append(np.allclose(np.squeeze(M_vol[key]),
                                                  np.squeeze(P_vol[key]),
                                                  rtol=1e-05, equal_nan=True))
-    testout_SurfStatAvVol.append(np.allclose(M_data, P_data,
+    testout_AvVol.append(np.allclose(M_data, P_data,
                                  rtol=1e-05, equal_nan=True))
 
-    assert all(flag == True for (flag) in testout_SurfStatAvVol)
+    assert all(flag == True for (flag) in testout_AvVol)
 
 
 def test_01():
