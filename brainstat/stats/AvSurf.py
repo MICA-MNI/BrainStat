@@ -5,7 +5,7 @@ from brainspace.mesh.mesh_elements import get_cells, get_points
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 
 
-def py_SurfStatAvSurf(filenames, fun = np.add, output_surfstat=False):
+def AvSurf(filenames, fun = np.add, output_surfstat=False):
     """Average, minimum, or maximum of surfaces.
 
     Args:
