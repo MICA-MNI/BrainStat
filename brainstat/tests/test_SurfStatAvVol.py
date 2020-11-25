@@ -3,9 +3,13 @@ import surfstat_wrap as sw
 import numpy as np
 import random
 import pytest
-
+import os
+import brainstat
 sw.matlab_init_surfstat()
 
+data_dir = (os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'volfiles'
+        + os.path.sep)
 
 def dummy_test(filenames, fun = np.add, Nan = None, dimensionality = None):
 
@@ -33,114 +37,70 @@ def dummy_test(filenames, fun = np.add, Nan = None, dimensionality = None):
 
 def test_01():
     # ANALYZE format (*img)
-    filenames = ['./tests/data/volfiles/Arandom1.img',
-                 './tests/data/volfiles/Arandom2.img',
-                 './tests/data/volfiles/Arandom3.img',
-                 './tests/data/volfiles/Arandom4.img',
-                 './tests/data/volfiles/Arandom5.img']
+    filenames = [data_dir + 'Arandom' + str(x) + '.img' for x in range(1,6)]
     dummy_test(np.array(filenames))
 
 
 def test_02():
     # ANALYZE format (*img)
-    filenames = ['./tests/data/volfiles/Arandom1.img',
-                 './tests/data/volfiles/Arandom2.img',
-                 './tests/data/volfiles/Arandom3.img',
-                 './tests/data/volfiles/Arandom4.img',
-                 './tests/data/volfiles/Arandom5.img']
+    filenames = [data_dir + 'Arandom' + str(x) + '.img' for x in range(1,6)]
     dummy_test(np.array(filenames), fun=np.fmin)
 
 
 def test_03():
     # ANALYZE format (*img)
-    filenames = ['./tests/data/volfiles/Arandom1.img',
-                 './tests/data/volfiles/Arandom2.img',
-                 './tests/data/volfiles/Arandom3.img',
-                 './tests/data/volfiles/Arandom4.img',
-                 './tests/data/volfiles/Arandom5.img']
+    filenames = [data_dir + 'Arandom' + str(x) + '.img' for x in range(1,6)]
     dummy_test(np.array(filenames), fun=np.fmax)
 
 
 def test_04():
     # ANALYZE format (*img), image with NaN values
-    filenames = ['./tests/data/volfiles/Arandom1.img',
-                 './tests/data/volfiles/Arandom2.img',
-                 './tests/data/volfiles/Arandom3.img',
-                 './tests/data/volfiles/Arandom4.img',
-                 './tests/data/volfiles/Arandom5.img',
-                 './tests/data/volfiles/ArandomNaN.img']
+    filenames = [data_dir + 'Arandom' + str(x) + '.img' for x in range(1,6)]
+    filenames.append(data_dir + 'ArandomNaN.img')
     dummy_test(np.array(filenames), fun=np.add)
 
 
 def test_05():
     # ANALYZE format (*img), image with NaN values, replace NaN
-    filenames = ['./tests/data/volfiles/Arandom1.img',
-                 './tests/data/volfiles/Arandom2.img',
-                 './tests/data/volfiles/Arandom3.img',
-                 './tests/data/volfiles/Arandom4.img',
-                 './tests/data/volfiles/Arandom5.img',
-                 './tests/data/volfiles/ArandomNaN.img']
+    filenames = [data_dir + 'Arandom' + str(x) + '.img' for x in range(1,6)]
+    filenames.append(data_dir + 'ArandomNaN.img')
     dummy_test(np.array(filenames), fun=np.add, Nan = random.uniform(0, 50))
 
 
 def test_06():
     # NIFTI files
-    filenames = ['./tests/data/volfiles/random1.nii',
-                './tests/data/volfiles/random2.nii',
-                './tests/data/volfiles/random3.nii',
-                './tests/data/volfiles/random4.nii',
-                './tests/data/volfiles/random5.nii']
+    filenames = [data_dir + 'random' + str(x) + '.nii' for x in range(1,6)]
     dummy_test(np.array(filenames))
 
 
 def test_07():
     # NIFTI files
-    filenames = ['./tests/data/volfiles/random1.nii',
-                './tests/data/volfiles/random2.nii',
-                './tests/data/volfiles/random3.nii',
-                './tests/data/volfiles/random4.nii',
-                './tests/data/volfiles/random5.nii']
+    filenames = [data_dir + 'random' + str(x) + '.nii' for x in range(1,6)]
     dummy_test(np.array(filenames), fun=np.fmin)
 
 
 def test_08():
     # NIFTI files
-    filenames = ['./tests/data/volfiles/random1.nii',
-                './tests/data/volfiles/random2.nii',
-                './tests/data/volfiles/random3.nii',
-                './tests/data/volfiles/random4.nii',
-                './tests/data/volfiles/random5.nii']
+    filenames = [data_dir + 'random' + str(x) + '.nii' for x in range(1,6)]
     dummy_test(np.array(filenames), fun=np.fmax)
 
 
 def test_09():
     # NIFTI files
-    filenames = ['./tests/data/volfiles/random1.nii',
-                './tests/data/volfiles/random2.nii',
-                './tests/data/volfiles/random3.nii',
-                './tests/data/volfiles/random4.nii',
-                './tests/data/volfiles/random5.nii',
-                './tests/data/volfiles/randomNaN.nii']
+    filenames = [data_dir + 'random' + str(x) + '.nii' for x in range(1,6)]
+    filenames.append(data_dir + 'randomNaN.nii')
     dummy_test(np.array(filenames))
 
 
 def test_10():
     # NIFTI files
-    filenames = ['./tests/data/volfiles/random1.nii',
-                 './tests/data/volfiles/random2.nii',
-                 './tests/data/volfiles/random3.nii',
-                 './tests/data/volfiles/random4.nii',
-                 './tests/data/volfiles/random5.nii',
-                 './tests/data/volfiles/randomNaN.nii']
+    filenames = [data_dir + 'random' + str(x) + '.nii' for x in range(1,6)]
+    filenames.append(data_dir + 'randomNaN.nii')
     dummy_test(np.array(filenames), fun=np.fmin)
 
 
 def test_11():
     # NIFTI files
-    filenames = ['./tests/data/volfiles/random1.nii',
-                 './tests/data/volfiles/random2.nii',
-                 './tests/data/volfiles/random3.nii',
-                 './tests/data/volfiles/random4.nii',
-                 './tests/data/volfiles/random5.nii',
-                 './tests/data/volfiles/randomNaN.nii']
+    filenames = [data_dir + 'random' + str(x) + '.nii' for x in range(1,6)]
+    filenames.append(data_dir + 'randomNaN.nii')
     dummy_test(np.array(filenames), fun=np.add, Nan=3)

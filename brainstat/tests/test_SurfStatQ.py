@@ -10,6 +10,9 @@ import pytest
 from scipy.io import loadmat
 import random
 
+import os
+import brainstat
+
 sw.matlab_init_surfstat()
 
 
@@ -40,8 +43,8 @@ sw.matlab_init_surfstat()
 
 def test_01():
     # data from Sofie, only slm['t'], slm['df'], slm['k'] --> mandatory input
-    slmfile = './tests/data/slm.mat'
-    slmdata = loadmat(slmfile)
+    slmdata = loadmat(os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
     slm = {}
     slm['t'] = slmdata['slm']['t'][0,0]
     slm['df'] = slmdata['slm']['df'][0,0]
@@ -173,7 +176,8 @@ def test_09():
 
 def test_10():
     # load tutorial data (for n=10 subjects)
-    fname = './tests/data/thickness.mat'
+    fname = (os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'thickness.mat')
     f = loadmat(fname)
     SW = {}
     SW['tri'] = f['tri']
@@ -190,7 +194,8 @@ def test_10():
 
 def test_11():
     # load tutorial data (for n=10 subjects)
-    fname = './tests/data/thickness.mat'
+    fname = (os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'thickness.mat')
     f = loadmat(fname)
     SW = {}
     SW['tri'] = f['tri']
@@ -206,7 +211,8 @@ def test_11():
 
 
 def test_12():
-    fname = './tests/data/thickness_slm.mat'
+    fname = (os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'thickness_slm.mat')
     f = loadmat(fname)
     slm = {}
     slm['X'] = f['slm']['X'][0,0]
@@ -218,7 +224,8 @@ def test_12():
     AGE = f['slm']['AGE'][0,0]
     slm = T(slm, -1*AGE)
 
-    mname = './tests/data/mask.mat'
+    mname = (os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'mask.mat')
     m = loadmat(mname)
     mask = m['mask'].astype(bool).flatten()
 
@@ -226,7 +233,8 @@ def test_12():
 
 
 def test_13():
-    fname = './tests/data/sofopofo1.mat'
+    fname = (os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'sofopofo1.mat')
     f = loadmat(fname)
     fT = f['sofie']['T'][0,0]
 
@@ -244,7 +252,8 @@ def test_13():
 
 
 def test_14():
-    fname = './tests/data/sofopofo1_slm.mat'
+    fname = (os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'sofopofo1_slm.mat')
     f = loadmat(fname)
     slm = {}
     slm['X'] = f['slm']['X'][0,0]

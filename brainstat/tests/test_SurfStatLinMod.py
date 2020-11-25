@@ -6,6 +6,9 @@ from brainstat.stats.term import Term
 from brainspace.datasets import load_conte69
 from scipy.io import loadmat
 
+import os
+import brainstat
+
 surfstat_eng = sw.matlab_init_surfstat()
 
 
@@ -193,7 +196,8 @@ def test_12():
 
 # real thickness data for 10 subjects
 def test_13():
-    fname = './tests/data/thickness.mat'
+    fname = (os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'thickness.mat')
     f = loadmat(fname)
 
     A = f['T']
@@ -207,7 +211,8 @@ def test_13():
 
 # real thickness data for 10 subjects --> shuffle "Y" values
 def test_14():
-    fname = './tests/data/thickness.mat'
+    fname = (os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'thickness.mat')
     f = loadmat(fname)
 
     A = f['T']
@@ -223,7 +228,8 @@ def test_14():
 
 # real thickness data for 10 subjects --> shuffle "Y" values, shuffle surf['tri']
 def test_15():
-    fname = './tests/data/thickness.mat'
+    fname = (os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'thickness.mat')
     f = loadmat(fname)
 
     A = f['T']
@@ -242,7 +248,8 @@ def test_15():
 
 # real data from sofopofo
 def test_16():
-    fname = './tests/data/sofopofo1.mat'
+    fname = (os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'sofopofo1.mat')
     f = loadmat(fname)
     T = f['sofie']['T'][0,0]
 
@@ -261,7 +268,8 @@ def test_16():
 
 # real data from sofopofo, no column naming in the model Term
 def test_17():
-    fname = './tests/data/sofopofo1.mat'
+    fname = (os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'sofopofo1.mat')
     f = loadmat(fname)
     T = f['sofie']['T'][0,0]
 

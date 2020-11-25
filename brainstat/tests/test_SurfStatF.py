@@ -4,6 +4,9 @@ from scipy.io import loadmat
 import numpy as np
 import pytest
 
+import os
+import brainstat
+
 sw.matlab_init_surfstat()
 
 
@@ -261,7 +264,8 @@ def test_09():
 
 
 def test_10():
-    fname = './tests/data/thickness_slm.mat'
+    fname = (os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'thickness_slm.mat')
     f = loadmat(fname)
     slm = {}
     slm['X'] = f['slm']['X'][0,0]
@@ -280,7 +284,8 @@ def test_10():
 
 
 def test_11():
-    fname = './tests/data/thickness_slm.mat'
+    fname = (os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'thickness_slm.mat')
     f = loadmat(fname)
     slm = {}
     slm['X'] = f['slm']['X'][0,0]
@@ -303,7 +308,8 @@ def test_11():
 
 
 def test_12():
-    fname = './tests/data/sofopofo1.mat'
+    fname = (os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'sofopofo1.mat')
     f = loadmat(fname)
     fT = f['sofie']['T'][0,0]
     params = f['sofie']['model'][0,0]

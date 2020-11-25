@@ -4,7 +4,8 @@ import numpy as np
 import random
 from scipy.io import loadmat
 import pytest
-
+import os
+import brainstat
 
 def dummy_test(slm, mask, thresh, reselspvert=None, edg=None):
     # Deal with edge offset.
@@ -42,8 +43,8 @@ sw.matlab_init_surfstat()
 
 def test_01():
     # data from Sofie, randomize threshold between 0 and 1
-    slmfile = './tests/data/slm.mat'
-    slmdata = loadmat(slmfile)
+    slmdata = loadmat(os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
     slm = {}
     slm['t'] = slmdata['slm']['t'][0,0]
     slm['tri'] = slmdata['slm']['tri'][0,0]
@@ -90,8 +91,8 @@ def test_04():
 
 def test_05():
     # data from Sofie, randomize threshold between 0 and 1, add reselspvert
-    slmfile = './tests/data/slm.mat'
-    slmdata = loadmat(slmfile)
+    slmdata = loadmat(os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
     slm = {}
     slm['t'] = slmdata['slm']['t'][0,0]
     slm['tri'] = slmdata['slm']['tri'][0,0]
@@ -306,8 +307,8 @@ def test_18():
 
 def test_19():
     # special case n<1
-    slmfile = './tests/data/slm.mat'
-    slmdata = loadmat(slmfile)
+    slmdata = loadmat(os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
     slm = {}
     slm['t'] = slmdata['slm']['t'][0,0]
     slm['tri'] = slmdata['slm']['tri'][0,0]

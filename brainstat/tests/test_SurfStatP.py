@@ -7,6 +7,9 @@ from scipy.io import loadmat
 import numpy as np
 import pytest
 
+import os
+import brainstat
+
 sw.matlab_init_surfstat()
 
 
@@ -49,7 +52,8 @@ def test_01():
     # special case, v =1, l=1
     l = int(1)
     v = int(1)
-    slmfile = './tests/data/slm.mat'
+    slmfile = (os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
     slmdata = loadmat(slmfile)
     slm = {}
     slm['t'] = np.random.rand(l,v)
@@ -65,7 +69,8 @@ def test_02():
     # special case, v=1, l>1
     l = np.random.randint(1,10000)
     v = int(1)
-    slmfile = './tests/data/slm.mat'
+    slmfile = (os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
     slmdata = loadmat(slmfile)
     slm = {}
     slm['t'] = np.random.rand(l,v)
@@ -84,7 +89,8 @@ def test_03():
     e = np.random.randint(1,10)
     k = 1
     d = np.random.randint(1111,2000)
-    slmfile = './tests/data/slm.mat'
+    slmfile = (os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
     slmdata = loadmat(slmfile)
     slm = {}
     slm['t'] = np.random.rand(l,v)
@@ -98,7 +104,8 @@ def test_03():
 
 def test_04():
     # v >1 and clusthresh < 1 (default clusthresh)
-    slmfile = './tests/data/slm.mat'
+    slmfile = (os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
     slmdata = loadmat(slmfile)
     slm = {}
     slm['t'] = slmdata['slm']['t'][0,0]
@@ -132,7 +139,8 @@ def test_06():
     e = 194940
     k = 1
     d = np.random.randint(1111, 2000)
-    slmfile = './tests/data/slm.mat'
+    slmfile = (os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
     slmdata = loadmat(slmfile)
     slm = {}
     slm['t'] = np.random.uniform(-5,5, (l,v))
@@ -145,7 +153,8 @@ def test_06():
 
 def test_07():
     # special case np.max(slm['t'][0, mask.flatten()]) < thresh
-    slmfile = './tests/data/slm.mat'
+    slmfile = (os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
     slmdata = loadmat(slmfile)
     slm = {}
     slm['t'] = np.random.uniform(low=-4, high=0, size=(1,64984))
@@ -160,7 +169,8 @@ def test_08():
     # special case np.max(slm['t'][0, mask.flatten()]) < thresh
     # make slm['df'] a random integer
     d = np.random.randint(1111, 2000)
-    slmfile = './tests/data/slm.mat'
+    slmfile = (os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
     slmdata = loadmat(slmfile)
     slm = {}
     slm['t'] = np.random.uniform(low=-4, high=0, size=(1,64984))
@@ -173,7 +183,8 @@ def test_08():
 
 def test_09():
     # special case case np.max(slm['t'][0, mask.flatten()]) > thresh
-    slmfile = './tests/data/slm.mat'
+    slmfile = (os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
     slmdata = loadmat(slmfile)
     slm = {}
     slm['t'] = np.random.uniform(low=0, high=4, size=(1,64984))
@@ -186,7 +197,8 @@ def test_09():
 
 def test_10():
     # data from Sofie
-    slmfile = './tests/data/slm.mat'
+    slmfile = (os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
     slmdata = loadmat(slmfile)
     slm = {}
     slm['t'] = slmdata['slm']['t'][0,0]
@@ -199,7 +211,8 @@ def test_10():
 
 def test_11():
     # data from Sofie + a random mask
-    slmfile = './tests/data/slm.mat'
+    slmfile = (os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
     slmdata = loadmat(slmfile)
     slm = {}
     slm['t'] = slmdata['slm']['t'][0,0]
@@ -217,7 +230,8 @@ def test_11():
 
 def test_12():
     # data from Sofie + clusthresh is a random value
-    slmfile = './tests/data/slm.mat'
+    slmfile = (os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
     slmdata = loadmat(slmfile)
 
     slm = {}
@@ -239,7 +253,8 @@ def test_13():
     v = int(64984)
     y = int(194940)
 
-    slmfile = './tests/data/slm.mat'
+    slmfile = (os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
     slmdata = loadmat(slmfile)
 
     slm = {}
@@ -255,7 +270,8 @@ def test_13():
 
 def test_14():
     # data from Sofie, slm['t'] is array of shape (1,1)
-    slmfile = './tests/data/slm.mat'
+    slmfile = (os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
     slmdata = loadmat(slmfile)
 
     slm = {}
@@ -273,7 +289,8 @@ def test_15():
     # data from Sofie + add a random slm['dfs']
     v = int(64984)
 
-    slmfile = './tests/data/slm.mat'
+    slmfile = (os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
     slmdata = loadmat(slmfile)
 
     slm = {}
@@ -290,7 +307,8 @@ def test_15():
 
 def test_16():
     # data from Reinder, slm.k = 3
-    slmfile = './tests/data/slmk3.mat'
+    slmfile = (os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slmk3.mat')
     slmdata = loadmat(slmfile)
     slm = {}
     slm['t'] = slmdata['slm']['t'][0,0]
@@ -305,7 +323,8 @@ def test_16():
 
 def test_17():
     # load tutorial data (for n=10 subjects)
-    fname = './tests/data/thickness.mat'
+    fname = (os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'thickness.mat')
     f = loadmat(fname)
     SW = {}
     SW['tri'] = f['tri']
@@ -321,7 +340,8 @@ def test_17():
 
 
 def test_18():
-    fname = './tests/data/thickness_slm.mat'
+    fname = (os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'thickness_slm.mat')
     f = loadmat(fname)
     slm = {}
     slm['X'] = f['slm']['X'][0,0]
@@ -336,7 +356,8 @@ def test_18():
 
 
 def test_19():
-    fname = './tests/data/thickness_slm.mat'
+    fname = (os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'thickness_slm.mat')
     f = loadmat(fname)
     slm = {}
     slm['X'] = f['slm']['X'][0,0]
@@ -347,14 +368,16 @@ def test_19():
     slm['resl'] = f['slm']['resl'][0,0]
     AGE = f['slm']['AGE'][0,0]
     slm = T(slm, -1*AGE)
-    mname = './tests/data/mask.mat'
+    mname = (os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'mask.mat')
     m = loadmat(mname)
     mask = m['mask'].astype(bool).flatten()
     dummy_test(slm, mask)
 
 
 def test_20():
-    fname = './tests/data/sofopofo1.mat'
+    fname = (os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'sofopofo1.mat')
     f = loadmat(fname)
     fT = f['sofie']['T'][0,0]
     params = f['sofie']['model'][0,0]
@@ -373,7 +396,8 @@ def test_20():
 
 
 def test_21():
-    fname = './tests/data/sofopofo1_slm.mat'
+    fname = (os.path.dirname(brainstat.__file__) + 
+        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'sofopofo1_slm.mat')
     f = loadmat(fname)
     slm = {}
     slm['X'] = f['slm']['X'][0,0]
