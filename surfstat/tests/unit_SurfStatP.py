@@ -22,45 +22,45 @@ def dummy_test(infile, expfile):
 
     mask = None
     clusthresh=0.001
-    
+
     if 'dfs' in idic.keys():
         slm['dfs'] = idic['dfs']
 
     if 'resl' in idic.keys():
         slm['resl'] = idic['resl']
-        
+
     if 'mask' in idic.keys():
         mask = idic['mask']
-    
+
     if 'clusthresh' in idic.keys():
         clusthresh = idic['clusthresh']
 
     if 'X' in idic.keys():
         slm['X'] = idic['X']
-        
+
     if 'coef' in idic.keys():
         slm['coef']  = idic['coef']
-    
+
     if 'SSE' in idic.keys():
-        slm['SSE'] = idic['SSE']    
-    
+        slm['SSE'] = idic['SSE']
+
     if 'c' in idic.keys():
-        slm['c'] = idic['c']      
+        slm['c'] = idic['c']
 
     if 'ef' in idic.keys():
-        slm['ef'] = idic['ef']   
-    
+        slm['ef'] = idic['ef']
+
     if 'sd' in idic.keys():
-        slm['sd'] = idic['sd']    
-    
-    
+        slm['sd'] = idic['sd']
+
+
     PY_pval, PY_peak, PY_clus, PY_clusid = py_SurfStatP(slm, mask, clusthresh)
 
     # load expected outout data
     efile  = open(expfile, 'br')
     expdic = pickle.load(efile)
     efile.close()
-    
+
     O_pval   = expdic['pval']
     O_peak   = expdic['peak']
     O_clus   = expdic['clus']
