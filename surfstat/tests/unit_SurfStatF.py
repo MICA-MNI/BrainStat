@@ -1,6 +1,5 @@
 import sys
 sys.path.append("python")
-import surfstat_wrap as sw
 from SurfStatF import *
 import numpy as np
 import pytest

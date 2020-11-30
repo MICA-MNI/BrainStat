@@ -2,7 +2,6 @@ import sys
 sys.path.append("python")
 from SurfStatResels import *
 import numpy as np
-import sys
 import pytest
 import pickle
 
