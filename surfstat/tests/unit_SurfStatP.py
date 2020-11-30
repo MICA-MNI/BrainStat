@@ -83,7 +83,7 @@ def dummy_test(infile, expfile):
         for key in PY_clus.keys():
             comp = np.allclose(PY_clus[key], O_clus[key], rtol=1e-05, equal_nan=True)
     else:
-            comp = np.allclose(PY_clus, O_clus, rtol=1e-05, equal_nan=True)
+        comp = np.allclose(PY_clus, O_clus, rtol=1e-05, equal_nan=True)
     testout.append(comp)
 
     testout.append(np.allclose(PY_clusid, O_clusid,
