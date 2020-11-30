@@ -1,10 +1,10 @@
 import sys
 sys.path.append("python")
-import surfstat_wrap as sw
 from SurfStatEdg import *
 import numpy as np
 import pytest
 import pickle
+
 
 def dummy_test(infile, expfile):
 
@@ -17,7 +17,7 @@ def dummy_test(infile, expfile):
 
     if 'tri' in idic.keys():
         surf['tri'] = idic['tri']
-    
+
     if 'lat' in idic.keys():
         surf['lat'] = idic['lat']
 
@@ -28,8 +28,8 @@ def dummy_test(infile, expfile):
     efile  = open(expfile, 'br')
     expdic = pickle.load(efile)
     efile.close()
-    exp_edge = expdic['edg']    
-    
+    exp_edge = expdic['edg']
+
 
     testout = []
 
