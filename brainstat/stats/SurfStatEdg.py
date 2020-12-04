@@ -1,6 +1,6 @@
 import sys
 import numpy as np
-from brainstat.utils.matlab_functions import colon
+from brainstat.unassigned.matlab_functions import colon
 from brainspace.mesh.mesh_elements import get_edges
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 

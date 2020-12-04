@@ -13,7 +13,7 @@ def matlab_init_surfstat():
     global surfstat_eng
     surfstat_eng = matlab.engine.start_matlab()
     addpath = surfstat_eng.addpath(os.path.dirname(brainstat.__file__) + 
-        os.path.sep + 'utils' + os.path.sep + 'matlab')
+        os.path.sep + 'unassigned' + os.path.sep + 'matlab')
     return surfstat_eng
 
 # ==> SurfStatAvSurf.m <==
