@@ -3,15 +3,15 @@ from numpy import concatenate as cat
 from scipy.linalg import toeplitz
 from scipy.sparse import csr_matrix
 from brainstat.utils.matlab_functions import row_ismember, interp1
-from brainstat.stats.Edg import Edg
+from brainstat.stats.SurfStatEdg import SurfStatEdg
 
 
 def pacos(x):
     return np.arccos( np.minimum(np.abs(x),1) * np.sign(x) )
 
 
-def Resels(slm, mask=None):
-    """ Resels of surface or volume data inside a mask.
+def SurfStatResels(slm, mask=None):
+    """ SurfStatResels of surface or volume data inside a mask.
 
     Parameters
     ----------
@@ -105,7 +105,7 @@ def Resels(slm, mask=None):
             reselspvert = None
 
     if 'lat' in slm:
-        edg = Edg(slm)
+        edg = SurfStatEdg(slm)
         # The lattice is filled with 5 alternating tetrahedra per cube
         I, J, K = np.shape(slm['lat'])
         IJ = I*J

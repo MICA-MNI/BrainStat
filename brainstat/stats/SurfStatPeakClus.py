@@ -1,11 +1,11 @@
 import numpy as np
 import math
-from brainstat.stats.Edg import Edg
+from brainstat.stats.SurfStatEdg import SurfStatEdg
 from brainstat.utils.matlab_functions import interp1, ismember
 import copy
 
 
-def PeakClus(slm, mask, thresh, reselspvert=None, edg=None):
+def SurfStatPeakClus(slm, mask, thresh, reselspvert=None, edg=None):
     """ Finds peaks (local maxima) and clusters for surface data.
     Parameters
     ----------
@@ -29,7 +29,7 @@ def PeakClus(slm, mask, thresh, reselspvert=None, edg=None):
         reselspvert : numpy array of shape (v),
             resels per vertex, by default: np.ones(v).
         edg :  numpy array of shape (e,2), dtype=int,
-            edge indices, by default computed from Edg function.
+            edge indices, by default computed from SurfStatEdg function.
         slm['df'] : int,
             degrees of freedom, note that only the length (1 or 2) is used
             to determine if slm['t'] is Hotelling's T or T^2 when k>1.
@@ -56,7 +56,7 @@ def PeakClus(slm, mask, thresh, reselspvert=None, edg=None):
         array of cluster id's for each vertex.
     """
     if edg is None:
-        edg = Edg(slm)
+        edg = SurfStatEdg(slm)
 
     l, v = np.shape(slm['t'])
     slm_t = copy.deepcopy(slm['t'])

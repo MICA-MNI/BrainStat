@@ -1,9 +1,9 @@
 import numpy as np
 from numpy_groupies import aggregate
-from brainstat.stats.Edg import Edg
+from brainstat.stats.SurfStatEdg import SurfStatEdg
 
 
-def Smooth(Y, surf, FWHM):
+def SurfStatSmooth(Y, surf, FWHM):
     """Smooths surface data by repeatedly averaging over edges.
 
     Parameters
@@ -34,7 +34,7 @@ def Smooth(Y, surf, FWHM):
             n, v, k = np.shape(Y)
             isnum = True
 
-    edg = Edg(surf) + 1
+    edg = SurfStatEdg(surf) + 1
     agg_1 = aggregate(edg[:,0], 2, size=(v+1))
     agg_2 = aggregate(edg[:,1], 2, size=(v+1))
     Y1 = (agg_1 + agg_2)[1:]

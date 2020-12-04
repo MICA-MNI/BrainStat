@@ -23,7 +23,7 @@ def dummy_test(slm, mask, thresh, reselspvert=None, edg=None):
         pytest.skip("Original MATLAB code does not work with these inputs.")
 
     # call python functions
-    P_peak, P_clus, P_clusid = PeakClus(slm, mask, thresh,
+    P_peak, P_clus, P_clusid = SurfStatPeakClus(slm, mask, thresh,
                                                    reselspvert, edg)
     # compare matlab-python outputs
     testout_PeakClus = []
@@ -250,7 +250,7 @@ def test_15():
     reselspvert = np.random.rand(k)
     A = {}
     A['tri'] = np.random.randint(1,k, size=(m,3))
-    edg = Edg(A)
+    edg = SurfStatEdg(A)
     dummy_test(slm, mask, thresh, reselspvert, edg)
 
 
@@ -270,7 +270,7 @@ def test_16():
     reselspvert = np.random.rand(k)
     A = {}
     A['tri'] = np.random.randint(1,k, size=(m,3))
-    edg = Edg(A)
+    edg = SurfStatEdg(A)
     dummy_test(slm, mask, thresh, reselspvert, edg)
 
 
@@ -288,13 +288,13 @@ def test_17():
     reselspvert = np.random.rand(k)
     A = {}
     A['lat'] =np.random.choice([0, 1], size=(10,10,10))
-    edg = Edg(A)
+    edg = SurfStatEdg(A)
     dummy_test(slm, mask, thresh, reselspvert, edg)
 
 
 def test_18():
     # generate random data, small sized as 1000 points for slm['t'],
-    # extremely big threshold for n < 1 case in PeakClus.py
+    # extremely big threshold for n < 1 case in SurfStatPeakClus.py
     k = 1000
     m = 100
     slm = {}
@@ -332,5 +332,5 @@ def test_20():
     reselspvert = np.random.rand(k)
     A = {}
     A['lat'] =np.random.choice([0, 1], size=(10,10,10))
-    edg = Edg(A)
+    edg = SurfStatEdg(A)
     dummy_test(slm, mask, thresh, reselspvert, edg)

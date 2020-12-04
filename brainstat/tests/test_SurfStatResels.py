@@ -1,5 +1,5 @@
-from brainstat.stats.Resels import Resels
-from brainstat.stats.Edg import Edg
+from brainstat.stats.SurfStatResels import SurfStatResels
+from brainstat.stats.SurfStatEdg import SurfStatEdg
 import surfstat_wrap as sw
 import numpy as np
 import os
@@ -27,7 +27,7 @@ def dummy_test(slm, mask=None):
         pytest.skip("Original MATLAB code does not work with these inputs.")
 
     # Run Python
-    resels_py,  reselspvert_py,  edg_py =  Resels(slm,mask)
+    resels_py,  reselspvert_py,  edg_py =  SurfStatResels(slm,mask)
     if len(mat_output) == 1:
         py_output = [resels_py]
     else:
@@ -101,7 +101,7 @@ def test_06():
 def test_07():
     # Test with slm.lat and slm.resl
     slm = {'lat': np.random.rand(10,10,10) > 0.5}
-    edg = Edg(slm)
+    edg = SurfStatEdg(slm)
     slm['resl'] = np.random.rand(edg.shape[0],1)
     dummy_test(slm)
 
@@ -110,7 +110,7 @@ def test_08():
     # Test with slm.lat, slm.resl, and a mask
     slm = {'lat': np.random.rand(10,10,10) > 0.5}
     mask = np.random.choice([False,True],np.sum(slm['lat']))
-    edg = Edg(slm)
+    edg = SurfStatEdg(slm)
     slm['resl'] = np.random.rand(edg.shape[0],1)
     dummy_test(slm, mask)
 
@@ -119,7 +119,7 @@ def test_09():
     # Test with slm.lat, slm.resl, and a fully false mask
     slm = {'lat': np.random.rand(10,10,10) > 0.5}
     mask = np.zeros(np.sum(slm['lat']), dtype=bool)
-    edg = Edg(slm)
+    edg = SurfStatEdg(slm)
     slm['resl'] = np.random.rand(edg.shape[0],1)
     dummy_test(slm, mask)
 

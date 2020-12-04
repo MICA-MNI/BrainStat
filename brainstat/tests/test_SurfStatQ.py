@@ -1,8 +1,8 @@
-from brainstat.stats.Q import Q
+from brainstat.stats.SurfStatQ import SurfStatQ
 from brainstat.stats.term import Term
-from brainstat.stats.Edg import Edg
-from brainstat.stats.LinMod import LinMod
-from brainstat.stats.T import T
+from brainstat.stats.SurfStatEdg import SurfStatEdg
+from brainstat.stats.SurfStatLinMod import SurfStatLinMod
+from brainstat.stats.SurfStatT import SurfStatT
 
 import surfstat_wrap as sw
 import numpy as np
@@ -26,7 +26,7 @@ def dummy_test(slm, mask=None):
         pytest.skip("Original MATLAB code does not work with these inputs.")
 
     # run python equivalent
-    P_q_val = Q(slm, mask)
+    P_q_val = SurfStatQ(slm, mask)
 
     # compare matlab-python outputs
     testout_Q = []
@@ -168,7 +168,7 @@ def test_09():
     slm['k'] = 1
     slm['du'] = n
     slm['tri'] = np.random.randint(1,k, size=(m,3))
-    edg = Edg(slm)
+    edg = SurfStatEdg(slm)
     slm['resl'] = np.random.rand(edg.shape[0],1)
     slm['dfs'] = np.ones((1, k))
     dummy_test(slm)
@@ -187,8 +187,8 @@ def test_10():
     AGE = AGE.reshape(AGE.shape[1], 1)
     A = Term(AGE, 'AGE')
     M = 1 + A
-    slm = LinMod(Y, M, SW)
-    slm = T(slm, -1*AGE)
+    slm = SurfStatLinMod(Y, M, SW)
+    slm = SurfStatT(slm, -1*AGE)
     dummy_test(slm)
 
 
@@ -205,8 +205,8 @@ def test_11():
     AGE = AGE.reshape(AGE.shape[1], 1)
     A = Term(AGE, 'AGE')
     M = 1 + A
-    slm = LinMod(Y, M, SW)
-    slm = T(slm, -1*AGE)
+    slm = SurfStatLinMod(Y, M, SW)
+    slm = SurfStatT(slm, -1*AGE)
     dummy_test(slm)
 
 
@@ -222,7 +222,7 @@ def test_12():
     slm['tri'] = f['slm']['tri'][0,0]
     slm['resl'] = f['slm']['resl'][0,0]
     AGE = f['slm']['AGE'][0,0]
-    slm = T(slm, -1*AGE)
+    slm = SurfStatT(slm, -1*AGE)
 
     mname = (os.path.dirname(brainstat.__file__) + 
         os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'mask.mat')
@@ -245,9 +245,9 @@ def test_13():
     SW = {}
     SW['tri'] = f['sofie']['SW'][0,0]['tri'][0,0]
     SW['coord'] = f['sofie']['SW'][0,0]['coord'][0,0]
-    slm = LinMod(fT, M, SW)
+    slm = SurfStatLinMod(fT, M, SW)
     contrast = np.random.randint(20,50, size=(slm['X'].shape[0],1))
-    slm = T(slm, contrast)
+    slm = SurfStatT(slm, contrast)
     dummy_test(slm)
 
 
@@ -263,7 +263,7 @@ def test_14():
     slm['tri'] = f['slm']['tri'][0,0]
     slm['resl'] = f['slm']['resl'][0,0]
     contrast = np.random.randint(20,50, size=(slm['X'].shape[0],1))
-    slm = T(slm, contrast)
+    slm = SurfStatT(slm, contrast)
     mask = np.random.choice([0, 1], size=(slm['t'].shape[1]))
     mask = mask.astype(bool).flatten()
     dummy_test(slm, mask)

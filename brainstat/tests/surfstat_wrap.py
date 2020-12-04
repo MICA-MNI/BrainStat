@@ -436,8 +436,8 @@ def matlab_ReadVol1(file, Z, T):
     sys.exit("Function matlab_ReadVol1 is not implemented yet")
 
 
-# ==> SurfStatResels.m <==
-def matlab_Resels(slm, mask=None):
+# ==> SurfStatSurfStatResels.m <==
+def matlab_SurfStatResels(slm, mask=None):
     # slm.resl = numpy array of shape (e,k)
     # slm.tri  = numpy array of shape (t,3)
     # or
@@ -458,12 +458,12 @@ def matlab_Resels(slm, mask=None):
         num_out = 1
 
     if mask is None:
-        out = surfstat_eng.SurfStatResels(slm_mat,
+        out = surfstat_eng.SurfStatSurfStatResels(slm_mat,
                                 nargout=num_out)
     else:
         mask_mat = matlab.double(np.array(mask, dtype=int).tolist())
         mask_mat = matlab.logical(mask_mat)
-        out = surfstat_eng.SurfStatResels(slm_mat,
+        out = surfstat_eng.SurfStatSurfStatResels(slm_mat,
                                  mask_mat,
                                  nargout=num_out)
 

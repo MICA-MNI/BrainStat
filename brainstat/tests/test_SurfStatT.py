@@ -19,7 +19,7 @@ def dummy_test(slm, contrast):
         pytest.skip("Original MATLAB code does not work with these inputs.")
 
     # run python functions
-    Python_slm = T(slm, contrast)
+    Python_slm = SurfStatT(slm, contrast)
 
     testout_T = []
 
@@ -146,7 +146,7 @@ def test_07():
     surf = {}
     surf['tri'] = f['tri']
     surf['coord'] = f['coord']
-    slm = LinMod(A, B, surf)
+    slm = SurfStatLinMod(A, B, surf)
 
     contrast = np.array(f['AGE']).T
 
@@ -191,7 +191,7 @@ def test_09():
     SW = {}
     SW['tri'] = f['sofie']['SW'][0,0]['tri'][0,0]
     SW['coord'] = f['sofie']['SW'][0,0]['coord'][0,0]
-    slm = LinMod(T, M, SW)
+    slm = SurfStatLinMod(T, M, SW)
 
     contrast = np.random.randint(20,50, size=(slm['X'].shape[0],1))
 

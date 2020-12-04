@@ -14,7 +14,7 @@ def dummy_test(Y, mask, subdiv):
     except:
         pytest.skip("Original MATLAB code does not work with these inputs.")
 
-    Python_Y, Python_Yav = Norm(Y, mask, subdiv)
+    Python_Y, Python_Yav = SurfStatNorm(Y, mask, subdiv)
 
     # compare matlab-python outputs
 

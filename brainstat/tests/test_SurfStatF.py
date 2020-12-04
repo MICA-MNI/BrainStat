@@ -21,7 +21,7 @@ def dummy_test(A, B):
 
 
     # run python functions
-    Python_slm = F(A, B)
+    Python_slm = SurfStatF(A, B)
 
     testout_F = []
     # compare matlab-python outputs
@@ -275,7 +275,7 @@ def test_10():
     slm['tri'] = f['slm']['tri'][0,0]
     slm['resl'] = f['slm']['resl'][0,0]
     AGE = f['slm']['AGE'][0,0]
-    slm = T(slm, -1*AGE)
+    slm = SurfStatT(slm, -1*AGE)
 
     slm1 = slm.copy()
     slm1['t'] = slm1['t'] + np.random.rand()
@@ -295,7 +295,7 @@ def test_11():
     slm['tri'] = f['slm']['tri'][0,0]
     slm['resl'] = f['slm']['resl'][0,0]
     AGE = f['slm']['AGE'][0,0]
-    slm = T(slm, -1*AGE)
+    slm = SurfStatT(slm, -1*AGE)
 
     slm1 = slm.copy()
     slm1['X'] = slm['X'] + 2
@@ -319,11 +319,11 @@ def test_12():
     SW = {}
     SW['tri'] = f['sofie']['SW'][0,0]['tri'][0,0]
     SW['coord'] = f['sofie']['SW'][0,0]['coord'][0,0]
-    slm = LinMod(fT, M, SW)
+    slm = SurfStatLinMod(fT, M, SW)
     contrast = np.array([[37], [41], [24], [37], [26], [28], [44], [26], [22],
                          [32], [34], [33], [35], [25], [22], [27], [22], [29],
                          [29], [24]])
-    slm = T(slm, contrast)
+    slm = SurfStatT(slm, contrast)
 
     slm1 = slm.copy()
     slm1['t'] = slm1['t'] + np.random.rand()

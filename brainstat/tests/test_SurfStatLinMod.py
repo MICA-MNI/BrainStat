@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from brainstat.stats.LinMod import LinMod
+from brainstat.stats.SurfStatLinMod import SurfStatLinMod
 import surfstat_wrap as sw
 from brainstat.stats.term import Term
 from brainspace.datasets import load_conte69
@@ -14,7 +14,7 @@ surfstat_eng = sw.matlab_init_surfstat()
 
 def dummy_test(Y, model, surf=None, resl_check=True):
 
-    py_slm = LinMod(Y, model, surf=surf)
+    py_slm = SurfStatLinMod(Y, model, surf=surf)
     mat_slm = sw.matlab_LinMod(Y, model, surf=surf)
 
     if not resl_check:

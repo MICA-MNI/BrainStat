@@ -21,7 +21,7 @@ def dummy_test(surf):
     except:
         pytest.skip("ORIGINAL MATLAB CODE DOES NOT WORK WITH THESE INPUTS...")
 
-    Python_edg = Edg(surf) + 1 # +1 to match across implementations.
+    Python_edg = SurfStatEdg(surf) + 1 # +1 to match across implementations.
 
     # compare matlab-python outputs
     testout = np.allclose(Wrapped_edg, Python_edg, rtol=1e-05, equal_nan=True)

@@ -20,7 +20,7 @@ def dummy_test(Y, surf, FWHM):
         pytest.skip("Original MATLAB code does not work with these inputs.")
 
     # run matlab equivalent
-    Python_Y = Smooth(Y, surf, FWHM)
+    Python_Y = SurfStatSmooth(Y, surf, FWHM)
 
     # compare matlab-python outputs
     assert np.allclose(Wrapped_Y, Python_Y, rtol=1e-05, equal_nan=True)

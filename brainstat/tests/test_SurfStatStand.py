@@ -17,7 +17,7 @@ def dummy_test(Y, mask, subtractordivide):
 
 
     # python function
-    Python_Y, Python_Ym = Stand(Y, mask, subtractordivide)
+    Python_Y, Python_Ym = SurfStatStand(Y, mask, subtractordivide)
 
     # compare matlab-python outputs
     testout_Stand = []

@@ -1,9 +1,9 @@
 import numpy as np
-from brainstat.stats.Resels import Resels
+from brainstat.stats.SurfStatResels import SurfStatResels
 from brainstat.stats.stat_threshold import stat_threshold
 
 
-def Q(slm, mask=None):
+def SurfStatQ(slm, mask=None):
     """Q-values for False Discovey Rate of resels.
 
     Parameters
@@ -50,7 +50,7 @@ def Q(slm, mask=None):
         df[0, ndf-1] = slm['dfs'][0,mask>0].mean()
 
     if 'du' in slm:
-        resels, reselspvert, edg = Resels(slm, mask.flatten())
+        resels, reselspvert, edg = SurfStatResels(slm, mask.flatten())
     else:
         reselspvert = np.ones((v))
 

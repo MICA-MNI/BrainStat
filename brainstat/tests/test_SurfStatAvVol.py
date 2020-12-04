@@ -17,7 +17,7 @@ def dummy_test(filenames, fun = np.add, Nan = None, dimensionality = None):
     M_data, M_vol = sw.matlab_AvVol(filenames, fun, Nan, dimensionality)
 
     # run python equivalent
-    P_data, P_vol = AvVol(filenames, fun, Nan)
+    P_data, P_vol = SurfStatAvVol(filenames, fun, Nan)
 
     if filenames[0].endswith('.img'):
         P_data = P_data[:,:,:,0]
