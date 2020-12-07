@@ -1,7 +1,7 @@
 import numpy as np
 import math
 from brainstat.stats.SurfStatEdg import SurfStatEdg
-from brainstat.unassigned.matlab_functions import interp1, ismember
+from brainstat.stats.matlab_functions import interp1, ismember
 import copy
 
 
