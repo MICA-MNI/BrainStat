@@ -1,0 +1,144 @@
+<deployment-project plugin="plugin.toolbox" plugin-version="1.0">
+  <configuration file="/Users/reinder/GitHub/BrainStat/BrainStat.prj" location="/Users/reinder/GitHub/BrainStat" name="BrainStat" target="target.toolbox" target-name="Package Toolbox">
+    <param.appname>BrainStat</param.appname>
+    <param.authnamewatermark>MICA Lab, CNG Lab</param.authnamewatermark>
+    <param.email>reinder.vosdewael@gmail.com</param.email>
+    <param.company>McGill University, Max Planck Institute</param.company>
+    <param.summary>A toolbox for the statistical analysis of neuroimaging data.</param.summary>
+    <param.description>BrainStat is a MATLAB (and Python) toolbox for the statistical analysis of neuroimaging volumes and surfaces. For a full description of our toolbox, please see our ReadTheDocs (https://brainspace.readthedocs.io/en/latest/) and Github pages (https://github.com/MICA-MNI/BrainStat).</param.description>
+    <param.screenshot>/Users/reinder/Desktop/Screen Shot 2020-12-07 at 12.28.51.png</param.screenshot>
+    <param.version>0.1</param.version>
+    <param.output>${PROJECT_ROOT}/BrainStat.mltbx</param.output>
+    <param.products.name />
+    <param.products.id />
+    <param.products.version />
+    <param.platforms />
+    <param.guid>30f179bc-3f54-46b3-9963-dd4a76d6a69c</param.guid>
+    <param.exclude.filters />
+    <param.exclude.pcodedmfiles>true</param.exclude.pcodedmfiles>
+    <param.examples />
+    <param.demosxml />
+    <param.apps />
+    <param.registered.apps />
+    <param.docs />
+    <param.getting.started.guide />
+    <param.matlabpath.excludes />
+    <param.javaclasspath.excludes />
+    <param.exported.on.package>false</param.exported.on.package>
+    <param.required.addons />
+    <param.matlab.project.id />
+    <param.matlab.project.name />
+    <param.release.start>R2018a</param.release.start>
+    <param.release.end>latest</param.release.end>
+    <param.release.current.only>false</param.release.current.only>
+    <param.compatiblity.windows>true</param.compatiblity.windows>
+    <param.compatiblity.macos>true</param.compatiblity.macos>
+    <param.compatiblity.linux>true</param.compatiblity.linux>
+    <param.compatiblity.matlabonline>true</param.compatiblity.matlabonline>
+    <param.installation.map />
+    <param.additional.sw.names />
+    <param.additional.sw.licenses />
+    <param.additional.sw.win.url />
+    <param.additional.sw.mac.url />
+    <param.additional.sw.linux.url />
+    <unset>
+      <param.output />
+      <param.products.name />
+      <param.products.id />
+      <param.products.version />
+      <param.platforms />
+      <param.exclude.filters />
+      <param.exclude.pcodedmfiles />
+      <param.examples />
+      <param.demosxml />
+      <param.apps />
+      <param.registered.apps />
+      <param.docs />
+      <param.getting.started.guide />
+      <param.matlabpath.excludes />
+      <param.javaclasspath.excludes />
+      <param.exported.on.package />
+      <param.required.addons />
+      <param.matlab.project.id />
+      <param.matlab.project.name />
+      <param.release.current.only />
+      <param.compatiblity.windows />
+      <param.compatiblity.macos />
+      <param.compatiblity.linux />
+      <param.compatiblity.matlabonline />
+      <param.installation.map />
+      <param.additional.sw.names />
+      <param.additional.sw.licenses />
+      <param.additional.sw.win.url />
+      <param.additional.sw.mac.url />
+      <param.additional.sw.linux.url />
+    </unset>
+    <fileset.rootdir>
+      <file>${PROJECT_ROOT}/matlab</file>
+    </fileset.rootdir>
+    <fileset.rootfiles>
+      <file>${PROJECT_ROOT}/matlab/io</file>
+      <file>${PROJECT_ROOT}/matlab/multivariate</file>
+      <file>${PROJECT_ROOT}/matlab/readme.md</file>
+      <file>${PROJECT_ROOT}/matlab/surfstat_ported</file>
+      <file>${PROJECT_ROOT}/matlab/temporary_directories</file>
+      <file>${PROJECT_ROOT}/matlab/tests</file>
+      <file>${PROJECT_ROOT}/matlab/visualization</file>
+    </fileset.rootfiles>
+    <fileset.depfun.included />
+    <fileset.depfun.excluded>
+      <file>/Users/reinder/Documents/MATLAB/@gifti/Contents.m</file>
+      <file>/Users/reinder/Documents/MATLAB/@gifti/display.m</file>
+      <file>/Users/reinder/Documents/MATLAB/@gifti/export.m</file>
+      <file>/Users/reinder/Documents/MATLAB/@gifti/fieldnames.m</file>
+      <file>/Users/reinder/Documents/MATLAB/@gifti/gifti.m</file>
+      <file>/Users/reinder/Documents/MATLAB/@gifti/isfield.m</file>
+      <file>/Users/reinder/Documents/MATLAB/@gifti/plot.m</file>
+      <file>/Users/reinder/Documents/MATLAB/@gifti/private/base64decode.m</file>
+      <file>/Users/reinder/Documents/MATLAB/@gifti/private/base64encode.m</file>
+      <file>/Users/reinder/Documents/MATLAB/@gifti/private/getdict.m</file>
+      <file>/Users/reinder/Documents/MATLAB/@gifti/private/isintent.m</file>
+      <file>/Users/reinder/Documents/MATLAB/@gifti/private/mvtk_read.m</file>
+      <file>/Users/reinder/Documents/MATLAB/@gifti/private/mvtk_write.m</file>
+      <file>/Users/reinder/Documents/MATLAB/@gifti/private/mz3_read.m</file>
+      <file>/Users/reinder/Documents/MATLAB/@gifti/private/mz3_write.m</file>
+      <file>/Users/reinder/Documents/MATLAB/@gifti/private/obj_read.m</file>
+      <file>/Users/reinder/Documents/MATLAB/@gifti/private/ply_read.m</file>
+      <file>/Users/reinder/Documents/MATLAB/@gifti/private/read_freesurfer_file.m</file>
+      <file>/Users/reinder/Documents/MATLAB/@gifti/private/read_gifti_file_standalone.m</file>
+      <file>/Users/reinder/Documents/MATLAB/@gifti/private/stl_read.m</file>
+      <file>/Users/reinder/Documents/MATLAB/@gifti/private/xml_parser.m</file>
+      <file>/Users/reinder/Documents/MATLAB/@gifti/private/zstream.m</file>
+      <file>/Users/reinder/Documents/MATLAB/@gifti/private/zstream.mexmaci64</file>
+      <file>/Users/reinder/Documents/MATLAB/@gifti/save.m</file>
+      <file>/Users/reinder/Documents/MATLAB/@gifti/saveas.m</file>
+      <file>/Users/reinder/Documents/MATLAB/@gifti/struct.m</file>
+      <file>/Users/reinder/Documents/MATLAB/@gifti/subsasgn.m</file>
+      <file>/Users/reinder/Documents/MATLAB/@gifti/subsref.m</file>
+    </fileset.depfun.excluded>
+    <fileset.package />
+    <build-deliverables>
+      <file location="${PROJECT_ROOT}" name="BrainStat.mltbx" optional="false">/Users/reinder/GitHub/BrainStat/BrainStat.mltbx</file>
+    </build-deliverables>
+    <workflow />
+    <matlab>
+      <root>/Applications/MATLAB_R2019a.app</root>
+      <toolboxes />
+    </matlab>
+    <platform>
+      <unix>true</unix>
+      <mac>true</mac>
+      <windows>false</windows>
+      <win2k>false</win2k>
+      <winxp>false</winxp>
+      <vista>false</vista>
+      <linux>false</linux>
+      <solaris>false</solaris>
+      <osver>10.14.6</osver>
+      <os32>false</os32>
+      <os64>true</os64>
+      <arch>maci64</arch>
+      <matlab>true</matlab>
+    </platform>
+  </configuration>
+</deployment-project>
