@@ -12,8 +12,9 @@ def matlab_init_surfstat():
     global surfstat_eng
     surfstat_eng = matlab.engine.start_matlab()
     addpath = surfstat_eng.addpath(os.path.dirname(brainstat.__file__) +
-        os.path.sep + 'unassigned' + os.path.sep + 'matlab')
+                                   os.path.sep + 'unassigned' + os.path.sep + 'matlab')
     return surfstat_eng
+
 
 # ==> SurfStatAvSurf.m <==
 def matlab_AvSurf(filenames, fun, dimensionality=None):
@@ -35,7 +36,7 @@ def matlab_AvSurf(filenames, fun, dimensionality=None):
 
 
 # ==> SurfStatAvVol.m <==
-def matlab_AvVol(filenames, fun = np.add, Nan = None, dimensionality = None):
+def matlab_AvVol(filenames, fun=np.add, Nan=None, dimensionality=None):
 
     if fun == np.add:
         fun = []
@@ -47,7 +48,7 @@ def matlab_AvVol(filenames, fun = np.add, Nan = None, dimensionality = None):
     if Nan is None:
         Nan = float('NaN')
     if dimensionality is None:
-        dimensionality = surfstat_eng.cell2mat([len(filenames),1])
+        dimensionality = surfstat_eng.cell2mat([len(filenames), 1])
 
     data_mat, vol_mat = surfstat_eng.SurfStatAvVol(filenames.tolist(), fun, Nan,
                                                    dimensionality, nargout=2)
@@ -82,17 +83,17 @@ def matlab_Coord2Ind(coord, surf):
 
 
 # ==> SurfStatDataCursor.m <==
-def matlab_DataCursor(empt,event_obj):
+def matlab_DataCursor(empt, event_obj):
     sys.exit("Function matlab_DataCursor is not implemented yet")
 
 
 # ==> SurfStatDataCursorP.m <==
-def matlab_DataCursorP(empt,event_obj):
+def matlab_DataCursorP(empt, event_obj):
     sys.exit("Function matlab_DataCursorP is not implemented yet")
 
 
 # ==> SurfStatDataCursorQ.m <==
-def matlab_DataCursorQ(empt,event_obj):
+def matlab_DataCursorQ(empt, event_obj):
     sys.exit("Function matlab_DataCursorQ is not implemented yet")
 
 
@@ -200,7 +201,7 @@ def matlab_LinMod(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
         k = None
         surf = surfstat_eng.cell(0)
     else:
-        if isinstance(surf,BSPolyData):
+        if isinstance(surf, BSPolyData):
             surf = {'tri': np.array(get_cells(surf))+1}
         k = 'tri' if 'tri' in surf else 'lat'
         s = surf[k]
@@ -241,15 +242,15 @@ def matlab_Norm(Y, mask=None, subdiv='s'):
 
     Y = matlab.double(Y.tolist())
 
-    if mask is None and subdiv=='s':
+    if mask is None and subdiv == 's':
         Y, Ya = surfstat_eng.SurfStatNorm(Y, nargout=2)
 
-    elif mask is not None and subdiv=='s':
+    elif mask is not None and subdiv == 's':
         mymask = np.array(mask, dtype=int)
         mymask = matlab.logical(matlab.double(mymask.tolist()))
         Y, Ya = surfstat_eng.SurfStatNorm(Y, mymask, nargout=2)
 
-    elif mask is not None and subdiv=='d':
+    elif mask is not None and subdiv == 'd':
         mymask = np.array(mask, dtype=int)
         mymask = matlab.logical(matlab.double(mymask.tolist()))
         Y, Ya = surfstat_eng.SurfStatNorm(Y, mymask, subdiv, nargout=2)
@@ -415,7 +416,7 @@ def matlab_ReadData1(filename):
 
 
 # ==> SurfStatReadSurf.m <==
-def matlab_ReadSurf(filenames,ab,numfields,dirname,maxmem):
+def matlab_ReadSurf(filenames, ab, numfields, dirname, maxmem):
     sys.exit("Function matlab_ReadSurf is not implemented yet")
 
 
@@ -425,7 +426,7 @@ def matlab_ReadSurf1(filename, ab, numfields):
 
 
 # ==> SurfStatReadVol.m <==
-def matlab_ReadVol(filenames,mask,step,dirname,maxmem):
+def matlab_ReadVol(filenames, mask, step, dirname, maxmem):
     sys.exit("Function matlab_ReadVol is not implemented yet")
 
 
@@ -457,13 +458,13 @@ def matlab_SurfStatResels(slm, mask=None):
 
     if mask is None:
         out = surfstat_eng.SurfStatSurfStatResels(slm_mat,
-                                nargout=num_out)
+                                                  nargout=num_out)
     else:
         mask_mat = matlab.double(np.array(mask, dtype=int).tolist())
         mask_mat = matlab.logical(mask_mat)
         out = surfstat_eng.SurfStatSurfStatResels(slm_mat,
-                                 mask_mat,
-                                 nargout=num_out)
+                                                  mask_mat,
+                                                  nargout=num_out)
 
     return np.array(out)
 
@@ -471,13 +472,13 @@ def matlab_SurfStatResels(slm, mask=None):
 # ==> SurfStatSmooth.m <==
 def matlab_Smooth(Y, surf, FWHM):
 
-    #Y : numpy array of shape (n,v) or (n,v,k)
+    # Y : numpy array of shape (n,v) or (n,v,k)
     #    surface data, v=#vertices, n=#observations, k=#variates.
-    #surf : a dictionary with key 'tri' or 'lat'
+    # surf : a dictionary with key 'tri' or 'lat'
     #    surf['tri'] = numpy array of shape (t,3), triangle indices, or
     #    surf['lat'] = numpy array of shape (nx,ny,nz), 1=in, 0=out,
     #    (nx,ny,nz) = size(volume).
-    #FWHM : approximate FWHM of Gaussian smoothing filter, in mesh units.
+    # FWHM : approximate FWHM of Gaussian smoothing filter, in mesh units.
 
     Y_mat = matlab.double(Y.tolist())
 
@@ -511,18 +512,19 @@ def matlab_Stand(Y, mask=None, subtractordivide='s'):
     # Ym     = mean of input Y along the mask, numpy array of shape (n x 1).
 
     Y = matlab.double(Y.tolist())
-    if mask is None and subtractordivide=='s':
+    if mask is None and subtractordivide == 's':
         Y, Ya = surfstat_eng.SurfStatStand(Y, nargout=2)
 
-    elif mask is not None and subtractordivide=='s':
+    elif mask is not None and subtractordivide == 's':
         mymask = np.array(mask, dtype=int)
         mymask = matlab.logical(matlab.double(mymask.tolist()))
         Y, Ya = surfstat_eng.SurfStatStand(Y, mymask, nargout=2)
 
-    elif mask is not None and subtractordivide=='d':
+    elif mask is not None and subtractordivide == 'd':
         mymask = np.array(mask, dtype=int)
         mymask = matlab.logical(matlab.double(mymask.tolist()))
-        Y, Ya = surfstat_eng.SurfStatStand(Y, mymask, subtractordivide, nargout=2)
+        Y, Ya = surfstat_eng.SurfStatStand(
+            Y, mymask, subtractordivide, nargout=2)
 
     return np.array(Y), np.array(Ya)
 
@@ -621,19 +623,18 @@ def matlab_WriteVol(d, Z, T):
 
 # ==> stat_threshold.m <==
 def matlab_stat_threshold(search_volume, num_voxels, fwhm, df, p_val_peak,
-        cluster_threshold, p_val_extent, nconj, nvar):
+                          cluster_threshold, p_val_extent, nconj, nvar):
 
     def var2mat(var):
         # Brings the input variables to matlab format.
         if var == None:
             var = []
-        elif not isinstance(var,list):
+        elif not isinstance(var, list):
             var = [var]
         return matlab.double(var)
 
-
     peak_threshold_mat, extent_threshold_mat, peak_threshold_1_mat, \
-    extent_threshold_1_mat, t_mat, rho_mat = surfstat_eng.stat_threshold(
+        extent_threshold_1_mat, t_mat, rho_mat = surfstat_eng.stat_threshold(
             var2mat(search_volume),
             var2mat(num_voxels),
             var2mat(fwhm),
@@ -646,7 +647,7 @@ def matlab_stat_threshold(search_volume, num_voxels, fwhm, df, p_val_peak,
             var2mat(None),
             var2mat(None),
             var2mat(0),
-            nargout=6 )
+            nargout=6)
 
     return peak_threshold_mat, extent_threshold_mat, peak_threshold_1_mat, \
-            extent_threshold_1_mat, t_mat, rho_mat
+        extent_threshold_1_mat, t_mat, rho_mat
