@@ -4,21 +4,19 @@
 import matlab.engine
 import matlab
 import numpy as np
-#import math
-#import sys
 import os
 import brainstat
+
 
 def matlab_init_surfstat():
     global surfstat_eng
     surfstat_eng = matlab.engine.start_matlab()
-    addpath = surfstat_eng.addpath(os.path.dirname(brainstat.__file__) + 
+    addpath = surfstat_eng.addpath(os.path.dirname(brainstat.__file__) +
         os.path.sep + 'unassigned' + os.path.sep + 'matlab')
     return surfstat_eng
 
 # ==> SurfStatAvSurf.m <==
 def matlab_AvSurf(filenames, fun, dimensionality=None):
-
     filenames_mat = filenames.flatten(order='F').tolist()
 
     if fun == np.add:

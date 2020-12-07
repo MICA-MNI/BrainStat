@@ -29,7 +29,8 @@ def dummy_test(Y, model, surf=None, resl_check=True):
             assert mat_slm[k].shape == py_slm[k].shape, \
                 "Different shape: %s" % k
 
-        assert np.allclose(mat_slm[k], py_slm[k], rtol=1e-05, equal_nan=True), "Not equal: %s" % k
+        assert np.allclose(
+            mat_slm[k], py_slm[k], rtol=1e-05, equal_nan=True), "Not equal: %s" % k
 
 
 # 2D inputs --- square matrices
@@ -38,7 +39,7 @@ def test_01():
 
     A = np.random.rand(n, n)
     B = np.random.rand(n, n)
-    B[:,0] = 1 # Constant term.
+    B[:, 0] = 1  # Constant term.
 
     dummy_test(A, B, surf=None)
 
@@ -51,7 +52,7 @@ def test_02():
 
     A = np.random.rand(n, v)
     B = np.random.rand(n, p)
-    B[:,0] = 1 # Constant term.
+    B[:, 0] = 1  # Constant term.
 
     dummy_test(A, B, surf=None)
 
@@ -64,7 +65,7 @@ def test_03():
 
     A = np.random.rand(n, v, k)
     B = np.random.rand(n, 2)
-    B[:,0] = 1 # Constant term.
+    B[:, 0] = 1  # Constant term.
 
     dummy_test(A, B, surf=None)
 
@@ -78,7 +79,7 @@ def test_04():
 
     A = np.random.rand(n, v, k)
     B = np.random.rand(n, p)
-    B[:,0] = 1 # Constant term.
+    B[:, 0] = 1  # Constant term.
 
     dummy_test(A, B, surf=None)
 
@@ -89,7 +90,7 @@ def test_05():
 
     A = np.random.rand(v, 1)
     B = np.random.rand(v, 2)
-    B[:,0] = 1 # Constant term.
+    B[:, 0] = 1  # Constant term.
 
     dummy_test(A, B, surf=None)
 
@@ -101,8 +102,8 @@ def test_06():
     p = np.random.randint(1, 10)
 
     A = np.random.rand(n, p)
-    B = np.random.rand(n,2)
-    B[:,0] = 1 # Constant term.
+    B = np.random.rand(n, 2)
+    B[:, 0] = 1  # Constant term.
     B = Term(B)
 
     dummy_test(A, B, surf=None)
@@ -116,8 +117,8 @@ def test_07():
     p = np.random.randint(3, 100)
 
     A = np.random.rand(n, v, k)
-    B = np.random.rand(n,p)
-    B[:,0] = 1 # Constant term.
+    B = np.random.rand(n, p)
+    B[:, 0] = 1  # Constant term.
     B = Term(B)
 
     dummy_test(A, B, surf=None)
@@ -130,7 +131,7 @@ def test_08():
 
     A = np.random.rand(n, v)
     B = np.random.rand(n, 2)
-    B[:,0] = 1 # Constant term.
+    B[:, 0] = 1  # Constant term.
 
     surf = {'tri': np.random.randint(1, v, size=(n, 3))}
     dummy_test(A, B, surf, resl_check=False)
@@ -144,8 +145,8 @@ def test_09():
     p = np.random.randint(3, 100)
 
     A = np.random.rand(n, v, k)
-    B = np.random.rand(n,p)
-    B[:,0] = 1 # Constant term.
+    B = np.random.rand(n, p)
+    B[:, 0] = 1  # Constant term.
     B = Term(B)
 
     surf = {'tri': np.random.randint(1, v, size=(k, 3))}
@@ -158,7 +159,7 @@ def test_10():
 
     A = np.random.rand(n, v)
     B = np.random.rand(n, 2)
-    B[:,0] = 1 # Constant term.
+    B[:, 0] = 1  # Constant term.
 
     surf = {'lat': np.random.choice([0, 1], size=(3, 3, 3)).astype(bool)}
     dummy_test(A, B, surf=surf)
@@ -172,8 +173,8 @@ def test_11():
     p = np.random.randint(3, 10)
 
     A = np.random.rand(n, v, k)
-    B = np.random.rand(n,p)
-    B[:,0] = 1 # Constant term.
+    B = np.random.rand(n, p)
+    B[:, 0] = 1  # Constant term.
     B = Term(B)
 
     surf = {'lat': np.random.choice([0, 1], size=(3, 3, 3))}
@@ -186,9 +187,9 @@ def test_12():
     p = np.random.randint(1, 10)
     n = np.random.randint(2, 10)
 
-    A = np.random.rand(n,32492)
-    B = np.random.rand(n,p)
-    B[:,0] = 1 # Constant term.
+    A = np.random.rand(n, 32492)
+    B = np.random.rand(n, p)
+    B[:, 0] = 1  # Constant term.
     B = Term(B)
 
     dummy_test(A, B, surf, resl_check=False)
@@ -196,8 +197,8 @@ def test_12():
 
 # real thickness data for 10 subjects
 def test_13():
-    fname = (os.path.dirname(brainstat.__file__) + 
-        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'thickness.mat')
+    fname = (os.path.dirname(brainstat.__file__) +
+             os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'thickness.mat')
     f = loadmat(fname)
 
     A = f['T']
@@ -211,8 +212,8 @@ def test_13():
 
 # real thickness data for 10 subjects --> shuffle "Y" values
 def test_14():
-    fname = (os.path.dirname(brainstat.__file__) + 
-        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'thickness.mat')
+    fname = (os.path.dirname(brainstat.__file__) +
+             os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'thickness.mat')
     f = loadmat(fname)
 
     A = f['T']
@@ -228,8 +229,8 @@ def test_14():
 
 # real thickness data for 10 subjects --> shuffle "Y" values, shuffle surf['tri']
 def test_15():
-    fname = (os.path.dirname(brainstat.__file__) + 
-        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'thickness.mat')
+    fname = (os.path.dirname(brainstat.__file__) +
+             os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'thickness.mat')
     f = loadmat(fname)
 
     A = f['T']
@@ -248,37 +249,37 @@ def test_15():
 
 # real data from sofopofo
 def test_16():
-    fname = (os.path.dirname(brainstat.__file__) + 
-        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'sofopofo1.mat')
+    fname = (os.path.dirname(brainstat.__file__) +
+             os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'sofopofo1.mat')
     f = loadmat(fname)
-    T = f['sofie']['T'][0,0]
+    T = f['sofie']['T'][0, 0]
 
-    params = f['sofie']['model'][0,0]
+    params = f['sofie']['model'][0, 0]
     colnames = ['1', 'ak', 'female', 'male', 'Affect', 'Control1', 'Perspective',
-    'Presence', 'ink']
+                'Presence', 'ink']
 
     M = Term(params, colnames)
 
     SW = {}
-    SW['tri'] = f['sofie']['SW'][0,0]['tri'][0,0]
-    SW['coord'] = f['sofie']['SW'][0,0]['coord'][0,0]
+    SW['tri'] = f['sofie']['SW'][0, 0]['tri'][0, 0]
+    SW['coord'] = f['sofie']['SW'][0, 0]['coord'][0, 0]
 
     dummy_test(T, M, SW)
 
 
 # real data from sofopofo, no column naming in the model Term
 def test_17():
-    fname = (os.path.dirname(brainstat.__file__) + 
-        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'sofopofo1.mat')
+    fname = (os.path.dirname(brainstat.__file__) +
+             os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'sofopofo1.mat')
     f = loadmat(fname)
-    T = f['sofie']['T'][0,0]
+    T = f['sofie']['T'][0, 0]
 
-    params = f['sofie']['model'][0,0]
+    params = f['sofie']['model'][0, 0]
 
     M = Term(params)
 
     SW = {}
-    SW['tri'] = f['sofie']['SW'][0,0]['tri'][0,0]
-    SW['coord'] = f['sofie']['SW'][0,0]['coord'][0,0]
+    SW['tri'] = f['sofie']['SW'][0, 0]['tri'][0, 0]
+    SW['coord'] = f['sofie']['SW'][0, 0]['coord'][0, 0]
 
     dummy_test(T, M, SW)

@@ -7,9 +7,10 @@ import os
 import brainstat
 sw.matlab_init_surfstat()
 
-data_dir = (os.path.dirname(brainstat.__file__) + 
+data_dir = (os.path.dirname(brainstat.__file__) +
         os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'volfiles'
         + os.path.sep)
+
 
 def dummy_test(filenames, fun = np.add, Nan = None, dimensionality = None):
 

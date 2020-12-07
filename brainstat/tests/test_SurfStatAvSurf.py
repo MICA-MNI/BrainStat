@@ -12,7 +12,7 @@ surfstat_eng = sw.matlab_init_surfstat()
 
 
 # Test function
-def dummy_test(py_surfaces, fun = np.add):
+def dummy_test(py_surfaces, fun=np.add):
     # Run functions
     mat_surf = sw.matlab_AvSurf(py_surfaces, fun)
     py_out = SurfStatAvSurf(py_surfaces, fun)
@@ -51,7 +51,7 @@ def test_01():
     t, names = temp_surfaces(surfaces)
     namesArr = np.array(names, ndmin=2).T
     dummy_test(namesArr)
-    for i in range(0,len(t)):
+    for i in range(0, len(t)):
         t[i].close()
 
 
@@ -61,7 +61,7 @@ def test_02():
     t, names = temp_surfaces(surfaces)
     namesArr = np.array(names, ndmin=2)
     dummy_test(namesArr)
-    for i in range(0,len(t)):
+    for i in range(0, len(t)):
         t[i].close()
 
 
@@ -70,9 +70,9 @@ def test_03():
     surfaces_1 = load_conte69()
     surfaces_2 = load_conte69(as_sphere=True)
     t, names = temp_surfaces(surfaces_1 + surfaces_2)
-    namesArr = np.reshape(np.array(names, ndmin=2),(2,2))
+    namesArr = np.reshape(np.array(names, ndmin=2), (2, 2))
     dummy_test(namesArr)
-    for i in range(0,len(t)):
+    for i in range(0, len(t)):
         t[i].close()
 
 
@@ -81,9 +81,9 @@ def test_04():
     surfaces_1 = load_conte69()
     surfaces_2 = load_conte69(as_sphere=True)
     t, names = temp_surfaces(surfaces_1 + surfaces_2)
-    namesArr = np.reshape(np.array(names, ndmin=2),(2,2))
+    namesArr = np.reshape(np.array(names, ndmin=2), (2, 2))
     dummy_test(namesArr, np.fmin)
-    for i in range(0,len(t)):
+    for i in range(0, len(t)):
         t[i].close()
 
 
@@ -92,9 +92,9 @@ def test_05():
     surfaces_1 = load_conte69()
     surfaces_2 = load_conte69(as_sphere=True)
     t, names = temp_surfaces(surfaces_1 + surfaces_2)
-    namesArr = np.reshape(np.array(names, ndmin=2),(2,2))
+    namesArr = np.reshape(np.array(names, ndmin=2), (2, 2))
     dummy_test(namesArr, np.fmax)
-    for i in range(0,len(t)):
+    for i in range(0, len(t)):
         t[i].close()
 
 
@@ -104,7 +104,7 @@ def test_06():
     surfaces_2 = load_conte69(as_sphere=True)
     surfaces_3 = load_conte69(as_sphere=True)
     t, names = temp_surfaces(surfaces_1 + surfaces_2 + surfaces_3)
-    namesArr = np.reshape(np.array(names, ndmin=2),(3,2))
+    namesArr = np.reshape(np.array(names, ndmin=2), (3, 2))
     dummy_test(namesArr, np.fmax)
-    for i in range(0,len(t)):
+    for i in range(0, len(t)):
         t[i].close()

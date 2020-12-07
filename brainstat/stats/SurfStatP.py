@@ -6,6 +6,7 @@ from brainstat.stats.SurfStatPeakClus import SurfStatPeakClus
 from brainstat.stats.stat_threshold import stat_threshold
 from brainstat.stats.SurfStatResels import SurfStatResels
 
+
 def SurfStatP(slm, mask=None, clusthresh=0.001):
     """Corrected P-values for vertices and clusters.
 

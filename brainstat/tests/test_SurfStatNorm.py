@@ -25,9 +25,9 @@ def dummy_test(Y, mask, subdiv):
 
 def test_01():
     # 1D inputs --- row vectors
-    v = np.random.randint(1,9)
+    v = np.random.randint(1, 9)
 
-    a = np.arange(1,v)
+    a = np.arange(1, v)
     a = a.reshape(1, len(a))
 
     Y = a
@@ -39,7 +39,7 @@ def test_01():
 
 def test_02():
     # 1D inputs --- row vectors & mask
-    a = np.arange(1,11)
+    a = np.arange(1, 11)
     a = a.reshape(1, len(a))
     Y = a
     mask = np.array([1, 1, 0, 1, 1, 1, 1, 1, 1, 1], dtype=bool)
@@ -49,9 +49,9 @@ def test_02():
 
 def test_03():
     # 1D inputs --- 2D arrays & mask
-    a = np.arange(1,11)
+    a = np.arange(1, 11)
     a = a.reshape(1, len(a))
-    Y = np.concatenate((a,a), axis=0)
+    Y = np.concatenate((a, a), axis=0)
     mask = np.array([1, 1, 0, 0, 1, 1, 1, 1, 1, 1], dtype=bool)
     subdiv = 's'
     dummy_test(Y, mask, subdiv)
@@ -59,10 +59,10 @@ def test_03():
 
 def test_04():
     # 1D inputs --- 3D arrays & mask
-    a = np.array([[1,2,3,4],[5,6,7,8],[9,10,11,12]])
-    Y = np.zeros((3,4,2))
-    Y[:,:,0] = a
-    Y[:,:,1] = a
+    a = np.array([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]])
+    Y = np.zeros((3, 4, 2))
+    Y[:, :, 0] = a
+    Y[:, :, 1] = a
     mask = np.array([1, 1, 0, 0], dtype=bool)
     subdiv = 's'
     dummy_test(Y, mask, subdiv)

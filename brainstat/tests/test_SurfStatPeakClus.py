@@ -7,6 +7,7 @@ import pytest
 import os
 import brainstat
 
+
 def dummy_test(slm, mask, thresh, reselspvert=None, edg=None):
     # Deal with edge offset.
     if edg is not None:
@@ -17,37 +18,38 @@ def dummy_test(slm, mask, thresh, reselspvert=None, edg=None):
     try:
         # wrap matlab functions
         M_peak, M_clus, M_clusid = sw.matlab_PeakClus(slm, mask,
-                                                              thresh,
-                                                              reselspvert, mat_edg)
+                                                      thresh,
+                                                      reselspvert, mat_edg)
     except:
         pytest.skip("Original MATLAB code does not work with these inputs.")
 
     # call python functions
     P_peak, P_clus, P_clusid = SurfStatPeakClus(slm, mask, thresh,
-                                                   reselspvert, edg)
+                                                reselspvert, edg)
     # compare matlab-python outputs
     testout_PeakClus = []
     for key in M_peak:
         testout_PeakClus.append(np.allclose(M_peak[key], P_peak[key],
-                                        rtol=1e-05, equal_nan=True))
+                                            rtol=1e-05, equal_nan=True))
     for key in M_clus:
         testout_PeakClus.append(np.allclose(M_clus[key], P_clus[key],
-                                        rtol=1e-05, equal_nan=True))
+                                            rtol=1e-05, equal_nan=True))
     testout_PeakClus.append(np.allclose(M_clusid, P_clusid,
-                                    rtol=1e-05, equal_nan=True))
+                                        rtol=1e-05, equal_nan=True))
 
     assert all(flag == True for (flag) in testout_PeakClus)
+
 
 sw.matlab_init_surfstat()
 
 
 def test_01():
     # data from Sofie, randomize threshold between 0 and 1
-    slmdata = loadmat(os.path.dirname(brainstat.__file__) + 
-        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
+    slmdata = loadmat(os.path.dirname(brainstat.__file__) +
+                      os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
     slm = {}
-    slm['t'] = slmdata['slm']['t'][0,0]
-    slm['tri'] = slmdata['slm']['tri'][0,0]
+    slm['t'] = slmdata['slm']['t'][0, 0]
+    slm['tri'] = slmdata['slm']['tri'][0, 0]
     mask = np.ones((64984))
     thresh = random.random()
     dummy_test(slm, mask, thresh)
@@ -58,8 +60,8 @@ def test_02():
     k = 1000
     m = 100
     slm = {}
-    slm['t'] = np.random.rand(1,k)
-    slm['tri'] = np.random.randint(1,k, size=(m,3))
+    slm['t'] = np.random.rand(1, k)
+    slm['tri'] = np.random.randint(1, k, size=(m, 3))
     mask = np.ones((k))
     thresh = random.random()
     dummy_test(slm, mask, thresh)
@@ -70,8 +72,8 @@ def test_03():
     k = random.randint(100, 1000)
     m = random.randint(100, 1000)
     slm = {}
-    slm['t'] = np.random.rand(1,k)
-    slm['tri'] = np.random.randint(1,k, size=(m,3))
+    slm['t'] = np.random.rand(1, k)
+    slm['tri'] = np.random.randint(1, k, size=(m, 3))
     mask = np.ones((k))
     thresh = random.random()
     dummy_test(slm, mask, thresh)
@@ -82,8 +84,8 @@ def test_04():
     k = random.randint(1000, 10000)
     m = random.randint(1000, 10000)
     slm = {}
-    slm['t'] = np.random.rand(1,k)
-    slm['tri'] = np.random.randint(1,k, size=(m,3))
+    slm['t'] = np.random.rand(1, k)
+    slm['tri'] = np.random.randint(1, k, size=(m, 3))
     mask = np.ones((k))
     thresh = random.random()
     dummy_test(slm, mask, thresh)
@@ -91,11 +93,11 @@ def test_04():
 
 def test_05():
     # data from Sofie, randomize threshold between 0 and 1, add reselspvert
-    slmdata = loadmat(os.path.dirname(brainstat.__file__) + 
-        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
+    slmdata = loadmat(os.path.dirname(brainstat.__file__) +
+                      os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
     slm = {}
-    slm['t'] = slmdata['slm']['t'][0,0]
-    slm['tri'] = slmdata['slm']['tri'][0,0]
+    slm['t'] = slmdata['slm']['t'][0, 0]
+    slm['tri'] = slmdata['slm']['tri'][0, 0]
     mask = np.ones((64984))
     thresh = random.random()
     reselspvert = np.random.rand(64984)
@@ -107,8 +109,8 @@ def test_06():
     k = random.randint(1000, 10000)
     m = random.randint(1000, 10000)
     slm = {}
-    slm['t'] = np.random.rand(1,k)
-    slm['tri'] = np.random.randint(1,k, size=(m,3))
+    slm['t'] = np.random.rand(1, k)
+    slm['tri'] = np.random.randint(1, k, size=(m, 3))
     mask = np.ones((k))
     thresh = random.random()
     reselspvert = np.random.rand(k)
@@ -120,8 +122,8 @@ def test_07():
     k = random.randint(1000, 10000)
     m = random.randint(1000, 10000)
     slm = {}
-    slm['t'] = np.random.rand(1,k)
-    slm['tri'] = np.random.randint(1,k, size=(m,3))
+    slm['t'] = np.random.rand(1, k)
+    slm['tri'] = np.random.randint(1, k, size=(m, 3))
     slm['k'] = 2
     slm['df'] = random.randint(100, 10000)
     mask = np.ones((k))
@@ -136,8 +138,8 @@ def test_08():
     k = random.randint(1000, 10000)
     m = random.randint(1000, 10000)
     slm = {}
-    slm['t'] = np.random.rand(2,k)
-    slm['tri'] = np.random.randint(1,k, size=(m,3))
+    slm['t'] = np.random.rand(2, k)
+    slm['tri'] = np.random.randint(1, k, size=(m, 3))
     slm['k'] = 2
     slm['df'] = random.randint(100, 10000)
     mask = np.ones((k))
@@ -151,8 +153,8 @@ def test_09():
     k = random.randint(1000, 10000)
     m = random.randint(1000, 10000)
     slm = {}
-    slm['t'] = np.random.rand(1,k)
-    slm['tri'] = np.random.randint(1,k, size=(m,3))
+    slm['t'] = np.random.rand(1, k)
+    slm['tri'] = np.random.randint(1, k, size=(m, 3))
     slm['k'] = 3
     slm['df'] = random.randint(100, 10000)
     mask = np.ones((k))
@@ -165,8 +167,8 @@ def test_10():
     k = random.randint(1000, 10000)
     m = random.randint(1000, 10000)
     slm = {}
-    slm['t'] = np.random.rand(1,k)
-    slm['tri'] = np.random.randint(1,k, size=(m,3))
+    slm['t'] = np.random.rand(1, k)
+    slm['tri'] = np.random.randint(1, k, size=(m, 3))
     slm['k'] = 3
     slm['df'] = random.randint(100, 10000)
     mask = np.ones((k))
@@ -181,8 +183,8 @@ def test_11():
     k = random.randint(1000, 10000)
     m = random.randint(1000, 10000)
     slm = {}
-    slm['t'] = np.random.rand(2,k)
-    slm['tri'] = np.random.randint(1,k, size=(m,3))
+    slm['t'] = np.random.rand(2, k)
+    slm['tri'] = np.random.randint(1, k, size=(m, 3))
     slm['k'] = 3
     slm['df'] = random.randint(100, 10000)
     mask = np.ones((k))
@@ -197,8 +199,8 @@ def test_12():
     k = random.randint(1000, 10000)
     m = random.randint(1000, 10000)
     slm = {}
-    slm['t'] = np.random.rand(3,k)
-    slm['tri'] = np.random.randint(1,k, size=(m,3))
+    slm['t'] = np.random.rand(3, k)
+    slm['tri'] = np.random.randint(1, k, size=(m, 3))
     slm['k'] = 3
     slm['df'] = random.randint(100, 10000)
     mask = np.ones((k))
@@ -212,8 +214,8 @@ def test_13():
     k = random.randint(1000, 10000)
     m = random.randint(1000, 10000)
     slm = {}
-    slm['t'] = np.random.rand(1,k)
-    slm['tri'] = np.random.randint(1,k, size=(m,3))
+    slm['t'] = np.random.rand(1, k)
+    slm['tri'] = np.random.randint(1, k, size=(m, 3))
     mask = np.random.choice([0, 1], size=(k))
     thresh = random.random()
     reselspvert = np.random.rand(k)
@@ -227,8 +229,8 @@ def test_14():
     k = random.randint(1000, 10000)
     m = random.randint(1000, 10000)
     slm = {}
-    slm['t'] = np.random.rand(2,k)
-    slm['tri'] = np.random.randint(1,k, size=(m,3))
+    slm['t'] = np.random.rand(2, k)
+    slm['tri'] = np.random.randint(1, k, size=(m, 3))
     slm['k'] = 3
     slm['df'] = random.randint(100, 10000)
     mask = np.random.choice([0, 1], size=(k))
@@ -243,13 +245,13 @@ def test_15():
     k = 1000
     m = 100
     slm = {}
-    slm['t'] = np.random.rand(1,k)
-    slm['tri'] = np.random.randint(1,k, size=(m,3))
+    slm['t'] = np.random.rand(1, k)
+    slm['tri'] = np.random.randint(1, k, size=(m, 3))
     mask = np.ones((k))
     thresh = random.random()
     reselspvert = np.random.rand(k)
     A = {}
-    A['tri'] = np.random.randint(1,k, size=(m,3))
+    A['tri'] = np.random.randint(1, k, size=(m, 3))
     edg = SurfStatEdg(A)
     dummy_test(slm, mask, thresh, reselspvert, edg)
 
@@ -261,15 +263,15 @@ def test_16():
     k = random.randint(1000, 10000)
     m = random.randint(1000, 10000)
     slm = {}
-    slm['t'] = np.random.rand(2,k)
-    slm['tri'] = np.random.randint(1,k, size=(m,3))
+    slm['t'] = np.random.rand(2, k)
+    slm['tri'] = np.random.randint(1, k, size=(m, 3))
     slm['k'] = 3
     slm['df'] = random.randint(100, 10000)
     mask = np.random.choice([0, 1], size=(k))
     thresh = random.random()
     reselspvert = np.random.rand(k)
     A = {}
-    A['tri'] = np.random.randint(1,k, size=(m,3))
+    A['tri'] = np.random.randint(1, k, size=(m, 3))
     edg = SurfStatEdg(A)
     dummy_test(slm, mask, thresh, reselspvert, edg)
 
@@ -281,13 +283,13 @@ def test_17():
     k = 1000
     m = 100
     slm = {}
-    slm['t'] = np.random.rand(1,k)
-    slm['tri'] = np.random.randint(1,k, size=(m,3))
+    slm['t'] = np.random.rand(1, k)
+    slm['tri'] = np.random.randint(1, k, size=(m, 3))
     mask = np.random.choice([0, 1], size=(k))
     thresh = random.random()
     reselspvert = np.random.rand(k)
     A = {}
-    A['lat'] =np.random.choice([0, 1], size=(10,10,10))
+    A['lat'] = np.random.choice([0, 1], size=(10, 10, 10))
     edg = SurfStatEdg(A)
     dummy_test(slm, mask, thresh, reselspvert, edg)
 
@@ -298,8 +300,8 @@ def test_18():
     k = 1000
     m = 100
     slm = {}
-    slm['t'] = np.random.rand(1,k)
-    slm['tri'] = np.random.randint(1,k, size=(m,3))
+    slm['t'] = np.random.rand(1, k)
+    slm['tri'] = np.random.randint(1, k, size=(m, 3))
     mask = np.ones((k))
     thresh = k * m * 1000000
     dummy_test(slm, mask, thresh)
@@ -307,11 +309,11 @@ def test_18():
 
 def test_19():
     # special case n<1
-    slmdata = loadmat(os.path.dirname(brainstat.__file__) + 
-        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
+    slmdata = loadmat(os.path.dirname(brainstat.__file__) +
+                      os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
     slm = {}
-    slm['t'] = slmdata['slm']['t'][0,0]
-    slm['tri'] = slmdata['slm']['tri'][0,0]
+    slm['t'] = slmdata['slm']['t'][0, 0]
+    slm['tri'] = slmdata['slm']['tri'][0, 0]
     mask = np.ones((64984))
     thresh = 100000
     dummy_test(slm, mask, thresh)
@@ -325,12 +327,12 @@ def test_20():
     k = 1000
     m = 100
     slm = {}
-    slm['t'] = np.random.rand(1,k)
-    slm['tri'] = np.random.randint(1,k, size=(m,3))
+    slm['t'] = np.random.rand(1, k)
+    slm['tri'] = np.random.randint(1, k, size=(m, 3))
     mask = np.random.choice([0, 1], size=(k))
     thresh = 100000
     reselspvert = np.random.rand(k)
     A = {}
-    A['lat'] =np.random.choice([0, 1], size=(10,10,10))
+    A['lat'] = np.random.choice([0, 1], size=(10, 10, 10))
     edg = SurfStatEdg(A)
     dummy_test(slm, mask, thresh, reselspvert, edg)

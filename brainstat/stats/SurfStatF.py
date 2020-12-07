@@ -2,6 +2,7 @@ import numpy as np
 from cmath import sqrt
 import warnings
 
+
 def SurfStatF(slm1, slm2):
     """ F-statistics for comparing two uni- or nulti-variate fixed effects models.
     Parameters
