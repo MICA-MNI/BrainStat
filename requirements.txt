@@ -1,0 +1,7 @@
+numpy>=1.19.4
+pandas>=1.1.5
+nibabel>=3.2.1
+scipy>=1.5.4
+nilearn>=0.7.0
+numpy_groupies>=0.9.13
+scikit_learn>=0.23.2
