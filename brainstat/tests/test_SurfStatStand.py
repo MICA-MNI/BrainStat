@@ -47,6 +47,7 @@ def dummy_test(infile, expfile):
 
 datadir = testutil.datadir
 
+
 def test_01(datadir):
     infile  = datadir.join('statsta_01_IN.pkl')
     expfile = datadir.join('statsta_01_OUT.pkl')
