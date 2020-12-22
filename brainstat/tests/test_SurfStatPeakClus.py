@@ -1,10 +1,8 @@
 import testutil
-from pytest import fixture
 import sys
 sys.path.append("brainstat/stats")
-from SurfStatPeakClus import *
+from SurfStatPeakClus import SurfStatPeakClus
 import numpy as np
-import pytest
 import pickle
 
 

@@ -1,11 +1,9 @@
 import testutil
-from pytest import fixture
 import sys
 sys.path.append("brainstat/stats")
-from SurfStatStand import *
+from SurfStatStand import SurfStatStand
 import numpy as np
 import pickle
-import pytest
 
 
 def dummy_test(infile, expfile):

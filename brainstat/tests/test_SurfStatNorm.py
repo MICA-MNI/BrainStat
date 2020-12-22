@@ -1,10 +1,8 @@
 import testutil
-from pytest import fixture
 import sys
 sys.path.append("brainstat/stats")
-from SurfStatNorm import *
+from SurfStatNorm import SurfStatNorm
 import numpy as np
-import pytest
 import pickle
 
 
@@ -22,9 +20,6 @@ def dummy_test(infile, expfile):
 
     if 'mask' in idic.keys():
         mask = idic['mask']
-
-    if 's' in idic.keys():
-        s = idic['s']
 
     # run SurfStatNorm
     Y_out, Yav_out = SurfStatNorm(Y, mask, subdiv)
