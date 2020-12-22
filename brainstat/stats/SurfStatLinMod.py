@@ -1,8 +1,10 @@
 import warnings
 import numpy as np
 import numpy.linalg as la
-from brainstat.stats.term import Term, Random
-from brainstat.stats.SurfStatEdg import SurfStatEdg
+import sys
+sys.path.append("../brainstat/stats")
+from term import Term, Random
+from SurfStatEdg import SurfStatEdg
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 from brainspace.mesh.mesh_elements import get_cells
 
