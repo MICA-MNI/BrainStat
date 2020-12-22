@@ -1,6 +1,9 @@
 import numpy as np
-from brainstat.stats.SurfStatResels import SurfStatResels
-from brainstat.stats.stat_threshold import stat_threshold
+import sys
+sys.path.append("../brainstat/stats")
+from matlab_functions import row_ismember, interp1
+from SurfStatResels import SurfStatResels
+from stat_threshold import stat_threshold
 
 
 def SurfStatQ(slm, mask=None):

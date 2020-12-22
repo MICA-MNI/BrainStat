@@ -1,270 +1,169 @@
-from brainstat.stats.SurfStatQ import SurfStatQ
-from brainstat.stats.term import Term
-from brainstat.stats.SurfStatEdg import SurfStatEdg
-from brainstat.stats.SurfStatLinMod import SurfStatLinMod
-from brainstat.stats.SurfStatT import SurfStatT
-
-import surfstat_wrap as sw
+import testutil
+from pytest import fixture
+import sys
+sys.path.append("brainstat/stats")
+from SurfStatQ import *
 import numpy as np
 import pytest
-from scipy.io import loadmat
-import random
-
-import os
-import brainstat
-
-sw.matlab_init_surfstat()
+import pickle
 
 
-def dummy_test(slm, mask=None):
+def dummy_test(infile, expfile):
 
-    try:
-        # wrap matlab functions
-        M_q_val = sw.matlab_Q(slm, mask)
-
-    except:
-        pytest.skip("Original MATLAB code does not work with these inputs.")
-
-    # run python equivalent
-    P_q_val = SurfStatQ(slm, mask)
-
-    # compare matlab-python outputs
-    testout_Q = []
-
-    for key in M_q_val:
-        testout_Q.append(np.allclose(np.squeeze(M_q_val[key]),
-                                     np.squeeze(P_q_val[key]),
-                                     rtol=1e-05, equal_nan=True))
-
-    assert all(flag == True for (flag) in testout_Q)
-
-
-sw.matlab_init_surfstat()
-
-
-def test_01():
-    # data from Sofie, only slm['t'], slm['df'], slm['k'] --> mandatory input
-    slmdata = loadmat(os.path.dirname(brainstat.__file__) +
-                      os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
-    slm = {}
-    slm['t'] = slmdata['slm']['t'][0, 0]
-    slm['df'] = slmdata['slm']['df'][0, 0]
-    slm['k'] = slmdata['slm']['k'][0, 0]
-
-    dummy_test(slm)
-
-
-def test_02():
-    # randomize slm['t'] and slm['df'], slm['k']=1
-    k = random.randint(1000, 10000)
-    m = random.randint(1000, 10000)
+    # load input test data
+    ifile = open(infile, 'br')
+    idic  = pickle.load(ifile)
+    ifile.close()
 
     slm = {}
-    slm['t'] = np.random.rand(1, k)
-    slm['df'] = np.array([[m]])
-    slm['k'] = 1
-    dummy_test(slm)
+    slm['t']  = idic['t']
+    slm['df'] = idic['df']
+    slm['k']  = idic['k']
+
+    # check other potential keys in input
+    if 'tri' in idic.keys():
+        slm['tri']    = idic['tri']
+
+    if 'resl' in idic.keys():
+        slm['resl'] = idic['resl']
+
+    if 'dfs' in idic.keys():
+        slm['dfs'] = idic['dfs']
+
+    if 'du' in idic.keys():
+        slm['du'] = idic['du']
+
+    if 'c' in idic.keys():
+        slm['c']    = idic['c']
+
+    if 'k' in idic.keys():
+        slm['k']    = idic['k']
+
+    if 'ef' in idic.keys():
+        slm['ef']    = idic['ef']
+
+    if 'sd' in idic.keys():
+        slm['sd']    = idic['sd']
+
+    if 't' in idic.keys():
+        slm['t']    = idic['t']
+
+    if 'SSE' in idic.keys():
+        slm['SSE']    = idic['SSE']
+
+    if 'mask' in idic.keys():
+        mask = idic['mask']
+    else:
+        mask = None
 
 
-def test_03():
-    # randomize slm['t'] and slm['df'], slm['k']
-    k = random.randint(1000, 10000)
-    m = random.randint(1000, 10000)
-    n = random.randint(1, 3)
+    # run SurfStatQ
+    outdic = SurfStatQ(slm, mask)
 
-    slm = {}
-    slm['t'] = np.random.rand(1, k)
-    slm['df'] = np.array([[m]])
-    slm['k'] = n
-    dummy_test(slm)
+    # load expected outout data
+    efile  = open(expfile, 'br')
+    expdic = pickle.load(efile)
+    efile.close()
 
+    testout = []
 
-def test_04():
-    # randomize slm['t'] and slm['df'], slm['k'], and a random mask (type bool)
-    k = random.randint(1000, 10000)
-    m = random.randint(1000, 10000)
-    n = random.randint(1, 3)
+    for key in outdic.keys():
+        comp = np.allclose(outdic[key], expdic[key], rtol=1e-05, equal_nan=True)
+        testout.append(comp)
 
-    slm = {}
-    slm['t'] = np.random.rand(1, k)
-    slm['df'] = np.array([[m]])
-    slm['k'] = n
-    mask = np.random.choice([0, 1], size=(k))
-    mask = mask.astype(bool)
-    dummy_test(slm, mask)
+    assert all(flag == True for (flag) in testout)
+
+datadir = testutil.datadir
 
 
-def test_05():
-    # randomize slm['t'] and slm['df'], slm['dfs'], slm['k']=1
-    k = random.randint(1000, 10000)
-    m = random.randint(1000, 10000)
-
-    slm = {}
-    slm['t'] = np.random.rand(1, k)
-    slm['df'] = np.array([[m]])
-    slm['k'] = 1
-    slm['dfs'] = np.random.choice([1, k-1], size=(1, k))
-    dummy_test(slm)
+def test_01(datadir):
+    infile  = datadir.join('statq_01_IN.pkl')
+    expfile = datadir.join('statq_01_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
-def test_06():
-    # randomize slm['t'] and slm['df'], slm['k'], slm['dfs'] and a random mask (type bool)
-    k = random.randint(1000, 10000)
-    m = random.randint(1000, 10000)
-    n = random.randint(1, 3)
-
-    slm = {}
-    slm['t'] = np.random.rand(1, k)
-    slm['df'] = np.array([[m]])
-    slm['k'] = n
-    mask = np.random.choice([0, 1], size=(k))
-    mask = mask.astype(bool)
-    slm['dfs'] = np.random.choice([1, k-1], size=(1, k))
-    dummy_test(slm, mask)
+def test_02(datadir):
+    infile  = datadir.join('statq_02_IN.pkl')
+    expfile = datadir.join('statq_02_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
-def test_07():
-    # randomize slm['t'], slm['df'], slm['k'], slm['tri'], slm['dfs'], mask
-    k = random.randint(1000, 10000)
-    m = random.randint(1000, 10000)
-    n = random.randint(1, 3)
-
-    slm = {}
-    slm['t'] = np.random.rand(1, k)
-    slm['df'] = np.array([[m]])
-    slm['k'] = n
-    slm['tri'] = np.random.randint(1, k, size=(m, 3))
-    slm['dfs'] = np.random.choice([1, k-1], size=(1, k))
-    mask = np.random.choice([0, 1], size=(k))
-    mask = mask.astype(bool)
-    dummy_test(slm, mask)
+def test_03(datadir):
+    infile  = datadir.join('statq_03_IN.pkl')
+    expfile = datadir.join('statq_03_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
-def test_08():
-    # random slm['t'], slm['df'], slm['k'], slm['tri'], slm['resl'], slm['dfs']
-    k = random.randint(1000, 10000)
-    m = random.randint(1000, 10000)
-    n = random.randint(1, 10)
-
-    slm = {}
-    slm['t'] = np.random.rand(1, k)
-    slm['df'] = np.array([[m]])
-    slm['k'] = 5
-    slm['tri'] = np.random.randint(1, k, size=(m, 3))
-    slm['resl'] = np.random.rand(k, 1)
-    slm['dfs'] = np.random.randint(1, 10, (1, k))
-    dummy_test(slm)
+def test_04(datadir):
+    infile  = datadir.join('statq_04_IN.pkl')
+    expfile = datadir.join('statq_04_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
-def test_09():
-    # random slm['t'], slm['df'], slm['tri'], slm['resl'],
-    # special input case: slm['dfs'] and slm['du']
-    k = random.randint(1000, 10000)
-    m = random.randint(1000, 10000)
-    n = random.randint(1, 10)
-
-    slm = {}
-    slm['t'] = np.random.rand(1, k)
-    slm['df'] = np.array([[m]])
-    slm['k'] = 1
-    slm['du'] = n
-    slm['tri'] = np.random.randint(1, k, size=(m, 3))
-    edg = SurfStatEdg(slm)
-    slm['resl'] = np.random.rand(edg.shape[0], 1)
-    slm['dfs'] = np.ones((1, k))
-    dummy_test(slm)
+def test_05(datadir):
+    infile  = datadir.join('statq_05_IN.pkl')
+    expfile = datadir.join('statq_05_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
-def test_10():
-    # load tutorial data (for n=10 subjects)
-    fname = (os.path.dirname(brainstat.__file__) +
-             os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'thickness.mat')
-    f = loadmat(fname)
-    SW = {}
-    SW['tri'] = f['tri']
-    SW['coord'] = f['coord']
-    Y = f['T']
-    AGE = np.array(f['AGE'])
-    AGE = AGE.reshape(AGE.shape[1], 1)
-    A = Term(AGE, 'AGE')
-    M = 1 + A
-    slm = SurfStatLinMod(Y, M, SW)
-    slm = SurfStatT(slm, -1*AGE)
-    dummy_test(slm)
+def test_06(datadir):
+    infile  = datadir.join('statq_06_IN.pkl')
+    expfile = datadir.join('statq_06_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
-def test_11():
-    # load tutorial data (for n=10 subjects)
-    fname = (os.path.dirname(brainstat.__file__) +
-             os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'thickness.mat')
-    f = loadmat(fname)
-    SW = {}
-    SW['tri'] = f['tri']
-    SW['coord'] = f['coord']
-    Y = f['T']
-    AGE = np.array(f['AGE'])
-    AGE = AGE.reshape(AGE.shape[1], 1)
-    A = Term(AGE, 'AGE')
-    M = 1 + A
-    slm = SurfStatLinMod(Y, M, SW)
-    slm = SurfStatT(slm, -1*AGE)
-    dummy_test(slm)
+def test_07(datadir):
+    infile  = datadir.join('statq_07_IN.pkl')
+    expfile = datadir.join('statq_07_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
-def test_12():
-    fname = (os.path.dirname(brainstat.__file__) +
-             os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'thickness_slm.mat')
-    f = loadmat(fname)
-    slm = {}
-    slm['X'] = f['slm']['X'][0, 0]
-    slm['df'] = f['slm']['df'][0, 0][0, 0]
-    slm['coef'] = f['slm']['coef'][0, 0]
-    slm['SSE'] = f['slm']['SSE'][0, 0]
-    slm['tri'] = f['slm']['tri'][0, 0]
-    slm['resl'] = f['slm']['resl'][0, 0]
-    AGE = f['slm']['AGE'][0, 0]
-    slm = SurfStatT(slm, -1*AGE)
-
-    mname = (os.path.dirname(brainstat.__file__) +
-             os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'mask.mat')
-    m = loadmat(mname)
-    mask = m['mask'].astype(bool).flatten()
-
-    dummy_test(slm, mask)
+def test_08(datadir):
+    infile  = datadir.join('statq_08_IN.pkl')
+    expfile = datadir.join('statq_08_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
-def test_13():
-    fname = (os.path.dirname(brainstat.__file__) +
-             os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'sofopofo1.mat')
-    f = loadmat(fname)
-    fT = f['sofie']['T'][0, 0]
-
-    params = f['sofie']['model'][0, 0]
-    colnames = ['1', 'ak', 'female', 'male', 'Affect', 'Control1',
-                'Perspective', 'Presence', 'ink']
-    M = Term(params, colnames)
-    SW = {}
-    SW['tri'] = f['sofie']['SW'][0, 0]['tri'][0, 0]
-    SW['coord'] = f['sofie']['SW'][0, 0]['coord'][0, 0]
-    slm = SurfStatLinMod(fT, M, SW)
-    contrast = np.random.randint(20, 50, size=(slm['X'].shape[0], 1))
-    slm = SurfStatT(slm, contrast)
-    dummy_test(slm)
+def test_09(datadir):
+    infile  = datadir.join('statq_09_IN.pkl')
+    expfile = datadir.join('statq_09_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
-def test_14():
-    fname = (os.path.dirname(brainstat.__file__) +
-             os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'sofopofo1_slm.mat')
-    f = loadmat(fname)
-    slm = {}
-    slm['X'] = f['slm']['X'][0, 0]
-    slm['df'] = f['slm']['df'][0, 0][0, 0]
-    slm['coef'] = f['slm']['coef'][0, 0]
-    slm['SSE'] = f['slm']['SSE'][0, 0]
-    slm['tri'] = f['slm']['tri'][0, 0]
-    slm['resl'] = f['slm']['resl'][0, 0]
-    contrast = np.random.randint(20, 50, size=(slm['X'].shape[0], 1))
-    slm = SurfStatT(slm, contrast)
-    mask = np.random.choice([0, 1], size=(slm['t'].shape[1]))
-    mask = mask.astype(bool).flatten()
-    dummy_test(slm, mask)
+def test_10(datadir):
+    infile  = datadir.join('statq_10_IN.pkl')
+    expfile = datadir.join('statq_10_OUT.pkl')
+    dummy_test(infile, expfile)
+
+
+def test_11(datadir):
+    infile  = datadir.join('statq_11_IN.pkl')
+    expfile = datadir.join('statq_11_OUT.pkl')
+    dummy_test(infile, expfile)
+
+
+def test_12(datadir):
+    infile  = datadir.join('statq_12_IN.pkl')
+    expfile = datadir.join('statq_12_OUT.pkl')
+    dummy_test(infile, expfile)
+
+
+def test_13(datadir):
+    infile  = datadir.join('statq_13_IN.pkl')
+    expfile = datadir.join('statq_13_OUT.pkl')
+    dummy_test(infile, expfile)
+
+
+def test_14(datadir):
+    infile  = datadir.join('statq_14_IN.pkl')
+    expfile = datadir.join('statq_14_OUT.pkl')
+    dummy_test(infile, expfile)
+
+
+
+
+
+
+
+
+

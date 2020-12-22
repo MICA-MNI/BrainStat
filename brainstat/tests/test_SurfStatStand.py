@@ -1,73 +1,73 @@
-from brainstat.stats import *
-import surfstat_wrap as sw
+import testutil
+from pytest import fixture
+import sys
+sys.path.append("brainstat/stats")
+from SurfStatStand import *
 import numpy as np
+import pickle
 import pytest
 
-sw.matlab_init_surfstat()
 
+def dummy_test(infile, expfile):
 
-def dummy_test(Y, mask, subtractordivide):
+    # load input test data
+    ifile = open(infile, 'br')
+    idic  = pickle.load(ifile)
+    ifile.close()
 
-    try:
-        # wrap matlab functions
-        Wrapped_Y, Wrapped_Ym = sw.matlab_Stand(Y, mask, subtractordivide)
+    Y = idic['Y']
 
-    except:
-        pytest.skip("Original MATLAB code does not work with these inputs.")
-
-    # python function
-    Python_Y, Python_Ym = SurfStatStand(Y, mask, subtractordivide)
-
-    # compare matlab-python outputs
-    testout_Stand = []
-
-    testout_Stand.append(np.allclose(Wrapped_Y, Python_Y,
-                                     rtol=1e-05, equal_nan=True))
-
-    testout_Stand.append(np.allclose(Wrapped_Ym, Python_Ym,
-                                     rtol=1e-05, equal_nan=True))
-    #result_Stand = all(flag == True for (flag) in testout_Stand)
-
-    assert all(flag == True for (flag) in testout_Stand)
-
-
-def test_01():
-    # 1D inputs --- row vectors
-    v = np.random.randint(1, 9)
-    a = np.arange(1, v)
-    a = a.reshape(1, len(a))
-    Y = a
     mask = None
     subtractordivide = 's'
-    dummy_test(Y, mask=mask, subtractordivide=subtractordivide)
 
 
-def test_02():
-    # 1D inputs --- row vectors & mask
-    a = np.arange(1, 11)
-    a = a.reshape(1, len(a))
-    Y = a
-    mask = np.array([1, 1, 0, 1, 1, 1, 1, 1, 1, 1], dtype=bool)
-    subtractordivide = 's'
-    dummy_test(Y, mask=mask, subtractordivide=subtractordivide)
+    if 'mask' in idic.keys():
+        mask = idic['mask']
+
+    if 'subtractordivide' in idic.keys():
+        subtractordivide = idic['subtractordivide']
 
 
-def test_03():
-    # 2D inputs --- 2D arrays & mask
-    a = np.arange(1, 11)
-    a = a.reshape(1, len(a))
-    Y = np.concatenate((a, a), axis=0)
-    mask = np.array([1, 1, 0, 0, 1, 1, 1, 1, 1, 1], dtype=bool)
-    subtractordivide = 's'
-    dummy_test(Y, mask=mask, subtractordivide=subtractordivide)
+    # run SurfStatStand
+    Y_out, Ym_out = SurfStatStand(Y, mask, subtractordivide)
+
+    # load expected outout data
+    efile  = open(expfile, 'br')
+    expdic = pickle.load(efile)
+    efile.close()
+    Y_exp  = expdic['Python_Y']
+    Ym_exp = expdic['Python_Ym']
+
+    testout = []
+
+    testout.append(np.allclose(Y_out, Y_exp, rtol=1e-05, equal_nan=True))
+    testout.append(np.allclose(Ym_out, Ym_exp, rtol=1e-05, equal_nan=True))
+
+    assert all(flag == True for (flag) in testout)
+
+datadir = testutil.datadir
+
+def test_01(datadir):
+    infile  = datadir.join('statsta_01_IN.pkl')
+    expfile = datadir.join('statsta_01_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
-def test_04():
-    # 3D inputs --- 3D arrays & mask
-    a = np.array([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]])
-    Y = np.zeros((3, 4, 2))
-    Y[:, :, 0] = a
-    Y[:, :, 1] = a
-    mask = np.array([1, 1, 0, 0], dtype=bool)
-    subtractordivide = 's'
-    dummy_test(Y, mask=mask, subtractordivide=subtractordivide)
+def test_02(datadir):
+    infile  = datadir.join('statsta_02_IN.pkl')
+    expfile = datadir.join('statsta_02_OUT.pkl')
+    dummy_test(infile, expfile)
+
+
+def test_03(datadir):
+    infile  = datadir.join('statsta_03_IN.pkl')
+    expfile = datadir.join('statsta_03_OUT.pkl')
+    dummy_test(infile, expfile)
+
+
+def test_04(datadir):
+    infile  = datadir.join('statsta_04_IN.pkl')
+    expfile = datadir.join('statsta_04_OUT.pkl')
+    dummy_test(infile, expfile)
+
+
