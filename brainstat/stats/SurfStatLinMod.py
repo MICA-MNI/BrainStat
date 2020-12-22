@@ -1,12 +1,10 @@
 import warnings
 import numpy as np
 import numpy.linalg as la
-import sys
-sys.path.append("../brainstat/stats")
-from term import Term, Random
-from SurfStatEdg import SurfStatEdg
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 from brainspace.mesh.mesh_elements import get_cells
+from .term import Term, Random
+from .SurfStatEdg import SurfStatEdg
 
 
 def SurfStatLinMod(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):

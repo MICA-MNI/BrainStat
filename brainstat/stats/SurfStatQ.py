@@ -1,8 +1,6 @@
 import numpy as np
-import sys
-sys.path.append("../brainstat/stats")
-from SurfStatResels import SurfStatResels
-from stat_threshold import stat_threshold
+from .SurfStatResels import SurfStatResels
+from .stat_threshold import stat_threshold
 
 
 def SurfStatQ(slm, mask=None):

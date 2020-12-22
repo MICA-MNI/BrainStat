@@ -1,10 +1,8 @@
 import numpy as np
 import math
-import sys
-sys.path.append("../brainstat/stats")
-from matlab_functions import interp1, ismember
-from SurfStatEdg import SurfStatEdg
 import copy
+from .matlab_functions import interp1, ismember
+from .SurfStatEdg import SurfStatEdg
 
 
 def SurfStatPeakClus(slm, mask, thresh, reselspvert=None, edg=None):
