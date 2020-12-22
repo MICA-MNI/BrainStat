@@ -1,9 +1,7 @@
-import testutil
-import sys
-sys.path.append("brainstat/stats")
 import numpy as np
-from stat_threshold import stat_threshold
 import pickle
+from .testutil import datadir
+from ..stats import stat_threshold
 
 
 def dummy_test(infile, expfile):
@@ -42,9 +40,6 @@ def dummy_test(infile, expfile):
         testout.append(comp)
 
     assert all(flag == True for (flag) in testout)
-
-
-datadir = testutil.datadir
 
 
 def test_01(datadir):

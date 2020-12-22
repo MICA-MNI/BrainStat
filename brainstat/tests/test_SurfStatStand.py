@@ -1,9 +1,7 @@
-import testutil
-import sys
-sys.path.append("brainstat/stats")
-from SurfStatStand import SurfStatStand
 import numpy as np
 import pickle
+from .testutil import datadir
+from ..stats import SurfStatStand
 
 
 def dummy_test(infile, expfile):
@@ -42,8 +40,6 @@ def dummy_test(infile, expfile):
     testout.append(np.allclose(Ym_out, Ym_exp, rtol=1e-05, equal_nan=True))
 
     assert all(flag == True for (flag) in testout)
-
-datadir = testutil.datadir
 
 
 def test_01(datadir):

@@ -1,9 +1,8 @@
 import sys
 import numpy as np
-sys.path.append("../brainstat/stats")
-from matlab_functions import colon
 from brainspace.mesh.mesh_elements import get_edges
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
+from .matlab_functions import colon
 
 
 def SurfStatEdg(surf):

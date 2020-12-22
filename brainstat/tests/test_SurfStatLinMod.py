@@ -1,10 +1,8 @@
-import testutil
-import sys
-sys.path.append("brainstat/stats")
 import numpy as np
-from SurfStatLinMod import SurfStatLinMod
-from term import Term
 import pickle
+from .testutil import datadir
+from ..stats import SurfStatLinMod
+from ..stats import Term
 
 
 def dummy_test(slm, oslm):
@@ -18,9 +16,6 @@ def dummy_test(slm, oslm):
     print(testout)
 
     assert all(flag == True for (flag) in testout)
-
-
-datadir = testutil.datadir
 
 
 def test_01(datadir):
