@@ -5,3 +5,4 @@ scipy>=1.5.4
 nilearn>=0.7.0
 numpy_groupies>=0.9.13
 scikit_learn>=0.23.2
+brainspace>=0.1.1
