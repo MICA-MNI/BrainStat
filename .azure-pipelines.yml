@@ -3,21 +3,18 @@ trigger:
     include:
       - '*'
 
-# Set languages.
+# Set languages and operating system.
 pool:
   vmImage: 'ubuntu-latest'
 strategy:
   matrix:
     Python 3.6:
+      implementation_language: 'python'
       implementation_version: '3.6'
-      implementation_language: 'python'
     Python 3.7:
-      implementation_version: '3.7'
       implementation_language: 'python'
-    MATLAB latest:
-      implementation_language: 'matlab'
-      implementation_version: 'latest'
-    MATLAB 2019b:
+      implementation_version: '3.7'
+    MATLAB 2020a:
       implementation_language: 'matlab'
       implementation_version: 'R2020a'
 
@@ -37,11 +34,12 @@ steps:
   # Lint Python
   - script: |
       python -m pip install flake8
-      flake8 ./brainstat
-    displayName: 'Run lint tests'
+      flake8 --select E101,E117,E125,E302,W191,W291,W293 ./brainstat 
+    displayName: 'Run Python lint tests'
     condition: eq(variables.implementation_language, 'python')
   # Run MATLAB unit tests. 
   - task: RunMATLABTests@0
     condition: eq(variables.implementation_language, 'matlab')
+    displayName: 'Run MATLAB unit tests.'
     inputs:
       sourceFolder: 'matlab'
