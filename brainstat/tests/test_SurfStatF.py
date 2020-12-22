@@ -71,75 +71,75 @@ def dummy_test(infile, expfile):
     assert all(flag == True for (flag) in testout)
 
 
-def test_01(datadir):
-    infile  = datadir.join('statf_01_IN.pkl')
-    expfile = datadir.join('statf_01_OUT.pkl')
+def test_01():
+    infile  = datadir('statf_01_IN.pkl')
+    expfile = datadir('statf_01_OUT.pkl')
     dummy_test(infile, expfile)
 
 
-def test_02(datadir):
-    infile  = datadir.join('statf_02_IN.pkl')
-    expfile = datadir.join('statf_02_OUT.pkl')
+def test_02():
+    infile  = datadir('statf_02_IN.pkl')
+    expfile = datadir('statf_02_OUT.pkl')
     dummy_test(infile, expfile)
 
 
-def test_03(datadir):
-    infile  = datadir.join('statf_03_IN.pkl')
-    expfile = datadir.join('statf_03_OUT.pkl')
+def test_03():
+    infile  = datadir('statf_03_IN.pkl')
+    expfile = datadir('statf_03_OUT.pkl')
     dummy_test(infile, expfile)
 
 
-def test_04(datadir):
-    infile  = datadir.join('statf_04_IN.pkl')
-    expfile = datadir.join('statf_04_OUT.pkl')
+def test_04():
+    infile  = datadir('statf_04_IN.pkl')
+    expfile = datadir('statf_04_OUT.pkl')
     dummy_test(infile, expfile)
 
 
-def test_05(datadir):
-    infile  = datadir.join('statf_05_IN.pkl')
-    expfile = datadir.join('statf_05_OUT.pkl')
+def test_05():
+    infile  = datadir('statf_05_IN.pkl')
+    expfile = datadir('statf_05_OUT.pkl')
     dummy_test(infile, expfile)
 
 
-def test_06(datadir):
-    infile  = datadir.join('statf_06_IN.pkl')
-    expfile = datadir.join('statf_06_OUT.pkl')
+def test_06():
+    infile  = datadir('statf_06_IN.pkl')
+    expfile = datadir('statf_06_OUT.pkl')
     dummy_test(infile, expfile)
 
 
-def test_07(datadir):
-    infile  = datadir.join('statf_07_IN.pkl')
-    expfile = datadir.join('statf_07_OUT.pkl')
+def test_07():
+    infile  = datadir('statf_07_IN.pkl')
+    expfile = datadir('statf_07_OUT.pkl')
     dummy_test(infile, expfile)
 
 
-def test_08(datadir):
-    infile  = datadir.join('statf_08_IN.pkl')
-    expfile = datadir.join('statf_08_OUT.pkl')
+def test_08():
+    infile  = datadir('statf_08_IN.pkl')
+    expfile = datadir('statf_08_OUT.pkl')
     dummy_test(infile, expfile)
 
 
-def test_09(datadir):
-    infile  = datadir.join('statf_09_IN.pkl')
-    expfile = datadir.join('statf_09_OUT.pkl')
+def test_09():
+    infile  = datadir('statf_09_IN.pkl')
+    expfile = datadir('statf_09_OUT.pkl')
     dummy_test(infile, expfile)
 
 
-def test_10(datadir):
-    infile  = datadir.join('statf_10_IN.pkl')
-    expfile = datadir.join('statf_10_OUT.pkl')
+def test_10():
+    infile  = datadir('statf_10_IN.pkl')
+    expfile = datadir('statf_10_OUT.pkl')
     dummy_test(infile, expfile)
 
 
-def test_11(datadir):
-    infile  = datadir.join('statf_11_IN.pkl')
-    expfile = datadir.join('statf_11_OUT.pkl')
+def test_11():
+    infile  = datadir('statf_11_IN.pkl')
+    expfile = datadir('statf_11_OUT.pkl')
     dummy_test(infile, expfile)
 
 
-def test_12(datadir):
-    infile  = datadir.join('statf_12_IN.pkl')
-    expfile = datadir.join('statf_12_OUT.pkl')
+def test_12():
+    infile  = datadir('statf_12_IN.pkl')
+    expfile = datadir('statf_12_OUT.pkl')
     dummy_test(infile, expfile)
 
 

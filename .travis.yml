@@ -7,11 +7,11 @@ addons:
   apt:
     packages:
       - flake8
+      - python3-pytest
 
 install:
   - env | grep -v "encrypted" | LC_ALL=C sort
   - lscpu || sysctl hw
 
 script:
-  - flake8 --select E101,E117,E125,E302,W191,W291,W293,F401,F405,F841 --per-file-ignores="__init__.py:F401" .
-
+  - flake8 --select E101,E117,E125,E302,W191,W291,W293,F405,F841 .

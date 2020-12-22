@@ -18,30 +18,10 @@ def dummy_test(slm, oslm):
     assert all(flag == True for (flag) in testout)
 
 
-def test_01(datadir):
+def test_01():
 
-    infile  = datadir.join('linmod_01_IN.pkl')
-    expfile = datadir.join('linmod_01_OUT.pkl')
-
-    ifile = open(infile, 'br')
-    idic  = pickle.load(ifile)
-    ifile.close()
-
-    Y   = idic['Y']
-    M   = idic['M']
-    slm = SurfStatLinMod(Y, M)
-
-    ofile = open(expfile, 'br')
-    oslm  = pickle.load(ofile)
-    ofile.close()
-
-    dummy_test(slm, oslm)
-
-
-def test_02(datadir):
-
-    infile  = datadir.join('linmod_02_IN.pkl')
-    expfile = datadir.join('linmod_02_OUT.pkl')
+    infile  = datadir('linmod_01_IN.pkl')
+    expfile = datadir('linmod_01_OUT.pkl')
 
     ifile = open(infile, 'br')
     idic  = pickle.load(ifile)
@@ -58,30 +38,10 @@ def test_02(datadir):
     dummy_test(slm, oslm)
 
 
-def test_03(datadir):
+def test_02():
 
-    infile  = datadir.join('linmod_03_IN.pkl')
-    expfile = datadir.join('linmod_03_OUT.pkl')
-
-    ifile = open(infile, 'br')
-    idic  = pickle.load(ifile)
-    ifile.close()
-
-    Y   = idic['Y']
-    M   = idic['M']
-    slm = SurfStatLinMod(Y, M)
-
-    ofile = open(expfile, 'br')
-    oslm  = pickle.load(ofile)
-    ofile.close()
-
-    dummy_test(slm, oslm)
-
-
-def test_04(datadir):
-
-    infile  = datadir.join('linmod_04_IN.pkl')
-    expfile = datadir.join('linmod_04_OUT.pkl')
+    infile  = datadir('linmod_02_IN.pkl')
+    expfile = datadir('linmod_02_OUT.pkl')
 
     ifile = open(infile, 'br')
     idic  = pickle.load(ifile)
@@ -98,10 +58,10 @@ def test_04(datadir):
     dummy_test(slm, oslm)
 
 
-def test_05(datadir):
+def test_03():
 
-    infile  = datadir.join('linmod_05_IN.pkl')
-    expfile = datadir.join('linmod_05_OUT.pkl')
+    infile  = datadir('linmod_03_IN.pkl')
+    expfile = datadir('linmod_03_OUT.pkl')
 
     ifile = open(infile, 'br')
     idic  = pickle.load(ifile)
@@ -118,10 +78,10 @@ def test_05(datadir):
     dummy_test(slm, oslm)
 
 
-def test_06(datadir):
+def test_04():
 
-    infile  = datadir.join('linmod_06_IN.pkl')
-    expfile = datadir.join('linmod_06_OUT.pkl')
+    infile  = datadir('linmod_04_IN.pkl')
+    expfile = datadir('linmod_04_OUT.pkl')
 
     ifile = open(infile, 'br')
     idic  = pickle.load(ifile)
@@ -129,7 +89,6 @@ def test_06(datadir):
 
     Y   = idic['Y']
     M   = idic['M']
-    M   = Term(M)
     slm = SurfStatLinMod(Y, M)
 
     ofile = open(expfile, 'br')
@@ -139,10 +98,30 @@ def test_06(datadir):
     dummy_test(slm, oslm)
 
 
-def test_07(datadir):
+def test_05():
 
-    infile  = datadir.join('linmod_07_IN.pkl')
-    expfile = datadir.join('linmod_07_OUT.pkl')
+    infile  = datadir('linmod_05_IN.pkl')
+    expfile = datadir('linmod_05_OUT.pkl')
+
+    ifile = open(infile, 'br')
+    idic  = pickle.load(ifile)
+    ifile.close()
+
+    Y   = idic['Y']
+    M   = idic['M']
+    slm = SurfStatLinMod(Y, M)
+
+    ofile = open(expfile, 'br')
+    oslm  = pickle.load(ofile)
+    ofile.close()
+
+    dummy_test(slm, oslm)
+
+
+def test_06():
+
+    infile  = datadir('linmod_06_IN.pkl')
+    expfile = datadir('linmod_06_OUT.pkl')
 
     ifile = open(infile, 'br')
     idic  = pickle.load(ifile)
@@ -160,10 +139,31 @@ def test_07(datadir):
     dummy_test(slm, oslm)
 
 
-def test_08(datadir):
+def test_07():
 
-    infile  = datadir.join('linmod_08_IN.pkl')
-    expfile = datadir.join('linmod_08_OUT.pkl')
+    infile  = datadir('linmod_07_IN.pkl')
+    expfile = datadir('linmod_07_OUT.pkl')
+
+    ifile = open(infile, 'br')
+    idic  = pickle.load(ifile)
+    ifile.close()
+
+    Y   = idic['Y']
+    M   = idic['M']
+    M   = Term(M)
+    slm = SurfStatLinMod(Y, M)
+
+    ofile = open(expfile, 'br')
+    oslm  = pickle.load(ofile)
+    ofile.close()
+
+    dummy_test(slm, oslm)
+
+
+def test_08():
+
+    infile  = datadir('linmod_08_IN.pkl')
+    expfile = datadir('linmod_08_OUT.pkl')
 
     ifile = open(infile, 'br')
     idic  = pickle.load(ifile)
@@ -182,10 +182,10 @@ def test_08(datadir):
     dummy_test(slm, oslm)
 
 
-def test_09(datadir):
+def test_09():
 
-    infile  = datadir.join('linmod_09_IN.pkl')
-    expfile = datadir.join('linmod_09_OUT.pkl')
+    infile  = datadir('linmod_09_IN.pkl')
+    expfile = datadir('linmod_09_OUT.pkl')
 
     ifile = open(infile, 'br')
     idic  = pickle.load(ifile)
@@ -205,10 +205,10 @@ def test_09(datadir):
     dummy_test(slm, oslm)
 
 
-def test_10(datadir):
+def test_10():
 
-    infile  = datadir.join('linmod_10_IN.pkl')
-    expfile = datadir.join('linmod_10_OUT.pkl')
+    infile  = datadir('linmod_10_IN.pkl')
+    expfile = datadir('linmod_10_OUT.pkl')
 
     ifile = open(infile, 'br')
     idic  = pickle.load(ifile)
@@ -227,10 +227,10 @@ def test_10(datadir):
     dummy_test(slm, oslm)
 
 
-def test_11(datadir):
+def test_11():
 
-    infile  = datadir.join('linmod_11_IN.pkl')
-    expfile = datadir.join('linmod_11_OUT.pkl')
+    infile  = datadir('linmod_11_IN.pkl')
+    expfile = datadir('linmod_11_OUT.pkl')
 
     ifile = open(infile, 'br')
     idic  = pickle.load(ifile)
@@ -250,35 +250,10 @@ def test_11(datadir):
     dummy_test(slm, oslm)
 
 
-def test_12(datadir):
+def test_12():
 
-    infile  = datadir.join('linmod_12_IN.pkl')
-    expfile = datadir.join('linmod_12_OUT.pkl')
-
-    ifile = open(infile, 'br')
-    idic  = pickle.load(ifile)
-    ifile.close()
-
-    Y    = idic['Y']
-    age  = idic['age']
-    AGE  = Term(np.array(age), 'AGE')
-    M    = 1 + AGE
-    surf = {}
-    surf['tri'] = idic['tri']
-    surf['coord'] = idic['coord']
-    slm = SurfStatLinMod(Y, M, surf)
-
-    ofile = open(expfile, 'br')
-    oslm  = pickle.load(ofile)
-    ofile.close()
-
-    dummy_test(slm, oslm)
-
-
-def test_13(datadir):
-
-    infile  = datadir.join('linmod_13_IN.pkl')
-    expfile = datadir.join('linmod_13_OUT.pkl')
+    infile  = datadir('linmod_12_IN.pkl')
+    expfile = datadir('linmod_12_OUT.pkl')
 
     ifile = open(infile, 'br')
     idic  = pickle.load(ifile)
@@ -300,10 +275,10 @@ def test_13(datadir):
     dummy_test(slm, oslm)
 
 
-def test_14(datadir):
+def test_13():
 
-    infile  = datadir.join('linmod_14_IN.pkl')
-    expfile = datadir.join('linmod_14_OUT.pkl')
+    infile  = datadir('linmod_13_IN.pkl')
+    expfile = datadir('linmod_13_OUT.pkl')
 
     ifile = open(infile, 'br')
     idic  = pickle.load(ifile)
@@ -325,10 +300,35 @@ def test_14(datadir):
     dummy_test(slm, oslm)
 
 
-def test_15(datadir):
+def test_14():
 
-    infile  = datadir.join('linmod_15_IN.pkl')
-    expfile = datadir.join('linmod_15_OUT.pkl')
+    infile  = datadir('linmod_14_IN.pkl')
+    expfile = datadir('linmod_14_OUT.pkl')
+
+    ifile = open(infile, 'br')
+    idic  = pickle.load(ifile)
+    ifile.close()
+
+    Y    = idic['Y']
+    age  = idic['age']
+    AGE  = Term(np.array(age), 'AGE')
+    M    = 1 + AGE
+    surf = {}
+    surf['tri'] = idic['tri']
+    surf['coord'] = idic['coord']
+    slm = SurfStatLinMod(Y, M, surf)
+
+    ofile = open(expfile, 'br')
+    oslm  = pickle.load(ofile)
+    ofile.close()
+
+    dummy_test(slm, oslm)
+
+
+def test_15():
+
+    infile  = datadir('linmod_15_IN.pkl')
+    expfile = datadir('linmod_15_OUT.pkl')
 
     ifile = open(infile, 'br')
     idic  = pickle.load(ifile)
@@ -351,10 +351,10 @@ def test_15(datadir):
     dummy_test(slm, oslm)
 
 
-def test_16(datadir):
+def test_16():
 
-    infile  = datadir.join('linmod_16_IN.pkl')
-    expfile = datadir.join('linmod_16_OUT.pkl')
+    infile  = datadir('linmod_16_IN.pkl')
+    expfile = datadir('linmod_16_OUT.pkl')
 
     ifile = open(infile, 'br')
     idic  = pickle.load(ifile)
