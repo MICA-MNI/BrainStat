@@ -1,7 +1,9 @@
 import numpy as np
 import math
-from brainstat.stats.SurfStatEdg import SurfStatEdg
-from brainstat.stats.matlab_functions import interp1, ismember
+import sys
+sys.path.append("../brainstat/stats")
+from matlab_functions import interp1, ismember
+from SurfStatEdg import SurfStatEdg
 import copy
 
 
