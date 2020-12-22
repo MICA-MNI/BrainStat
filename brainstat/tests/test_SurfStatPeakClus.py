@@ -1,338 +1,198 @@
-from brainstat.stats import *
-import surfstat_wrap as sw
+import testutil
+from pytest import fixture
+import sys
+sys.path.append("brainstat/stats")
+from SurfStatPeakClus import *
 import numpy as np
-import random
-from scipy.io import loadmat
 import pytest
-import os
-import brainstat
+import pickle
 
 
-def dummy_test(slm, mask, thresh, reselspvert=None, edg=None):
-    # Deal with edge offset.
-    if edg is not None:
-        mat_edg = edg + 1
-    else:
-        mat_edg = None
+def dummy_test(infile, expfile):
 
-    try:
-        # wrap matlab functions
-        M_peak, M_clus, M_clusid = sw.matlab_PeakClus(slm, mask,
-                                                      thresh,
-                                                      reselspvert, mat_edg)
-    except:
-        pytest.skip("Original MATLAB code does not work with these inputs.")
+    # load input test data
+    ifile = open(infile, 'br')
+    idic  = pickle.load(ifile)
+    ifile.close()
 
-    # call python functions
+    slm = {}
+    slm['t']    = idic['t']
+    slm['tri']  = idic['tri']
+
+    mask = idic['mask']
+    thresh = idic['thresh']
+    reselspvert=None
+    edg=None
+
+    if 'reselspvert' in idic.keys():
+        reselspvert = idic['reselspvert']
+
+    if 'edg' in idic.keys():
+        edg = idic['edg']
+
+    if 'k' in idic.keys():
+        slm['k'] = idic['k']
+
+    if 'df' in idic.keys():
+        slm['df'] = idic['df']
+
+
+    # call python function
     P_peak, P_clus, P_clusid = SurfStatPeakClus(slm, mask, thresh,
                                                 reselspvert, edg)
-    # compare matlab-python outputs
-    testout_PeakClus = []
-    for key in M_peak:
-        testout_PeakClus.append(np.allclose(M_peak[key], P_peak[key],
-                                            rtol=1e-05, equal_nan=True))
-    for key in M_clus:
-        testout_PeakClus.append(np.allclose(M_clus[key], P_clus[key],
-                                            rtol=1e-05, equal_nan=True))
-    testout_PeakClus.append(np.allclose(M_clusid, P_clusid,
-                                        rtol=1e-05, equal_nan=True))
 
-    assert all(flag == True for (flag) in testout_PeakClus)
+    # load expected outout data
+    efile  = open(expfile, 'br')
+    expdic = pickle.load(efile)
+    efile.close()
 
+    O_peak   = expdic['peak']
+    O_clus   = expdic['clus']
+    O_clusid = expdic['clusid']
 
-sw.matlab_init_surfstat()
+    testout = []
 
+    if isinstance(P_peak, (dict)):
+        for key in P_peak.keys():
+            comp = np.allclose(P_peak[key], O_peak[key], rtol=1e-05, equal_nan=True)
+            testout.append(comp)
+    else:
+        comp = np.allclose(P_peak, O_peak, rtol=1e-05, equal_nan=True)
 
-def test_01():
-    # data from Sofie, randomize threshold between 0 and 1
-    slmdata = loadmat(os.path.dirname(brainstat.__file__) +
-                      os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
-    slm = {}
-    slm['t'] = slmdata['slm']['t'][0, 0]
-    slm['tri'] = slmdata['slm']['tri'][0, 0]
-    mask = np.ones((64984))
-    thresh = random.random()
-    dummy_test(slm, mask, thresh)
+    if isinstance(P_clus, (dict)):
+        for key in P_clus.keys():
+            comp = np.allclose(P_clus[key], O_clus[key], rtol=1e-05, equal_nan=True)
+    else:
+        comp = np.allclose(P_clus, O_clus, rtol=1e-05, equal_nan=True)
+    testout.append(comp)
 
+    testout.append(np.allclose(P_clusid, O_clusid,
+                               rtol=1e-05, equal_nan=True))
 
-def test_02():
-    # generate random data, small sized as 1000 points for slm['t']
-    k = 1000
-    m = 100
-    slm = {}
-    slm['t'] = np.random.rand(1, k)
-    slm['tri'] = np.random.randint(1, k, size=(m, 3))
-    mask = np.ones((k))
-    thresh = random.random()
-    dummy_test(slm, mask, thresh)
+    assert all(flag == True for (flag) in testout)
 
 
-def test_03():
-    # generate random data, size will be also random
-    k = random.randint(100, 1000)
-    m = random.randint(100, 1000)
-    slm = {}
-    slm['t'] = np.random.rand(1, k)
-    slm['tri'] = np.random.randint(1, k, size=(m, 3))
-    mask = np.ones((k))
-    thresh = random.random()
-    dummy_test(slm, mask, thresh)
+datadir = testutil.datadir
 
 
-def test_04():
-    # generate random data, size will be also random, big sizes...
-    k = random.randint(1000, 10000)
-    m = random.randint(1000, 10000)
-    slm = {}
-    slm['t'] = np.random.rand(1, k)
-    slm['tri'] = np.random.randint(1, k, size=(m, 3))
-    mask = np.ones((k))
-    thresh = random.random()
-    dummy_test(slm, mask, thresh)
+def test_01(datadir):
+    infile  = datadir.join('statpeakc_01_IN.pkl')
+    expfile = datadir.join('statpeakc_01_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
-def test_05():
-    # data from Sofie, randomize threshold between 0 and 1, add reselspvert
-    slmdata = loadmat(os.path.dirname(brainstat.__file__) +
-                      os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
-    slm = {}
-    slm['t'] = slmdata['slm']['t'][0, 0]
-    slm['tri'] = slmdata['slm']['tri'][0, 0]
-    mask = np.ones((64984))
-    thresh = random.random()
-    reselspvert = np.random.rand(64984)
-    dummy_test(slm, mask, thresh, reselspvert)
+def test_02(datadir):
+    infile  = datadir.join('statpeakc_02_IN.pkl')
+    expfile = datadir.join('statpeakc_02_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
-def test_06():
-    # generate random data, add reselpvert
-    k = random.randint(1000, 10000)
-    m = random.randint(1000, 10000)
-    slm = {}
-    slm['t'] = np.random.rand(1, k)
-    slm['tri'] = np.random.randint(1, k, size=(m, 3))
-    mask = np.ones((k))
-    thresh = random.random()
-    reselspvert = np.random.rand(k)
-    dummy_test(slm, mask, thresh, reselspvert)
+def test_03(datadir):
+    infile  = datadir.join('statpeakc_03_IN.pkl')
+    expfile = datadir.join('statpeakc_03_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
-def test_07():
-    # generate random data, add reselpvert, special case slm['k']=2, l=1
-    k = random.randint(1000, 10000)
-    m = random.randint(1000, 10000)
-    slm = {}
-    slm['t'] = np.random.rand(1, k)
-    slm['tri'] = np.random.randint(1, k, size=(m, 3))
-    slm['k'] = 2
-    slm['df'] = random.randint(100, 10000)
-    mask = np.ones((k))
-    thresh = random.random()
-    reselspvert = np.random.rand(k)
-    dummy_test(slm, mask, thresh, reselspvert)
+def test_04(datadir):
+    infile  = datadir.join('statpeakc_04_IN.pkl')
+    expfile = datadir.join('statpeakc_04_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
-def test_08():
-    # generate random data, add reselpvert, special case slm['k']=2, l>1,
-    # l>1 is for instance when slm['t'] = np.random.rand(2,k)
-    k = random.randint(1000, 10000)
-    m = random.randint(1000, 10000)
-    slm = {}
-    slm['t'] = np.random.rand(2, k)
-    slm['tri'] = np.random.randint(1, k, size=(m, 3))
-    slm['k'] = 2
-    slm['df'] = random.randint(100, 10000)
-    mask = np.ones((k))
-    thresh = random.random()
-    reselspvert = np.random.rand(k)
-    dummy_test(slm, mask, thresh, reselspvert)
+def test_05(datadir):
+    infile  = datadir.join('statpeakc_05_IN.pkl')
+    expfile = datadir.join('statpeakc_05_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
-def test_09():
-    # generate random data, special case slm['k']=3, l=1
-    k = random.randint(1000, 10000)
-    m = random.randint(1000, 10000)
-    slm = {}
-    slm['t'] = np.random.rand(1, k)
-    slm['tri'] = np.random.randint(1, k, size=(m, 3))
-    slm['k'] = 3
-    slm['df'] = random.randint(100, 10000)
-    mask = np.ones((k))
-    thresh = random.random()
-    dummy_test(slm, mask, thresh,)
+def test_06(datadir):
+    infile  = datadir.join('statpeakc_06_IN.pkl')
+    expfile = datadir.join('statpeakc_06_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
-def test_10():
-    # generate random data, add reselspvert, special case slm['k']=3, l=1
-    k = random.randint(1000, 10000)
-    m = random.randint(1000, 10000)
-    slm = {}
-    slm['t'] = np.random.rand(1, k)
-    slm['tri'] = np.random.randint(1, k, size=(m, 3))
-    slm['k'] = 3
-    slm['df'] = random.randint(100, 10000)
-    mask = np.ones((k))
-    thresh = random.random()
-    reselspvert = np.random.rand(k)
-    dummy_test(slm, mask, thresh, reselspvert)
+def test_07(datadir):
+    infile  = datadir.join('statpeakc_07_IN.pkl')
+    expfile = datadir.join('statpeakc_07_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
-def test_11():
-    # generate random data, add reselspvert, special case slm['k']=3, l=2,
-    # l=2 means that slm['t'] = np.random.rand(2,k)
-    k = random.randint(1000, 10000)
-    m = random.randint(1000, 10000)
-    slm = {}
-    slm['t'] = np.random.rand(2, k)
-    slm['tri'] = np.random.randint(1, k, size=(m, 3))
-    slm['k'] = 3
-    slm['df'] = random.randint(100, 10000)
-    mask = np.ones((k))
-    thresh = random.random()
-    reselspvert = np.random.rand(k)
-    dummy_test(slm, mask, thresh, reselspvert)
+def test_08(datadir):
+    infile  = datadir.join('statpeakc_08_IN.pkl')
+    expfile = datadir.join('statpeakc_08_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
-def test_12():
-    # generate random data, add reselspvert, special case slm['k']=3, l=3,
-    # l=3 means that slm['t'] = np.random.rand(3,k)
-    k = random.randint(1000, 10000)
-    m = random.randint(1000, 10000)
-    slm = {}
-    slm['t'] = np.random.rand(3, k)
-    slm['tri'] = np.random.randint(1, k, size=(m, 3))
-    slm['k'] = 3
-    slm['df'] = random.randint(100, 10000)
-    mask = np.ones((k))
-    thresh = random.random()
-    reselspvert = np.random.rand(k)
-    dummy_test(slm, mask, thresh, reselspvert)
+def test_09(datadir):
+    infile  = datadir.join('statpeakc_09_IN.pkl')
+    expfile = datadir.join('statpeakc_09_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
-def test_13():
-    # generate random data, add reselpvert, random mask
-    k = random.randint(1000, 10000)
-    m = random.randint(1000, 10000)
-    slm = {}
-    slm['t'] = np.random.rand(1, k)
-    slm['tri'] = np.random.randint(1, k, size=(m, 3))
-    mask = np.random.choice([0, 1], size=(k))
-    thresh = random.random()
-    reselspvert = np.random.rand(k)
-    dummy_test(slm, mask, thresh, reselspvert)
+def test_10(datadir):
+    infile  = datadir.join('statpeakc_10_IN.pkl')
+    expfile = datadir.join('statpeakc_10_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
-def test_14():
-    # generate random data, add reselspvert, special case slm['k']=3, l=2,
-    # l=2 means that slm['t'] = np.random.rand(2,k)
-    # random mask
-    k = random.randint(1000, 10000)
-    m = random.randint(1000, 10000)
-    slm = {}
-    slm['t'] = np.random.rand(2, k)
-    slm['tri'] = np.random.randint(1, k, size=(m, 3))
-    slm['k'] = 3
-    slm['df'] = random.randint(100, 10000)
-    mask = np.random.choice([0, 1], size=(k))
-    thresh = random.random()
-    reselspvert = np.random.rand(k)
-    dummy_test(slm, mask, thresh, reselspvert)
+def test_11(datadir):
+    infile  = datadir.join('statpeakc_11_IN.pkl')
+    expfile = datadir.join('statpeakc_11_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
-def test_15():
-    # generate random data, small sized as 1000 points for slm['t'],
-    # generate random edge, random reselspvert
-    k = 1000
-    m = 100
-    slm = {}
-    slm['t'] = np.random.rand(1, k)
-    slm['tri'] = np.random.randint(1, k, size=(m, 3))
-    mask = np.ones((k))
-    thresh = random.random()
-    reselspvert = np.random.rand(k)
-    A = {}
-    A['tri'] = np.random.randint(1, k, size=(m, 3))
-    edg = SurfStatEdg(A)
-    dummy_test(slm, mask, thresh, reselspvert, edg)
+def test_12(datadir):
+    infile  = datadir.join('statpeakc_12_IN.pkl')
+    expfile = datadir.join('statpeakc_12_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
-def test_16():
-    # generate random data, add reselspvert, special case slm['k']=3, l=2,
-    # l=2 means that slm['t'] = np.random.rand(2,k)
-    # random mask, generate random edge
-    k = random.randint(1000, 10000)
-    m = random.randint(1000, 10000)
-    slm = {}
-    slm['t'] = np.random.rand(2, k)
-    slm['tri'] = np.random.randint(1, k, size=(m, 3))
-    slm['k'] = 3
-    slm['df'] = random.randint(100, 10000)
-    mask = np.random.choice([0, 1], size=(k))
-    thresh = random.random()
-    reselspvert = np.random.rand(k)
-    A = {}
-    A['tri'] = np.random.randint(1, k, size=(m, 3))
-    edg = SurfStatEdg(A)
-    dummy_test(slm, mask, thresh, reselspvert, edg)
+def test_13(datadir):
+    infile  = datadir.join('statpeakc_13_IN.pkl')
+    expfile = datadir.join('statpeakc_13_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
-def test_17():
-    # generate random data, small sized as 1000 points for slm['t'],
-    # generate random edge from random ['lat'], random reselspvert,
-    # random mask
-    k = 1000
-    m = 100
-    slm = {}
-    slm['t'] = np.random.rand(1, k)
-    slm['tri'] = np.random.randint(1, k, size=(m, 3))
-    mask = np.random.choice([0, 1], size=(k))
-    thresh = random.random()
-    reselspvert = np.random.rand(k)
-    A = {}
-    A['lat'] = np.random.choice([0, 1], size=(10, 10, 10))
-    edg = SurfStatEdg(A)
-    dummy_test(slm, mask, thresh, reselspvert, edg)
+def test_14(datadir):
+    infile  = datadir.join('statpeakc_14_IN.pkl')
+    expfile = datadir.join('statpeakc_14_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
-def test_18():
-    # generate random data, small sized as 1000 points for slm['t'],
-    # extremely big threshold for n < 1 case in SurfStatPeakClus.py
-    k = 1000
-    m = 100
-    slm = {}
-    slm['t'] = np.random.rand(1, k)
-    slm['tri'] = np.random.randint(1, k, size=(m, 3))
-    mask = np.ones((k))
-    thresh = k * m * 1000000
-    dummy_test(slm, mask, thresh)
+def test_15(datadir):
+    infile  = datadir.join('statpeakc_15_IN.pkl')
+    expfile = datadir.join('statpeakc_15_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
-def test_19():
-    # special case n<1
-    slmdata = loadmat(os.path.dirname(brainstat.__file__) +
-                      os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
-    slm = {}
-    slm['t'] = slmdata['slm']['t'][0, 0]
-    slm['tri'] = slmdata['slm']['tri'][0, 0]
-    mask = np.ones((64984))
-    thresh = 100000
-    dummy_test(slm, mask, thresh)
+def test_16(datadir):
+    infile  = datadir.join('statpeakc_16_IN.pkl')
+    expfile = datadir.join('statpeakc_16_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
-def test_20():
-    # generate random data, small sized as 1000 points for slm['t'],
-    # generate random edge from random ['lat'], random reselspvert,
-    # random mask
-    # special case n<1
-    k = 1000
-    m = 100
-    slm = {}
-    slm['t'] = np.random.rand(1, k)
-    slm['tri'] = np.random.randint(1, k, size=(m, 3))
-    mask = np.random.choice([0, 1], size=(k))
-    thresh = 100000
-    reselspvert = np.random.rand(k)
-    A = {}
-    A['lat'] = np.random.choice([0, 1], size=(10, 10, 10))
-    edg = SurfStatEdg(A)
-    dummy_test(slm, mask, thresh, reselspvert, edg)
+def test_17(datadir):
+    infile  = datadir.join('statpeakc_17_IN.pkl')
+    expfile = datadir.join('statpeakc_17_OUT.pkl')
+    dummy_test(infile, expfile)
+
+
+def test_18(datadir):
+    infile  = datadir.join('statpeakc_18_IN.pkl')
+    expfile = datadir.join('statpeakc_18_OUT.pkl')
+    dummy_test(infile, expfile)
+
+
+def test_19(datadir):
+    infile  = datadir.join('statpeakc_19_IN.pkl')
+    expfile = datadir.join('statpeakc_19_OUT.pkl')
+    dummy_test(infile, expfile)
+
+
+def test_20(datadir):
+    infile  = datadir.join('statpeakc_20_IN.pkl')
+    expfile = datadir.join('statpeakc_20_OUT.pkl')
+    dummy_test(infile, expfile)
+
+
+
