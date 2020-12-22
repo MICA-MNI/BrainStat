@@ -1,6 +1,8 @@
 import numpy as np
 from numpy_groupies import aggregate
-from brainstat.stats.SurfStatEdg import SurfStatEdg
+import sys
+sys.path.append("../brainstat/stats")
+from SurfStatEdg import SurfStatEdg
 
 
 def SurfStatSmooth(Y, surf, FWHM):

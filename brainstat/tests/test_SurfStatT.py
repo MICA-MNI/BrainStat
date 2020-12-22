@@ -1,198 +1,117 @@
-from brainstat.stats import *
-import surfstat_wrap as sw
+import testutil
+from pytest import fixture
+import sys
+sys.path.append("brainstat/stats")
+from SurfStatT import *
 import numpy as np
-from scipy.io import loadmat
 import pytest
-import os
-import brainstat
-
-sw.matlab_init_surfstat()
+import pickle
 
 
-def dummy_test(slm, contrast):
+def dummy_test(infile, expfile):
 
-    try:
-        # wrap matlab functions
-        Wrapped_slm = sw.matlab_T(slm, contrast)
-
-    except:
-        pytest.skip("Original MATLAB code does not work with these inputs.")
-
-    # run python functions
-    Python_slm = SurfStatT(slm, contrast)
-
-    testout_T = []
-
-    # compare matlab-python outputs
-    for key in Wrapped_slm:
-        testout_T.append(np.allclose(Python_slm[key], Wrapped_slm[key],
-                                     rtol=1e-05, equal_nan=True))
-
-    assert all(flag == True for (flag) in testout_T)
-
-
-# Test 1
-def test_01():
-    a = np.random.randint(1, 10)
-    A = {}
-    A['X'] = np.random.rand(a, 1)
-    A['df'] = np.array([[3.0]])
-    A['coef'] = np.random.rand(1, a).reshape(1, a)
-    A['SSE'] = np.random.rand(1, a)
-    B = np.random.rand(1).reshape(1, 1)
-
-    dummy_test(A, B)
-
-
-# Test 2  ### square matrices
-def test_02():
-    a = np.random.randint(1, 10)
-    b = np.random.randint(1, 10)
-    A = {}
-    A['X'] = np.random.rand(a, a)
-    A['df'] = np.array([[b]])
-    A['coef'] = np.random.rand(a, a)
-    A['SSE'] = np.random.rand(1, a)
-    B = np.random.rand(1, a)
-    dummy_test(A, B)
-
-
-# Test 3  ### slm.V & slm.r given
-def test_03():
-    a = np.array([[4, 4, 4], [5, 5, 5], [6, 6, 6]])
-    b = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
-    Z = np.zeros((3, 3, 2))
-    Z[:, :, 0] = a
-    Z[:, :, 1] = b
-    A = {}
-    A['X'] = np.array([[1, 2], [3, 4], [5, 6]])
-    A['V'] = Z
-    A['df'] = np.array([[1.0]])
-    A['coef'] = np.array([[8], [9]])
-    A['SSE'] = np.array([[3]])
-    A['r'] = np.array([[4]])
-    A['dr'] = np.array([[5]])
-    B = np.array([[1]])
-    dummy_test(A, B)
-
-
-# Test 4 #### slm.V given, slm.r not
-def test_04():
-    A = {}
-    A['X'] = np.random.rand(3, 2)
-    A['V'] = np.array([[4, 4, 4], [5, 5, 5], [6, 6, 6]])
-    A['df'] = np.array([np.random.randint(1, 10)])
-    A['coef'] = np.random.rand(2, 1)
-    A['SSE'] = np.array([np.random.randint(1, 10)])
-    A['dr'] = np.array([np.random.randint(1, 10)])
-    B = np.array([[1]])
-    dummy_test(A, B)
-
-
-def test_05():
-    fname = (
-        os.path.dirname(brainstat.__file__) +
-        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep +
-        'thickness_slm.mat'
-    )
-    f = loadmat(fname)
+    # load input test data
+    ifile = open(infile, 'br')
+    idic  = pickle.load(ifile)
+    ifile.close()
 
     slm = {}
-    slm['X'] = f['slm']['X'][0, 0]
-    slm['df'] = f['slm']['df'][0, 0][0, 0]
-    slm['coef'] = f['slm']['coef'][0, 0]
-    slm['SSE'] = f['slm']['SSE'][0, 0]
-    slm['tri'] = f['slm']['tri'][0, 0]
-    slm['resl'] = f['slm']['resl'][0, 0]
+    slm['X']    = idic['X']
+    slm['df']   = idic['df']
+    slm['coef'] = idic['coef']
+    slm['SSE']  = idic['SSE']
 
-    AGE = f['slm']['AGE'][0, 0]
+    contrast = idic['contrast']
 
-    dummy_test(slm, AGE)
+    if 'V' in idic.keys():
+        slm['V']    = idic['V']
 
+    if 'SSE' in idic.keys():
+        slm['SSE']    = idic['SSE']
 
-def test_06():
-    fname = (
-        os.path.dirname(brainstat.__file__) +
-        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep +
-        'thickness_slm.mat'
-    )
-    f = loadmat(fname)
+    if 'r' in idic.keys():
+        slm['r']    = idic['r']
 
-    slm = {}
-    slm['X'] = f['slm']['X'][0, 0]
-    slm['df'] = f['slm']['df'][0, 0][0, 0]
-    slm['coef'] = f['slm']['coef'][0, 0]
-    slm['SSE'] = f['slm']['SSE'][0, 0]
-    slm['tri'] = f['slm']['tri'][0, 0]
-    slm['resl'] = f['slm']['resl'][0, 0]
+    if 'dr' in idic.keys():
+        slm['dr']    = idic['dr']
 
-    AGE = f['slm']['AGE'][0, 0]
+    if 'tri' in idic.keys():
+        slm['tri']    = idic['tri']
 
-    dummy_test(slm, -1*AGE)
+    if 'resl' in idic.keys():
+        slm['resl']    = idic['resl']
 
 
-def test_07():
-    fname = (
-        os.path.dirname(brainstat.__file__) +
-        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep +
-        'thickness.mat'
-    )
-    f = loadmat(fname)
-    A = f['T']
-    np.random.shuffle(A)
+    # run SurfStatT
+    outdic = SurfStatT(slm, contrast)
 
-    AGE = Term(np.array(f['AGE']), 'AGE')
-    B = 1 + AGE
-    surf = {}
-    surf['tri'] = f['tri']
-    surf['coord'] = f['coord']
-    slm = SurfStatLinMod(A, B, surf)
+    # load expected outout data
+    efile  = open(expfile, 'br')
+    expdic = pickle.load(efile)
+    efile.close()
 
-    contrast = np.array(f['AGE']).T
+    testout = []
 
-    dummy_test(slm, contrast)
+    for key in outdic.keys():
+        comp = np.allclose(outdic[key], expdic[key], rtol=1e-05, equal_nan=True)
+        testout.append(comp)
+
+    assert all(flag == True for (flag) in testout)
+
+datadir = testutil.datadir
 
 
-def test_08():
-    fname = (
-        os.path.dirname(brainstat.__file__) +
-        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep +
-        'sofopofo1_slm.mat'
-    )
-    f = loadmat(fname)
-    slm = {}
-    slm['X'] = f['slm']['X'][0, 0]
-    slm['df'] = f['slm']['df'][0, 0][0, 0]
-    slm['coef'] = f['slm']['coef'][0, 0]
-    slm['SSE'] = f['slm']['SSE'][0, 0]
-    slm['tri'] = f['slm']['tri'][0, 0]
-    slm['resl'] = f['slm']['resl'][0, 0]
-
-    contrast = np.random.randint(20, 50, size=(slm['X'].shape[0], 1))
-
-    dummy_test(slm, contrast)
+def test_01(datadir):
+    infile  = datadir.join('statt_01_IN.pkl')
+    expfile = datadir.join('statt_01_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
-def test_09():
-    fname = (
-        os.path.dirname(brainstat.__file__) +
-        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep +
-        'sofopofo1.mat'
-    )
-    f = loadmat(fname)
-    T = f['sofie']['T'][0, 0]
+def test_02(datadir):
+    infile  = datadir.join('statt_02_IN.pkl')
+    expfile = datadir.join('statt_02_OUT.pkl')
+    dummy_test(infile, expfile)
 
-    params = f['sofie']['model'][0, 0]
-    colnames = ['1', 'ak', 'female', 'male', 'Affect', 'Control1', 'Perspective',
-                'Presence', 'ink']
 
-    M = Term(params, colnames)
+def test_03(datadir):
+    infile  = datadir.join('statt_03_IN.pkl')
+    expfile = datadir.join('statt_03_OUT.pkl')
+    dummy_test(infile, expfile)
 
-    SW = {}
-    SW['tri'] = f['sofie']['SW'][0, 0]['tri'][0, 0]
-    SW['coord'] = f['sofie']['SW'][0, 0]['coord'][0, 0]
-    slm = SurfStatLinMod(T, M, SW)
 
-    contrast = np.random.randint(20, 50, size=(slm['X'].shape[0], 1))
+def test_04(datadir):
+    infile  = datadir.join('statt_04_IN.pkl')
+    expfile = datadir.join('statt_04_OUT.pkl')
+    dummy_test(infile, expfile)
 
-    dummy_test(slm, contrast)
+
+def test_05(datadir):
+    infile  = datadir.join('statt_05_IN.pkl')
+    expfile = datadir.join('statt_05_OUT.pkl')
+    dummy_test(infile, expfile)
+
+
+def test_06(datadir):
+    infile  = datadir.join('statt_06_IN.pkl')
+    expfile = datadir.join('statt_06_OUT.pkl')
+    dummy_test(infile, expfile)
+
+
+def test_07(datadir):
+    infile  = datadir.join('statt_07_IN.pkl')
+    expfile = datadir.join('statt_07_OUT.pkl')
+    dummy_test(infile, expfile)
+
+
+def test_08(datadir):
+    infile  = datadir.join('statt_08_IN.pkl')
+    expfile = datadir.join('statt_08_OUT.pkl')
+    dummy_test(infile, expfile)
+
+
+def test_09(datadir):
+    infile  = datadir.join('statt_09_IN.pkl')
+    expfile = datadir.join('statt_09_OUT.pkl')
+    dummy_test(infile, expfile)
+
+
