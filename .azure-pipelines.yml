@@ -10,7 +10,7 @@ strategy:
   matrix:
     Python 3.6:
       implementation_version: '3.6'
-      implementation:language: 'python'
+      implementation_language: 'python'
     Python 3.7:
       implementation_version: '3.7'
       implementation_language: 'python'
@@ -19,7 +19,7 @@ strategy:
       implementation_version: 'latest'
     MATLAB 2019b:
       implementation_language: 'matlab'
-      implementation_version: 'R2019b'
+      implementation_version: 'R2020a'
 
 steps:
   # Install Python/MATLAB
