@@ -1,6 +1,5 @@
 import warnings
 import scipy
-from scipy import linalg, matrix
 from scipy.linalg import null_space
 from scipy.linalg import cholesky
 import numpy as np

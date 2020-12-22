@@ -344,8 +344,7 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
     else:
         # cluster_threshold is treated as a probability
         tt = minterp1(pt,t,cluster_threshold)
-        if nprint>0:
-            Cluster_threshold = tt
+
 
     d = np.sum(D)
     rhoD = interp1(t, rho[:,D[0],D[1]], tt)

@@ -1,5 +1,4 @@
 from scipy.interpolate import interp1d
-from itertools import product
 import numpy as np
 
 

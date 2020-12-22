@@ -1,9 +1,7 @@
 import testutil
-from pytest import fixture
 import sys
 sys.path.append("brainstat/stats")
 import numpy as np
-import pytest
 from SurfStatLinMod import SurfStatLinMod
 from term import Term
 import pickle

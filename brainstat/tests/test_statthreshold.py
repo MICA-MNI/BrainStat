@@ -2,7 +2,6 @@ import testutil
 import sys
 sys.path.append("brainstat/stats")
 import numpy as np
-import pytest
 from stat_threshold import stat_threshold
 import pickle
 
