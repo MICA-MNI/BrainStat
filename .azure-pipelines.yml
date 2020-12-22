@@ -1,4 +1,4 @@
-pr:
+trigger:
   branches:
     include:
       - '*'
@@ -14,9 +14,9 @@ strategy:
     Python 3.7:
       implementation_language: 'python'
       implementation_version: '3.7'
-    MATLAB 2020a:
-      implementation_language: 'matlab'
-      implementation_version: 'R2020a'
+#    MATLAB 2020a:
+#      implementation_language: 'matlab'
+#      implementation_version: 'R2020a'
 
 steps:
   # Install Python/MATLAB
