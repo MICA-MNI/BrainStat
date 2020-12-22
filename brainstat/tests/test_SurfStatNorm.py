@@ -36,27 +36,27 @@ def dummy_test(infile, expfile):
     assert all(flag == True for (flag) in testout)
 
 
-def test_01(datadir):
-    infile  = datadir.join('statnor_01_IN.pkl')
-    expfile = datadir.join('statnor_01_OUT.pkl')
+def test_01():
+    infile  = datadir('statnor_01_IN.pkl')
+    expfile = datadir('statnor_01_OUT.pkl')
     dummy_test(infile, expfile)
 
 
-def test_02(datadir):
-    infile  = datadir.join('statnor_02_IN.pkl')
-    expfile = datadir.join('statnor_02_OUT.pkl')
+def test_02():
+    infile  = datadir('statnor_02_IN.pkl')
+    expfile = datadir('statnor_02_OUT.pkl')
     dummy_test(infile, expfile)
 
 
-def test_03(datadir):
-    infile  = datadir.join('statnor_03_IN.pkl')
-    expfile = datadir.join('statnor_03_OUT.pkl')
+def test_03():
+    infile  = datadir('statnor_03_IN.pkl')
+    expfile = datadir('statnor_03_OUT.pkl')
     dummy_test(infile, expfile)
 
 
-def test_04(datadir):
-    infile  = datadir.join('statnor_04_IN.pkl')
-    expfile = datadir.join('statnor_04_OUT.pkl')
+def test_04():
+    infile  = datadir('statnor_04_IN.pkl')
+    expfile = datadir('statnor_04_OUT.pkl')
     dummy_test(infile, expfile)
 
 
