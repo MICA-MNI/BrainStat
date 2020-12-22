@@ -2,9 +2,11 @@ import numpy as np
 from scipy.interpolate import interp1d
 from scipy.special import gammaln
 import math
-from brainstat.stats.SurfStatPeakClus import SurfStatPeakClus
-from brainstat.stats.stat_threshold import stat_threshold
-from brainstat.stats.SurfStatResels import SurfStatResels
+import sys
+sys.path.append("../brainstat/stats")
+from SurfStatPeakClus import SurfStatPeakClus
+from stat_threshold import stat_threshold
+from SurfStatResels import SurfStatResels
 
 
 def SurfStatP(slm, mask=None, clusthresh=0.001):
