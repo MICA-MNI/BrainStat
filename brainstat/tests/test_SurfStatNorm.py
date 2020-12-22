@@ -1,68 +1,71 @@
-from brainstat.stats import *
-import surfstat_wrap as sw
+import testutil
+from pytest import fixture
+import sys
+sys.path.append("brainstat/stats")
+from SurfStatNorm import *
 import numpy as np
 import pytest
-
-sw.matlab_init_surfstat()
-
-
-def dummy_test(Y, mask, subdiv):
-
-    try:
-        # wrap matlab functions
-        Wrapped_Y, Wrapped_Yav = sw.matlab_Norm(Y, mask, subdiv)
-    except:
-        pytest.skip("Original MATLAB code does not work with these inputs.")
-
-    Python_Y, Python_Yav = SurfStatNorm(Y, mask, subdiv)
-
-    # compare matlab-python outputs
-
-    assert np.allclose(Wrapped_Y, Python_Y, rtol=1e-05, equal_nan=True)
-
-    assert np.allclose(Wrapped_Yav, Python_Yav, rtol=1e-05, equal_nan=True)
+import pickle
 
 
-def test_01():
-    # 1D inputs --- row vectors
-    v = np.random.randint(1, 9)
+def dummy_test(infile, expfile):
 
-    a = np.arange(1, v)
-    a = a.reshape(1, len(a))
+    # load input test data
+    ifile = open(infile, 'br')
+    idic  = pickle.load(ifile)
+    ifile.close()
 
-    Y = a
+    Y = idic['Y']
+
     mask = None
     subdiv = 's'
 
-    dummy_test(Y, mask, subdiv)
+    if 'mask' in idic.keys():
+        mask = idic['mask']
+
+    if 's' in idic.keys():
+        s = idic['s']
+
+    # run SurfStatNorm
+    Y_out, Yav_out = SurfStatNorm(Y, mask, subdiv)
+
+    # load expected outout data
+    efile  = open(expfile, 'br')
+    expdic = pickle.load(efile)
+    efile.close()
+    exp_Y_out = expdic['Python_Y']
+    exp_Yav_out = expdic['Python_Yav']
+
+    testout = []
+    testout.append(np.allclose(Y_out, exp_Y_out, rtol=1e-05, equal_nan=True))
+    testout.append(np.allclose(Yav_out, exp_Yav_out, rtol=1e-05, equal_nan=True))
+
+    assert all(flag == True for (flag) in testout)
+
+datadir = testutil.datadir
 
 
-def test_02():
-    # 1D inputs --- row vectors & mask
-    a = np.arange(1, 11)
-    a = a.reshape(1, len(a))
-    Y = a
-    mask = np.array([1, 1, 0, 1, 1, 1, 1, 1, 1, 1], dtype=bool)
-    subdiv = 's'
-    dummy_test(Y, mask, subdiv)
+def test_01(datadir):
+    infile  = datadir.join('statnor_01_IN.pkl')
+    expfile = datadir.join('statnor_01_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
-def test_03():
-    # 1D inputs --- 2D arrays & mask
-    a = np.arange(1, 11)
-    a = a.reshape(1, len(a))
-    Y = np.concatenate((a, a), axis=0)
-    mask = np.array([1, 1, 0, 0, 1, 1, 1, 1, 1, 1], dtype=bool)
-    subdiv = 's'
-    dummy_test(Y, mask, subdiv)
+def test_02(datadir):
+    infile  = datadir.join('statnor_02_IN.pkl')
+    expfile = datadir.join('statnor_02_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
-def test_04():
-    # 1D inputs --- 3D arrays & mask
-    a = np.array([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]])
-    Y = np.zeros((3, 4, 2))
-    Y[:, :, 0] = a
-    Y[:, :, 1] = a
-    mask = np.array([1, 1, 0, 0], dtype=bool)
-    subdiv = 's'
-    dummy_test(Y, mask, subdiv)
+def test_03(datadir):
+    infile  = datadir.join('statnor_03_IN.pkl')
+    expfile = datadir.join('statnor_03_OUT.pkl')
+    dummy_test(infile, expfile)
+
+
+def test_04(datadir):
+    infile  = datadir.join('statnor_04_IN.pkl')
+    expfile = datadir.join('statnor_04_OUT.pkl')
+    dummy_test(infile, expfile)
+
+
