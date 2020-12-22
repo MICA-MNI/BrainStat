@@ -1,7 +1,9 @@
 import math
 import numpy as np
+import sys
+sys.path.append("../brainstat/stats")
+from matlab_functions import interp1, colon
 from scipy.special import betaln, gammaln, gamma
-from brainstat.stats.matlab_functions import interp1, colon
 
 
 def gammalni(n):
