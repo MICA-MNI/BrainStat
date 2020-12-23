@@ -4,6 +4,7 @@ import gzip
 from .testutil import datadir
 from ..stats import SurfStatEdg
 
+
 def dummy_test(infile, expfile):
 
     # load input test data

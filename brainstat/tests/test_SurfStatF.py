@@ -4,6 +4,7 @@ from .testutil import datadir
 from ..stats import SurfStatF
 import gzip
 
+
 def dummy_test(infile, expfile):
 
     # load input test data

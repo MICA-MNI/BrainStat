@@ -4,20 +4,21 @@ from .testutil import datadir
 from ..stats import SurfStatP
 import gzip
 
+
 def dummy_test(infile, expfile):
 
     # load input test data
     with gzip.open(infile, 'rb') as f:
-        idic  = pickle.load(f)
+        idic = pickle.load(f)
 
     slm = {}
-    slm['t']    = idic['t']
-    slm['df']   = idic['df']
-    slm['k']    = idic['k']
-    slm['tri']  = idic['tri']
+    slm['t'] = idic['t']
+    slm['df'] = idic['df']
+    slm['k'] = idic['k']
+    slm['tri'] = idic['tri']
 
     mask = None
-    clusthresh=0.001
+    clusthresh = 0.001
 
     if 'dfs' in idic.keys():
         slm['dfs'] = idic['dfs']
@@ -35,7 +36,7 @@ def dummy_test(infile, expfile):
         slm['X'] = idic['X']
 
     if 'coef' in idic.keys():
-        slm['coef']  = idic['coef']
+        slm['coef'] = idic['coef']
 
     if 'SSE' in idic.keys():
         slm['SSE'] = idic['SSE']
@@ -49,34 +50,36 @@ def dummy_test(infile, expfile):
     if 'sd' in idic.keys():
         slm['sd'] = idic['sd']
 
-
     PY_pval, PY_peak, PY_clus, PY_clusid = SurfStatP(slm, mask, clusthresh)
 
     # load expected outout data
     with gzip.open(expfile, 'rb') as f:
-        expdic  = pickle.load(f)
+        expdic = pickle.load(f)
 
-    O_pval   = expdic['pval']
-    O_peak   = expdic['peak']
-    O_clus   = expdic['clus']
+    O_pval = expdic['pval']
+    O_peak = expdic['peak']
+    O_clus = expdic['clus']
     O_clusid = expdic['clusid']
 
     testout = []
 
     for key in PY_pval.keys():
-        comp = np.allclose(PY_pval[key], O_pval[key], rtol=1e-05, equal_nan=True)
+        comp = np.allclose(PY_pval[key], O_pval[key],
+                           rtol=1e-05, equal_nan=True)
         testout.append(comp)
 
     if isinstance(PY_peak, (dict)):
         for key in PY_peak.keys():
-            comp = np.allclose(PY_peak[key], O_peak[key], rtol=1e-05, equal_nan=True)
+            comp = np.allclose(
+                PY_peak[key], O_peak[key], rtol=1e-05, equal_nan=True)
     else:
         comp = np.allclose(PY_peak, O_peak, rtol=1e-05, equal_nan=True)
     testout.append(comp)
 
     if isinstance(PY_peak, (dict)):
         for key in PY_clus.keys():
-            comp = np.allclose(PY_clus[key], O_clus[key], rtol=1e-05, equal_nan=True)
+            comp = np.allclose(
+                PY_clus[key], O_clus[key], rtol=1e-05, equal_nan=True)
     else:
         comp = np.allclose(PY_clus, O_clus, rtol=1e-05, equal_nan=True)
     testout.append(comp)
@@ -88,117 +91,114 @@ def dummy_test(infile, expfile):
 
 
 def test_01():
-    infile  = datadir('statp_01_IN.pkl.gz')
+    infile = datadir('statp_01_IN.pkl.gz')
     expfile = datadir('statp_01_OUT.pkl.gz')
     dummy_test(infile, expfile)
 
 
 def test_02():
-    infile  = datadir('statp_02_IN.pkl.gz')
+    infile = datadir('statp_02_IN.pkl.gz')
     expfile = datadir('statp_02_OUT.pkl.gz')
     dummy_test(infile, expfile)
 
 
 def test_03():
-    infile  = datadir('statp_03_IN.pkl.gz')
+    infile = datadir('statp_03_IN.pkl.gz')
     expfile = datadir('statp_03_OUT.pkl.gz')
     dummy_test(infile, expfile)
 
 
 def test_04():
-    infile  = datadir('statp_04_IN.pkl.gz')
+    infile = datadir('statp_04_IN.pkl.gz')
     expfile = datadir('statp_04_OUT.pkl.gz')
     dummy_test(infile, expfile)
 
 
 def test_05():
-    infile  = datadir('statp_05_IN.pkl.gz')
+    infile = datadir('statp_05_IN.pkl.gz')
     expfile = datadir('statp_05_OUT.pkl.gz')
     dummy_test(infile, expfile)
 
 
 def test_06():
-    infile  = datadir('statp_06_IN.pkl.gz')
+    infile = datadir('statp_06_IN.pkl.gz')
     expfile = datadir('statp_06_OUT.pkl.gz')
     dummy_test(infile, expfile)
 
 
 def test_07():
-    infile  = datadir('statp_07_IN.pkl.gz')
+    infile = datadir('statp_07_IN.pkl.gz')
     expfile = datadir('statp_07_OUT.pkl.gz')
     dummy_test(infile, expfile)
 
 
 def test_08():
-    infile  = datadir('statp_08_IN.pkl.gz')
+    infile = datadir('statp_08_IN.pkl.gz')
     expfile = datadir('statp_08_OUT.pkl.gz')
     dummy_test(infile, expfile)
 
 
 def test_09():
-    infile  = datadir('statp_09_IN.pkl.gz')
+    infile = datadir('statp_09_IN.pkl.gz')
     expfile = datadir('statp_09_OUT.pkl.gz')
     dummy_test(infile, expfile)
 
 
 def test_10():
-    infile  = datadir('statp_10_IN.pkl.gz')
+    infile = datadir('statp_10_IN.pkl.gz')
     expfile = datadir('statp_10_OUT.pkl.gz')
     dummy_test(infile, expfile)
 
 
 def test_11():
-    infile  = datadir('statp_11_IN.pkl.gz')
+    infile = datadir('statp_11_IN.pkl.gz')
     expfile = datadir('statp_11_OUT.pkl.gz')
     dummy_test(infile, expfile)
 
 
 def test_12():
-    infile  = datadir('statp_12_IN.pkl.gz')
+    infile = datadir('statp_12_IN.pkl.gz')
     expfile = datadir('statp_12_OUT.pkl.gz')
     dummy_test(infile, expfile)
 
 
 def test_13():
-    infile  = datadir('statp_13_IN.pkl.gz')
+    infile = datadir('statp_13_IN.pkl.gz')
     expfile = datadir('statp_13_OUT.pkl.gz')
     dummy_test(infile, expfile)
 
 
 def test_14():
-    infile  = datadir('statp_14_IN.pkl.gz')
+    infile = datadir('statp_14_IN.pkl.gz')
     expfile = datadir('statp_14_OUT.pkl.gz')
     dummy_test(infile, expfile)
 
 
 def test_15():
-    infile  = datadir('statp_15_IN.pkl.gz')
+    infile = datadir('statp_15_IN.pkl.gz')
     expfile = datadir('statp_15_OUT.pkl.gz')
     dummy_test(infile, expfile)
 
 
 def test_16():
-    infile  = datadir('statp_16_IN.pkl.gz')
+    infile = datadir('statp_16_IN.pkl.gz')
     expfile = datadir('statp_16_OUT.pkl.gz')
     dummy_test(infile, expfile)
 
 
 def test_17():
-    infile  = datadir('statp_17_IN.pkl.gz')
+    infile = datadir('statp_17_IN.pkl.gz')
     expfile = datadir('statp_17_OUT.pkl.gz')
     dummy_test(infile, expfile)
 
 
 def test_18():
-    infile  = datadir('statp_18_IN.pkl.gz')
+    infile = datadir('statp_18_IN.pkl.gz')
     expfile = datadir('statp_18_OUT.pkl.gz')
     dummy_test(infile, expfile)
 
 
 def test_19():
-    infile  = datadir('statp_19_IN.pkl.gz')
+    infile = datadir('statp_19_IN.pkl.gz')
     expfile = datadir('statp_19_OUT.pkl.gz')
     dummy_test(infile, expfile)
-
-
-
