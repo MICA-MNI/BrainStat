@@ -2,14 +2,13 @@ import numpy as np
 import pickle
 from .testutil import datadir
 from ..stats import SurfStatQ
-
+import gzip
 
 def dummy_test(infile, expfile):
 
     # load input test data
-    ifile = open(infile, 'br')
-    idic  = pickle.load(ifile)
-    ifile.close()
+    with gzip.open(infile, 'rb') as f:
+        idic  = pickle.load(f)
 
     slm = {}
     slm['t']  = idic['t']
@@ -57,9 +56,8 @@ def dummy_test(infile, expfile):
     outdic = SurfStatQ(slm, mask)
 
     # load expected outout data
-    efile  = open(expfile, 'br')
-    expdic = pickle.load(efile)
-    efile.close()
+    with gzip.open(expfile, 'rb') as f:
+        expdic  = pickle.load(f)
 
     testout = []
 
@@ -71,86 +69,86 @@ def dummy_test(infile, expfile):
 
 
 def test_01():
-    infile  = datadir('statq_01_IN.pkl')
-    expfile = datadir('statq_01_OUT.pkl')
+    infile  = datadir('statq_01_IN.pkl.gz')
+    expfile = datadir('statq_01_OUT.pkl.gz')
     dummy_test(infile, expfile)
 
 
 def test_02():
-    infile  = datadir('statq_02_IN.pkl')
-    expfile = datadir('statq_02_OUT.pkl')
+    infile  = datadir('statq_02_IN.pkl.gz')
+    expfile = datadir('statq_02_OUT.pkl.gz')
     dummy_test(infile, expfile)
 
 
 def test_03():
-    infile  = datadir('statq_03_IN.pkl')
-    expfile = datadir('statq_03_OUT.pkl')
+    infile  = datadir('statq_03_IN.pkl.gz')
+    expfile = datadir('statq_03_OUT.pkl.gz')
     dummy_test(infile, expfile)
 
 
 def test_04():
-    infile  = datadir('statq_04_IN.pkl')
-    expfile = datadir('statq_04_OUT.pkl')
+    infile  = datadir('statq_04_IN.pkl.gz')
+    expfile = datadir('statq_04_OUT.pkl.gz')
     dummy_test(infile, expfile)
 
 
 def test_05():
-    infile  = datadir('statq_05_IN.pkl')
-    expfile = datadir('statq_05_OUT.pkl')
+    infile  = datadir('statq_05_IN.pkl.gz')
+    expfile = datadir('statq_05_OUT.pkl.gz')
     dummy_test(infile, expfile)
 
 
 def test_06():
-    infile  = datadir('statq_06_IN.pkl')
-    expfile = datadir('statq_06_OUT.pkl')
+    infile  = datadir('statq_06_IN.pkl.gz')
+    expfile = datadir('statq_06_OUT.pkl.gz')
     dummy_test(infile, expfile)
 
 
 def test_07():
-    infile  = datadir('statq_07_IN.pkl')
-    expfile = datadir('statq_07_OUT.pkl')
+    infile  = datadir('statq_07_IN.pkl.gz')
+    expfile = datadir('statq_07_OUT.pkl.gz')
     dummy_test(infile, expfile)
 
 
 def test_08():
-    infile  = datadir('statq_08_IN.pkl')
-    expfile = datadir('statq_08_OUT.pkl')
+    infile  = datadir('statq_08_IN.pkl.gz')
+    expfile = datadir('statq_08_OUT.pkl.gz')
     dummy_test(infile, expfile)
 
 
 def test_09():
-    infile  = datadir('statq_09_IN.pkl')
-    expfile = datadir('statq_09_OUT.pkl')
+    infile  = datadir('statq_09_IN.pkl.gz')
+    expfile = datadir('statq_09_OUT.pkl.gz')
     dummy_test(infile, expfile)
 
 
 def test_10():
-    infile  = datadir('statq_10_IN.pkl')
-    expfile = datadir('statq_10_OUT.pkl')
+    infile  = datadir('statq_10_IN.pkl.gz')
+    expfile = datadir('statq_10_OUT.pkl.gz')
     dummy_test(infile, expfile)
 
 
 def test_11():
-    infile  = datadir('statq_11_IN.pkl')
-    expfile = datadir('statq_11_OUT.pkl')
+    infile  = datadir('statq_11_IN.pkl.gz')
+    expfile = datadir('statq_11_OUT.pkl.gz')
     dummy_test(infile, expfile)
 
 
 def test_12():
-    infile  = datadir('statq_12_IN.pkl')
-    expfile = datadir('statq_12_OUT.pkl')
+    infile  = datadir('statq_12_IN.pkl.gz')
+    expfile = datadir('statq_12_OUT.pkl.gz')
     dummy_test(infile, expfile)
 
 
 def test_13():
-    infile  = datadir('statq_13_IN.pkl')
-    expfile = datadir('statq_13_OUT.pkl')
+    infile  = datadir('statq_13_IN.pkl.gz')
+    expfile = datadir('statq_13_OUT.pkl.gz')
     dummy_test(infile, expfile)
 
 
 def test_14():
-    infile  = datadir('statq_14_IN.pkl')
-    expfile = datadir('statq_14_OUT.pkl')
+    infile  = datadir('statq_14_IN.pkl.gz')
+    expfile = datadir('statq_14_OUT.pkl.gz')
     dummy_test(infile, expfile)
 
 

@@ -2,14 +2,13 @@ import numpy as np
 import pickle
 from .testutil import datadir
 from ..stats import SurfStatStand
-
+import gzip
 
 def dummy_test(infile, expfile):
 
     # load input test data
-    ifile = open(infile, 'br')
-    idic  = pickle.load(ifile)
-    ifile.close()
+    with gzip.open(infile, 'rb') as f:
+        idic  = pickle.load(f)
 
     Y = idic['Y']
 
@@ -28,9 +27,8 @@ def dummy_test(infile, expfile):
     Y_out, Ym_out = SurfStatStand(Y, mask, subtractordivide)
 
     # load expected outout data
-    efile  = open(expfile, 'br')
-    expdic = pickle.load(efile)
-    efile.close()
+    with gzip.open(expfile, 'rb') as f:
+        expdic  = pickle.load(f)
     Y_exp  = expdic['Python_Y']
     Ym_exp = expdic['Python_Ym']
 
@@ -43,26 +41,26 @@ def dummy_test(infile, expfile):
 
 
 def test_01():
-    infile  = datadir('statsta_01_IN.pkl')
-    expfile = datadir('statsta_01_OUT.pkl')
+    infile  = datadir('statsta_01_IN.pkl.gz')
+    expfile = datadir('statsta_01_OUT.pkl.gz')
     dummy_test(infile, expfile)
 
 
 def test_02():
-    infile  = datadir('statsta_02_IN.pkl')
-    expfile = datadir('statsta_02_OUT.pkl')
+    infile  = datadir('statsta_02_IN.pkl.gz')
+    expfile = datadir('statsta_02_OUT.pkl.gz')
     dummy_test(infile, expfile)
 
 
 def test_03():
-    infile  = datadir('statsta_03_IN.pkl')
-    expfile = datadir('statsta_03_OUT.pkl')
+    infile  = datadir('statsta_03_IN.pkl.gz')
+    expfile = datadir('statsta_03_OUT.pkl.gz')
     dummy_test(infile, expfile)
 
 
 def test_04():
-    infile  = datadir('statsta_04_IN.pkl')
-    expfile = datadir('statsta_04_OUT.pkl')
+    infile  = datadir('statsta_04_IN.pkl.gz')
+    expfile = datadir('statsta_04_OUT.pkl.gz')
     dummy_test(infile, expfile)
 
 
