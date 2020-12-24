@@ -90,114 +90,244 @@ def dummy_test(infile, expfile):
 
 
 def test_01():
+    # ['t'] : np array, shape (1, 1), float64
+    # ['df'] : np array, shape (1, 1), uint16
+    # ['k'] : np array, shape (1, 1), uint8
+    # ['tri'] : np array, shape (129960, 3), int32
+    # ['resl'] : np array, shape (194940, 1), float64
+    # ['dfs'] : np array, shape (1, 1), int64
     infile  = datadir('statp_01_IN.pkl')
     expfile = datadir('statp_01_OUT.pkl')
     dummy_test(infile, expfile)
 
 
 def test_02():
+    # ['t'] : np array, shape (2483, 1), float64
+    # ['df'] : np array, shape (1, 1), uint16
+    # ['k'] : np array, shape (1, 1), uint8
+    # ['resl'] : np array, shape (194940, 1), float64
+    # ['tri'] : np array, shape (129960, 3), int32
+    # ['dfs'] : np array, shape (1, 1), int64
     infile  = datadir('statp_02_IN.pkl')
     expfile = datadir('statp_02_OUT.pkl')
     dummy_test(infile, expfile)
 
 
 def test_03():
+    # ['t'] : np array, shape (5969, 1), float64
+    # ['df'] : np array, shape (1, 1), int64
+    # ['k'] : int
+    # ['resl'] : np array, shape (3, 1), float64
+    # ['tri'] : np array, shape (129960, 3), int32
+    # ['dfs'] : np array, shape (1, 1), int64
     infile  = datadir('statp_03_IN.pkl')
     expfile = datadir('statp_03_OUT.pkl')
     dummy_test(infile, expfile)
 
 
 def test_04():
+    # ['t'] : np array, shape (1, 64984), float64
+    # ['df'] :  np array, shape (1, 1), uint16
+    # ['k'] :  np array, shape (1, 1), uint8
+    # ['resl'] :  np array, shape (194940, 1), float64
+    # ['tri'] :  np array, shape (129960, 3), int32
     infile  = datadir('statp_04_IN.pkl')
     expfile = datadir('statp_04_OUT.pkl')
     dummy_test(infile, expfile)
 
 
 def test_05():
+    # ['t'] : np array, shape (1, 64984), float64
+    # ['df'] : np array, shape (1, 1), int64
+    # ['k'] :  int
+    # ['resl'] : np array, shape (194940, 1), float64
+    # ['tri'] : np array, shape (129960, 3), int32
     infile  = datadir('statp_05_IN.pkl')
     expfile = datadir('statp_05_OUT.pkl')
     dummy_test(infile, expfile)
 
 
 def test_06():
+    # ['t'] : np array, shape (1, 64984), float64
+    # ['df'] : np array, shape (1, 1), uint16
+    # ['k'] : np array, shape (1, 1), uint8
+    # ['resl'] : np array, shape (194940, 1), float64
+    # ['tri'] : np array, shape (129960, 3), int32
     infile  = datadir('statp_06_IN.pkl')
     expfile = datadir('statp_06_OUT.pkl')
     dummy_test(infile, expfile)
 
 
 def test_07():
+    # ['t'] : np array, shape (1, 64984), float64
+    # ['df'] : np array, shape (1, 1), int64
+    # ['k'] : np array, shape (1, 1), uint8
+    # ['resl'] : np array, shape (194940, 1), float64
+    # ['tri'] : np array, shape (129960, 3), int32
     infile  = datadir('statp_07_IN.pkl')
     expfile = datadir('statp_07_OUT.pkl')
     dummy_test(infile, expfile)
 
 
 def test_08():
+    # ['t'] : np array, shape (1, 64984), float64
+    # ['df'] : np array, shape (1, 1), uint16
+    # ['k'] :  np array, shape (1, 1), uint8
+    # ['resl'] : np array, shape (194940, 1), float64
+    # ['tri'] : np array, shape (129960, 3), int32
     infile  = datadir('statp_08_IN.pkl')
     expfile = datadir('statp_08_OUT.pkl')
     dummy_test(infile, expfile)
 
 
 def test_09():
+    # ['t'] : np array, shape (1, 64984), float64
+    # ['df'] : np array, shape (1, 1), uint16
+    # ['k'] : np array, shape (1, 1), uint8
+    # ['resl'] : np array, shape (194940, 1), float64
+    # ['tri'] : np array, shape (129960, 3), int32
     infile  = datadir('statp_09_IN.pkl')
     expfile = datadir('statp_09_OUT.pkl')
     dummy_test(infile, expfile)
 
 
 def test_10():
+    # ['t'] : np array, shape (1, 64984), float64
+    # ['df'] : np array, shape (1, 1), uint16
+    # ['k'] : np array, shape (1, 1), uint8
+    # ['resl'] : np array, shape (194940, 1), float64
+    # ['tri'] : np array, shape (129960, 3), int32
+    # ['mask'] : np array, shape (64984,), bool
     infile  = datadir('statp_10_IN.pkl')
     expfile = datadir('statp_10_OUT.pkl')
     dummy_test(infile, expfile)
 
 
 def test_11():
+    # ['t'] : np array, shape (1, 64984), float64
+    # ['df'] : np array, shape (1, 1), uint16
+    # ['k'] : np array, shape (1, 1), uint8
+    # ['resl'] : np array, shape (194940, 1), float64
+    # ['tri'] : np array, shape (129960, 3), int32
+    # ['mask'] : mask np array, shape (64984,), bool
+    # ['clusthresh'] : <class 'float'>
     infile  = datadir('statp_11_IN.pkl')
     expfile = datadir('statp_11_OUT.pkl')
     dummy_test(infile, expfile)
 
 
 def test_12():
+    # ['t'] :  np array, shape (1, 64984), float64
+    # ['df'] : np array, shape (1, 1), uint16
+    # ['k'] :  np array, shape (1, 1), uint8
+    # ['resl'] : np array, shape (194940, 1), float64
+    # ['tri'] : np array, shape (129960, 3), int32
+    # ['clusthresh'] :  <class 'float'>
+    # ['mask'] : np array, shape (64984,), bool
     infile  = datadir('statp_12_IN.pkl')
     expfile = datadir('statp_12_OUT.pkl')
     dummy_test(infile, expfile)
 
 
 def test_13():
+    # ['t'] : np array, shape (1, 64984), float64
+    # ['df'] : np array, shape (1,), int64
+    # ['k'] : int
+    # ['resl'] np array, shape (194940, 1), float64
+    # ['tri']  np array, shape (129960, 3), int32
     infile  = datadir('statp_13_IN.pkl')
     expfile = datadir('statp_13_OUT.pkl')
     dummy_test(infile, expfile)
 
 
 def test_14():
+    # ['t'] :  np array, shape (1, 64984), float64
+    # ['df'] : np array, shape (1, 1), uint16
+    # ['k'] : np array, shape (1, 1), uint8
+    # ['resl'] : np array, shape (194940, 1), float64
+    # ['tri'] : np array, shape (129960, 3), int32
+    # ['dfs'] : np array, shape (1, 64984), int64
     infile  = datadir('statp_14_IN.pkl')
     expfile = datadir('statp_14_OUT.pkl')
     dummy_test(infile, expfile)
 
 
 def test_15():
+    # ['t'] : np array, shape (1, 32492), float64
+    # ['df'] : np array, shape (1, 1), uint8
+    # ['k'] : np array, shape (1, 1), uint8
+    # ['resl'] : np array, shape (97470, 3), float64
+    # ['tri'] : np array, shape (64980, 3), int32
     infile  = datadir('statp_15_IN.pkl')
     expfile = datadir('statp_15_OUT.pkl')
     dummy_test(infile, expfile)
 
 
 def test_16():
+    # ['df'] : int64
+    # ['X'] : np array, shape (10, 2), float64
+    # ['coef'] :  np array, shape (2, 20484), float64
+    # ['SSE'] : np array, shape (1, 20484), float64
+    # ['tri'] : np array, shape (40960, 3), int32
+    # ['resl'] : np array, shape (61440, 1), float64
+    # ['c'] : np array, shape (1, 2), float64
+    # ['k'] : int
+    # ['ef'] : np array, shape (1, 20484), float64
+    # ['sd'] : np array, shape (1, 20484), float64
+    # ['t'] :  np array, shape (1, 20484), float64
     infile  = datadir('statp_16_IN.pkl')
     expfile = datadir('statp_16_OUT.pkl')
     dummy_test(infile, expfile)
 
 
 def test_17():
+    # ['X'] : np array, shape (10, 2), uint8
+    # ['df'] : uint8
+    # ['coef'] : np array, shape (2, 20484), float64
+    # ['SSE'] : np array, shape (1, 20484), float64
+    # ['tri'] :  np array, shape (40960, 3), int32
+    # ['resl'] : np array, shape (61440, 1), float64
+    # ['c'] :  np array, shape (1, 2), float64
+    # ['k'] :  int
+    # ['ef'] : np array, shape (1, 20484), float64
+    # ['sd'] : np array, shape (1, 20484), float64
+    # ['t'] :  np array, shape (1, 20484), float64
+    # ['mask'] :  np array, shape (20484,), bool
     infile  = datadir('statp_17_IN.pkl')
     expfile = datadir('statp_17_OUT.pkl')
     dummy_test(infile, expfile)
 
 
 def test_18():
+    # ['df'] :  int64
+    # ['X'] np array, shape (20, 9), uint16
+    # ['coef'] : np array, shape (9, 20484), float64
+    # ['SSE'] : np array, shape (1, 20484), float64
+    # ['tri'] : np array, shape (40960, 3), int32
+    # ['resl'] : np array, shape (61440, 1), float64
+    # ['c'] : np array, shape (1, 9), float64
+    # ['k'] : int
+    # ['ef'] : np array, shape (1, 20484), float64
+    # ['sd'] : np array, shape (1, 20484), float64
+    # ['t'] :  np array, shape (1, 20484), float64
     infile  = datadir('statp_18_IN.pkl')
     expfile = datadir('statp_18_OUT.pkl')
     dummy_test(infile, expfile)
 
 
 def test_19():
+    # ['X'] : np array, shape (20, 9), uint16
+    # ['df'] :  uint8
+    # ['coef'] : np array, shape (9, 20484), float64
+    # ['SSE'] : np array, shape (1, 20484), float64
+    # ['tri'] : np array, shape (40960, 3), int32
+    # ['resl'] : np array, shape (61440, 1), float64
+    # ['c'] : np array, shape (1, 9), float64
+    # ['k'] : int
+    # ['ef'] : np array, shape (1, 20484), float64
+    # ['sd'] : np array, shape (1, 20484), float64
+    # ['t'] :  np array, shape (1, 20484), float64
+    # ['mask'] : np array, shape (20484,), bool
     infile  = datadir('statp_19_IN.pkl')
     expfile = datadir('statp_19_OUT.pkl')
     dummy_test(infile, expfile)

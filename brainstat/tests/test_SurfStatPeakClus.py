@@ -69,120 +69,234 @@ def dummy_test(infile, expfile):
 
 
 def test_01():
+    # ['t'] : np array, shape (1, 64984), float64
+    # ['tri] : np array, shape (129960, 3), int32
+    # ['mask'] : np array, shape (64984,), float64
+    # ['thresh'] : float
     infile  = datadir('statpeakc_01_IN.pkl')
     expfile = datadir('statpeakc_01_OUT.pkl')
     dummy_test(infile, expfile)
 
 
 def test_02():
+    # ['t'] : np array, shape (1, 1000), float64
+    # ['tri] : np array, shape (100, 3), int64
+    # ['mask'] : np array, shape (1000,), float64
+    # ['thresh'] : float
     infile  = datadir('statpeakc_02_IN.pkl')
     expfile = datadir('statpeakc_02_OUT.pkl')
     dummy_test(infile, expfile)
 
 
 def test_03():
+    # ['t'] : np array, shape (1, 598), float64
+    # ['tri] : np array, shape (330, 3), int64
+    # ['mask'] : np array, shape (598,), float64
+    # ['thresh'] : float
     infile  = datadir('statpeakc_03_IN.pkl')
     expfile = datadir('statpeakc_03_OUT.pkl')
     dummy_test(infile, expfile)
 
 
 def test_04():
+    # ['t'] :  np array, shape (1, 8961), float64
+    # ['tri] : np array, shape (4171, 3), int64
+    # ['mask'] : np array, shape (8961,), float64
+    # ['thresh'] : float
     infile  = datadir('statpeakc_04_IN.pkl')
     expfile = datadir('statpeakc_04_OUT.pkl')
     dummy_test(infile, expfile)
 
 
 def test_05():
+    # ['t'] : np array, shape (1, 64984), float64
+    # ['tri] : np array, shape (129960, 3), int32
+    # ['mask'] : np array, shape (64984,), float64
+    # ['thresh'] : float
+    # ['reselspvert'] : np array, shape (64984,), float64
     infile  = datadir('statpeakc_05_IN.pkl')
     expfile = datadir('statpeakc_05_OUT.pkl')
     dummy_test(infile, expfile)
 
 
 def test_06():
+    # ['t'] : np array, shape (1, 5926), float64
+    # ['tri] : np array, shape (8467, 3), int64
+    # ['mask'] : np array, shape (5926,), float64
+    # ['thresh'] : float
+    # ['reselspvert'] : np array, shape (5926,), float64
     infile  = datadir('statpeakc_06_IN.pkl')
     expfile = datadir('statpeakc_06_OUT.pkl')
     dummy_test(infile, expfile)
 
 
 def test_07():
+    # ['t'] : np array, shape (1, 4593), float64
+    # ['tri] :  np array, shape (8181, 3), int64
+    # ['mask'] : np array, shape (4593,), float64
+    # ['thresh'] : float
+    # ['reselspvert'] : np array, shape (4593,), float64
+    # ['k'] : int
+    # ['df'] : int
     infile  = datadir('statpeakc_07_IN.pkl')
     expfile = datadir('statpeakc_07_OUT.pkl')
     dummy_test(infile, expfile)
 
 
 def test_08():
+    # ['t'] : np array, shape (2, 4496), float64
+    # ['tri] :  np array, shape (7793, 3), int64
+    # ['mask'] : np array, shape (4496,), float64
+    # ['thresh'] : float
+    # ['reselspvert'] : np array, shape (4496,), float64
+    # ['k'] : int
+    # ['df'] : int
     infile  = datadir('statpeakc_08_IN.pkl')
     expfile = datadir('statpeakc_08_OUT.pkl')
     dummy_test(infile, expfile)
 
 
 def test_09():
+    # ['t'] : np array, shape (2, 4085), float64
+    # ['tri] : np array, shape (4673, 3), int64
+    # ['mask'] : np array, shape (4085,), float64
+    # ['thresh'] : float
+    # ['reselspvert'] : np array, shape (4085,), float64
+    # ['k'] : int
+    # ['df'] : int
     infile  = datadir('statpeakc_09_IN.pkl')
     expfile = datadir('statpeakc_09_OUT.pkl')
     dummy_test(infile, expfile)
 
 
 def test_10():
+    # ['t'] : np array, shape (1, 8594), float64
+    # ['tri] : np array, shape (9770, 3), int64
+    # ['mask'] : np array, shape (8594,), float64
+    # ['thresh'] : float
+    # ['reselspvert'] : np array, shape (8594,), float64
+    # ['k'] : int
+    # ['df'] : int
     infile  = datadir('statpeakc_10_IN.pkl')
     expfile = datadir('statpeakc_10_OUT.pkl')
     dummy_test(infile, expfile)
 
 
 def test_11():
+    # ['t'] :  np array, shape (2, 4225), float64
+    # ['tri'] : np array, shape (8820, 3), int64
+    # ['mask'] :  np array, shape (4225,), float64
+    # ['thresh'] : float
+    # ['reselspvert'] : np array, shape (4225,), float64
+    # ['k'] : int
+    # ['df'] : int
     infile  = datadir('statpeakc_11_IN.pkl')
     expfile = datadir('statpeakc_11_OUT.pkl')
     dummy_test(infile, expfile)
 
 
 def test_12():
+    # ['t'] : np array, shape (3, 7534), float64
+    # ['tri'] : np array, shape (3190, 3), int64
+    # ['mask'] : np array, shape (7534,), float64
+    # ['thresh'] : float
+    # ['reselspvert'] : np array, shape (7534,), float64
+    # ['k'] : int
+    # ['df'] : int
     infile  = datadir('statpeakc_12_IN.pkl')
     expfile = datadir('statpeakc_12_OUT.pkl')
     dummy_test(infile, expfile)
 
 
 def test_13():
+    # ['t'] : np array, shape (1, 9550), float64
+    # ['tri'] : np array, shape (2891, 3), int64
+    # ['mask'] : np array, shape (9550,), int64
+    # ['thresh'] : float
+    # ['reselspvert'] : np array, shape (9550,), float64
     infile  = datadir('statpeakc_13_IN.pkl')
     expfile = datadir('statpeakc_13_OUT.pkl')
     dummy_test(infile, expfile)
 
 
 def test_14():
+    # ['t'] : np array, shape (2, 6550), float64
+    # ['tri'] :  np array, shape (8049, 3), int64
+    # ['mask'] : np array, shape (6550,), int64
+    # ['thresh'] : float
+    # ['reselspvert'] : np array, shape (6550,), float64
+    # ['k'] : int
+    # ['df'] : int
     infile  = datadir('statpeakc_14_IN.pkl')
     expfile = datadir('statpeakc_14_OUT.pkl')
     dummy_test(infile, expfile)
 
 
 def test_15():
+    # ['t'] : np array, shape (1, 1000), float64
+    # ['tri'] : np array, shape (100, 3), int64
+    # ['mask'] : np array, shape (1000,), float64
+    # ['thresh'] : float
+    # ['reselspvert'] : np array, shape (1000,), float64
+    # ['edg'] : np array, shape (300, 2), int64
     infile  = datadir('statpeakc_15_IN.pkl')
     expfile = datadir('statpeakc_15_OUT.pkl')
     dummy_test(infile, expfile)
 
 
 def test_16():
+    # ['t'] : np array, shape (2, 9521), float64
+    # ['tri'] :  np array, shape (6660, 3), int64
+    # ['mask'] : np array, shape (9521,), int64
+    # ['thresh'] : float
+    # ['reselspvert'] : np array, shape (9521,), float64
+    # ['k'] : int
+    # ['df'] : int
+    # ['edg'] : np array, shape (19977, 2), int64
     infile  = datadir('statpeakc_16_IN.pkl')
     expfile = datadir('statpeakc_16_OUT.pkl')
     dummy_test(infile, expfile)
 
 
 def test_17():
+    # ['t'] : np array, shape (1, 1000), float64
+    # ['tri'] :  np array, shape (100, 3), int64
+    # ['mask'] : np array, shape (1000,), int64
+    # ['thresh'] : float
+    # ['reselspvert'] : np array, shape (1000,), float64
+    # ['edg'] : np array, shape (1228, 2), int64
     infile  = datadir('statpeakc_17_IN.pkl')
     expfile = datadir('statpeakc_17_OUT.pkl')
     dummy_test(infile, expfile)
 
 
 def test_18():
+    # ['t'] : np array, shape (1, 1000), float64
+    # ['tri'] : np array, shape (100, 3), int64
+    # ['mask'] : np array, shape (1000,), float64
+    # ['thresh'] : int
     infile  = datadir('statpeakc_18_IN.pkl')
     expfile = datadir('statpeakc_18_OUT.pkl')
     dummy_test(infile, expfile)
 
 
 def test_19():
+    # ['t'] : np array, shape (1, 64984), float64
+    # ['tri'] : np array, shape (129960, 3), int32
+    # ['mask'] : np array, shape (64984,), float64
+    # ['thresh'] : int
     infile  = datadir('statpeakc_19_IN.pkl')
     expfile = datadir('statpeakc_19_OUT.pkl')
     dummy_test(infile, expfile)
 
 
 def test_20():
+    # ['t'] : np array, shape (1, 1000), float64
+    # ['tri'] : np array, shape (100, 3), int64
+    # ['mask'] : np array, shape (1000,), int64
+    # ['thresh'] : int
+    # ['reselspvert'] :  np array, shape (1000,), float64
+    # ['edg'] : np array, shape (1312, 2), int64
     infile  = datadir('statpeakc_20_IN.pkl')
     expfile = datadir('statpeakc_20_OUT.pkl')
     dummy_test(infile, expfile)
