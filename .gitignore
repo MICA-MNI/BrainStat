@@ -15,6 +15,8 @@ dist
 
 .vscode
 
-
 .DS_Store
 __pycache__/
+
+# test input data lives in a separate branch and will be pulled on demand
+/extern/test-data/

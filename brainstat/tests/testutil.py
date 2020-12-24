@@ -2,5 +2,7 @@ import os
 
 
 def datadir(file):
-    mydir = os.path.dirname(__file__)
-    return os.path.join(mydir, "data", file)
+    topdir = os.path.dirname(__file__)
+    topdir = os.path.join(topdir, "../..")
+    topdir = os.path.abspath(topdir)
+    return os.path.join(topdir, "extern/test-data", file)
