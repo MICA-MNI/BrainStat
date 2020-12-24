@@ -43,24 +43,31 @@ def dummy_test(infile, expfile):
 
 
 def test_01():
+    # ['Y'] : np array, shape (1, 1), int64
     infile  = datadir('statsta_01_IN.pkl')
     expfile = datadir('statsta_01_OUT.pkl')
     dummy_test(infile, expfile)
 
 
 def test_02():
+    # ['Y'] : np array, shape (1, 10), int64
+    # ['mask'] : np array, shape (10,), bool
     infile  = datadir('statsta_02_IN.pkl')
     expfile = datadir('statsta_02_OUT.pkl')
     dummy_test(infile, expfile)
 
 
 def test_03():
+    # ['Y'] : np array, shape (2, 10), int64
+    # ['mask'] : np array, shape (10,), bool
     infile  = datadir('statsta_03_IN.pkl')
     expfile = datadir('statsta_03_OUT.pkl')
     dummy_test(infile, expfile)
 
 
 def test_04():
+    # ['Y'] : np array, shape (3, 4, 2), float64
+    # ['mask'] : np array, shape (4,), bool
     infile  = datadir('statsta_04_IN.pkl')
     expfile = datadir('statsta_04_OUT.pkl')
     dummy_test(infile, expfile)
