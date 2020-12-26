@@ -69,6 +69,7 @@ def dummy_test(infile, expfile):
 
 
 def test_01():
+    # real-data testing; data to be assigned to slm['t'], slm['tri'], mask and thresh
     # ['t'] : np array, shape (1, 64984), float64
     # ['tri] : np array, shape (129960, 3), int32
     # ['mask'] : np array, shape (64984,), float64
@@ -79,6 +80,7 @@ def test_01():
 
 
 def test_02():
+    # non-sensical input; test data with more vertices than exists
     # ['t'] : np array, shape (1, 1000), float64
     # ['tri] : np array, shape (100, 3), int64
     # ['mask'] : np array, shape (1000,), float64
@@ -89,6 +91,7 @@ def test_02():
 
 
 def test_03():
+    # non-sensical input; test data with more vertices than exists
     # ['t'] : np array, shape (1, 598), float64
     # ['tri] : np array, shape (330, 3), int64
     # ['mask'] : np array, shape (598,), float64
@@ -99,6 +102,7 @@ def test_03():
 
 
 def test_04():
+    # non-sensical input; test data with more vertices than exists
     # ['t'] :  np array, shape (1, 8961), float64
     # ['tri] : np array, shape (4171, 3), int64
     # ['mask'] : np array, shape (8961,), float64
@@ -109,6 +113,7 @@ def test_04():
 
 
 def test_05():
+    # similar to test_01 + optional input c
     # ['t'] : np array, shape (1, 64984), float64
     # ['tri] : np array, shape (129960, 3), int32
     # ['mask'] : np array, shape (64984,), float64
@@ -120,6 +125,7 @@ def test_05():
 
 
 def test_06():
+    # artifical data for slm['t'], slm['tri'], ['mask'], ['thresh'], ['reselspvert']
     # ['t'] : np array, shape (1, 5926), float64
     # ['tri] : np array, shape (8467, 3), int64
     # ['mask'] : np array, shape (5926,), float64
@@ -131,6 +137,7 @@ def test_06():
 
 
 def test_07():
+    # similar to test_06 + optional input slm['k'] and slm['df']
     # ['t'] : np array, shape (1, 4593), float64
     # ['tri] :  np array, shape (8181, 3), int64
     # ['mask'] : np array, shape (4593,), float64
@@ -144,6 +151,7 @@ def test_07():
 
 
 def test_08():
+    # similar to test_07, shape/values of input params changed
     # ['t'] : np array, shape (2, 4496), float64
     # ['tri] :  np array, shape (7793, 3), int64
     # ['mask'] : np array, shape (4496,), float64
@@ -157,6 +165,7 @@ def test_08():
 
 
 def test_09():
+    # similar to test_07, shape/values of input params changed
     # ['t'] : np array, shape (2, 4085), float64
     # ['tri] : np array, shape (4673, 3), int64
     # ['mask'] : np array, shape (4085,), float64
@@ -170,6 +179,7 @@ def test_09():
 
 
 def test_10():
+    # similar to test_07, shape/values of input params changed
     # ['t'] : np array, shape (1, 8594), float64
     # ['tri] : np array, shape (9770, 3), int64
     # ['mask'] : np array, shape (8594,), float64
@@ -183,6 +193,7 @@ def test_10():
 
 
 def test_11():
+    # similar to test_07, shape/values of input params changed
     # ['t'] :  np array, shape (2, 4225), float64
     # ['tri'] : np array, shape (8820, 3), int64
     # ['mask'] :  np array, shape (4225,), float64
@@ -196,6 +207,7 @@ def test_11():
 
 
 def test_12():
+    # similar to test_07, shape/values of input params changed
     # ['t'] : np array, shape (3, 7534), float64
     # ['tri'] : np array, shape (3190, 3), int64
     # ['mask'] : np array, shape (7534,), float64
@@ -209,6 +221,7 @@ def test_12():
 
 
 def test_13():
+    # similar to test_06, shape/values of input params changed
     # ['t'] : np array, shape (1, 9550), float64
     # ['tri'] : np array, shape (2891, 3), int64
     # ['mask'] : np array, shape (9550,), int64
@@ -220,6 +233,7 @@ def test_13():
 
 
 def test_14():
+    # similar to test_07, shape/values of input params changed
     # ['t'] : np array, shape (2, 6550), float64
     # ['tri'] :  np array, shape (8049, 3), int64
     # ['mask'] : np array, shape (6550,), int64
@@ -233,6 +247,7 @@ def test_14():
 
 
 def test_15():
+    # similar to test_06 + optional ['edg'] input
     # ['t'] : np array, shape (1, 1000), float64
     # ['tri'] : np array, shape (100, 3), int64
     # ['mask'] : np array, shape (1000,), float64
@@ -245,6 +260,7 @@ def test_15():
 
 
 def test_16():
+    # similar to test_07 + optional ['edg'] input
     # ['t'] : np array, shape (2, 9521), float64
     # ['tri'] :  np array, shape (6660, 3), int64
     # ['mask'] : np array, shape (9521,), int64
@@ -259,6 +275,7 @@ def test_16():
 
 
 def test_17():
+    # similar to test_15, shape of ['edg'] changed
     # ['t'] : np array, shape (1, 1000), float64
     # ['tri'] :  np array, shape (100, 3), int64
     # ['mask'] : np array, shape (1000,), int64
@@ -271,6 +288,7 @@ def test_17():
 
 
 def test_18():
+    # non-sensical input (similar to test_02), ['thresh'] dtype changed
     # ['t'] : np array, shape (1, 1000), float64
     # ['tri'] : np array, shape (100, 3), int64
     # ['mask'] : np array, shape (1000,), float64
@@ -281,6 +299,7 @@ def test_18():
 
 
 def test_19():
+    # similar to test_01, ['thresh'] dtype changed
     # ['t'] : np array, shape (1, 64984), float64
     # ['tri'] : np array, shape (129960, 3), int32
     # ['mask'] : np array, shape (64984,), float64
@@ -291,6 +310,7 @@ def test_19():
 
 
 def test_20():
+    # similar to test_15, shape of ['edg'] changed
     # ['t'] : np array, shape (1, 1000), float64
     # ['tri'] : np array, shape (100, 3), int64
     # ['mask'] : np array, shape (1000,), int64
