@@ -177,7 +177,7 @@ def test_07():
 
 
 def test_08():
-    # values in slm['t'] (of test_07) were shuffled 
+    # values in slm['t'] (of test_07) were shuffled
     # ['t'] : np array, shape (1, 64984), float64
     # ['df'] : np array, shape (1, 1), uint16
     # ['k'] :  np array, shape (1, 1), uint8
@@ -189,7 +189,7 @@ def test_08():
 
 
 def test_09():
-    # values in slm['t'] array (of test_07) were shuffled 
+    # values in slm['t'] array (of test_07) were shuffled
     # ['t'] : np array, shape (1, 64984), float64
     # ['df'] : np array, shape (1, 1), uint16
     # ['k'] : np array, shape (1, 1), uint8
@@ -228,7 +228,7 @@ def test_11():
 
 
 def test_13():
-    # only mandatory slm keys given, slm['df'] is changed to a 1D array 
+    # only mandatory slm keys given, slm['df'] is changed to a 1D array
     # ['t'] : np array, shape (1, 64984), float64
     # ['df'] : np array, shape (1,), int64
     # ['k'] : int
@@ -320,7 +320,7 @@ def test_18():
 
 
 def test_19():
-    # test_16 + dtype/shape change of non-sense slm keys  + optional ['mask'] input 
+    # test_16 + dtype/shape change of non-sense slm keys  + optional ['mask'] input
     # ['X'] : np array, shape (20, 9), uint16
     # ['df'] :  uint8
     # ['coef'] : np array, shape (9, 20484), float64
