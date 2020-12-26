@@ -90,6 +90,7 @@ def dummy_test(infile, expfile):
 
 
 def test_01():
+    # slm with only one vertex with t-value ['t'], huge sized ['tri'] and ['resl']
     # ['t'] : np array, shape (1, 1), float64
     # ['df'] : np array, shape (1, 1), uint16
     # ['k'] : np array, shape (1, 1), uint8
@@ -102,6 +103,7 @@ def test_01():
 
 
 def test_02():
+    # slm with intermediate sized ['t'], huge sized ['tri'] and ['resl']
     # ['t'] : np array, shape (2483, 1), float64
     # ['df'] : np array, shape (1, 1), uint16
     # ['k'] : np array, shape (1, 1), uint8
@@ -114,6 +116,7 @@ def test_02():
 
 
 def test_03():
+    # slm['k'] data type changed to an int
     # ['t'] : np array, shape (5969, 1), float64
     # ['df'] : np array, shape (1, 1), int64
     # ['k'] : int
@@ -126,6 +129,7 @@ def test_03():
 
 
 def test_04():
+    # only mandatory keys of slm are given, slm['t'] is 64k
     # ['t'] : np array, shape (1, 64984), float64
     # ['df'] :  np array, shape (1, 1), uint16
     # ['k'] :  np array, shape (1, 1), uint8
@@ -137,6 +141,7 @@ def test_04():
 
 
 def test_05():
+    # only mandatory slm keys given, change dtype of slm['df'] and slm['k']
     # ['t'] : np array, shape (1, 64984), float64
     # ['df'] : np array, shape (1, 1), int64
     # ['k'] :  int
@@ -148,6 +153,7 @@ def test_05():
 
 
 def test_06():
+    # only mandatory slm keys given, change dtype of slm['df'] and slm['k']
     # ['t'] : np array, shape (1, 64984), float64
     # ['df'] : np array, shape (1, 1), uint16
     # ['k'] : np array, shape (1, 1), uint8
@@ -159,6 +165,7 @@ def test_06():
 
 
 def test_07():
+    # only mandatory keys of slm are given, change dtype of slm['df'] and slm['k']
     # ['t'] : np array, shape (1, 64984), float64
     # ['df'] : np array, shape (1, 1), int64
     # ['k'] : np array, shape (1, 1), uint8
@@ -170,6 +177,7 @@ def test_07():
 
 
 def test_08():
+    # values in slm['t'] (of test_07) were shuffled 
     # ['t'] : np array, shape (1, 64984), float64
     # ['df'] : np array, shape (1, 1), uint16
     # ['k'] :  np array, shape (1, 1), uint8
@@ -181,6 +189,7 @@ def test_08():
 
 
 def test_09():
+    # values in slm['t'] array (of test_07) were shuffled 
     # ['t'] : np array, shape (1, 64984), float64
     # ['df'] : np array, shape (1, 1), uint16
     # ['k'] : np array, shape (1, 1), uint8
@@ -192,6 +201,7 @@ def test_09():
 
 
 def test_10():
+    # only mandatory slm keys given + optional input ['mask'] given
     # ['t'] : np array, shape (1, 64984), float64
     # ['df'] : np array, shape (1, 1), uint16
     # ['k'] : np array, shape (1, 1), uint8
@@ -204,6 +214,7 @@ def test_10():
 
 
 def test_11():
+    # test_10 + optional input ['mask'] and ['clusthresh'] given
     # ['t'] : np array, shape (1, 64984), float64
     # ['df'] : np array, shape (1, 1), uint16
     # ['k'] : np array, shape (1, 1), uint8
@@ -216,20 +227,8 @@ def test_11():
     dummy_test(infile, expfile)
 
 
-def test_12():
-    # ['t'] :  np array, shape (1, 64984), float64
-    # ['df'] : np array, shape (1, 1), uint16
-    # ['k'] :  np array, shape (1, 1), uint8
-    # ['resl'] : np array, shape (194940, 1), float64
-    # ['tri'] : np array, shape (129960, 3), int32
-    # ['clusthresh'] :  <class 'float'>
-    # ['mask'] : np array, shape (64984,), bool
-    infile  = datadir('statp_12_IN.pkl')
-    expfile = datadir('statp_12_OUT.pkl')
-    dummy_test(infile, expfile)
-
-
 def test_13():
+    # only mandatory slm keys given, slm['df'] is changed to a 1D array 
     # ['t'] : np array, shape (1, 64984), float64
     # ['df'] : np array, shape (1,), int64
     # ['k'] : int
@@ -241,6 +240,7 @@ def test_13():
 
 
 def test_14():
+    # test_04 + optional slm['dfs'] (huge sized) given
     # ['t'] :  np array, shape (1, 64984), float64
     # ['df'] : np array, shape (1, 1), uint16
     # ['k'] : np array, shape (1, 1), uint8
@@ -253,6 +253,7 @@ def test_14():
 
 
 def test_15():
+    # only mandatory slm keys are given, ['t'] is 32k, half-sized of test_04
     # ['t'] : np array, shape (1, 32492), float64
     # ['df'] : np array, shape (1, 1), uint8
     # ['k'] : np array, shape (1, 1), uint8
@@ -264,6 +265,7 @@ def test_15():
 
 
 def test_16():
+    # additional non-sense keys (meaningless for SurfStatP) are added to slm
     # ['df'] : int64
     # ['X'] : np array, shape (10, 2), float64
     # ['coef'] :  np array, shape (2, 20484), float64
@@ -281,6 +283,7 @@ def test_16():
 
 
 def test_17():
+    # test_16 + dtype change of non-sense slm keys + optional ['mask'] input given
     # ['X'] : np array, shape (10, 2), uint8
     # ['df'] : uint8
     # ['coef'] : np array, shape (2, 20484), float64
@@ -299,6 +302,7 @@ def test_17():
 
 
 def test_18():
+    # test_16 + dtype/shape change of the non-sense slm keys
     # ['df'] :  int64
     # ['X'] np array, shape (20, 9), uint16
     # ['coef'] : np array, shape (9, 20484), float64
@@ -316,6 +320,7 @@ def test_18():
 
 
 def test_19():
+    # test_16 + dtype/shape change of non-sense slm keys  + optional ['mask'] input 
     # ['X'] : np array, shape (20, 9), uint16
     # ['df'] :  uint8
     # ['coef'] : np array, shape (9, 20484), float64
