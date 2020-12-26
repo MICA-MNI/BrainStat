@@ -68,13 +68,6 @@ def test_04():
     dummy_test(infile, expfile)
 
 
-def test_05():
-    # ['tri'] is a 2D numpy array of shape (40960, 3), dtype('int32')
-    infile  = datadir('statedg_05_IN.pkl')
-    expfile = datadir('statedg_05_OUT.pkl')
-    dummy_test(infile, expfile)
-
-
 def test_06():
     # ['tri'] is a 2D numpy array of shape (2044, 3), dtype('uint16')
     infile  = datadir('statedg_06_IN.pkl')
