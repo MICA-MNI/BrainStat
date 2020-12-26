@@ -20,8 +20,9 @@ def dummy_test(slm, oslm):
 
 
 def test_01():
-    # ['Y'] : numpy array, shape (43, 43), dtype('float64')
-    # ['M'] : numpy array, (43, 43), dtype('float64')
+    # ['Y'] and ['M'] middle sized 2D arrays
+    # ['Y'] : np array, shape (43, 43), dtype('float64')
+    # ['M'] : np array, (43, 43), dtype('float64')
     infile  = datadir('linmod_01_IN.pkl')
     expfile = datadir('linmod_01_OUT.pkl')
     ifile = open(infile, 'br')
@@ -38,8 +39,9 @@ def test_01():
 
 
 def test_02():
-    # ['Y'] : numpy array, (62, 7), dtype('float64')
-    # ['M'] : numpy array, (62, 92), dtype('float64')
+    # similar to test_01, shapes of ['Y'] and ['M'] changed
+    # ['Y'] : np array, (62, 7), dtype('float64')
+    # ['M'] : np array, (62, 92), dtype('float64')
     infile  = datadir('linmod_02_IN.pkl')
     expfile = datadir('linmod_02_OUT.pkl')
     ifile = open(infile, 'br')
@@ -56,8 +58,9 @@ def test_02():
 
 
 def test_03():
-    # ['Y'] : numpy array, (52, 64, 76), dtype('float64')
-    # ['M'] : numpy array, (52, 2), dtype('float64')
+    # ['Y'] is a 3D array, ['M'] is a 2D array
+    # ['Y'] : np array, (52, 64, 76), dtype('float64')
+    # ['M'] : np array, (52, 2), dtype('float64')
     infile  = datadir('linmod_03_IN.pkl')
     expfile = datadir('linmod_03_OUT.pkl')
     ifile = open(infile, 'br')
@@ -74,8 +77,9 @@ def test_03():
 
 
 def test_04():
-    # ['Y'] : numpy array, (69, 41, 5), dtype('float64')
-    # ['M'] : numpy array, (69, 30), dtype('float64')
+    # similar to test_03, shapes of ['Y'] and ['M'] changed
+    # ['Y'] : np array, (69, 41, 5), dtype('float64')
+    # ['M'] : np array, (69, 30), dtype('float64')
     infile  = datadir('linmod_04_IN.pkl')
     expfile = datadir('linmod_04_OUT.pkl')
     ifile = open(infile, 'br')
@@ -92,8 +96,9 @@ def test_04():
 
 
 def test_05():
-    # ['Y'] : numpy array, (81, 1), dtype('float64')
-    # ['M'] : numpy array, (81, 2), dtype('float64')
+    # similar to test_01, shapes of ['Y'] and ['M'] changed
+    # ['Y'] : np array, (81, 1), dtype('float64')
+    # ['M'] : np array, (81, 2), dtype('float64')
     infile  = datadir('linmod_05_IN.pkl')
     expfile = datadir('linmod_05_OUT.pkl')
     ifile = open(infile, 'br')
@@ -110,8 +115,9 @@ def test_05():
 
 
 def test_06():
-    # ['Y'] : numpy array, (93, 41, 57), dtype('float64')
-    # ['M'] : numpy array, (93, 67), dtype('float64')
+    # similar to test_03, shapes of ['Y'] and ['M'] changed
+    # ['Y'] : np array, (93, 41, 57), dtype('float64')
+    # ['M'] : np array, (93, 67), dtype('float64')
     infile  = datadir('linmod_06_IN.pkl')
     expfile = datadir('linmod_06_OUT.pkl')
     ifile = open(infile, 'br')
@@ -129,8 +135,9 @@ def test_06():
 
 
 def test_07():
-    # ['Y'] : numpy array, (40, 46, 21), dtype('float64')
-    # ['M'] : numpy array, (40, 81), dtype('float64')
+    # similar to test_03, shapes of ['Y'] and ['M'] changed
+    # ['Y'] : np array, (40, 46, 21), dtype('float64')
+    # ['M'] : np array, (40, 81), dtype('float64')
     infile  = datadir('linmod_07_IN.pkl')
     expfile = datadir('linmod_07_OUT.pkl')
     ifile = open(infile, 'br')
@@ -148,9 +155,10 @@ def test_07():
 
 
 def test_08():
-    # ['Y'] : numpy array, (93, 43), dtype('float64')
-    # ['M'] : numpy array, (93, 2), dtype('float64')
-    # ['tri'] : numpy array, (93, 3), dtype('int64')
+    # ['Y'] and ['M'] mid. sized 2D arrays + optional ['tri'] input for surf
+    # ['Y'] : np array, (93, 43), dtype('float64')
+    # ['M'] : np array, (93, 2), dtype('float64')
+    # ['tri'] : np array, (93, 3), dtype('int64')
     infile  = datadir('linmod_08_IN.pkl')
     expfile = datadir('linmod_08_OUT.pkl')
     ifile = open(infile, 'br')
@@ -169,9 +177,10 @@ def test_08():
 
 
 def test_09():
-    # ['Y'] : numpy array, (98, 69, 60), dtype('float64')
-    # ['M'] : numpy array, (98, 91), dtype('float64')
-    # ['tri'] : numpy array, (60, 3), dtype('int64')
+    # similar to test_03 + optional ['tri'] input for surf
+    # ['Y'] : np array, (98, 69, 60), dtype('float64')
+    # ['M'] : np array, (98, 91), dtype('float64')
+    # ['tri'] : np array, (60, 3), dtype('int64')
     infile  = datadir('linmod_09_IN.pkl')
     expfile = datadir('linmod_09_OUT.pkl')
     ifile = open(infile, 'br')
@@ -190,9 +199,10 @@ def test_09():
 
 
 def test_10():
-    # ['Y'] : numpy array, (49, 27), dtype('float64')
-    # ['M'] : numpy array, (49, 2), dtype('float64')
-    # ['lat'] : numpy array, (3, 3, 3), dtype('bool')
+    # similar to test_02 + optional ['lat'] input for surf
+    # ['Y'] : np array, (49, 27), dtype('float64')
+    # ['M'] : np array, (49, 2), dtype('float64')
+    # ['lat'] : np array, (3, 3, 3), dtype('bool')
     infile  = datadir('linmod_10_IN.pkl')
     expfile = datadir('linmod_10_OUT.pkl')
     ifile = open(infile, 'br')
@@ -210,9 +220,10 @@ def test_10():
 
 
 def test_11():
-    # ['Y'] : numpy array, (45, 27, 3), dtype('float64')
-    # ['M'] : numpy array, (45, 7), dtype('float64')
-    # ['lat'] : numpy array, (3, 3, 3), dtype('int64')
+    # similar to test_03 + optional ['lat'] input for surf
+    # ['Y'] : np array, (45, 27, 3), dtype('float64')
+    # ['M'] : np array, (45, 7), dtype('float64')
+    # ['lat'] : np array, (3, 3, 3), dtype('int64')
     infile  = datadir('linmod_11_IN.pkl')
     expfile = datadir('linmod_11_OUT.pkl')
     ifile = open(infile, 'br')
@@ -231,10 +242,11 @@ def test_11():
 
 
 def test_12():
-    # ['Y'] : numpy array, (10, 20484), dtype('float64')
-    # ['age'] : numpy array, (1, 10), dtype('float64')
-    # ['tri'] : numpy array, (40960, 3), dtype('int32')
-    # ['coord'] :numpy array, (3, 20484), dtype('float64')
+    # real dataset, ['Y'] 20k columns, ['age'] modelling with Term, ['tri'] 40k vertex
+    # ['Y'] : np array, (10, 20484), dtype('float64')
+    # ['age'] : np array, (1, 10), dtype('float64')
+    # ['tri'] : np array, (40960, 3), dtype('int32')
+    # ['coord'] :np array, (3, 20484), dtype('float64')
     infile  = datadir('linmod_12_IN.pkl')
     expfile = datadir('linmod_12_OUT.pkl')
     ifile = open(infile, 'br')
@@ -255,10 +267,11 @@ def test_12():
 
 
 def test_13():
-    # ['Y'] : numpy array, (10, 20484), dtype('float64')
-    # ['age'] : numpy array, (1, 10), dtype('float64')
-    # ['tri'] : numpy array, (40960, 3), dtype('int32')
-    # ['coord'] : numpy array, (3, 20484), dtype('float64')
+    # similar to test_12, ['Y'] values shuffled
+    # ['Y'] : np array, (10, 20484), dtype('float64')
+    # ['age'] : np array, (1, 10), dtype('float64')
+    # ['tri'] : np array, (40960, 3), dtype('int32')
+    # ['coord'] : np array, (3, 20484), dtype('float64')
     infile  = datadir('linmod_13_IN.pkl')
     expfile = datadir('linmod_13_OUT.pkl')
     ifile = open(infile, 'br')
@@ -279,10 +292,11 @@ def test_13():
 
 
 def test_14():
-    # ['Y'] : numpy array, (10, 20484), dtype('float64')
-    # ['age'] : numpy array, (1, 10), dtype('float64')
-    # ['tri'] : numpy array, (40960, 3), dtype('int32')
-    # ['coord'] : numpy array, (3, 20484), dtype('float64')
+    # similar to test_12, ['Y'] and ['tri'] values shuffled
+    # ['Y'] : np array, (10, 20484), dtype('float64')
+    # ['age'] : np array, (1, 10), dtype('float64')
+    # ['tri'] : np array, (40960, 3), dtype('int32')
+    # ['coord'] : np array, (3, 20484), dtype('float64')
     infile  = datadir('linmod_14_IN.pkl')
     expfile = datadir('linmod_14_OUT.pkl')
     ifile = open(infile, 'br')
@@ -303,12 +317,12 @@ def test_14():
 
 
 def test_15():
-    # building the model term while testing..
-    # ['Y'] : numpy array, (20, 20484), dtype('float64')
-    # ['params'] : numpy array, (20, 9), dtype('uint16')
-    # ['colnames'] : numpy array, (9,), dtype('<U11')
-    # ['tri'] : numpy array, (40960, 3), dtype('int32')
-    # ['coord'] : numpy array, (3, 20484), dtype('float64')
+    # choose ['Y']-values in range of [-1, 1], modeling from ['params'] & ['colnames']
+    # ['Y'] : np array, (20, 20484), dtype('float64')
+    # ['params'] : np array, (20, 9), dtype('uint16')
+    # ['colnames'] : np array, (9,), dtype('<U11')
+    # ['tri'] : np array, (40960, 3), dtype('int32')
+    # ['coord'] : np array, (3, 20484), dtype('float64')
     infile  = datadir('linmod_15_IN.pkl')
     expfile = datadir('linmod_15_OUT.pkl')
     ifile = open(infile, 'br')
@@ -329,10 +343,11 @@ def test_15():
 
 
 def test_16():
-    # ['Y'] : numpy array, (20, 20484), dtype('float64')
-    # ['params'] : numpy array, (20, 9), dtype('uint16')
-    # ['tri'] : numpy array, (40960, 3), dtype('int32')
-    # ['coord'] :numpy array, (3, 20484), dtype('float64')
+    # similar to test_15, modeling only using the ['params']
+    # ['Y'] : np array, (20, 20484), dtype('float64')
+    # ['params'] : np array, (20, 9), dtype('uint16')
+    # ['tri'] : np array, (40960, 3), dtype('int32')
+    # ['coord'] :np array, (3, 20484), dtype('float64')
     infile  = datadir('linmod_16_IN.pkl')
     expfile = datadir('linmod_16_OUT.pkl')
     ifile = open(infile, 'br')
