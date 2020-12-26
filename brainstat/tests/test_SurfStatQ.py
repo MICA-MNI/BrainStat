@@ -17,23 +17,29 @@ def dummy_test(infile, expfile):
     slm['k']  = idic['k']
 
     # check other potential keys in input
-    if 'tri' in idic.keys():
-        slm['tri']    = idic['tri']
+    if 'dfs' in idic.keys():
+        slm['dfs'] = idic['dfs']
 
     if 'resl' in idic.keys():
         slm['resl'] = idic['resl']
 
-    if 'dfs' in idic.keys():
-        slm['dfs'] = idic['dfs']
+    if 'tri' in idic.keys():
+        slm['tri']    = idic['tri']
 
+    if 'lat' in idic.keys():
+        slm['tri']    = idic['tri']
+
+    if 'mask' in idic.keys():
+        mask = idic['mask']
+    else:
+        mask = None
+
+    # non-sense input for SurfStatQ, but potentially produced by SurfStatLinMod
     if 'du' in idic.keys():
         slm['du'] = idic['du']
 
     if 'c' in idic.keys():
         slm['c']    = idic['c']
-
-    if 'k' in idic.keys():
-        slm['k']    = idic['k']
 
     if 'ef' in idic.keys():
         slm['ef']    = idic['ef']
@@ -41,17 +47,8 @@ def dummy_test(infile, expfile):
     if 'sd' in idic.keys():
         slm['sd']    = idic['sd']
 
-    if 't' in idic.keys():
-        slm['t']    = idic['t']
-
     if 'SSE' in idic.keys():
         slm['SSE']    = idic['SSE']
-
-    if 'mask' in idic.keys():
-        mask = idic['mask']
-    else:
-        mask = None
-
 
     # run SurfStatQ
     outdic = SurfStatQ(slm, mask)
@@ -71,6 +68,7 @@ def dummy_test(infile, expfile):
 
 
 def test_01():
+    # real-data testing with only mandatory input slm['t'], slm['df'], slm['k']
     # ['t'] : np array, shape (1, 64984), float64
     # ['df'] : np array, shape (1, 1), uint16
     # ['k'] : np array, shape (1, 1), uint8
@@ -80,6 +78,7 @@ def test_01():
 
 
 def test_02():
+    # test data, slm['t'] and slm['df'] 2D arrays, slm['k'] int
     # ['t'] : np array, shape (1, 9850), float64
     # ['df'] : np array, shape (1, 1), int64
     # ['k'] : int
@@ -89,6 +88,7 @@ def test_02():
 
 
 def test_03():
+    # similar to test_02, shapes/values of slm['t'] and slm['df'] manipulated
     # ['t'] :  np array, shape (1, 2139), float64
     # ['df'] : np array, shape (1, 1), int64
     # ['k'] :  int
@@ -98,6 +98,7 @@ def test_03():
 
 
 def test_04():
+    # similar to test_02 + optional input ['mask']
     # ['t'] : np array, shape (1, 2475), float64
     # ['df'] : np array, shape (1, 1), int64
     # ['k'] : int
@@ -108,6 +109,7 @@ def test_04():
 
 
 def test_05():
+    # similar to test_02 + optional input slm['dfs']
     # ['t'] : np array, shape (1, 1998), float64
     # ['df'] : np array, shape (1, 1), int64
     # ['k'] : int
@@ -118,6 +120,7 @@ def test_05():
 
 
 def test_06():
+    # similar to test_02 + optional inputs slm['dfs'] and ['mask']
     # ['t'] : np array, shape (1, 3328), float64
     # ['df'] : np array, shape (1, 1), int64
     # ['k'] : int
@@ -129,6 +132,7 @@ def test_06():
 
 
 def test_07():
+    # similar to test_02 + optional inputs slm['dfs'], ['mask'] and ['tri']
     # ['t'] : np array, shape (1, 9512), float64
     # ['df'] : np array, shape (1, 1), int64
     # ['k'] : int
@@ -141,6 +145,7 @@ def test_07():
 
 
 def test_08():
+    # similar to test_02 + optional inputs slm['dfs'], slm['tri'] and slm['resl']
     # ['t'] : np array, shape (1, 1520), float64
     # ['df'] : np array, shape (1, 1), int64
     # ['k'] : int
@@ -153,19 +158,23 @@ def test_08():
 
 
 def test_09():
+    # similar to test_08 + values/shapes of input params changed +
+    # additional input slm['du'] (non-sense for SurfStatQ)
     # ['t'] : np array, shape (1, 4397), float64
     # ['df'] : np array, shape (1, 1), int64
     # ['k'] : int
-    # ['du'] : int
     # ['tri'] : np array, shape (2734, 3), int64
     # ['resl'] : np array, shape (8199, 1), float64
-    # ['dfsl'] : np array, shape (1, 4397), float64
+    # ['dfs'] : np array, shape (1, 4397), float64
+    # ['du'] : int
     infile  = datadir('statq_09_IN.pkl')
     expfile = datadir('statq_09_OUT.pkl')
     dummy_test(infile, expfile)
 
 
 def test_10():
+    # similar to test_08 + + values/shapes of input params changed + additional
+    # input slm['du'], slm['c'], slm['ef'], and slm['sd'] (non-sense for SurfStatQ)
     # ['t'] : np array, shape (1, 20484), float64
     # ['df'] : int64
     # ['k'] : int
@@ -180,6 +189,8 @@ def test_10():
 
 
 def test_11():
+    # similar to test_08 + additional input ['c'], ['ef'], ['sd'], ['X'],
+    # and ['coef'], ['SSE'] (non-sense for SurfStatQ)
     # ['t'] : np array, shape (1, 20484), float64
     # ['df'] : int64
     # ['k'] : int
@@ -197,6 +208,7 @@ def test_11():
 
 
 def test_12():
+    # similar to test_11 + optional input ['mask'] + ['df'] dtype changed
     # ['t'] : np array, shape (1, 20484), float64
     # ['df'] : uint8
     # ['k'] : int
@@ -215,6 +227,7 @@ def test_12():
 
 
 def test_13():
+    # similar to test_11, ['t']-values shuffled
     # ['t'] : np array, shape (1, 20484), float64
     # ['df'] : int64
     # ['k'] : int
@@ -232,6 +245,7 @@ def test_13():
 
 
 def test_14():
+    # similar to test_11, ['t']-values shuffled + optional ['mask']
     # ['t'] : np array, shape (1, 20484), float64
     # ['df'] : uint8
     # ['k'] : int
