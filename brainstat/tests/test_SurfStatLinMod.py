@@ -1,285 +1,368 @@
 import numpy as np
-import pytest
-from brainstat.stats.SurfStatLinMod import SurfStatLinMod
-import surfstat_wrap as sw
-from brainstat.stats.term import Term
-from brainspace.datasets import load_conte69
-from scipy.io import loadmat
-
-import os
-import brainstat
-
-surfstat_eng = sw.matlab_init_surfstat()
+import pickle
+from .testutil import datadir
+from ..stats import SurfStatLinMod
+from ..stats import Term
 
 
-def dummy_test(Y, model, surf=None, resl_check=True):
+def dummy_test(slm, oslm):
 
-    py_slm = SurfStatLinMod(Y, model, surf=surf)
-    mat_slm = sw.matlab_LinMod(Y, model, surf=surf)
+    testout = []
 
-    if not resl_check:
-        py_slm['resl'] = np.array([])
-        mat_slm['resl'] = np.array([])
+    for key in slm.keys():
+        comp = np.allclose(slm[key], oslm[key], rtol=1e-05, equal_nan=True)
+        testout.append(comp)
 
-    for k in set.union(set(py_slm.keys()), set(mat_slm.keys())):
-        assert k in mat_slm, "'%s' missing from MATLAB slm." % k
-        assert k in py_slm, "'%s' missing from Python slm." % k
+    print(testout)
 
-        if k not in ['df', 'dr']:
-            assert mat_slm[k].shape == py_slm[k].shape, \
-                "Different shape: %s" % k
-
-        assert np.allclose(
-            mat_slm[k], py_slm[k], rtol=1e-05, equal_nan=True), "Not equal: %s" % k
+    assert all(flag == True for (flag) in testout)
 
 
-# 2D inputs --- square matrices
+
 def test_01():
-    n = np.random.randint(10, 100)
+    # ['Y'] and ['M'] middle sized 2D arrays
+    # ['Y'] : np array, shape (43, 43), dtype('float64')
+    # ['M'] : np array, (43, 43), dtype('float64')
+    infile  = datadir('linmod_01_IN.pkl')
+    expfile = datadir('linmod_01_OUT.pkl')
+    ifile = open(infile, 'br')
+    idic  = pickle.load(ifile)
+    ifile.close()
+    Y   = idic['Y']
+    M   = idic['M']
+    slm = SurfStatLinMod(Y, M)
+    # oslm : expected output
+    ofile = open(expfile, 'br')
+    oslm  = pickle.load(ofile)
+    ofile.close()
+    dummy_test(slm, oslm)
 
-    A = np.random.rand(n, n)
-    B = np.random.rand(n, n)
-    B[:, 0] = 1  # Constant term.
 
-    dummy_test(A, B, surf=None)
-
-
-# 2D inputs --- rectangular matrices
 def test_02():
-    n = np.random.randint(1, 100)
-    p = np.random.randint(1, 100)
-    v = np.random.randint(1, 100)
+    # similar to test_01, shapes of ['Y'] and ['M'] changed
+    # ['Y'] : np array, (62, 7), dtype('float64')
+    # ['M'] : np array, (62, 92), dtype('float64')
+    infile  = datadir('linmod_02_IN.pkl')
+    expfile = datadir('linmod_02_OUT.pkl')
+    ifile = open(infile, 'br')
+    idic  = pickle.load(ifile)
+    ifile.close()
+    Y   = idic['Y']
+    M   = idic['M']
+    slm = SurfStatLinMod(Y, M)
+    # oslm : expected output
+    ofile = open(expfile, 'br')
+    oslm  = pickle.load(ofile)
+    ofile.close()
+    dummy_test(slm, oslm)
 
-    A = np.random.rand(n, v)
-    B = np.random.rand(n, p)
-    B[:, 0] = 1  # Constant term.
 
-    dummy_test(A, B, surf=None)
-
-
-# 3D inputs --- A is a 3D input, B is 1D
 def test_03():
-    n = np.random.randint(1, 100)
-    k = np.random.randint(2, 100)
-    v = np.random.randint(1, 100)
+    # ['Y'] is a 3D array, ['M'] is a 2D array
+    # ['Y'] : np array, (52, 64, 76), dtype('float64')
+    # ['M'] : np array, (52, 2), dtype('float64')
+    infile  = datadir('linmod_03_IN.pkl')
+    expfile = datadir('linmod_03_OUT.pkl')
+    ifile = open(infile, 'br')
+    idic  = pickle.load(ifile)
+    ifile.close()
+    Y   = idic['Y']
+    M   = idic['M']
+    slm = SurfStatLinMod(Y, M)
+    # oslm : expected output
+    ofile = open(expfile, 'br')
+    oslm  = pickle.load(ofile)
+    ofile.close()
+    dummy_test(slm, oslm)
 
-    A = np.random.rand(n, v, k)
-    B = np.random.rand(n, 2)
-    B[:, 0] = 1  # Constant term.
 
-    dummy_test(A, B, surf=None)
-
-
-# 3D inputs --- A is a 3D input, B is 2D
 def test_04():
-    n = np.random.randint(1, 100)
-    k = np.random.randint(2, 100)
-    v = np.random.randint(1, 100)
-    p = np.random.randint(2, 100)
-
-    A = np.random.rand(n, v, k)
-    B = np.random.rand(n, p)
-    B[:, 0] = 1  # Constant term.
-
-    dummy_test(A, B, surf=None)
+    # similar to test_03, shapes of ['Y'] and ['M'] changed
+    # ['Y'] : np array, (69, 41, 5), dtype('float64')
+    # ['M'] : np array, (69, 30), dtype('float64')
+    infile  = datadir('linmod_04_IN.pkl')
+    expfile = datadir('linmod_04_OUT.pkl')
+    ifile = open(infile, 'br')
+    idic  = pickle.load(ifile)
+    ifile.close()
+    Y   = idic['Y']
+    M   = idic['M']
+    slm = SurfStatLinMod(Y, M)
+    # oslm : expected output
+    ofile = open(expfile, 'br')
+    oslm  = pickle.load(ofile)
+    ofile.close()
+    dummy_test(slm, oslm)
 
 
 def test_05():
+    # similar to test_01, shapes of ['Y'] and ['M'] changed
+    # ['Y'] : np array, (81, 1), dtype('float64')
+    # ['M'] : np array, (81, 2), dtype('float64')
+    infile  = datadir('linmod_05_IN.pkl')
+    expfile = datadir('linmod_05_OUT.pkl')
+    ifile = open(infile, 'br')
+    idic  = pickle.load(ifile)
+    ifile.close()
+    Y   = idic['Y']
+    M   = idic['M']
+    slm = SurfStatLinMod(Y, M)
+    # oslm : expected output
+    ofile = open(expfile, 'br')
+    oslm  = pickle.load(ofile)
+    ofile.close()
+    dummy_test(slm, oslm)
 
-    v = np.random.randint(10, 100)
 
-    A = np.random.rand(v, 1)
-    B = np.random.rand(v, 2)
-    B[:, 0] = 1  # Constant term.
-
-    dummy_test(A, B, surf=None)
-
-
-# 1D terms
 def test_06():
+    # similar to test_03, shapes of ['Y'] and ['M'] changed
+    # ['Y'] : np array, (93, 41, 57), dtype('float64')
+    # ['M'] : np array, (93, 67), dtype('float64')
+    infile  = datadir('linmod_06_IN.pkl')
+    expfile = datadir('linmod_06_OUT.pkl')
+    ifile = open(infile, 'br')
+    idic  = pickle.load(ifile)
+    ifile.close()
+    Y   = idic['Y']
+    M   = idic['M']
+    M   = Term(M)
+    slm = SurfStatLinMod(Y, M)
+    # oslm : expected output
+    ofile = open(expfile, 'br')
+    oslm  = pickle.load(ofile)
+    ofile.close()
+    dummy_test(slm, oslm)
 
-    n = np.random.randint(10, 100)
-    p = np.random.randint(1, 10)
 
-    A = np.random.rand(n, p)
-    B = np.random.rand(n, 2)
-    B[:, 0] = 1  # Constant term.
-    B = Term(B)
-
-    dummy_test(A, B, surf=None)
-
-
-# 3D inputs --- A is a 3D input, B is Term
 def test_07():
-    n = np.random.randint(3, 100)
-    k = np.random.randint(3, 100)
-    v = np.random.randint(3, 100)
-    p = np.random.randint(3, 100)
+    # similar to test_03, shapes of ['Y'] and ['M'] changed
+    # ['Y'] : np array, (40, 46, 21), dtype('float64')
+    # ['M'] : np array, (40, 81), dtype('float64')
+    infile  = datadir('linmod_07_IN.pkl')
+    expfile = datadir('linmod_07_OUT.pkl')
+    ifile = open(infile, 'br')
+    idic  = pickle.load(ifile)
+    ifile.close()
+    Y   = idic['Y']
+    M   = idic['M']
+    M   = Term(M)
+    slm = SurfStatLinMod(Y, M)
+    # oslm : expected output
+    ofile = open(expfile, 'br')
+    oslm  = pickle.load(ofile)
+    ofile.close()
+    dummy_test(slm, oslm)
 
-    A = np.random.rand(n, v, k)
-    B = np.random.rand(n, p)
-    B[:, 0] = 1  # Constant term.
-    B = Term(B)
 
-    dummy_test(A, B, surf=None)
-
-
-# ?
 def test_08():
-    n = np.random.randint(2, 100)
-    v = np.random.randint(2, 100)
+    # ['Y'] and ['M'] mid. sized 2D arrays + optional ['tri'] input for surf
+    # ['Y'] : np array, (93, 43), dtype('float64')
+    # ['M'] : np array, (93, 2), dtype('float64')
+    # ['tri'] : np array, (93, 3), dtype('int64')
+    infile  = datadir('linmod_08_IN.pkl')
+    expfile = datadir('linmod_08_OUT.pkl')
+    ifile = open(infile, 'br')
+    idic  = pickle.load(ifile)
+    ifile.close()
+    Y    = idic['Y']
+    M    = idic['M']
+    surf = {}
+    surf['tri'] = idic['tri']
+    slm = SurfStatLinMod(Y, M, surf)
+    # oslm : expected output
+    ofile = open(expfile, 'br')
+    oslm  = pickle.load(ofile)
+    ofile.close()
+    dummy_test(slm, oslm)
 
-    A = np.random.rand(n, v)
-    B = np.random.rand(n, 2)
-    B[:, 0] = 1  # Constant term.
 
-    surf = {'tri': np.random.randint(1, v, size=(n, 3))}
-    dummy_test(A, B, surf, resl_check=False)
-
-
-# 3D inputs --- A is a 3D input, B is Term
 def test_09():
-    n = np.random.randint(3, 100)
-    k = np.random.randint(3, 100)
-    v = np.random.randint(3, 100)
-    p = np.random.randint(3, 100)
-
-    A = np.random.rand(n, v, k)
-    B = np.random.rand(n, p)
-    B[:, 0] = 1  # Constant term.
-    B = Term(B)
-
-    surf = {'tri': np.random.randint(1, v, size=(k, 3))}
-    dummy_test(A, B, surf=surf, resl_check=False)
+    # similar to test_03 + optional ['tri'] input for surf
+    # ['Y'] : np array, (98, 69, 60), dtype('float64')
+    # ['M'] : np array, (98, 91), dtype('float64')
+    # ['tri'] : np array, (60, 3), dtype('int64')
+    infile  = datadir('linmod_09_IN.pkl')
+    expfile = datadir('linmod_09_OUT.pkl')
+    ifile = open(infile, 'br')
+    idic  = pickle.load(ifile)
+    ifile.close()
+    Y    = idic['Y']
+    M    = idic['M']
+    M    = Term(M)
+    surf = {}
+    surf['tri'] = idic['tri']
+    slm = SurfStatLinMod(Y, M, surf)
+    ofile = open(expfile, 'br')
+    oslm  = pickle.load(ofile)
+    ofile.close()
+    dummy_test(slm, oslm)
 
 
 def test_10():
-    n = np.random.randint(2, 100)
-    v = np.random.randint(27, 28)
+    # similar to test_02 + optional ['lat'] input for surf
+    # ['Y'] : np array, (49, 27), dtype('float64')
+    # ['M'] : np array, (49, 2), dtype('float64')
+    # ['lat'] : np array, (3, 3, 3), dtype('bool')
+    infile  = datadir('linmod_10_IN.pkl')
+    expfile = datadir('linmod_10_OUT.pkl')
+    ifile = open(infile, 'br')
+    idic  = pickle.load(ifile)
+    ifile.close()
+    Y    = idic['Y']
+    M    = idic['M']
+    surf = {}
+    surf['lat'] = idic['lat']
+    slm = SurfStatLinMod(Y, M, surf)
+    ofile = open(expfile, 'br')
+    oslm  = pickle.load(ofile)
+    ofile.close()
+    dummy_test(slm, oslm)
 
-    A = np.random.rand(n, v)
-    B = np.random.rand(n, 2)
-    B[:, 0] = 1  # Constant term.
 
-    surf = {'lat': np.random.choice([0, 1], size=(3, 3, 3)).astype(bool)}
-    dummy_test(A, B, surf=surf)
-
-
-# 3D inputs --- A is a 3D input, B is Term
 def test_11():
-    n = np.random.randint(3, 100)
-    k = np.random.randint(3, 10)
-    v = np.random.randint(27, 28)
-    p = np.random.randint(3, 10)
-
-    A = np.random.rand(n, v, k)
-    B = np.random.rand(n, p)
-    B[:, 0] = 1  # Constant term.
-    B = Term(B)
-
-    surf = {'lat': np.random.choice([0, 1], size=(3, 3, 3))}
-    dummy_test(A, B, surf, resl_check=False)
+    # similar to test_03 + optional ['lat'] input for surf
+    # ['Y'] : np array, (45, 27, 3), dtype('float64')
+    # ['M'] : np array, (45, 7), dtype('float64')
+    # ['lat'] : np array, (3, 3, 3), dtype('int64')
+    infile  = datadir('linmod_11_IN.pkl')
+    expfile = datadir('linmod_11_OUT.pkl')
+    ifile = open(infile, 'br')
+    idic  = pickle.load(ifile)
+    ifile.close()
+    Y    = idic['Y']
+    M    = idic['M']
+    M    = Term(M)
+    surf = {}
+    surf['lat'] = idic['lat']
+    slm = SurfStatLinMod(Y, M, surf)
+    ofile = open(expfile, 'br')
+    oslm  = pickle.load(ofile)
+    ofile.close()
+    dummy_test(slm, oslm)
 
 
 def test_12():
-    surf, _ = load_conte69()
+    # real dataset, ['Y'] 20k columns, ['age'] modelling with Term, ['tri'] 40k vertex
+    # ['Y'] : np array, (10, 20484), dtype('float64')
+    # ['age'] : np array, (1, 10), dtype('float64')
+    # ['tri'] : np array, (40960, 3), dtype('int32')
+    # ['coord'] :np array, (3, 20484), dtype('float64')
+    infile  = datadir('linmod_12_IN.pkl')
+    expfile = datadir('linmod_12_OUT.pkl')
+    ifile = open(infile, 'br')
+    idic  = pickle.load(ifile)
+    ifile.close()
+    Y    = idic['Y']
+    age  = idic['age']
+    AGE  = Term(np.array(age), 'AGE')
+    M    = 1 + AGE
+    surf = {}
+    surf['tri'] = idic['tri']
+    surf['coord'] = idic['coord']
+    slm = SurfStatLinMod(Y, M, surf)
+    ofile = open(expfile, 'br')
+    oslm  = pickle.load(ofile)
+    ofile.close()
+    dummy_test(slm, oslm)
 
-    p = np.random.randint(1, 10)
-    n = np.random.randint(2, 10)
 
-    A = np.random.rand(n, 32492)
-    B = np.random.rand(n, p)
-    B[:, 0] = 1  # Constant term.
-    B = Term(B)
-
-    dummy_test(A, B, surf, resl_check=False)
-
-
-# real thickness data for 10 subjects
 def test_13():
-    fname = (os.path.dirname(brainstat.__file__) +
-             os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'thickness.mat')
-    f = loadmat(fname)
-
-    A = f['T']
-    AGE = Term(np.array(f['AGE']), 'AGE')
-    B = 1 + AGE
+    # similar to test_12, ['Y'] values shuffled
+    # ['Y'] : np array, (10, 20484), dtype('float64')
+    # ['age'] : np array, (1, 10), dtype('float64')
+    # ['tri'] : np array, (40960, 3), dtype('int32')
+    # ['coord'] : np array, (3, 20484), dtype('float64')
+    infile  = datadir('linmod_13_IN.pkl')
+    expfile = datadir('linmod_13_OUT.pkl')
+    ifile = open(infile, 'br')
+    idic  = pickle.load(ifile)
+    ifile.close()
+    Y    = idic['Y']
+    age  = idic['age']
+    AGE  = Term(np.array(age), 'AGE')
+    M    = 1 + AGE
     surf = {}
-    surf['tri'] = f['tri']
-    surf['coord'] = f['coord']
-    dummy_test(A, B, surf)
+    surf['tri'] = idic['tri']
+    surf['coord'] = idic['coord']
+    slm = SurfStatLinMod(Y, M, surf)
+    ofile = open(expfile, 'br')
+    oslm  = pickle.load(ofile)
+    ofile.close()
+    dummy_test(slm, oslm)
 
 
-# real thickness data for 10 subjects --> shuffle "Y" values
 def test_14():
-    fname = (os.path.dirname(brainstat.__file__) +
-             os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'thickness.mat')
-    f = loadmat(fname)
-
-    A = f['T']
-    np.random.shuffle(A)
-
-    AGE = Term(np.array(f['AGE']), 'AGE')
-    B = 1 + AGE
+    # similar to test_12, ['Y'] and ['tri'] values shuffled
+    # ['Y'] : np array, (10, 20484), dtype('float64')
+    # ['age'] : np array, (1, 10), dtype('float64')
+    # ['tri'] : np array, (40960, 3), dtype('int32')
+    # ['coord'] : np array, (3, 20484), dtype('float64')
+    infile  = datadir('linmod_14_IN.pkl')
+    expfile = datadir('linmod_14_OUT.pkl')
+    ifile = open(infile, 'br')
+    idic  = pickle.load(ifile)
+    ifile.close()
+    Y    = idic['Y']
+    age  = idic['age']
+    AGE  = Term(np.array(age), 'AGE')
+    M    = 1 + AGE
     surf = {}
-    surf['tri'] = f['tri']
-    surf['coord'] = f['coord']
-    dummy_test(A, B, surf)
+    surf['tri'] = idic['tri']
+    surf['coord'] = idic['coord']
+    slm = SurfStatLinMod(Y, M, surf)
+    ofile = open(expfile, 'br')
+    oslm  = pickle.load(ofile)
+    ofile.close()
+    dummy_test(slm, oslm)
 
 
-# real thickness data for 10 subjects --> shuffle "Y" values, shuffle surf['tri']
 def test_15():
-    fname = (os.path.dirname(brainstat.__file__) +
-             os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'thickness.mat')
-    f = loadmat(fname)
-
-    A = f['T']
-    np.random.shuffle(A)
-
-    AGE = Term(np.array(f['AGE']), 'AGE')
-    B = 1 + AGE
+    # choose ['Y']-values in range of [-1, 1], modeling from ['params'] & ['colnames']
+    # ['Y'] : np array, (20, 20484), dtype('float64')
+    # ['params'] : np array, (20, 9), dtype('uint16')
+    # ['colnames'] : np array, (9,), dtype('<U11')
+    # ['tri'] : np array, (40960, 3), dtype('int32')
+    # ['coord'] : np array, (3, 20484), dtype('float64')
+    infile  = datadir('linmod_15_IN.pkl')
+    expfile = datadir('linmod_15_OUT.pkl')
+    ifile = open(infile, 'br')
+    idic  = pickle.load(ifile)
+    ifile.close()
+    Y        = idic['Y']
+    params   = idic['params']
+    colnames = list(idic['colnames'])
+    M        = Term(params, colnames)
     surf = {}
-    surf['tri'] = f['tri']
+    surf['tri'] = idic['tri']
+    surf['coord'] = idic['coord']
+    slm = SurfStatLinMod(Y, M, surf)
+    ofile = open(expfile, 'br')
+    oslm  = pickle.load(ofile)
+    ofile.close()
+    dummy_test(slm, oslm)
 
-    np.random.shuffle(surf['tri'])
 
-    surf['coord'] = f['coord']
-    dummy_test(A, B, surf)
-
-
-# real data from sofopofo
 def test_16():
-    fname = (os.path.dirname(brainstat.__file__) +
-             os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'sofopofo1.mat')
-    f = loadmat(fname)
-    T = f['sofie']['T'][0, 0]
+    # similar to test_15, modeling only using the ['params']
+    # ['Y'] : np array, (20, 20484), dtype('float64')
+    # ['params'] : np array, (20, 9), dtype('uint16')
+    # ['tri'] : np array, (40960, 3), dtype('int32')
+    # ['coord'] :np array, (3, 20484), dtype('float64')
+    infile  = datadir('linmod_16_IN.pkl')
+    expfile = datadir('linmod_16_OUT.pkl')
+    ifile = open(infile, 'br')
+    idic  = pickle.load(ifile)
+    ifile.close()
+    Y        = idic['Y']
+    params   = idic['params']
+    M        = Term(params)
+    surf = {}
+    surf['tri'] = idic['tri']
+    surf['coord'] = idic['coord']
+    slm = SurfStatLinMod(Y, M, surf)
+    ofile = open(expfile, 'br')
+    oslm  = pickle.load(ofile)
+    ofile.close()
+    dummy_test(slm, oslm)
 
-    params = f['sofie']['model'][0, 0]
-    colnames = ['1', 'ak', 'female', 'male', 'Affect', 'Control1', 'Perspective',
-                'Presence', 'ink']
 
-    M = Term(params, colnames)
-
-    SW = {}
-    SW['tri'] = f['sofie']['SW'][0, 0]['tri'][0, 0]
-    SW['coord'] = f['sofie']['SW'][0, 0]['coord'][0, 0]
-
-    dummy_test(T, M, SW)
-
-
-# real data from sofopofo, no column naming in the model Term
-def test_17():
-    fname = (os.path.dirname(brainstat.__file__) +
-             os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'sofopofo1.mat')
-    f = loadmat(fname)
-    T = f['sofie']['T'][0, 0]
-
-    params = f['sofie']['model'][0, 0]
-
-    M = Term(params)
-
-    SW = {}
-    SW['tri'] = f['sofie']['SW'][0, 0]['tri'][0, 0]
-    SW['coord'] = f['sofie']['SW'][0, 0]['coord'][0, 0]
-
-    dummy_test(T, M, SW)

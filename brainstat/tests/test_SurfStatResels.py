@@ -1,181 +1,157 @@
-from brainstat.stats.SurfStatResels import SurfStatResels
-from brainstat.stats.SurfStatEdg import SurfStatEdg
-import surfstat_wrap as sw
 import numpy as np
-import os
-import brainstat
-import pytest
-from scipy.io import loadmat
-
-sw.matlab_init_surfstat()
+import pickle
+from .testutil import datadir
+from ..stats import SurfStatResels
 
 
-def dummy_test(slm, mask=None):
+def dummy_test(infile, expfile):
 
-    # Run MATLAB
-    try:
-        mat_output = sw.matlab_Resels(slm, mask)
-        # Deal with either 1 or 3 output arguments.
-        # if not isinstance(mat_output, np.ndarray):
-        #    mat_output = mat_output[0].tolist()
-        #    mat_output[1] = np.squeeze(mat_output[1])
-        # else:
-        mat_output = mat_output.tolist()
-        if isinstance(mat_output, float):
-            mat_output = [mat_output]
-    except:
-        pytest.skip("Original MATLAB code does not work with these inputs.")
+    # load input test data
+    ifile = open(infile, 'br')
+    idic  = pickle.load(ifile)
+    ifile.close()
 
-    # Run Python
-    resels_py,  reselspvert_py,  edg_py = SurfStatResels(slm, mask)
-    if len(mat_output) == 1:
-        py_output = [resels_py]
-    else:
-        py_output = [resels_py,
-                     reselspvert_py,
-                     edg_py+1]
+    slm = {}
 
-    # compare matlab-python outputs
-    test_out = []
-    for py, mat in zip(py_output, mat_output):
-        result = np.allclose(np.squeeze(py),
-                             np.squeeze(np.asarray(mat)),
-                             rtol=1e-05, equal_nan=True)
-        test_out.append(result)
+    if 'tri' in idic.keys():
+        slm['tri'] = idic['tri']
 
-    assert all(flag == True for (flag) in test_out)
+    if 'resl' in idic.keys():
+        slm['resl'] = idic['resl']
+
+    if 'lat' in idic.keys():
+        slm['lat'] = idic['lat']
+
+    mask = None
+
+    if 'mask' in idic.keys():
+        mask = idic['mask']
+
+    resels_py, reselspvert_py, edg_py =  SurfStatResels(slm,mask)
+
+    out = {}
+    out['resels']      = resels_py
+    out['reselspvert'] = reselspvert_py
+    out['edg']         = edg_py
+
+    # load expected outout data
+    efile  = open(expfile, 'br')
+    expdic = pickle.load(efile)
+    efile.close()
+
+    testout = []
+
+    for key in out.keys():
+        if out[key] is not None and expdic[key] is not None:
+            comp = np.allclose(out[key], expdic[key], rtol=1e-05, equal_nan=True)
+            testout.append(comp)
+
+    assert all(flag == True for (flag) in testout)
 
 
 def test_01():
-    # Test with only slm.tri
-    slm = {'tri': np.array(
-        [[1, 2, 3],
-         [2, 3, 4],
-         [1, 2, 4],
-         [2, 3, 5]])}
-    dummy_test(slm)
+    # ['tri'] :np array, shape (4, 3), int64
+    infile  = datadir('statresl_01_IN.pkl')
+    expfile = datadir('statresl_01_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_02():
-    # Test with slm.tri and slm.resl
-    slm = {'tri': np.array(
-        [[1, 2, 3],
-         [2, 3, 4],
-         [1, 2, 4],
-         [2, 3, 5]]),
-        'resl': np.random.rand(8, 6)}
-    dummy_test(slm)
+    # ['tri'] :np array, shape (4, 3), int64
+    # ['resl'] :np array, shape (8, 6), float64
+    infile  = datadir('statresl_02_IN.pkl')
+    expfile = datadir('statresl_02_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_03():
-    # Test with slm.tri, slm.resl, and mask
-    slm = {'tri': np.array(
-        [[1, 2, 3],
-         [2, 3, 4],
-         [1, 2, 4],
-         [2, 3, 5]]),
-        'resl': np.random.rand(8, 6)}
-    mask = np.array([True, True, True, False, True])
-    dummy_test(slm, mask)
+    # ['tri'] :np array, shape (4, 3), int64
+    # ['resl'] :np array, shape (8, 6), float64
+    # ['mask'] :np array, shape (5,), bool
+    infile  = datadir('statresl_03_IN.pkl')
+    expfile = datadir('statresl_03_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_04():
-    # Test with slm.lat, 1's only.
-    slm = {'lat': np.ones((10, 10, 10))}
-    dummy_test(slm)
+    # ['lat'] :np array, shape (10, 10, 10), float64
+    infile  = datadir('statresl_04_IN.pkl')
+    expfile = datadir('statresl_04_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_05():
-    # Test with slm.lat, both 0's and 1's.
-    slm = {'lat': np.random.rand(10, 10, 10) > 0.5}
-    dummy_test(slm)
+    # ['lat'] :np array, shape (10, 10, 10), bool
+    infile  = datadir('statresl_05_IN.pkl')
+    expfile = datadir('statresl_05_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_06():
-    # Test with slm.lat, both 0's and 1's, and a mask.
-    slm = {'lat': np.random.rand(10, 10, 10) > 0.5}
-    mask = np.random.choice([False, True], np.sum(slm['lat']))
-    dummy_test(slm, mask)
+    # ['lat'] :np array, shape (10, 10, 10), bool
+    # ['mask'] :np array, shape (457,), bool
+    infile  = datadir('statresl_06_IN.pkl')
+    expfile = datadir('statresl_06_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_07():
-    # Test with slm.lat and slm.resl
-    slm = {'lat': np.random.rand(10, 10, 10) > 0.5}
-    edg = SurfStatEdg(slm)
-    slm['resl'] = np.random.rand(edg.shape[0], 1)
-    dummy_test(slm)
+    # ['lat'] :np array, shape (10, 10, 10), bool
+    # ['resl'] :np array, shape (1359, 1), float64
+    infile  = datadir('statresl_07_IN.pkl')
+    expfile = datadir('statresl_07_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_08():
-    # Test with slm.lat, slm.resl, and a mask
-    slm = {'lat': np.random.rand(10, 10, 10) > 0.5}
-    mask = np.random.choice([False, True], np.sum(slm['lat']))
-    edg = SurfStatEdg(slm)
-    slm['resl'] = np.random.rand(edg.shape[0], 1)
-    dummy_test(slm, mask)
+    # ['lat'] :np array, shape (10, 10, 10), bool
+    # ['resl'] :np array, shape (1251, 1), float64
+    # ['mask'] :np array, shape (499,), bool
+    infile  = datadir('statresl_08_IN.pkl')
+    expfile = datadir('statresl_08_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_09():
-    # Test with slm.lat, slm.resl, and a fully false mask
-    slm = {'lat': np.random.rand(10, 10, 10) > 0.5}
-    mask = np.zeros(np.sum(slm['lat']), dtype=bool)
-    edg = SurfStatEdg(slm)
-    slm['resl'] = np.random.rand(edg.shape[0], 1)
-    dummy_test(slm, mask)
+    # ['lat'] :np array, shape (10, 10, 10), bool
+    # ['resl'] :np array, shape (1198, 1), float64
+    # ['mask'] :np array, shape (478,), bool
+    infile  = datadir('statresl_09_IN.pkl')
+    expfile = datadir('statresl_09_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_10():
-    slmfile = (os.path.dirname(brainstat.__file__) +
-               os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep +
-               'slm.mat')
-    slmdata = loadmat(slmfile)
-    slm = {}
-    slm['tri'] = slmdata['slm']['tri'][0, 0]
-    slm['resl'] = slmdata['slm']['resl'][0, 0]
-    dummy_test(slm)
+    # ['tri'] :np array, shape (129960, 3), int32
+    # ['resl'] :np array, shape (194940, 1), float64
+    infile  = datadir('statresl_10_IN.pkl')
+    expfile = datadir('statresl_10_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_11():
-    # real data & random mask
-    slmfile = (os.path.dirname(brainstat.__file__) +
-               os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep +
-               'slm.mat')
-    slmdata = loadmat(slmfile)
-    slm = {}
-    slm['tri'] = slmdata['slm']['tri'][0, 0]
-    slm['resl'] = slmdata['slm']['resl'][0, 0]
-    # v is number of vertices
-    v = slm['tri'].max()
-    mask = np.random.choice([False, True], v)
-    dummy_test(slm, mask)
+    # ['tri'] :np array, shape (129960, 3), int32
+    # ['resl'] :np array, shape (194940, 1), float64
+    # ['mask'] :np array, shape (64984,), bool
+    infile  = datadir('statresl_11_IN.pkl')
+    expfile = datadir('statresl_11_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_12():
-    # randomized (shuffled) real data
-    slmfile = (os.path.dirname(brainstat.__file__) +
-               os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep +
-               'slm.mat')
-    slmdata = loadmat(slmfile)
-    slm = {}
-    slm['tri'] = slmdata['slm']['tri'][0, 0]
-    slm['resl'] = slmdata['slm']['resl'][0, 0]
-    np.random.shuffle(slm['tri'])
-    np.random.shuffle(slm['resl'])
-    dummy_test(slm)
+    # ['tri'] :np array, shape (129960, 3), int32
+    # ['resl'] :np array, shape (194940, 1), float64
+    infile  = datadir('statresl_12_IN.pkl')
+    expfile = datadir('statresl_12_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_13():
-    # randomized (shuffled) real data & random mask
-    slmfile = (os.path.dirname(brainstat.__file__) +
-               os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep +
-               'slm.mat')
-    slmdata = loadmat(slmfile)
-    slm = {}
-    slm['tri'] = slmdata['slm']['tri'][0, 0]
-    slm['resl'] = slmdata['slm']['resl'][0, 0]
-    np.random.shuffle(slm['tri'])
-    np.random.shuffle(slm['resl'])
-    # v is number of vertices
-    v = slm['tri'].max()
-    mask = np.random.choice([False, True], v)
-    dummy_test(slm, mask)
+    # ['tri'] :np array, shape (129960, 3), int32
+    # ['resl'] :np array, shape (194940, 1), float64
+    # ['mask'] :np array, shape (64984,), bool
+    infile  = datadir('statresl_13_IN.pkl')
+    expfile = datadir('statresl_13_OUT.pkl')
+    dummy_test(infile, expfile)
+
+

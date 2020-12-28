@@ -1,6 +1,6 @@
 import numpy as np
-from brainstat.stats.SurfStatResels import SurfStatResels
-from brainstat.stats.stat_threshold import stat_threshold
+from .SurfStatResels import SurfStatResels
+from .stat_threshold import stat_threshold
 
 
 def SurfStatQ(slm, mask=None):

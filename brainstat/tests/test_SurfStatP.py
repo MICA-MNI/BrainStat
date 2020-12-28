@@ -1,411 +1,341 @@
-from brainstat.stats.SurfStatLinMod import SurfStatLinMod
-from brainstat.stats.SurfStatT import SurfStatT
-from brainstat.stats.term import Term
-from brainstat.stats.SurfStatP import SurfStatP
-import surfstat_wrap as sw
-from scipy.io import loadmat
 import numpy as np
-import pytest
-
-import os
-import brainstat
-
-sw.matlab_init_surfstat()
+import pickle
+from .testutil import datadir
+from ..stats import SurfStatP
 
 
-def dummy_test(slm, mask=None, clusthresh=0.001):
+def dummy_test(infile, expfile):
 
-    try:
-        # wrap matlab functions
-        M_pval, M_peak, M_clus, M_clusid = sw.matlab_P(slm,
-                                                       mask,
-                                                       clusthresh)
+    # load input test data
+    ifile = open(infile, 'br')
+    idic  = pickle.load(ifile)
+    ifile.close()
 
-    except:
-        pytest.skip("Original MATLAB code does not work with these inputs.")
+    slm = {}
+    slm['t']    = idic['t']
+    slm['df']   = idic['df']
+    slm['k']    = idic['k']
+    slm['tri']  = idic['tri']
 
-    # run python equivalent
-    PY_pval, PY_peak, PY_clus, PY_clusid = SurfStatP(slm,
-                                                     mask,
-                                                     clusthresh)
+    mask = None
+    clusthresh=0.001
 
-    # compare matlab-python outputs
-    testout_P = []
+    if 'dfs' in idic.keys():
+        slm['dfs'] = idic['dfs']
 
-    for key in M_pval:
-        testout_P.append(np.allclose(M_pval[key], PY_pval[key],
-                                     rtol=1e-05, equal_nan=True))
-    for key in M_peak:
-        testout_P.append(np.allclose(M_peak[key], PY_peak[key],
-                                     rtol=1e-05, equal_nan=True))
-    for key in M_clus:
-        testout_P.append(np.allclose(M_clus[key], PY_clus[key],
-                                     rtol=1e-05, equal_nan=True))
-    testout_P.append(np.allclose(M_clusid, PY_clusid,
-                                 rtol=1e-05, equal_nan=True))
+    if 'resl' in idic.keys():
+        slm['resl'] = idic['resl']
 
-    assert (all(flag == True for (flag) in testout_P))
+    if 'mask' in idic.keys():
+        mask = idic['mask']
+
+    if 'clusthresh' in idic.keys():
+        clusthresh = idic['clusthresh']
+
+    if 'X' in idic.keys():
+        slm['X'] = idic['X']
+
+    if 'coef' in idic.keys():
+        slm['coef']  = idic['coef']
+
+    if 'SSE' in idic.keys():
+        slm['SSE'] = idic['SSE']
+
+    if 'c' in idic.keys():
+        slm['c'] = idic['c']
+
+    if 'ef' in idic.keys():
+        slm['ef'] = idic['ef']
+
+    if 'sd' in idic.keys():
+        slm['sd'] = idic['sd']
+
+
+    PY_pval, PY_peak, PY_clus, PY_clusid = SurfStatP(slm, mask, clusthresh)
+
+    # load expected outout data
+    efile  = open(expfile, 'br')
+    expdic = pickle.load(efile)
+    efile.close()
+
+    O_pval   = expdic['pval']
+    O_peak   = expdic['peak']
+    O_clus   = expdic['clus']
+    O_clusid = expdic['clusid']
+
+    testout = []
+
+    for key in PY_pval.keys():
+        comp = np.allclose(PY_pval[key], O_pval[key], rtol=1e-05, equal_nan=True)
+        testout.append(comp)
+
+    if isinstance(PY_peak, (dict)):
+        for key in PY_peak.keys():
+            comp = np.allclose(PY_peak[key], O_peak[key], rtol=1e-05, equal_nan=True)
+    else:
+        comp = np.allclose(PY_peak, O_peak, rtol=1e-05, equal_nan=True)
+    testout.append(comp)
+
+    if isinstance(PY_peak, (dict)):
+        for key in PY_clus.keys():
+            comp = np.allclose(PY_clus[key], O_clus[key], rtol=1e-05, equal_nan=True)
+    else:
+        comp = np.allclose(PY_clus, O_clus, rtol=1e-05, equal_nan=True)
+    testout.append(comp)
+
+    testout.append(np.allclose(PY_clusid, O_clusid,
+                               rtol=1e-05, equal_nan=True))
+
+    assert all(flag == True for (flag) in testout)
 
 
 def test_01():
-    # special case, v =1, l=1
-    l = int(1)
-    v = int(1)
-    slmfile = (os.path.dirname(brainstat.__file__) +
-               os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
-    slmdata = loadmat(slmfile)
-    slm = {}
-    slm['t'] = np.random.rand(l, v)
-    slm['df'] = slmdata['slm']['df'][0, 0]
-    slm['k'] = slmdata['slm']['k'][0, 0]
-    slm['resl'] = slmdata['slm']['resl'][0, 0]
-    slm['tri'] = slmdata['slm']['tri'][0, 0]
-    slm['dfs'] = np.array([[np.random.randint(1, 10)]])
-    dummy_test(slm)
+    # slm with only one vertex with t-value ['t'], huge sized ['tri'] and ['resl']
+    # ['t'] : np array, shape (1, 1), float64
+    # ['df'] : np array, shape (1, 1), uint16
+    # ['k'] : np array, shape (1, 1), uint8
+    # ['tri'] : np array, shape (129960, 3), int32
+    # ['resl'] : np array, shape (194940, 1), float64
+    # ['dfs'] : np array, shape (1, 1), int64
+    infile  = datadir('statp_01_IN.pkl')
+    expfile = datadir('statp_01_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_02():
-    # special case, v=1, l>1
-    l = np.random.randint(1, 10000)
-    v = int(1)
-    slmfile = (os.path.dirname(brainstat.__file__) +
-               os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
-    slmdata = loadmat(slmfile)
-    slm = {}
-    slm['t'] = np.random.rand(l, v)
-    slm['df'] = slmdata['slm']['df'][0, 0]
-    slm['k'] = slmdata['slm']['k'][0, 0]
-    slm['resl'] = slmdata['slm']['resl'][0, 0]
-    slm['tri'] = slmdata['slm']['tri'][0, 0]
-    slm['dfs'] = np.array([[np.random.randint(1, 10)]])
-    dummy_test(slm)
+    # slm with intermediate sized ['t'], huge sized ['tri'] and ['resl']
+    # ['t'] : np array, shape (2483, 1), float64
+    # ['df'] : np array, shape (1, 1), uint16
+    # ['k'] : np array, shape (1, 1), uint8
+    # ['resl'] : np array, shape (194940, 1), float64
+    # ['tri'] : np array, shape (129960, 3), int32
+    # ['dfs'] : np array, shape (1, 1), int64
+    infile  = datadir('statp_02_IN.pkl')
+    expfile = datadir('statp_02_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_03():
-    # special case, v=1, l>1, other input more randomized
-    l = np.random.randint(1, 10000)
-    v = int(1)
-    e = np.random.randint(1, 10)
-    k = 1
-    d = np.random.randint(1111, 2000)
-    slmfile = (os.path.dirname(brainstat.__file__) +
-               os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
-    slmdata = loadmat(slmfile)
-    slm = {}
-    slm['t'] = np.random.rand(l, v)
-    slm['df'] = np.array([[d]])
-    slm['k'] = k
-    slm['resl'] = np.random.rand(e, k)
-    slm['tri'] = slmdata['slm']['tri'][0, 0]
-    slm['dfs'] = np.array([[np.random.randint(1, 10)]])
-    dummy_test(slm)
+    # slm['k'] data type changed to an int
+    # ['t'] : np array, shape (5969, 1), float64
+    # ['df'] : np array, shape (1, 1), int64
+    # ['k'] : int
+    # ['resl'] : np array, shape (3, 1), float64
+    # ['tri'] : np array, shape (129960, 3), int32
+    # ['dfs'] : np array, shape (1, 1), int64
+    infile  = datadir('statp_03_IN.pkl')
+    expfile = datadir('statp_03_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_04():
-    # v >1 and clusthresh < 1 (default clusthresh)
-    slmfile = (os.path.dirname(brainstat.__file__) +
-               os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
-    slmdata = loadmat(slmfile)
-    slm = {}
-    slm['t'] = slmdata['slm']['t'][0, 0]
-    slm['df'] = slmdata['slm']['df'][0, 0]
-    slm['k'] = slmdata['slm']['k'][0, 0]
-    slm['resl'] = slmdata['slm']['resl'][0, 0]
-    slm['tri'] = slmdata['slm']['tri'][0, 0]
-    dummy_test(slm,  mask=None, clusthresh=0.001)
+    # only mandatory keys of slm are given, slm['t'] is 64k
+    # ['t'] : np array, shape (1, 64984), float64
+    # ['df'] :  np array, shape (1, 1), uint16
+    # ['k'] :  np array, shape (1, 1), uint8
+    # ['resl'] :  np array, shape (194940, 1), float64
+    # ['tri'] :  np array, shape (129960, 3), int32
+    infile  = datadir('statp_04_IN.pkl')
+    expfile = datadir('statp_04_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_05():
-    # v >1 and clusthresh < 1 (default clusthresh)
-    l = 1
-    v = 64984
-    e = 194940
-    k = 1
-    d = 1111
-    slm = {}
-    slm['t'] = np.random.uniform(-5, 5, (l, v))
-    slm['df'] = np.array([[d]])
-    slm['k'] = k
-    slm['resl'] = np.random.rand(e, k)
-    slm['tri'] = np.random.randint(low=1, high=64984+1, size=(129960, 3))
-    dummy_test(slm,  mask=None, clusthresh=0.001)
+    # only mandatory slm keys given, change dtype of slm['df'] and slm['k']
+    # ['t'] : np array, shape (1, 64984), float64
+    # ['df'] : np array, shape (1, 1), int64
+    # ['k'] :  int
+    # ['resl'] : np array, shape (194940, 1), float64
+    # ['tri'] : np array, shape (129960, 3), int32
+    infile  = datadir('statp_05_IN.pkl')
+    expfile = datadir('statp_05_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_06():
-    # v >1 and clusthresh < 1 (default clusthresh)
-    l = 1
-    v = 64984
-    e = 194940
-    k = 1
-    d = np.random.randint(1111, 2000)
-    slmfile = (os.path.dirname(brainstat.__file__) +
-               os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
-    slmdata = loadmat(slmfile)
-    slm = {}
-    slm['t'] = np.random.uniform(-5, 5, (l, v))
-    slm['df'] = np.array([[d]])
-    slm['k'] = k
-    slm['resl'] = slmdata['slm']['resl'][0, 0]
-    slm['tri'] = slmdata['slm']['tri'][0, 0]
-    dummy_test(slm,  mask=None, clusthresh=0.001)
+    # only mandatory slm keys given, change dtype of slm['df'] and slm['k']
+    # ['t'] : np array, shape (1, 64984), float64
+    # ['df'] : np array, shape (1, 1), uint16
+    # ['k'] : np array, shape (1, 1), uint8
+    # ['resl'] : np array, shape (194940, 1), float64
+    # ['tri'] : np array, shape (129960, 3), int32
+    infile  = datadir('statp_06_IN.pkl')
+    expfile = datadir('statp_06_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_07():
-    # special case np.max(slm['t'][0, mask.flatten()]) < thresh
-    slmfile = (os.path.dirname(brainstat.__file__) +
-               os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
-    slmdata = loadmat(slmfile)
-    slm = {}
-    slm['t'] = np.random.uniform(low=-4, high=0, size=(1, 64984))
-    slm['df'] = slmdata['slm']['df'][0, 0]
-    slm['k'] = slmdata['slm']['k'][0, 0]
-    slm['resl'] = slmdata['slm']['resl'][0, 0]
-    slm['tri'] = slmdata['slm']['tri'][0, 0]
-    dummy_test(slm)
+    # only mandatory keys of slm are given, change dtype of slm['df'] and slm['k']
+    # ['t'] : np array, shape (1, 64984), float64
+    # ['df'] : np array, shape (1, 1), int64
+    # ['k'] : np array, shape (1, 1), uint8
+    # ['resl'] : np array, shape (194940, 1), float64
+    # ['tri'] : np array, shape (129960, 3), int32
+    infile  = datadir('statp_07_IN.pkl')
+    expfile = datadir('statp_07_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_08():
-    # special case np.max(slm['t'][0, mask.flatten()]) < thresh
-    # make slm['df'] a random integer
-    d = np.random.randint(1111, 2000)
-    slmfile = (os.path.dirname(brainstat.__file__) +
-               os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
-    slmdata = loadmat(slmfile)
-    slm = {}
-    slm['t'] = np.random.uniform(low=-4, high=0, size=(1, 64984))
-    slm['df'] = np.array([[d]])
-    slm['k'] = slmdata['slm']['k'][0, 0]
-    slm['resl'] = slmdata['slm']['resl'][0, 0]
-    slm['tri'] = slmdata['slm']['tri'][0, 0]
-    dummy_test(slm)
+    # values in slm['t'] (of test_07) were shuffled
+    # ['t'] : np array, shape (1, 64984), float64
+    # ['df'] : np array, shape (1, 1), uint16
+    # ['k'] :  np array, shape (1, 1), uint8
+    # ['resl'] : np array, shape (194940, 1), float64
+    # ['tri'] : np array, shape (129960, 3), int32
+    infile  = datadir('statp_08_IN.pkl')
+    expfile = datadir('statp_08_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_09():
-    # special case case np.max(slm['t'][0, mask.flatten()]) > thresh
-    slmfile = (os.path.dirname(brainstat.__file__) +
-               os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
-    slmdata = loadmat(slmfile)
-    slm = {}
-    slm['t'] = np.random.uniform(low=0, high=4, size=(1, 64984))
-    slm['df'] = slmdata['slm']['df'][0, 0]
-    slm['k'] = slmdata['slm']['k'][0, 0]
-    slm['resl'] = slmdata['slm']['resl'][0, 0]
-    slm['tri'] = slmdata['slm']['tri'][0, 0]
-    dummy_test(slm)
+    # values in slm['t'] array (of test_07) were shuffled
+    # ['t'] : np array, shape (1, 64984), float64
+    # ['df'] : np array, shape (1, 1), uint16
+    # ['k'] : np array, shape (1, 1), uint8
+    # ['resl'] : np array, shape (194940, 1), float64
+    # ['tri'] : np array, shape (129960, 3), int32
+    infile  = datadir('statp_09_IN.pkl')
+    expfile = datadir('statp_09_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_10():
-    # data from Sofie
-    slmfile = (os.path.dirname(brainstat.__file__) +
-               os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
-    slmdata = loadmat(slmfile)
-    slm = {}
-    slm['t'] = slmdata['slm']['t'][0, 0]
-    slm['df'] = slmdata['slm']['df'][0, 0]
-    slm['k'] = slmdata['slm']['k'][0, 0]
-    slm['resl'] = slmdata['slm']['resl'][0, 0]
-    slm['tri'] = slmdata['slm']['tri'][0, 0]
-    dummy_test(slm)
+    # only mandatory slm keys given + optional input ['mask'] given
+    # ['t'] : np array, shape (1, 64984), float64
+    # ['df'] : np array, shape (1, 1), uint16
+    # ['k'] : np array, shape (1, 1), uint8
+    # ['resl'] : np array, shape (194940, 1), float64
+    # ['tri'] : np array, shape (129960, 3), int32
+    # ['mask'] : np array, shape (64984,), bool
+    infile  = datadir('statp_10_IN.pkl')
+    expfile = datadir('statp_10_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_11():
-    # data from Sofie + a random mask
-    slmfile = (os.path.dirname(brainstat.__file__) +
-               os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
-    slmdata = loadmat(slmfile)
-    slm = {}
-    slm['t'] = slmdata['slm']['t'][0, 0]
-    slm['df'] = slmdata['slm']['df'][0, 0]
-    slm['k'] = slmdata['slm']['k'][0, 0]
-    slm['resl'] = slmdata['slm']['resl'][0, 0]
-    slm['tri'] = slmdata['slm']['tri'][0, 0]
-
-    v = np.shape(slmdata['slm']['t'][0, 0])[1]
-    Amask = np.random.choice([0, 1], size=(v))
-    Amask = np.array(Amask, dtype=bool)
-
-    dummy_test(slm, mask=Amask)
-
-
-def test_12():
-    # data from Sofie + clusthresh is a random value
-    slmfile = (os.path.dirname(brainstat.__file__) +
-               os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
-    slmdata = loadmat(slmfile)
-
-    slm = {}
-
-    slm['t'] = slmdata['slm']['t'][0, 0]
-    slm['df'] = slmdata['slm']['df'][0, 0]
-    slm['k'] = slmdata['slm']['k'][0, 0]
-    slm['resl'] = slmdata['slm']['resl'][0, 0]
-    slm['tri'] = slmdata['slm']['tri'][0, 0]
-
-    Amask = np.ones((slm['t'].shape[1]))
-    Amask = np.array(Amask, dtype=bool)
-    Aclusthresh = 0.3
-    dummy_test(slm, Amask, Aclusthresh)
+    # test_10 + optional input ['mask'] and ['clusthresh'] given
+    # ['t'] : np array, shape (1, 64984), float64
+    # ['df'] : np array, shape (1, 1), uint16
+    # ['k'] : np array, shape (1, 1), uint8
+    # ['resl'] : np array, shape (194940, 1), float64
+    # ['tri'] : np array, shape (129960, 3), int32
+    # ['mask'] : mask np array, shape (64984,), bool
+    # ['clusthresh'] : <class 'float'>
+    infile  = datadir('statp_11_IN.pkl')
+    expfile = datadir('statp_11_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_13():
-    # randomize Sofie's data a little bit
-    v = int(64984)
-    y = int(194940)
-
-    slmfile = (os.path.dirname(brainstat.__file__) +
-               os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
-    slmdata = loadmat(slmfile)
-
-    slm = {}
-
-    slm['t'] = np.random.rand(1, v)
-    slm['df'] = np.array([1111])
-    slm['k'] = 1
-    slm['resl'] = slmdata['slm']['resl'][0, 0]
-    slm['tri'] = slmdata['slm']['tri'][0, 0]
-
-    dummy_test(slm)
+    # only mandatory slm keys given, slm['df'] is changed to a 1D array
+    # ['t'] : np array, shape (1, 64984), float64
+    # ['df'] : np array, shape (1,), int64
+    # ['k'] : int
+    # ['resl'] np array, shape (194940, 1), float64
+    # ['tri']  np array, shape (129960, 3), int32
+    infile  = datadir('statp_13_IN.pkl')
+    expfile = datadir('statp_13_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_14():
-    # data from Sofie, slm['t'] is array of shape (1,1)
-    slmfile = (os.path.dirname(brainstat.__file__) +
-               os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
-    slmdata = loadmat(slmfile)
-
-    slm = {}
-
-    slm['t'] = np.array([[-0.1718374541922737]])
-    slm['df'] = slmdata['slm']['df'][0, 0]
-    slm['k'] = 1
-    slm['resl'] = slmdata['slm']['resl'][0, 0]
-    slm['tri'] = slmdata['slm']['tri'][0, 0]
-
-    dummy_test(slm)
+    # test_04 + optional slm['dfs'] (huge sized) given
+    # ['t'] :  np array, shape (1, 64984), float64
+    # ['df'] : np array, shape (1, 1), uint16
+    # ['k'] : np array, shape (1, 1), uint8
+    # ['resl'] : np array, shape (194940, 1), float64
+    # ['tri'] : np array, shape (129960, 3), int32
+    # ['dfs'] : np array, shape (1, 64984), int64
+    infile  = datadir('statp_14_IN.pkl')
+    expfile = datadir('statp_14_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_15():
-    # data from Sofie + add a random slm['dfs']
-    v = int(64984)
-
-    slmfile = (os.path.dirname(brainstat.__file__) +
-               os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
-    slmdata = loadmat(slmfile)
-
-    slm = {}
-
-    slm['t'] = slmdata['slm']['t'][0, 0]
-    slm['df'] = slmdata['slm']['df'][0, 0]
-    slm['k'] = slmdata['slm']['k'][0, 0]
-    slm['resl'] = slmdata['slm']['resl'][0, 0]
-    slm['tri'] = slmdata['slm']['tri'][0, 0]
-    slm['dfs'] = np.random.randint(1, 10, (1, v))
-
-    dummy_test(slm)
+    # only mandatory slm keys are given, ['t'] is 32k, half-sized of test_04
+    # ['t'] : np array, shape (1, 32492), float64
+    # ['df'] : np array, shape (1, 1), uint8
+    # ['k'] : np array, shape (1, 1), uint8
+    # ['resl'] : np array, shape (97470, 3), float64
+    # ['tri'] : np array, shape (64980, 3), int32
+    infile  = datadir('statp_15_IN.pkl')
+    expfile = datadir('statp_15_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_16():
-    # data from Reinder, slm.k = 3
-    slmfile = (os.path.dirname(brainstat.__file__) +
-               os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slmk3.mat')
-    slmdata = loadmat(slmfile)
-    slm = {}
-    slm['t'] = slmdata['slm']['t'][0, 0]
-    slm['df'] = slmdata['slm']['df'][0, 0]
-    slm['k'] = slmdata['slm']['k'][0, 0]
-    slm['resl'] = slmdata['slm']['resl'][0, 0]
-    slm['tri'] = slmdata['slm']['tri'][0, 0]
-
-    dummy_test(slm)
+    # additional non-sense keys (meaningless for SurfStatP) are added to slm
+    # ['df'] : int64
+    # ['X'] : np array, shape (10, 2), float64
+    # ['coef'] :  np array, shape (2, 20484), float64
+    # ['SSE'] : np array, shape (1, 20484), float64
+    # ['tri'] : np array, shape (40960, 3), int32
+    # ['resl'] : np array, shape (61440, 1), float64
+    # ['c'] : np array, shape (1, 2), float64
+    # ['k'] : int
+    # ['ef'] : np array, shape (1, 20484), float64
+    # ['sd'] : np array, shape (1, 20484), float64
+    # ['t'] :  np array, shape (1, 20484), float64
+    infile  = datadir('statp_16_IN.pkl')
+    expfile = datadir('statp_16_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_17():
-    # load tutorial data (for n=10 subjects)
-    fname = (os.path.dirname(brainstat.__file__) +
-             os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'thickness.mat')
-    f = loadmat(fname)
-    SW = {}
-    SW['tri'] = f['tri']
-    SW['coord'] = f['coord']
-    Y = f['T']
-    AGE = np.array(f['AGE'])
-    AGE = AGE.reshape(AGE.shape[1], 1)
-    A = Term(AGE, 'AGE')
-    M = 1 + A
-    slm = SurfStatLinMod(Y, M, SW)
-    slm = SurfStatT(slm, -1*AGE)
-    dummy_test(slm)
+    # test_16 + dtype change of non-sense slm keys + optional ['mask'] input given
+    # ['X'] : np array, shape (10, 2), uint8
+    # ['df'] : uint8
+    # ['coef'] : np array, shape (2, 20484), float64
+    # ['SSE'] : np array, shape (1, 20484), float64
+    # ['tri'] :  np array, shape (40960, 3), int32
+    # ['resl'] : np array, shape (61440, 1), float64
+    # ['c'] :  np array, shape (1, 2), float64
+    # ['k'] :  int
+    # ['ef'] : np array, shape (1, 20484), float64
+    # ['sd'] : np array, shape (1, 20484), float64
+    # ['t'] :  np array, shape (1, 20484), float64
+    # ['mask'] :  np array, shape (20484,), bool
+    infile  = datadir('statp_17_IN.pkl')
+    expfile = datadir('statp_17_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_18():
-    fname = (os.path.dirname(brainstat.__file__) +
-             os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'thickness_slm.mat')
-    f = loadmat(fname)
-    slm = {}
-    slm['X'] = f['slm']['X'][0, 0]
-    slm['df'] = f['slm']['df'][0, 0][0, 0]
-    slm['coef'] = f['slm']['coef'][0, 0]
-    slm['SSE'] = f['slm']['SSE'][0, 0]
-    slm['tri'] = f['slm']['tri'][0, 0]
-    slm['resl'] = f['slm']['resl'][0, 0]
-    AGE = f['slm']['AGE'][0, 0]
-    slm = SurfStatT(slm, -1*AGE)
-    dummy_test(slm)
+    # test_16 + dtype/shape change of the non-sense slm keys
+    # ['df'] :  int64
+    # ['X'] np array, shape (20, 9), uint16
+    # ['coef'] : np array, shape (9, 20484), float64
+    # ['SSE'] : np array, shape (1, 20484), float64
+    # ['tri'] : np array, shape (40960, 3), int32
+    # ['resl'] : np array, shape (61440, 1), float64
+    # ['c'] : np array, shape (1, 9), float64
+    # ['k'] : int
+    # ['ef'] : np array, shape (1, 20484), float64
+    # ['sd'] : np array, shape (1, 20484), float64
+    # ['t'] :  np array, shape (1, 20484), float64
+    infile  = datadir('statp_18_IN.pkl')
+    expfile = datadir('statp_18_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_19():
-    fname = (os.path.dirname(brainstat.__file__) +
-             os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'thickness_slm.mat')
-    f = loadmat(fname)
-    slm = {}
-    slm['X'] = f['slm']['X'][0, 0]
-    slm['df'] = f['slm']['df'][0, 0][0, 0]
-    slm['coef'] = f['slm']['coef'][0, 0]
-    slm['SSE'] = f['slm']['SSE'][0, 0]
-    slm['tri'] = f['slm']['tri'][0, 0]
-    slm['resl'] = f['slm']['resl'][0, 0]
-    AGE = f['slm']['AGE'][0, 0]
-    slm = SurfStatT(slm, -1*AGE)
-    mname = (os.path.dirname(brainstat.__file__) +
-             os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'mask.mat')
-    m = loadmat(mname)
-    mask = m['mask'].astype(bool).flatten()
-    dummy_test(slm, mask)
+    # test_16 + dtype/shape change of non-sense slm keys  + optional ['mask'] input
+    # ['X'] : np array, shape (20, 9), uint16
+    # ['df'] :  uint8
+    # ['coef'] : np array, shape (9, 20484), float64
+    # ['SSE'] : np array, shape (1, 20484), float64
+    # ['tri'] : np array, shape (40960, 3), int32
+    # ['resl'] : np array, shape (61440, 1), float64
+    # ['c'] : np array, shape (1, 9), float64
+    # ['k'] : int
+    # ['ef'] : np array, shape (1, 20484), float64
+    # ['sd'] : np array, shape (1, 20484), float64
+    # ['t'] :  np array, shape (1, 20484), float64
+    # ['mask'] : np array, shape (20484,), bool
+    infile  = datadir('statp_19_IN.pkl')
+    expfile = datadir('statp_19_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
-def test_20():
-    fname = (os.path.dirname(brainstat.__file__) +
-             os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'sofopofo1.mat')
-    f = loadmat(fname)
-    fT = f['sofie']['T'][0, 0]
-    params = f['sofie']['model'][0, 0]
-    colnames = ['1', 'ak', 'female', 'male', 'Affect', 'Control1',
-                'Perspective', 'Presence', 'ink']
-    M = Term(params, colnames)
-    SW = {}
-    SW['tri'] = f['sofie']['SW'][0, 0]['tri'][0, 0]
-    SW['coord'] = f['sofie']['SW'][0, 0]['coord'][0, 0]
-    slm = SurfStatLinMod(fT, M, SW)
-    contrast = np.array([[37], [41], [24], [37], [26], [28], [44], [26], [22],
-                         [32], [34], [33], [35], [25], [22], [27], [22], [29],
-                         [29], [24]])
-    slm = SurfStatT(slm, contrast)
-    dummy_test(slm)
 
-
-def test_21():
-    fname = (os.path.dirname(brainstat.__file__) +
-             os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'sofopofo1_slm.mat')
-    f = loadmat(fname)
-    slm = {}
-    slm['X'] = f['slm']['X'][0, 0]
-    slm['df'] = f['slm']['df'][0, 0][0, 0]
-    slm['coef'] = f['slm']['coef'][0, 0]
-    slm['SSE'] = f['slm']['SSE'][0, 0]
-    slm['tri'] = f['slm']['tri'][0, 0]
-    slm['resl'] = f['slm']['resl'][0, 0]
-    contrast = np.random.randint(20, 50, size=(slm['X'].shape[0], 1))
-    slm = SurfStatT(slm, contrast)
-    mask = np.random.choice([0, 1], size=(slm['t'].shape[1]))
-    mask = mask.astype(bool).flatten()
-    dummy_test(slm, mask)

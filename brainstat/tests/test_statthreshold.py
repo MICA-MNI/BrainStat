@@ -1,516 +1,198 @@
-# Developer's note a known difference in MATLAB/Python output is that, when
-# the product of the num_voxels vector becomes extremely large, differences in
-# MATLAB's and Python's handling of extremely large numbers causes Python
-# to throw NaNs but MATLAB still returns real values. This should never occur
-# in real-world scenario's though as storing data from such a large number of
-# voxels is beyond reasonable computational capacities. - RV
-
-from brainstat.stats.stat_threshold import stat_threshold
 import numpy as np
-import matlab.engine
-import math
-import pytest
-from scipy.io import loadmat
-import os
-import brainstat
+import pickle
+from .testutil import datadir
+from ..stats import stat_threshold
 
 
-def var2mat(var):
-    # Brings the input variables to matlab format.
-    if isinstance(var, np.ndarray):
-        var = var.tolist()
-    elif var == None:
-        var = []
-    if not isinstance(var, list) and not isinstance(var, np.ndarray):
-        var = [var]
-    return matlab.double(var)
+def dummy_test(infile, expfile):
 
+    # load input test data
+    ifile = open(infile, 'br')
+    idic  = pickle.load(ifile)
+    ifile.close()
 
-def dummy_test(eng, search_volume, num_voxels, fwhm, df, p_val_peak,
-               cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint):
+    # run stat_threshold
+    A, B, C, D, E, F = stat_threshold(idic["search_volume"],
+                                      idic["num_voxels"],
+                                      idic["fwhm"],
+                                      idic["df"],
+                                      idic["p_val_peak"],
+                                      idic["cluster_threshold"],
+                                      idic["p_val_extent"],
+                                      idic["nconj"],
+                                      idic["nvar"],
+                                      None,
+                                      None,
+                                      idic["nprint"])
+    outdic = {"peak_threshold" : A, "extent_threshold" : B,
+              "peak_threshold_1" : C, "extent_threshold_1" : D,
+              "t" : E, "rho" : F}
 
-    try:
-        # run matlab functions (wrapping...)
-        peak_threshold_mat, extent_threshold_mat, peak_threshold_1_mat, \
-            extent_threshold_1_mat, t_mat, rho_mat = eng.stat_threshold(
-                var2mat(search_volume),
-                var2mat(num_voxels),
-                var2mat(fwhm),
-                var2mat(df),
-                var2mat(p_val_peak),
-                var2mat(cluster_threshold),
-                var2mat(p_val_extent),
-                var2mat(nconj),
-                var2mat(nvar),
-                var2mat(None),
-                var2mat(None),
-                var2mat(nprint),
-                nargout=6)
-        mat_output = [peak_threshold_mat,
-                      extent_threshold_mat,
-                      peak_threshold_1_mat,
-                      extent_threshold_1_mat,
-                      t_mat,
-                      rho_mat]
-    except:
-        pytest.skip("Original MATLAB code does not work with these inputs.")
+    # load expected outout data
+    efile  = open(expfile, 'br')
+    expdic = pickle.load(efile)
+    efile.close()
 
-    # run python functions
-    peak_threshold_py, extent_threshold_py, peak_threshold_1_py, \
-        extent_threshold_1_py, t_py, rho_py = stat_threshold(
-            search_volume,
-            num_voxels,
-            fwhm,
-            df,
-            p_val_peak,
-            cluster_threshold,
-            p_val_extent,
-            nconj,
-            nvar,
-            None,
-            None,
-            nprint)
+    testout = []
 
-    py_output = [peak_threshold_py,
-                 extent_threshold_py,
-                 peak_threshold_1_py,
-                 extent_threshold_1_py,
-                 t_py,
-                 rho_py]
+    for key in outdic.keys():
+        comp = np.allclose(outdic[key], expdic[key], rtol=1e-05, equal_nan=True)
+        testout.append(comp)
 
-    # compare matlab-python outputs
-    testout_statthreshold = []
-    for py, mat in zip(py_output, mat_output):
-        if np.all([np.isnan(x) for x in py]) and np.all(np.iscomplex(mat)):
-            # Due to differences in how python and matlab handle powers with
-            # imaginary outputs there are edge-cases where python returns nan
-            # and matlab returns a complex number. Neither of these should ever
-            # happen to begin with, so just skip these cases.
-            continue
-        result = np.allclose(np.squeeze(np.asarray(py)),
-                             np.squeeze(np.asarray(mat)),
-                             rtol=1e-05, equal_nan=True)
-        testout_statthreshold.append(result)
+    assert all(flag == True for (flag) in testout)
 
-    assert all(flag == True for (flag) in testout_statthreshold)
-
-
-eng = matlab.engine.start_matlab()
-eng.addpath(os.path.dirname(brainstat.__file__) +
-            os.path.sep + 'utils' + os.path.sep + 'matlab')
+# parameters in *pck is equal to default params, if not specified in tests
 
 
 def test_01():
-    # search_volume is "a float"  (rest is default-values)
-    search_volume = np.random.uniform(0, 10)
-    num_voxels = 1
-    fwhm = 0.0
-    df = 5
-    p_val_peak = 0.05
-    cluster_threshold = 0.001
-    p_val_extent = 0.05
-    nconj = 0.5
-    nvar = 1
-    EC_file = None
-    expr = None
-    nprint = 0
-
-    dummy_test(eng, search_volume, num_voxels, fwhm, df, p_val_peak,
-               cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
+    # search_volume = 5.59, df = 5, nconj = 0.5, nprint = 0
+    infile  = datadir('thresh_01_IN.pkl')
+    expfile = datadir('thresh_01_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_02():
-    # search_volume is a list  (rest is default-values)
-    m = np.random.uniform(0, 10)
-    n = np.random.uniform(0, 10)
-    k = np.random.uniform(0, 10)
-
-    search_volume = [m, n, k]
-    num_voxels = 1
-    fwhm = 0.0
-    df = 5
-    p_val_peak = 0.05
-    cluster_threshold = 0.001
-    p_val_extent = 0.05
-    nconj = 0.5
-    nvar = 1
-    EC_file = None
-    expr = None
-    nprint = 0
-
-    dummy_test(eng, search_volume, num_voxels, fwhm, df, p_val_peak,
-               cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
+    # search volume is a list,  search volume = [3.2, 8.82, 7.71],
+    # df = 5, nconj = 0.5, nprint=0
+    infile  = datadir('thresh_02_IN.pkl')
+    expfile = datadir('thresh_02_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_03():
-    # search_volume is a 1D numpy array (rest is default-values)
-    m = np.random.uniform(0, 10)
-    n = np.random.uniform(0, 10)
-    k = np.random.uniform(0, 10)
-
-    search_volume = np.array([m, n, k])
-    num_voxels = 1
-    fwhm = 0.0
-    df = 5
-    p_val_peak = 0.05
-    cluster_threshold = 0.001
-    p_val_extent = 0.05
-    nconj = 0.5
-    nvar = 1
-    EC_file = None
-    expr = None
-    nprint = 0
-
-    dummy_test(eng, search_volume, num_voxels, fwhm, df, p_val_peak,
-               cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
+    # search volume is a 1D numpy array, search volume = np.array([0.36, 6.22 , 2.13]),
+    # df = 5, nconj = 0.5, nprint=0
+    infile  = datadir('thresh_03_IN.pkl')
+    expfile = datadir('thresh_03_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_04():
-    # search_volume is a 2D numpy array (rest is default-values)
-    m = np.random.uniform(0, 10)
-    n = np.random.uniform(0, 10)
-
-    search_volume = np.array([[m, n], [n+10, m+87]])
-    num_voxels = 1
-    fwhm = 0.0
-    df = 5
-    p_val_peak = 0.05
-    cluster_threshold = 0.001
-    p_val_extent = 0.05
-    nconj = 0.5
-    nvar = 1
-    EC_file = None
-    expr = None
-    nprint = 0
-
-    dummy_test(eng, search_volume, num_voxels, fwhm, df, p_val_peak,
-               cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
+    # search_volume is a 2D numpy array,
+    # search_volume = array([[ 0.46,  3.00], [13.00, 87.46]]),
+    # df = 5, nconj = 0.5, nprint=0
+    infile  = datadir('thresh_04_IN.pkl')
+    expfile = datadir('thresh_04_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_05():
-    # search_volume a float, num_voxels: an int
-    search_volume = np.random.uniform(0, 10)
-    num_voxels = np.random.randint(1, 1000)
-    fwhm = 0.0
-    df = 5
-    p_val_peak = 0.05
-    cluster_threshold = 0.001
-    p_val_extent = 0.05
-    nconj = 0.5
-    nvar = 1
-    EC_file = None
-    expr = None
-    nprint = 0
-
-    dummy_test(eng, search_volume, num_voxels, fwhm, df, p_val_peak,
-               cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
+    # search_volume is a float,  search_volume = 1.22,
+    # num_voxels = 560, df = 5, nconj = 0.5, nprint = 0
+    infile  = datadir('thresh_05_IN.pkl')
+    expfile = datadir('thresh_05_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_06():
-    # search_volume 2D numpy array, num_voxels: a list
-    m = np.random.randint(1, 10000)
-    n = np.random.randint(1, 10000)
-    k = np.random.randint(1, 10000)
-
-    search_volume = np.array([[m, n], [n+10, m+87]])
-    num_voxels = [m, n, k]
-    fwhm = 0.0
-    df = 5
-    p_val_peak = 0.05
-    cluster_threshold = 0.001
-    p_val_extent = 0.05
-    nconj = 0.5
-    nvar = 1
-    EC_file = None
-    expr = None
-    nprint = 0
-
-    dummy_test(eng, search_volume, num_voxels, fwhm, df, p_val_peak,
-               cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
+    # search_volume is a 2D numpy array,
+    # search volume = array([[3955,  760], [ 770, 4042]]),
+    # num_voxels is a list of integers, num_voxels = [3955, 760, 8058],
+    # df = 5, nconj = 0.5, nprint = 0
+    infile  = datadir('thresh_06_IN.pkl')
+    expfile = datadir('thresh_06_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_07():
-    # search_volume 2D array, num_voxels: 2D array of shape (k,1), fwhm float, df: int
-    m = np.random.randint(3, 100)
-    n = np.random.randint(1, 100)
-    k = np.random.randint(1, 100)
-
-    search_volume = np.array([[m, n], [n+10, m+87]])
-    num_voxels = np.random.rand(k, 1)
-    fwhm = np.random.uniform(0, 10)
-    df = np.random.randint(1, (m-1))
-    p_val_peak = 0.05
-    cluster_threshold = 0.001
-    p_val_extent = 0.05
-    nconj = 0.5
-    nvar = 1
-    EC_file = None
-    expr = None
-    nprint = 0
-
-    dummy_test(eng, search_volume, num_voxels, fwhm, df, p_val_peak,
-               cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
+    # search_volume is a 2D numpy array,
+    # search_volume = array([[ 49,  47], [ 57, 136]]),
+    # num_voxels is a 2D array of shape (23, 1), including floats,
+    # fwhm = 5.34, df = 35, nconj = 0.5, nprint=0
+    infile  = datadir('thresh_07_IN.pkl')
+    expfile = datadir('thresh_07_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
-def test_8():
-    # search_volume 2D array, num_voxels: 2D array of shape (k,1), fwhm float, df: math.inf
-    m = np.random.randint(1, 100)
-    n = np.random.randint(1, 100)
-    k = np.random.randint(1, 100)
-
-    rng = np.random.default_rng()
-
-    search_volume = np.array([[m, n], [n+10, m+87]])
-    num_voxels = np.random.rand(k, 1)
-    fwhm = np.random.uniform(0, 10)
-    df = math.inf
-    p_val_peak = 0.05
-    cluster_threshold = 0.001
-    p_val_extent = 0.05
-    nconj = 0.5
-    nvar = 1
-    EC_file = None
-    expr = None
-    nprint = 0
-
-    dummy_test(eng, search_volume, num_voxels, fwhm, df, p_val_peak,
-               cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
+def test_08():
+    # search_volume is a 2D numpy array, array([[ 76,  71], [ 81, 163]]),
+    # num_voxels is a 2D array of shape (75, 1), dtype('float64'),
+    # fwhm = 3.57,  df = inf, nconj = 0.5, nprint=0
+    infile  = datadir('thresh_08_IN.pkl')
+    expfile = datadir('thresh_08_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_09():
-    # search_volume float, num_voxels: 2D array of shape (1,k),
-    # fwhm float, df: int, p_val_peak: float
-    m = np.random.randint(1, 100)
-    n = np.random.randint(1, 100)
-    k = np.random.randint(1, 10)
-
-    rng = np.random.default_rng()
-
-    search_volume = np.random.uniform(0, 100)
-    num_voxels = rng.integers(1, 100, size=(k))
-    fwhm = np.random.uniform(0, 10)
-    df = k
-    p_val_peak = np.random.uniform(0, 1)
-    cluster_threshold = 0.001
-    p_val_extent = 0.05
-    nconj = 0.5
-    nvar = 1
-    EC_file = None
-    expr = None
-    nprint = 0
-
-    dummy_test(eng, search_volume, num_voxels, fwhm, df, p_val_peak,
-               cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
+    # search_volume is a float,  search_volume = 70.66,
+    # num_voxels is a 1D array of shape (5,), dtype('int64'),
+    # fwhm = 6.95, df = 5, p_val_peak = 0.71, nconj = 0.5, nprint=0
+    infile  = datadir('thresh_09_IN.pkl')
+    expfile = datadir('thresh_09_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_10():
-    # search_volume float, num_voxels: 2D array of shape (1,k),
-    # fwhm float, df: int, p_val_peak: list
-    m = np.random.uniform(0, 1)
-    n = np.random.uniform(0, 1)
-    k = np.random.randint(1, 10)
-
-    rng = np.random.default_rng()
-
-    search_volume = np.random.uniform(0, 100)
-    num_voxels = rng.integers(1, 100, size=(k))
-    fwhm = np.random.uniform(0, 10)
-    df = k
-    p_val_peak = [m, n, m/2, n/2]
-    cluster_threshold = 0.001
-    p_val_extent = 0.05
-    nconj = 0.5
-    nvar = 1
-    EC_file = None
-    expr = None
-    nprint = 0
-
-    dummy_test(eng, search_volume, num_voxels, fwhm, df, p_val_peak,
-               cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
+    # search_volume is a float,  search_volume = 72.70,
+    # num_voxels is a 1D array of shape (5,), dtype('int64'),
+    # fwhm = 5.21, df = 7,
+    # p_val_peak is a list,  p_val_peak = [0.48, 0.54, 0.24, 0.27],
+    # nconj = 0.5, nprint=0
+    infile  = datadir('thresh_10_IN.pkl')
+    expfile = datadir('thresh_10_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_11():
-    # search_volume float, num_voxels: 2D array of shape (1,k),
-    # fwhm float, df: int, p_val_peak: 1D array
-    m = np.random.uniform(0, 1)
-    k = np.random.randint(1, 10)
-
-    rng = np.random.default_rng()
-
-    search_volume = np.random.uniform(0, 100)
-    num_voxels = rng.integers(1, 100, size=(k))
-    fwhm = np.random.uniform(0, 10)
-    df = k
-    p_val_peak = np.random.rand(k)
-    cluster_threshold = 0.001
-    p_val_extent = 0.05
-    nconj = 0.5
-    nvar = 1
-    EC_file = None
-    expr = None
-    nprint = 0
-
-    dummy_test(eng, search_volume, num_voxels, fwhm, df, p_val_peak,
-               cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
+    # search_volume is a float, search_volume = 33.26,
+    # num_voxels is a 1D array of shape (5,), dtype('int64'),
+    # fwhm = 5.20, df = 7,
+    # p_val_peak is a 1D array of shape (7,), dtype('float64'),
+    # nconj = 0.5, nprint=0
+    infile  = datadir('thresh_11_IN.pkl')
+    expfile = datadir('thresh_11_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_12():
-    # search_volume float, num_voxels: 2D array of shape (1,k),
-    # fwhm float, df: int, p_val_peak: 1D array, cluster_threshold: float
-    m = np.random.randint(1, 10)
-    k = np.random.randint(1, 100)
-
-    rng = np.random.default_rng()
-
-    search_volume = np.random.uniform(0, 100)
-    num_voxels = rng.integers(1, 100, size=(m))
-    fwhm = np.random.uniform(0, 10)
-    df = k
-    p_val_peak = np.random.rand(k)
-    cluster_threshold = np.random.uniform(0, 1)
-    p_val_extent = 0.05
-    nconj = 0.5
-    nvar = 1
-    EC_file = None
-    expr = None
-    nprint = 0
-
-    dummy_test(eng, search_volume, num_voxels, fwhm, df, p_val_peak,
-               cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
+    # search_volume is a float, search_volume = 7.0,
+    # num_voxels = 55, fwhm = 9.50, df = 6,
+    # p_val_peak is a 1D array of shape (55,), dtype('float64'),
+    # cluster_threshold = 0.048,
+    # p_val_extent is a 1D array of shape (55,), dtype('float64'),
+    # nconj = 54, nprint = 0
+    infile  = datadir('thresh_12_IN.pkl')
+    expfile = datadir('thresh_12_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_13():
-    # search_volume float, num_voxels: int,
-    # fwhm float, df: int, p_val_peak: 1D array, cluster_threshold: float,
-    # p_val_extent 1D array
-    m = np.random.randint(3, 10)
-    n = np.random.randint(1, 100)
-    k = np.random.randint(1, 100)
-
-    search_volume = 7.0
-    num_voxels = k
-    fwhm = np.random.uniform(0, 10)
-    df = np.random.randint(1, (m-1))
-    p_val_peak = np.random.rand(k)
-    cluster_threshold = np.random.uniform(0, 1)
-    p_val_extent = np.random.rand(k)
-    nconj = 0.5
-    nvar = 1
-    EC_file = None
-    expr = None
-    nprint = 0
-
-    dummy_test(eng, search_volume, num_voxels, fwhm, df, p_val_peak,
-               cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
+    # search_volume is a list, search_volume = [5.7, 8, 9],
+    # num_voxels = 100, df = 5,
+    # p_val_peak is a 2D array of shape (2,2), dtype('float64'),
+    # cluster_threshold is a list, cluster_threshold = [0.001, 0.1, 0, 6]
+    # p_val_extent = 0.01, nconj = 0.02, nvar = [1, 1], nprint = 0
+    infile  = datadir('thresh_13_IN.pkl')
+    expfile = datadir('thresh_13_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_14():
-    # search_volume float, num_voxels: int,
-    # fwhm float, df: int, p_val_peak: 1D array, cluster_threshold: float,
-    # p_val_extent 1D array, nconj: int
-    m = np.random.randint(3, 100)
-    n = np.random.randint(1, 100)
-    k = np.random.randint(1, 100)
-    l = np.random.randint(1, 100)
-
-    search_volume = 7.0
-    num_voxels = k
-    fwhm = np.random.uniform(0, 10)
-    df = np.random.randint(1, (m-1))
-    p_val_peak = np.random.rand(k)
-    cluster_threshold = np.random.uniform(0, 1)
-    p_val_extent = np.random.rand(k)
-    nconj = l
-    nvar = 1
-    EC_file = None
-    expr = None
-    nprint = 0
-
-    dummy_test(eng, search_volume, num_voxels, fwhm, df, p_val_peak,
-               cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
+    # search_volume is a 2D numpy array,
+    # search_volume = np.array([[4.00e+00, nan, 6.59e+03]]).
+    # num_voxels = 64984, fwhm = 1,
+    # df a 2D array of shape (2,2), dtype('int64'),
+    # p_val_peak is a 1D array of shape (2,), dtype('float64'),
+    # cluster_threshold = 0.001, p_val_extent = 0.05, nprint = 1
+    infile  = datadir('thresh_14_IN.pkl')
+    expfile = datadir('thresh_14_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_15():
-    search_volume = [5.7, 8, 9]
-    num_voxels = 100
-    fwhm = 0
-    df = 5
-    p_val_peak = np.array([[0.01, 0.02], [0.03, 0.04]])
-    cluster_threshold = [0.001, 0.1, 0, 6]
-    p_val_extent = 0.01
-    nconj = 0.02
-    nvar = [1, 1]
-    EC_file = None
-    expr = None
-    nprint = 0
-
-    dummy_test(eng, search_volume, num_voxels, fwhm, df, p_val_peak,
-               cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
+    # df a 2D array of shape (2, 2), dtype('int64'),
+    # p_val_peak is a 2D array of shape (1, 87), dtype('float64'),
+    # nprint = 0
+    infile  = datadir('thresh_15_IN.pkl')
+    expfile = datadir('thresh_15_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_16():
-    resels = np.array([[4.00000000e+00,  np.NaN, 6.59030991e+03]])
-    N = 64984
-    df = np.array([[1111, 0], [1111, 1111]])
-
-    # this is from some real test data
-    search_volume = resels
-    num_voxels = N
-    fwhm = 1
-    df = df
-    p_val_peak = np.array([0.5, 1])
-    cluster_threshold = 0.001
-    p_val_extent = 0.05
-    nconj = 1
-    nvar = 1
-    EC_file = None
-    expr = None
-    nprint = 1
-
-    dummy_test(eng, search_volume, num_voxels, fwhm, df, p_val_peak,
-               cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
+    # df a 2D array of shape (2, 2), dtype('int64'),
+    # p_val_peak = 0.001, nvar = 3.0 nprint = 0
+    infile  = datadir('thresh_16_IN.pkl')
+    expfile = datadir('thresh_16_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
-def test_17():
-    somedata = loadmat(os.path.dirname(brainstat.__file__) +
-                       os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'varA.mat')
-    varA = somedata['varA']
-    df = somedata['df']
-    k = somedata['k'][0]
-
-    # this is from some real test data
-    search_volume = 0
-    num_voxels = 1
-    fwhm = 0
-    df = df
-    p_val_peak = varA
-    cluster_threshold = 0.001
-    p_val_extent = 0.05
-    nconj = 1
-    nvar = 1
-    EC_file = None
-    expr = None
-    nprint = 0
-
-    dummy_test(eng, search_volume, num_voxels, fwhm, df, p_val_peak,
-               cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)
-
-
-def test_18():
-
-    # this is from some real test data
-    search_volume = 0
-    num_voxels = 1
-    fwhm = 0
-    df = np.array([[9, 0], [9, 9]])
-    p_val_peak = 0.001
-    cluster_threshold = 0.001
-    p_val_extent = 0.05
-    nconj = 1
-    nvar = 3.0
-    EC_file = None
-    expr = None
-    nprint = 0
-
-    dummy_test(eng, search_volume, num_voxels, fwhm, df, p_val_peak,
-               cluster_threshold, p_val_extent, nconj, nvar, EC_file, expr, nprint)

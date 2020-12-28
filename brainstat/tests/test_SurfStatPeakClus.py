@@ -1,338 +1,325 @@
-from brainstat.stats import *
-import surfstat_wrap as sw
 import numpy as np
-import random
-from scipy.io import loadmat
-import pytest
-import os
-import brainstat
+import pickle
+from .testutil import datadir
+from ..stats import SurfStatPeakClus
 
 
-def dummy_test(slm, mask, thresh, reselspvert=None, edg=None):
-    # Deal with edge offset.
-    if edg is not None:
-        mat_edg = edg + 1
-    else:
-        mat_edg = None
+def dummy_test(infile, expfile):
 
-    try:
-        # wrap matlab functions
-        M_peak, M_clus, M_clusid = sw.matlab_PeakClus(slm, mask,
-                                                      thresh,
-                                                      reselspvert, mat_edg)
-    except:
-        pytest.skip("Original MATLAB code does not work with these inputs.")
+    # load input test data
+    ifile = open(infile, 'br')
+    idic  = pickle.load(ifile)
+    ifile.close()
 
-    # call python functions
+    slm = {}
+    slm['t']    = idic['t']
+    slm['tri']  = idic['tri']
+
+    mask = idic['mask']
+    thresh = idic['thresh']
+    reselspvert=None
+    edg=None
+
+    if 'reselspvert' in idic.keys():
+        reselspvert = idic['reselspvert']
+
+    if 'edg' in idic.keys():
+        edg = idic['edg']
+
+    if 'k' in idic.keys():
+        slm['k'] = idic['k']
+
+    if 'df' in idic.keys():
+        slm['df'] = idic['df']
+
+
+    # call python function
     P_peak, P_clus, P_clusid = SurfStatPeakClus(slm, mask, thresh,
                                                 reselspvert, edg)
-    # compare matlab-python outputs
-    testout_PeakClus = []
-    for key in M_peak:
-        testout_PeakClus.append(np.allclose(M_peak[key], P_peak[key],
-                                            rtol=1e-05, equal_nan=True))
-    for key in M_clus:
-        testout_PeakClus.append(np.allclose(M_clus[key], P_clus[key],
-                                            rtol=1e-05, equal_nan=True))
-    testout_PeakClus.append(np.allclose(M_clusid, P_clusid,
-                                        rtol=1e-05, equal_nan=True))
 
-    assert all(flag == True for (flag) in testout_PeakClus)
+    # load expected outout data
+    efile  = open(expfile, 'br')
+    expdic = pickle.load(efile)
+    efile.close()
 
+    O_peak   = expdic['peak']
+    O_clus   = expdic['clus']
+    O_clusid = expdic['clusid']
 
-sw.matlab_init_surfstat()
+    testout = []
+
+    if isinstance(P_peak, (dict)):
+        for key in P_peak.keys():
+            comp = np.allclose(P_peak[key], O_peak[key], rtol=1e-05, equal_nan=True)
+            testout.append(comp)
+    else:
+        comp = np.allclose(P_peak, O_peak, rtol=1e-05, equal_nan=True)
+
+    if isinstance(P_clus, (dict)):
+        for key in P_clus.keys():
+            comp = np.allclose(P_clus[key], O_clus[key], rtol=1e-05, equal_nan=True)
+    else:
+        comp = np.allclose(P_clus, O_clus, rtol=1e-05, equal_nan=True)
+    testout.append(comp)
+
+    testout.append(np.allclose(P_clusid, O_clusid,
+                               rtol=1e-05, equal_nan=True))
+
+    assert all(flag == True for (flag) in testout)
 
 
 def test_01():
-    # data from Sofie, randomize threshold between 0 and 1
-    slmdata = loadmat(os.path.dirname(brainstat.__file__) +
-                      os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
-    slm = {}
-    slm['t'] = slmdata['slm']['t'][0, 0]
-    slm['tri'] = slmdata['slm']['tri'][0, 0]
-    mask = np.ones((64984))
-    thresh = random.random()
-    dummy_test(slm, mask, thresh)
+    # real-data testing; data to be assigned to slm['t'], slm['tri'], mask and thresh
+    # ['t'] : np array, shape (1, 64984), float64
+    # ['tri] : np array, shape (129960, 3), int32
+    # ['mask'] : np array, shape (64984,), float64
+    # ['thresh'] : float
+    infile  = datadir('statpeakc_01_IN.pkl')
+    expfile = datadir('statpeakc_01_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_02():
-    # generate random data, small sized as 1000 points for slm['t']
-    k = 1000
-    m = 100
-    slm = {}
-    slm['t'] = np.random.rand(1, k)
-    slm['tri'] = np.random.randint(1, k, size=(m, 3))
-    mask = np.ones((k))
-    thresh = random.random()
-    dummy_test(slm, mask, thresh)
+    # non-sensical input; test data with more vertices than exists
+    # ['t'] : np array, shape (1, 1000), float64
+    # ['tri] : np array, shape (100, 3), int64
+    # ['mask'] : np array, shape (1000,), float64
+    # ['thresh'] : float
+    infile  = datadir('statpeakc_02_IN.pkl')
+    expfile = datadir('statpeakc_02_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_03():
-    # generate random data, size will be also random
-    k = random.randint(100, 1000)
-    m = random.randint(100, 1000)
-    slm = {}
-    slm['t'] = np.random.rand(1, k)
-    slm['tri'] = np.random.randint(1, k, size=(m, 3))
-    mask = np.ones((k))
-    thresh = random.random()
-    dummy_test(slm, mask, thresh)
+    # non-sensical input; test data with more vertices than exists
+    # ['t'] : np array, shape (1, 598), float64
+    # ['tri] : np array, shape (330, 3), int64
+    # ['mask'] : np array, shape (598,), float64
+    # ['thresh'] : float
+    infile  = datadir('statpeakc_03_IN.pkl')
+    expfile = datadir('statpeakc_03_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_04():
-    # generate random data, size will be also random, big sizes...
-    k = random.randint(1000, 10000)
-    m = random.randint(1000, 10000)
-    slm = {}
-    slm['t'] = np.random.rand(1, k)
-    slm['tri'] = np.random.randint(1, k, size=(m, 3))
-    mask = np.ones((k))
-    thresh = random.random()
-    dummy_test(slm, mask, thresh)
+    # non-sensical input; test data with more vertices than exists
+    # ['t'] :  np array, shape (1, 8961), float64
+    # ['tri] : np array, shape (4171, 3), int64
+    # ['mask'] : np array, shape (8961,), float64
+    # ['thresh'] : float
+    infile  = datadir('statpeakc_04_IN.pkl')
+    expfile = datadir('statpeakc_04_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_05():
-    # data from Sofie, randomize threshold between 0 and 1, add reselspvert
-    slmdata = loadmat(os.path.dirname(brainstat.__file__) +
-                      os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
-    slm = {}
-    slm['t'] = slmdata['slm']['t'][0, 0]
-    slm['tri'] = slmdata['slm']['tri'][0, 0]
-    mask = np.ones((64984))
-    thresh = random.random()
-    reselspvert = np.random.rand(64984)
-    dummy_test(slm, mask, thresh, reselspvert)
+    # similar to test_01 + optional input c
+    # ['t'] : np array, shape (1, 64984), float64
+    # ['tri] : np array, shape (129960, 3), int32
+    # ['mask'] : np array, shape (64984,), float64
+    # ['thresh'] : float
+    # ['reselspvert'] : np array, shape (64984,), float64
+    infile  = datadir('statpeakc_05_IN.pkl')
+    expfile = datadir('statpeakc_05_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_06():
-    # generate random data, add reselpvert
-    k = random.randint(1000, 10000)
-    m = random.randint(1000, 10000)
-    slm = {}
-    slm['t'] = np.random.rand(1, k)
-    slm['tri'] = np.random.randint(1, k, size=(m, 3))
-    mask = np.ones((k))
-    thresh = random.random()
-    reselspvert = np.random.rand(k)
-    dummy_test(slm, mask, thresh, reselspvert)
+    # artifical data for slm['t'], slm['tri'], ['mask'], ['thresh'], ['reselspvert']
+    # ['t'] : np array, shape (1, 5926), float64
+    # ['tri] : np array, shape (8467, 3), int64
+    # ['mask'] : np array, shape (5926,), float64
+    # ['thresh'] : float
+    # ['reselspvert'] : np array, shape (5926,), float64
+    infile  = datadir('statpeakc_06_IN.pkl')
+    expfile = datadir('statpeakc_06_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_07():
-    # generate random data, add reselpvert, special case slm['k']=2, l=1
-    k = random.randint(1000, 10000)
-    m = random.randint(1000, 10000)
-    slm = {}
-    slm['t'] = np.random.rand(1, k)
-    slm['tri'] = np.random.randint(1, k, size=(m, 3))
-    slm['k'] = 2
-    slm['df'] = random.randint(100, 10000)
-    mask = np.ones((k))
-    thresh = random.random()
-    reselspvert = np.random.rand(k)
-    dummy_test(slm, mask, thresh, reselspvert)
+    # similar to test_06 + optional input slm['k'] and slm['df']
+    # ['t'] : np array, shape (1, 4593), float64
+    # ['tri] :  np array, shape (8181, 3), int64
+    # ['mask'] : np array, shape (4593,), float64
+    # ['thresh'] : float
+    # ['reselspvert'] : np array, shape (4593,), float64
+    # ['k'] : int
+    # ['df'] : int
+    infile  = datadir('statpeakc_07_IN.pkl')
+    expfile = datadir('statpeakc_07_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_08():
-    # generate random data, add reselpvert, special case slm['k']=2, l>1,
-    # l>1 is for instance when slm['t'] = np.random.rand(2,k)
-    k = random.randint(1000, 10000)
-    m = random.randint(1000, 10000)
-    slm = {}
-    slm['t'] = np.random.rand(2, k)
-    slm['tri'] = np.random.randint(1, k, size=(m, 3))
-    slm['k'] = 2
-    slm['df'] = random.randint(100, 10000)
-    mask = np.ones((k))
-    thresh = random.random()
-    reselspvert = np.random.rand(k)
-    dummy_test(slm, mask, thresh, reselspvert)
+    # similar to test_07, shape/values of input params changed
+    # ['t'] : np array, shape (2, 4496), float64
+    # ['tri] :  np array, shape (7793, 3), int64
+    # ['mask'] : np array, shape (4496,), float64
+    # ['thresh'] : float
+    # ['reselspvert'] : np array, shape (4496,), float64
+    # ['k'] : int
+    # ['df'] : int
+    infile  = datadir('statpeakc_08_IN.pkl')
+    expfile = datadir('statpeakc_08_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_09():
-    # generate random data, special case slm['k']=3, l=1
-    k = random.randint(1000, 10000)
-    m = random.randint(1000, 10000)
-    slm = {}
-    slm['t'] = np.random.rand(1, k)
-    slm['tri'] = np.random.randint(1, k, size=(m, 3))
-    slm['k'] = 3
-    slm['df'] = random.randint(100, 10000)
-    mask = np.ones((k))
-    thresh = random.random()
-    dummy_test(slm, mask, thresh,)
+    # similar to test_07, shape/values of input params changed
+    # ['t'] : np array, shape (2, 4085), float64
+    # ['tri] : np array, shape (4673, 3), int64
+    # ['mask'] : np array, shape (4085,), float64
+    # ['thresh'] : float
+    # ['reselspvert'] : np array, shape (4085,), float64
+    # ['k'] : int
+    # ['df'] : int
+    infile  = datadir('statpeakc_09_IN.pkl')
+    expfile = datadir('statpeakc_09_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_10():
-    # generate random data, add reselspvert, special case slm['k']=3, l=1
-    k = random.randint(1000, 10000)
-    m = random.randint(1000, 10000)
-    slm = {}
-    slm['t'] = np.random.rand(1, k)
-    slm['tri'] = np.random.randint(1, k, size=(m, 3))
-    slm['k'] = 3
-    slm['df'] = random.randint(100, 10000)
-    mask = np.ones((k))
-    thresh = random.random()
-    reselspvert = np.random.rand(k)
-    dummy_test(slm, mask, thresh, reselspvert)
+    # similar to test_07, shape/values of input params changed
+    # ['t'] : np array, shape (1, 8594), float64
+    # ['tri] : np array, shape (9770, 3), int64
+    # ['mask'] : np array, shape (8594,), float64
+    # ['thresh'] : float
+    # ['reselspvert'] : np array, shape (8594,), float64
+    # ['k'] : int
+    # ['df'] : int
+    infile  = datadir('statpeakc_10_IN.pkl')
+    expfile = datadir('statpeakc_10_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_11():
-    # generate random data, add reselspvert, special case slm['k']=3, l=2,
-    # l=2 means that slm['t'] = np.random.rand(2,k)
-    k = random.randint(1000, 10000)
-    m = random.randint(1000, 10000)
-    slm = {}
-    slm['t'] = np.random.rand(2, k)
-    slm['tri'] = np.random.randint(1, k, size=(m, 3))
-    slm['k'] = 3
-    slm['df'] = random.randint(100, 10000)
-    mask = np.ones((k))
-    thresh = random.random()
-    reselspvert = np.random.rand(k)
-    dummy_test(slm, mask, thresh, reselspvert)
+    # similar to test_07, shape/values of input params changed
+    # ['t'] :  np array, shape (2, 4225), float64
+    # ['tri'] : np array, shape (8820, 3), int64
+    # ['mask'] :  np array, shape (4225,), float64
+    # ['thresh'] : float
+    # ['reselspvert'] : np array, shape (4225,), float64
+    # ['k'] : int
+    # ['df'] : int
+    infile  = datadir('statpeakc_11_IN.pkl')
+    expfile = datadir('statpeakc_11_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_12():
-    # generate random data, add reselspvert, special case slm['k']=3, l=3,
-    # l=3 means that slm['t'] = np.random.rand(3,k)
-    k = random.randint(1000, 10000)
-    m = random.randint(1000, 10000)
-    slm = {}
-    slm['t'] = np.random.rand(3, k)
-    slm['tri'] = np.random.randint(1, k, size=(m, 3))
-    slm['k'] = 3
-    slm['df'] = random.randint(100, 10000)
-    mask = np.ones((k))
-    thresh = random.random()
-    reselspvert = np.random.rand(k)
-    dummy_test(slm, mask, thresh, reselspvert)
+    # similar to test_07, shape/values of input params changed
+    # ['t'] : np array, shape (3, 7534), float64
+    # ['tri'] : np array, shape (3190, 3), int64
+    # ['mask'] : np array, shape (7534,), float64
+    # ['thresh'] : float
+    # ['reselspvert'] : np array, shape (7534,), float64
+    # ['k'] : int
+    # ['df'] : int
+    infile  = datadir('statpeakc_12_IN.pkl')
+    expfile = datadir('statpeakc_12_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_13():
-    # generate random data, add reselpvert, random mask
-    k = random.randint(1000, 10000)
-    m = random.randint(1000, 10000)
-    slm = {}
-    slm['t'] = np.random.rand(1, k)
-    slm['tri'] = np.random.randint(1, k, size=(m, 3))
-    mask = np.random.choice([0, 1], size=(k))
-    thresh = random.random()
-    reselspvert = np.random.rand(k)
-    dummy_test(slm, mask, thresh, reselspvert)
+    # similar to test_06, shape/values of input params changed
+    # ['t'] : np array, shape (1, 9550), float64
+    # ['tri'] : np array, shape (2891, 3), int64
+    # ['mask'] : np array, shape (9550,), int64
+    # ['thresh'] : float
+    # ['reselspvert'] : np array, shape (9550,), float64
+    infile  = datadir('statpeakc_13_IN.pkl')
+    expfile = datadir('statpeakc_13_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_14():
-    # generate random data, add reselspvert, special case slm['k']=3, l=2,
-    # l=2 means that slm['t'] = np.random.rand(2,k)
-    # random mask
-    k = random.randint(1000, 10000)
-    m = random.randint(1000, 10000)
-    slm = {}
-    slm['t'] = np.random.rand(2, k)
-    slm['tri'] = np.random.randint(1, k, size=(m, 3))
-    slm['k'] = 3
-    slm['df'] = random.randint(100, 10000)
-    mask = np.random.choice([0, 1], size=(k))
-    thresh = random.random()
-    reselspvert = np.random.rand(k)
-    dummy_test(slm, mask, thresh, reselspvert)
+    # similar to test_07, shape/values of input params changed
+    # ['t'] : np array, shape (2, 6550), float64
+    # ['tri'] :  np array, shape (8049, 3), int64
+    # ['mask'] : np array, shape (6550,), int64
+    # ['thresh'] : float
+    # ['reselspvert'] : np array, shape (6550,), float64
+    # ['k'] : int
+    # ['df'] : int
+    infile  = datadir('statpeakc_14_IN.pkl')
+    expfile = datadir('statpeakc_14_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_15():
-    # generate random data, small sized as 1000 points for slm['t'],
-    # generate random edge, random reselspvert
-    k = 1000
-    m = 100
-    slm = {}
-    slm['t'] = np.random.rand(1, k)
-    slm['tri'] = np.random.randint(1, k, size=(m, 3))
-    mask = np.ones((k))
-    thresh = random.random()
-    reselspvert = np.random.rand(k)
-    A = {}
-    A['tri'] = np.random.randint(1, k, size=(m, 3))
-    edg = SurfStatEdg(A)
-    dummy_test(slm, mask, thresh, reselspvert, edg)
+    # similar to test_06 + optional ['edg'] input
+    # ['t'] : np array, shape (1, 1000), float64
+    # ['tri'] : np array, shape (100, 3), int64
+    # ['mask'] : np array, shape (1000,), float64
+    # ['thresh'] : float
+    # ['reselspvert'] : np array, shape (1000,), float64
+    # ['edg'] : np array, shape (300, 2), int64
+    infile  = datadir('statpeakc_15_IN.pkl')
+    expfile = datadir('statpeakc_15_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_16():
-    # generate random data, add reselspvert, special case slm['k']=3, l=2,
-    # l=2 means that slm['t'] = np.random.rand(2,k)
-    # random mask, generate random edge
-    k = random.randint(1000, 10000)
-    m = random.randint(1000, 10000)
-    slm = {}
-    slm['t'] = np.random.rand(2, k)
-    slm['tri'] = np.random.randint(1, k, size=(m, 3))
-    slm['k'] = 3
-    slm['df'] = random.randint(100, 10000)
-    mask = np.random.choice([0, 1], size=(k))
-    thresh = random.random()
-    reselspvert = np.random.rand(k)
-    A = {}
-    A['tri'] = np.random.randint(1, k, size=(m, 3))
-    edg = SurfStatEdg(A)
-    dummy_test(slm, mask, thresh, reselspvert, edg)
+    # similar to test_07 + optional ['edg'] input
+    # ['t'] : np array, shape (2, 9521), float64
+    # ['tri'] :  np array, shape (6660, 3), int64
+    # ['mask'] : np array, shape (9521,), int64
+    # ['thresh'] : float
+    # ['reselspvert'] : np array, shape (9521,), float64
+    # ['k'] : int
+    # ['df'] : int
+    # ['edg'] : np array, shape (19977, 2), int64
+    infile  = datadir('statpeakc_16_IN.pkl')
+    expfile = datadir('statpeakc_16_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_17():
-    # generate random data, small sized as 1000 points for slm['t'],
-    # generate random edge from random ['lat'], random reselspvert,
-    # random mask
-    k = 1000
-    m = 100
-    slm = {}
-    slm['t'] = np.random.rand(1, k)
-    slm['tri'] = np.random.randint(1, k, size=(m, 3))
-    mask = np.random.choice([0, 1], size=(k))
-    thresh = random.random()
-    reselspvert = np.random.rand(k)
-    A = {}
-    A['lat'] = np.random.choice([0, 1], size=(10, 10, 10))
-    edg = SurfStatEdg(A)
-    dummy_test(slm, mask, thresh, reselspvert, edg)
+    # similar to test_15, shape of ['edg'] changed
+    # ['t'] : np array, shape (1, 1000), float64
+    # ['tri'] :  np array, shape (100, 3), int64
+    # ['mask'] : np array, shape (1000,), int64
+    # ['thresh'] : float
+    # ['reselspvert'] : np array, shape (1000,), float64
+    # ['edg'] : np array, shape (1228, 2), int64
+    infile  = datadir('statpeakc_17_IN.pkl')
+    expfile = datadir('statpeakc_17_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_18():
-    # generate random data, small sized as 1000 points for slm['t'],
-    # extremely big threshold for n < 1 case in SurfStatPeakClus.py
-    k = 1000
-    m = 100
-    slm = {}
-    slm['t'] = np.random.rand(1, k)
-    slm['tri'] = np.random.randint(1, k, size=(m, 3))
-    mask = np.ones((k))
-    thresh = k * m * 1000000
-    dummy_test(slm, mask, thresh)
+    # non-sensical input (similar to test_02), ['thresh'] dtype changed
+    # ['t'] : np array, shape (1, 1000), float64
+    # ['tri'] : np array, shape (100, 3), int64
+    # ['mask'] : np array, shape (1000,), float64
+    # ['thresh'] : int
+    infile  = datadir('statpeakc_18_IN.pkl')
+    expfile = datadir('statpeakc_18_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_19():
-    # special case n<1
-    slmdata = loadmat(os.path.dirname(brainstat.__file__) +
-                      os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep + 'slm.mat')
-    slm = {}
-    slm['t'] = slmdata['slm']['t'][0, 0]
-    slm['tri'] = slmdata['slm']['tri'][0, 0]
-    mask = np.ones((64984))
-    thresh = 100000
-    dummy_test(slm, mask, thresh)
+    # similar to test_01, ['thresh'] dtype changed
+    # ['t'] : np array, shape (1, 64984), float64
+    # ['tri'] : np array, shape (129960, 3), int32
+    # ['mask'] : np array, shape (64984,), float64
+    # ['thresh'] : int
+    infile  = datadir('statpeakc_19_IN.pkl')
+    expfile = datadir('statpeakc_19_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_20():
-    # generate random data, small sized as 1000 points for slm['t'],
-    # generate random edge from random ['lat'], random reselspvert,
-    # random mask
-    # special case n<1
-    k = 1000
-    m = 100
-    slm = {}
-    slm['t'] = np.random.rand(1, k)
-    slm['tri'] = np.random.randint(1, k, size=(m, 3))
-    mask = np.random.choice([0, 1], size=(k))
-    thresh = 100000
-    reselspvert = np.random.rand(k)
-    A = {}
-    A['lat'] = np.random.choice([0, 1], size=(10, 10, 10))
-    edg = SurfStatEdg(A)
-    dummy_test(slm, mask, thresh, reselspvert, edg)
+    # similar to test_15, shape of ['edg'] changed
+    # ['t'] : np array, shape (1, 1000), float64
+    # ['tri'] : np array, shape (100, 3), int64
+    # ['mask'] : np array, shape (1000,), int64
+    # ['thresh'] : int
+    # ['reselspvert'] :  np array, shape (1000,), float64
+    # ['edg'] : np array, shape (1312, 2), int64
+    infile  = datadir('statpeakc_20_IN.pkl')
+    expfile = datadir('statpeakc_20_OUT.pkl')
+    dummy_test(infile, expfile)
+
+
+

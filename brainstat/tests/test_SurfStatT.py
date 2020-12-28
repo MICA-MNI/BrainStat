@@ -1,198 +1,177 @@
-from brainstat.stats import *
-import surfstat_wrap as sw
 import numpy as np
-from scipy.io import loadmat
-import pytest
-import os
-import brainstat
-
-sw.matlab_init_surfstat()
+import pickle
+from .testutil import datadir
+from ..stats import SurfStatT
 
 
-def dummy_test(slm, contrast):
+def dummy_test(infile, expfile):
 
-    try:
-        # wrap matlab functions
-        Wrapped_slm = sw.matlab_T(slm, contrast)
+    # load input test data
+    ifile = open(infile, 'br')
+    idic  = pickle.load(ifile)
+    ifile.close()
 
-    except:
-        pytest.skip("Original MATLAB code does not work with these inputs.")
+    slm = {}
+    slm['X']    = idic['X']
+    slm['df']   = idic['df']
+    slm['coef'] = idic['coef']
+    slm['SSE']  = idic['SSE']
 
-    # run python functions
-    Python_slm = SurfStatT(slm, contrast)
+    contrast = idic['contrast']
 
-    testout_T = []
+    if 'V' in idic.keys():
+        slm['V']    = idic['V']
 
-    # compare matlab-python outputs
-    for key in Wrapped_slm:
-        testout_T.append(np.allclose(Python_slm[key], Wrapped_slm[key],
-                                     rtol=1e-05, equal_nan=True))
+    if 'SSE' in idic.keys():
+        slm['SSE']    = idic['SSE']
 
-    assert all(flag == True for (flag) in testout_T)
+    if 'r' in idic.keys():
+        slm['r']    = idic['r']
+
+    if 'dr' in idic.keys():
+        slm['dr']    = idic['dr']
+
+    if 'tri' in idic.keys():
+        slm['tri']    = idic['tri']
+
+    if 'resl' in idic.keys():
+        slm['resl']    = idic['resl']
 
 
-# Test 1
+    # run SurfStatT
+    outdic = SurfStatT(slm, contrast)
+
+    # load expected outout data
+    efile  = open(expfile, 'br')
+    expdic = pickle.load(efile)
+    efile.close()
+
+    testout = []
+
+    for key in outdic.keys():
+        comp = np.allclose(outdic[key], expdic[key], rtol=1e-05, equal_nan=True)
+        testout.append(comp)
+
+    assert all(flag == True for (flag) in testout)
+
+
 def test_01():
-    a = np.random.randint(1, 10)
-    A = {}
-    A['X'] = np.random.rand(a, 1)
-    A['df'] = np.array([[3.0]])
-    A['coef'] = np.random.rand(1, a).reshape(1, a)
-    A['SSE'] = np.random.rand(1, a)
-    B = np.random.rand(1).reshape(1, 1)
+    # ['X'] : np array, shape (3, 1), float64
+    # ['df']: np array, shape (1,), float64
+    # ['coef'] : np array, shape (1, 3), float64
+    # ['SSE'] : np array, shape (1, 3), float64
+    # ['contrast'] : np array, shape (1, 1), float64
+    infile = datadir('statt_01_IN.pkl')
+    expfile = datadir('statt_01_OUT.pkl')
+    dummy_test(infile, expfile)
 
-    dummy_test(A, B)
 
-
-# Test 2  ### square matrices
 def test_02():
-    a = np.random.randint(1, 10)
-    b = np.random.randint(1, 10)
-    A = {}
-    A['X'] = np.random.rand(a, a)
-    A['df'] = np.array([[b]])
-    A['coef'] = np.random.rand(a, a)
-    A['SSE'] = np.random.rand(1, a)
-    B = np.random.rand(1, a)
-    dummy_test(A, B)
+    # ['X'] : np array, shape (6, 6), float64
+    # ['df']: np array, shape (1, 1), int64
+    # ['coef'] : np array, shape (6, 6), float64
+    # ['SSE'] : np array, shape (1, 6), float64
+    # ['contrast']: np array, shape (1, 6), float64
+    infile  = datadir('statt_02_IN.pkl')
+    expfile = datadir('statt_02_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
-# Test 3  ### slm.V & slm.r given
 def test_03():
-    a = np.array([[4, 4, 4], [5, 5, 5], [6, 6, 6]])
-    b = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
-    Z = np.zeros((3, 3, 2))
-    Z[:, :, 0] = a
-    Z[:, :, 1] = b
-    A = {}
-    A['X'] = np.array([[1, 2], [3, 4], [5, 6]])
-    A['V'] = Z
-    A['df'] = np.array([[1.0]])
-    A['coef'] = np.array([[8], [9]])
-    A['SSE'] = np.array([[3]])
-    A['r'] = np.array([[4]])
-    A['dr'] = np.array([[5]])
-    B = np.array([[1]])
-    dummy_test(A, B)
+    # ['X'] : np array, shape (3, 2), int64
+    # ['V'] : np array, shape (3, 3, 2), float64
+    # ['df'] : np array, shape (1,), float64
+    # ['coef'] : np array, shape (2, 1), int64
+    # ['SSE'] : np array, shape (1, 1), int64
+    # ['r'] : np array, shape (1, 1), int64
+    # ['dr'] np array, shape (1, 1), int64
+    # ['contrast']: np array, shape (1, 1), int64
+    # ['c']: np array, shape (1, 2), float64
+    # ['k']: int
+    # ['dfs']: np array, shape (1, 1), float64
+    # ['ef']: np array, shape (1, 1), float64
+    # ['sd']: np array, shape (1, 1), float64
+    # ['t']: np array, shape (1, 1), float64
+    infile  = datadir('statt_03_IN.pkl')
+    expfile = datadir('statt_03_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
-# Test 4 #### slm.V given, slm.r not
 def test_04():
-    A = {}
-    A['X'] = np.random.rand(3, 2)
-    A['V'] = np.array([[4, 4, 4], [5, 5, 5], [6, 6, 6]])
-    A['df'] = np.array([np.random.randint(1, 10)])
-    A['coef'] = np.random.rand(2, 1)
-    A['SSE'] = np.array([np.random.randint(1, 10)])
-    A['dr'] = np.array([np.random.randint(1, 10)])
-    B = np.array([[1]])
-    dummy_test(A, B)
+    # ['X'] : np array, shape (3, 2), float64
+    # ['V'] : np array, shape (3, 3), int64
+    # ['df'] : np array, shape (1,), int64
+    # ['coef'] : np array, shape (2, 1), float64
+    # ['SSE'] : np array, shape (1,), int64
+    # ['dr'] : np array, shape (1,), int64
+    # ['contrast']: np array, shape (1, 1), int64
+    infile  = datadir('statt_04_IN.pkl')
+    expfile = datadir('statt_04_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_05():
-    fname = (
-        os.path.dirname(brainstat.__file__) +
-        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep +
-        'thickness_slm.mat'
-    )
-    f = loadmat(fname)
-
-    slm = {}
-    slm['X'] = f['slm']['X'][0, 0]
-    slm['df'] = f['slm']['df'][0, 0][0, 0]
-    slm['coef'] = f['slm']['coef'][0, 0]
-    slm['SSE'] = f['slm']['SSE'][0, 0]
-    slm['tri'] = f['slm']['tri'][0, 0]
-    slm['resl'] = f['slm']['resl'][0, 0]
-
-    AGE = f['slm']['AGE'][0, 0]
-
-    dummy_test(slm, AGE)
+    # ['X'] : np array, shape (10, 2), uint8
+    # ['df'] : uint8
+    # ['coef'] : np array, shape (2, 20484), float64
+    # ['SSE'] : np array, shape (1, 20484), float64
+    # ['tri'] : np array, shape (40960, 3), int32
+    # ['resl'] : np array, shape (61440, 1), float64
+    # ['contrast']: np array, shape (10, 1), uint8
+    infile  = datadir('statt_05_IN.pkl')
+    expfile = datadir('statt_05_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_06():
-    fname = (
-        os.path.dirname(brainstat.__file__) +
-        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep +
-        'thickness_slm.mat'
-    )
-    f = loadmat(fname)
-
-    slm = {}
-    slm['X'] = f['slm']['X'][0, 0]
-    slm['df'] = f['slm']['df'][0, 0][0, 0]
-    slm['coef'] = f['slm']['coef'][0, 0]
-    slm['SSE'] = f['slm']['SSE'][0, 0]
-    slm['tri'] = f['slm']['tri'][0, 0]
-    slm['resl'] = f['slm']['resl'][0, 0]
-
-    AGE = f['slm']['AGE'][0, 0]
-
-    dummy_test(slm, -1*AGE)
+    # ['X'] : np array, shape (10, 2), uint8
+    # ['df'] : uint8
+    # ['coef'] : np array, shape (2, 20484), float64
+    # ['SSE'] : np array, shape (1, 20484), float64
+    # ['tri'] : np array, shape (40960, 3), int32
+    # ['resl'] : np array, shape (61440, 1), float64
+    # ['contrast']: np array, shape (10, 1), int16
+    infile  = datadir('statt_06_IN.pkl')
+    expfile = datadir('statt_06_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_07():
-    fname = (
-        os.path.dirname(brainstat.__file__) +
-        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep +
-        'thickness.mat'
-    )
-    f = loadmat(fname)
-    A = f['T']
-    np.random.shuffle(A)
-
-    AGE = Term(np.array(f['AGE']), 'AGE')
-    B = 1 + AGE
-    surf = {}
-    surf['tri'] = f['tri']
-    surf['coord'] = f['coord']
-    slm = SurfStatLinMod(A, B, surf)
-
-    contrast = np.array(f['AGE']).T
-
-    dummy_test(slm, contrast)
+    # ['df'] : int64
+    # ['X'] : np array, shape (10, 2), float64
+    # ['coef'] : np array, shape (2, 20484), float64
+    # ['SSE'] : np array, shape (1, 20484), float64
+    # ['tri'] : np array, shape (40960, 3), int32
+    # ['resl'] : np array, shape (61440, 1), float64
+    # ['contrast']: np array, shape (10, 1), float64
+    infile  = datadir('statt_07_IN.pkl')
+    expfile = datadir('statt_07_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_08():
-    fname = (
-        os.path.dirname(brainstat.__file__) +
-        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep +
-        'sofopofo1_slm.mat'
-    )
-    f = loadmat(fname)
-    slm = {}
-    slm['X'] = f['slm']['X'][0, 0]
-    slm['df'] = f['slm']['df'][0, 0][0, 0]
-    slm['coef'] = f['slm']['coef'][0, 0]
-    slm['SSE'] = f['slm']['SSE'][0, 0]
-    slm['tri'] = f['slm']['tri'][0, 0]
-    slm['resl'] = f['slm']['resl'][0, 0]
-
-    contrast = np.random.randint(20, 50, size=(slm['X'].shape[0], 1))
-
-    dummy_test(slm, contrast)
+    # ['X'] : np array, shape (20, 9), uint16
+    # ['df'] : uint8
+    # ['coef'] : np array, shape (9, 20484), float64
+    # ['SSE'] : np array, shape (1, 20484), float64
+    # ['tri'] : np array, shape (40960, 3), int32
+    # ['resl'] : np array, shape (61440, 1), float64
+    # ['contrast'] : np array, shape (20, 1), int64
+    infile  = datadir('statt_08_IN.pkl')
+    expfile = datadir('statt_08_OUT.pkl')
+    dummy_test(infile, expfile)
 
 
 def test_09():
-    fname = (
-        os.path.dirname(brainstat.__file__) +
-        os.path.sep + 'tests' + os.path.sep + 'data' + os.path.sep +
-        'sofopofo1.mat'
-    )
-    f = loadmat(fname)
-    T = f['sofie']['T'][0, 0]
+    # ['df'] : int64
+    # ['X'] : np array, shape (20, 9), uint16
+    # ['coef'] : np array, shape (9, 20484), float64
+    # ['SSE'] : np array, shape (1, 20484), float64
+    # ['tri'] : np array, shape (40960, 3), int32
+    # ['resl'] : np array, shape (61440, 1), float64
+    # ['contrast'] : np array, shape (20, 1), int64
+    infile  = datadir('statt_09_IN.pkl')
+    expfile = datadir('statt_09_OUT.pkl')
+    dummy_test(infile, expfile)
 
-    params = f['sofie']['model'][0, 0]
-    colnames = ['1', 'ak', 'female', 'male', 'Affect', 'Control1', 'Perspective',
-                'Presence', 'ink']
 
-    M = Term(params, colnames)
-
-    SW = {}
-    SW['tri'] = f['sofie']['SW'][0, 0]['tri'][0, 0]
-    SW['coord'] = f['sofie']['SW'][0, 0]['coord'][0, 0]
-    slm = SurfStatLinMod(T, M, SW)
-
-    contrast = np.random.randint(20, 50, size=(slm['X'].shape[0], 1))
-
-    dummy_test(slm, contrast)

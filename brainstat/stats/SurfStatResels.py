@@ -2,8 +2,8 @@ import numpy as np
 from numpy import concatenate as cat
 from scipy.linalg import toeplitz
 from scipy.sparse import csr_matrix
-from brainstat.stats.matlab_functions import row_ismember, interp1
-from brainstat.stats.SurfStatEdg import SurfStatEdg
+from .matlab_functions import row_ismember, interp1
+from .SurfStatEdg import SurfStatEdg
 
 
 def pacos(x):
