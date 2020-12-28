@@ -8,15 +8,15 @@ pool:
   vmImage: 'ubuntu-latest'
 strategy:
   matrix:
-    Python 3.6:
-      implementation_language: 'python'
-      implementation_version: '3.6'
-    Python 3.7:
-      implementation_language: 'python'
-      implementation_version: '3.7'
-#    MATLAB 2020a:
-#      implementation_language: 'matlab'
-#      implementation_version: 'R2020a'
+#    Python 3.6:
+#      implementation_language: 'python'
+#      implementation_version: '3.6'
+#    Python 3.7:
+#      implementation_language: 'python'
+#      implementation_version: '3.7'
+    MATLAB 2020a:
+      implementation_language: 'matlab'
+      implementation_version: 'R2020a'
 
 steps:
   # Install Python/MATLAB
