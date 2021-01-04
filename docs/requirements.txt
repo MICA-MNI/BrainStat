@@ -1,1 +1,11 @@
 Sphinx~=3.4.2
+brainspace>=0.1.1
+gitpython
+nibabel
+nilearn>=0.7.0
+numpy>=1.16.5
+numpy_groupies
+pandas
+pytest
+scikit_learn
+scipy>=1.3.3
