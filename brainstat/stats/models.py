@@ -1,3 +1,6 @@
+"""
+test docstring
+"""
 import warnings
 import numpy as np
 from numpy import concatenate as cat
