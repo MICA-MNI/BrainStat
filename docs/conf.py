@@ -12,8 +12,10 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
+
 import os
 import sys
+import re
 sys.path.insert(0, os.path.abspath('../'))
 
 
@@ -24,9 +26,14 @@ copyright = u'2020, MICA Lab, CNG Lab'
 author = u'MICA Lab, CNG Lab'
 
 # The short X.Y version
-version = u''
+with open('../setup.py') as f:
+    for line in f:
+        if line.startswith('    version='):
+            m = re.search('[0-9]+.[0-9]+.[0-9]+',line)
+            version = m.group(0)
+            break
 # The full version, including alpha/beta/rc tags
-release = u'0.1'
+release = version
 
 
 # -- General configuration ---------------------------------------------------
