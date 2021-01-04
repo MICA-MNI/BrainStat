@@ -7,7 +7,7 @@ The following expandable section covers some of the theoretical and mathematical
 
 
 Mass-univariate linear modelling 
--------------------
+----------------------------------
 
 BrainStat implements element-wise univariate and multivariate linear models, similar to one its predecessor `SurfStat <http://www.math.mcgill.ca/keith/surfstat/>`_ 
 
@@ -33,7 +33,7 @@ Where contrast could be something like x1, -x1 from the above model in the case 
 
 
 Mixed effects models 
--------------------
+----------------------------
 BrainStat also incorporates element-wise linear mixed effects models, again leveraging functionality from `SurfStat <http://www.math.mcgill.ca/keith/surfstat/>`_ 
 
 Mixed models allow for the incorporation of fixed and random effects, which can be useful when handling hierarchically organized (e.g. longitudinal data) where correlated measures may exist across data points. Mixed effects models also have an advantage of flexibly handing irregular data and missing data points, making these approached more efficient than e.g. repeated measures ANOVA. A mixed effects model decomposes the total variance into fixed and random effects 
@@ -53,7 +53,7 @@ followed by simple model fitting and contrast estimation as above
 
 
 Correction for multiple comparisons  
--------------------
+---------------------------------------
 Several ways for multiple comparisons correction are implemented and can be flexibly assessed with one script: 
 	slm = BrainStat_multipleComp(slm, type, vargin)
 	 
@@ -61,6 +61,6 @@ which allows for 'no', 'bonferroni', 'fdr-peak', 'fdr-cluster', 'rft-peak' , 'rf
 
 
 Multivariate associative techniques  
--------------------
+---------------------------------------
 BrainStat furthermore implements multivariate associative techniques, namely canonical correlation analysis and partial least squares, which find the optimal mapping between two sets of high dimensional data (e.g. behavioral batteries and brain imaging measures). 
 
