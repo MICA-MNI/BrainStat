@@ -2,7 +2,7 @@ import numpy as np
 from scipy.interpolate import interp1d
 from scipy.special import betaln, gammaln, gamma
 import math
-from .models import stat_threshold, _peak_clus, _resels
+from .models import _peak_clus, _resels
 from .utils import interp1, colon
 
 
@@ -58,7 +58,7 @@ def _fdr(slm, mask=None):
         reselspvert = np.ones((v))
 
     varA = np.append(10, slm['t'][0, mask.astype(bool)])
-    P_val = stat_threshold(df=df, p_val_peak=varA,
+    P_val = _stat_threshold(df=df, p_val_peak=varA,
                            nvar=float(slm['k']), nprint=0)[0]
     P_val = P_val[1:len(P_val)]
     nx = len(P_val)
@@ -167,7 +167,7 @@ def _random_field_theory(slm, mask=None, clusthresh=0.001):
     if v == 1:
         varA = varA = np.concatenate((np.array([10]), slm['t'][0]))
         pval = {}
-        pval['P'] = stat_threshold(df=df, p_val_peak=varA,
+        pval['P'] = _stat_threshold(df=df, p_val_peak=varA,
                                    nvar=float(slm['k']), nprint=0)[0]
         pval['P'] = pval['P'][1]
         peak = []
@@ -177,7 +177,7 @@ def _random_field_theory(slm, mask=None, clusthresh=0.001):
         return pval, peak, clus, clusid
 
     if clusthresh < 1:
-        thresh = stat_threshold(df=df, p_val_peak=clusthresh,
+        thresh = _stat_threshold(df=df, p_val_peak=clusthresh,
                                 nvar=float(slm['k']), nprint=0)[0]
         thresh = float(thresh[0])
     else:
@@ -189,7 +189,7 @@ def _random_field_theory(slm, mask=None, clusthresh=0.001):
     if np.max(slm['t'][0, mask]) < thresh:
         pval = {}
         varA = np.concatenate((np.array([[10]]), slm['t']), axis=1)
-        pval['P'] = stat_threshold(search_volume=resels, num_voxels=N,
+        pval['P'] = _stat_threshold(search_volume=resels, num_voxels=N,
                                    fwhm=1, df=df,
                                    p_val_peak=varA.flatten(),
                                    nvar=float(slm['k']), nprint=0)[0]
@@ -203,7 +203,7 @@ def _random_field_theory(slm, mask=None, clusthresh=0.001):
         varA = np.concatenate((np.array([[10]]), peak['t'].T, slm['t']),
                               axis=1)
         varB = np.concatenate((np.array([[10]]), clus['resels']))
-        pp, clpval, _, _, _, _, = stat_threshold(search_volume=resels,
+        pp, clpval, _, _, _, _, = _stat_threshold(search_volume=resels,
                                                  num_voxels=N, fwhm=1,
                                                  df=df,
                                                  p_val_peak=varA.flatten(),
@@ -224,7 +224,7 @@ def _random_field_theory(slm, mask=None, clusthresh=0.001):
                                      np.arange(0, slm['k'])/2)/ndf
             varA = np.convolve(resels.flatten(), sphere.flatten())
             varB = np.concatenate((np.array([[10]]), clus['resels']))
-            pp, clpval, _, _, _, _, = stat_threshold(search_volume=varA,
+            pp, clpval, _, _, _, _, = _stat_threshold(search_volume=varA,
                                                      num_voxels=math.inf, fwhm=1.0,
                                                      df=df, cluster_threshold=thresh,
                                                      p_val_extent=varB, nprint=0)
@@ -234,7 +234,7 @@ def _random_field_theory(slm, mask=None, clusthresh=0.001):
         y = np.concatenate((np.array([[1]]), clus['P']), axis=0)
         pval['C'] = interp1d(x.flatten(), y.flatten())(clusid)
 
-    tlim = stat_threshold(search_volume=resels, num_voxels=N, fwhm=1,
+    tlim = _stat_threshold(search_volume=resels, num_voxels=N, fwhm=1,
                           df=df, p_val_peak=np.array([0.5, 1]),
                           nvar=float(slm['k']), nprint=0)[0]
     tlim = tlim[1]
