@@ -1,8 +1,8 @@
 import numpy as np
 import pickle
 from .testutil import datadir
-from ..stats import SurfStatLinMod
-from ..stats import Term
+from brainstat.stats.models import linear_model
+from brainstat.stats.terms import Term
 
 
 def dummy_test(slm, oslm):
@@ -30,7 +30,7 @@ def test_01():
     ifile.close()
     Y   = idic['Y']
     M   = idic['M']
-    slm = SurfStatLinMod(Y, M)
+    slm = linear_model(Y, M)
     # oslm : expected output
     ofile = open(expfile, 'br')
     oslm  = pickle.load(ofile)
@@ -49,7 +49,7 @@ def test_02():
     ifile.close()
     Y   = idic['Y']
     M   = idic['M']
-    slm = SurfStatLinMod(Y, M)
+    slm = linear_model(Y, M)
     # oslm : expected output
     ofile = open(expfile, 'br')
     oslm  = pickle.load(ofile)
@@ -68,7 +68,7 @@ def test_03():
     ifile.close()
     Y   = idic['Y']
     M   = idic['M']
-    slm = SurfStatLinMod(Y, M)
+    slm = linear_model(Y, M)
     # oslm : expected output
     ofile = open(expfile, 'br')
     oslm  = pickle.load(ofile)
@@ -87,7 +87,7 @@ def test_04():
     ifile.close()
     Y   = idic['Y']
     M   = idic['M']
-    slm = SurfStatLinMod(Y, M)
+    slm = linear_model(Y, M)
     # oslm : expected output
     ofile = open(expfile, 'br')
     oslm  = pickle.load(ofile)
@@ -106,7 +106,7 @@ def test_05():
     ifile.close()
     Y   = idic['Y']
     M   = idic['M']
-    slm = SurfStatLinMod(Y, M)
+    slm = linear_model(Y, M)
     # oslm : expected output
     ofile = open(expfile, 'br')
     oslm  = pickle.load(ofile)
@@ -126,7 +126,7 @@ def test_06():
     Y   = idic['Y']
     M   = idic['M']
     M   = Term(M)
-    slm = SurfStatLinMod(Y, M)
+    slm = linear_model(Y, M)
     # oslm : expected output
     ofile = open(expfile, 'br')
     oslm  = pickle.load(ofile)
@@ -146,7 +146,7 @@ def test_07():
     Y   = idic['Y']
     M   = idic['M']
     M   = Term(M)
-    slm = SurfStatLinMod(Y, M)
+    slm = linear_model(Y, M)
     # oslm : expected output
     ofile = open(expfile, 'br')
     oslm  = pickle.load(ofile)
@@ -168,7 +168,7 @@ def test_08():
     M    = idic['M']
     surf = {}
     surf['tri'] = idic['tri']
-    slm = SurfStatLinMod(Y, M, surf)
+    slm = linear_model(Y, M, surf)
     # oslm : expected output
     ofile = open(expfile, 'br')
     oslm  = pickle.load(ofile)
@@ -191,7 +191,7 @@ def test_09():
     M    = Term(M)
     surf = {}
     surf['tri'] = idic['tri']
-    slm = SurfStatLinMod(Y, M, surf)
+    slm = linear_model(Y, M, surf)
     ofile = open(expfile, 'br')
     oslm  = pickle.load(ofile)
     ofile.close()
@@ -212,7 +212,7 @@ def test_10():
     M    = idic['M']
     surf = {}
     surf['lat'] = idic['lat']
-    slm = SurfStatLinMod(Y, M, surf)
+    slm = linear_model(Y, M, surf)
     ofile = open(expfile, 'br')
     oslm  = pickle.load(ofile)
     ofile.close()
@@ -234,7 +234,7 @@ def test_11():
     M    = Term(M)
     surf = {}
     surf['lat'] = idic['lat']
-    slm = SurfStatLinMod(Y, M, surf)
+    slm = linear_model(Y, M, surf)
     ofile = open(expfile, 'br')
     oslm  = pickle.load(ofile)
     ofile.close()
@@ -259,7 +259,7 @@ def test_12():
     surf = {}
     surf['tri'] = idic['tri']
     surf['coord'] = idic['coord']
-    slm = SurfStatLinMod(Y, M, surf)
+    slm = linear_model(Y, M, surf)
     ofile = open(expfile, 'br')
     oslm  = pickle.load(ofile)
     ofile.close()
@@ -284,7 +284,7 @@ def test_13():
     surf = {}
     surf['tri'] = idic['tri']
     surf['coord'] = idic['coord']
-    slm = SurfStatLinMod(Y, M, surf)
+    slm = linear_model(Y, M, surf)
     ofile = open(expfile, 'br')
     oslm  = pickle.load(ofile)
     ofile.close()
@@ -309,7 +309,7 @@ def test_14():
     surf = {}
     surf['tri'] = idic['tri']
     surf['coord'] = idic['coord']
-    slm = SurfStatLinMod(Y, M, surf)
+    slm = linear_model(Y, M, surf)
     ofile = open(expfile, 'br')
     oslm  = pickle.load(ofile)
     ofile.close()
@@ -335,7 +335,7 @@ def test_15():
     surf = {}
     surf['tri'] = idic['tri']
     surf['coord'] = idic['coord']
-    slm = SurfStatLinMod(Y, M, surf)
+    slm = linear_model(Y, M, surf)
     ofile = open(expfile, 'br')
     oslm  = pickle.load(ofile)
     ofile.close()
@@ -359,7 +359,7 @@ def test_16():
     surf = {}
     surf['tri'] = idic['tri']
     surf['coord'] = idic['coord']
-    slm = SurfStatLinMod(Y, M, surf)
+    slm = linear_model(Y, M, surf)
     ofile = open(expfile, 'br')
     oslm  = pickle.load(ofile)
     ofile.close()

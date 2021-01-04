@@ -1,7 +1,7 @@
 import numpy as np
 import pickle
 from .testutil import datadir
-from ..stats import SurfStatEdg
+from brainstat.mesh.utils import mesh_edges
 
 
 def dummy_test(infile, expfile):
@@ -19,8 +19,8 @@ def dummy_test(infile, expfile):
     if 'lat' in idic.keys():
         surf['lat'] = idic['lat']
 
-    # run SurfStatEdg
-    out_edge = SurfStatEdg(surf)
+    # run mesh_edges
+    out_edge = mesh_edges(surf)
 
     # load expected outout data
     efile  = open(expfile, 'br')

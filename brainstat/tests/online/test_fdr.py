@@ -1,7 +1,7 @@
 import numpy as np
 import pickle
 from .testutil import datadir
-from ..stats import SurfStatQ
+from brainstat.stats.multiple_comparisons import _fdr
 
 
 def dummy_test(infile, expfile):
@@ -34,7 +34,7 @@ def dummy_test(infile, expfile):
     else:
         mask = None
 
-    # non-sense input for SurfStatQ, but potentially produced by SurfStatLinMod
+    # non-sense input for _fdr, but potentially produced by SurfStatLinMod
     if 'du' in idic.keys():
         slm['du'] = idic['du']
 
@@ -50,8 +50,8 @@ def dummy_test(infile, expfile):
     if 'SSE' in idic.keys():
         slm['SSE']    = idic['SSE']
 
-    # run SurfStatQ
-    outdic = SurfStatQ(slm, mask)
+    # run _fdr
+    outdic = _fdr(slm, mask)
 
     # load expected outout data
     efile  = open(expfile, 'br')
@@ -159,7 +159,7 @@ def test_08():
 
 def test_09():
     # similar to test_08 + values/shapes of input params changed +
-    # additional input slm['du'] (non-sense for SurfStatQ)
+    # additional input slm['du'] (non-sense for _fdr)
     # ['t'] : np array, shape (1, 4397), float64
     # ['df'] : np array, shape (1, 1), int64
     # ['k'] : int
@@ -174,7 +174,7 @@ def test_09():
 
 def test_10():
     # similar to test_08 + + values/shapes of input params changed + additional
-    # input slm['du'], slm['c'], slm['ef'], and slm['sd'] (non-sense for SurfStatQ)
+    # input slm['du'], slm['c'], slm['ef'], and slm['sd'] (non-sense for _fdr)
     # ['t'] : np array, shape (1, 20484), float64
     # ['df'] : int64
     # ['k'] : int
@@ -190,7 +190,7 @@ def test_10():
 
 def test_11():
     # similar to test_08 + additional input ['c'], ['ef'], ['sd'], ['X'],
-    # and ['coef'], ['SSE'] (non-sense for SurfStatQ)
+    # and ['coef'], ['SSE'] (non-sense for _fdr)
     # ['t'] : np array, shape (1, 20484), float64
     # ['df'] : int64
     # ['k'] : int

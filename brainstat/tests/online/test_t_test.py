@@ -1,7 +1,7 @@
 import numpy as np
 import pickle
 from .testutil import datadir
-from ..stats import SurfStatT
+from brainstat.stats.models import _t_test
 
 
 def dummy_test(infile, expfile):
@@ -38,8 +38,8 @@ def dummy_test(infile, expfile):
         slm['resl']    = idic['resl']
 
 
-    # run SurfStatT
-    outdic = SurfStatT(slm, contrast)
+    # run _t_test
+    outdic = _t_test(slm, contrast)
 
     # load expected outout data
     efile  = open(expfile, 'br')

@@ -1,7 +1,7 @@
 import numpy as np
 import pickle
 from .testutil import datadir
-from ..stats import SurfStatP
+from brainstat.stats.multiple_comparisons import _random_field_theory
 
 
 def dummy_test(infile, expfile):
@@ -51,7 +51,7 @@ def dummy_test(infile, expfile):
         slm['sd'] = idic['sd']
 
 
-    PY_pval, PY_peak, PY_clus, PY_clusid = SurfStatP(slm, mask, clusthresh)
+    PY_pval, PY_peak, PY_clus, PY_clusid = _random_field_theory(slm, mask, clusthresh)
 
     # load expected outout data
     efile  = open(expfile, 'br')
@@ -265,7 +265,7 @@ def test_15():
 
 
 def test_16():
-    # additional non-sense keys (meaningless for SurfStatP) are added to slm
+    # additional non-sense keys (meaningless for _random_field_theory) are added to slm
     # ['df'] : int64
     # ['X'] : np array, shape (10, 2), float64
     # ['coef'] :  np array, shape (2, 20484), float64
