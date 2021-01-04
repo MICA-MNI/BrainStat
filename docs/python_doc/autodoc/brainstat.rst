@@ -7,8 +7,8 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
+   brainstat.mesh
    brainstat.stats
-   brainstat.tests
    brainstat.unassigned
 
 Module contents
