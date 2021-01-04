@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - 'master'
-      - 'code-coverage' 
+      - 'code_coverage' 
 jobs:
   codecov:
     name: Codecov Workflow
