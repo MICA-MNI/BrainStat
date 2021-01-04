@@ -1,7 +1,7 @@
 import numpy as np
 import pickle
 from .testutil import datadir
-from ..stats import SurfStatNorm
+from brainstat.mesh.data import mesh_normalize
 
 
 def dummy_test(infile, expfile):
@@ -19,8 +19,8 @@ def dummy_test(infile, expfile):
     if 'mask' in idic.keys():
         mask = idic['mask']
 
-    # run SurfStatNorm
-    Y_out, Yav_out = SurfStatNorm(Y, mask, subdiv)
+    # run mesh_normalize
+    Y_out, Yav_out = mesh_normalize(Y, mask, subdiv)
 
     # load expected outout data
     efile  = open(expfile, 'br')

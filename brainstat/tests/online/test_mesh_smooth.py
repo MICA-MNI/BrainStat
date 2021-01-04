@@ -1,7 +1,7 @@
 import numpy as np
 import pickle
 from .testutil import datadir
-from ..stats import SurfStatSmooth
+from brainstat.mesh.data import mesh_smooth
 
 
 def dummy_test(infile, expfile):
@@ -21,8 +21,8 @@ def dummy_test(infile, expfile):
     if 'lat' in idic.keys():
         surf['lat'] = idic['lat']
 
-    # run SurfStatSmooth
-    Y_out = SurfStatSmooth(Y, surf, FWHM)
+    # run mesh_smooth
+    Y_out = mesh_smooth(Y, surf, FWHM)
 
     # load expected outout data
     efile  = open(expfile, 'br')

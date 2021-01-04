@@ -1,7 +1,7 @@
 import numpy as np
 import pickle
 from .testutil import datadir
-from ..stats import SurfStatResels
+from brainstat.stats.models import _resels
 
 
 def dummy_test(infile, expfile):
@@ -27,7 +27,7 @@ def dummy_test(infile, expfile):
     if 'mask' in idic.keys():
         mask = idic['mask']
 
-    resels_py, reselspvert_py, edg_py =  SurfStatResels(slm,mask)
+    resels_py, reselspvert_py, edg_py =  _resels(slm,mask)
 
     out = {}
     out['resels']      = resels_py

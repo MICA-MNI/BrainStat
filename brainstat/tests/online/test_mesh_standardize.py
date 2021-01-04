@@ -1,7 +1,7 @@
 import numpy as np
 import pickle
 from .testutil import datadir
-from ..stats import SurfStatStand
+from brainstat.mesh.data import mesh_standardize
 
 
 def dummy_test(infile, expfile):
@@ -24,8 +24,8 @@ def dummy_test(infile, expfile):
         subtractordivide = idic['subtractordivide']
 
 
-    # run SurfStatStand
-    Y_out, Ym_out = SurfStatStand(Y, mask, subtractordivide)
+    # run mesh_standardize
+    Y_out, Ym_out = mesh_standardize(Y, mask, subtractordivide)
 
     # load expected outout data
     efile  = open(expfile, 'br')
