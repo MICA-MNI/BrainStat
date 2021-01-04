@@ -19,8 +19,6 @@ import re
 import mock
 sys.path.insert(0, os.path.abspath('../'))
 
-autodoc_mock_imports = ['scipy','nibabel','nilearn','numpy','numpy_groupies','pandas','pytest','scikit_learn','numpy']
-
 # -- Project information -----------------------------------------------------
 
 project = u'BrainStat'
