@@ -12,6 +12,9 @@ Welcome to BrainStat's documentation!
     :target: https://github.com/MICA-LAB/brainstat/actions
 .. image:: https://codecov.io/gh/MICA-LAB/BrainStat/branch/master/graph/badge.svg?token=5O9PVCT9GA
     :target: https://codecov.io/gh/MICA-LAB/BrainStat
+.. image::
+https://readthedocs.org/projects/brainstat/badge/?version=latest&style=plastic
+    :target: https://brainstat.readthedocs.io/en/latest/
 
 BrainStat is a toolbox for the statistical analysis and context decoding of
 neuroimaging data. It implements both univariate and multivariate linear models
@@ -23,10 +26,11 @@ languages in the neuroimaging and neuroinformatics communities. It is openly
 available, and complemented by an expansive `documentation <https://brainstat.readthedocs.io/en/latest/>`_. 
 
 .. image:: https://github.com/MICA-LAB/BrainStat/blob/master/docs/figures/brainstat_logo_bw.png?raw=true
+
 ..
     For some reason referencing the BrainStat image locally doesn't work, so
     just linking to the image on Github instead. 
-    
+
 Developers
 ----------
 .. |seyma_s|   unicode:: U+015E .. CEDILLA S
