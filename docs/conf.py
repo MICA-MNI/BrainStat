@@ -36,7 +36,8 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.napoleon',
     'sphinx.ext.intersphinx',
-    'sphinx.ext.doctest'
+    'sphinx.ext.doctest',
+    'sphinxcontrib.matlab'
 ]
 
 # Napoleon settings
@@ -58,6 +59,11 @@ intersphinx_mapping = {
 
 # Autosummary settings
 autosummary_generate = True
+
+# MATLAB documentation settings
+this_dir = os.path.dirname(os.path.abspath(__file__))
+matlab_src_dir = os.path.abspath(os.path.join(this_dir, '..'))
+matlab_keep_package_prefix = False
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
