@@ -411,7 +411,7 @@ def linear_model(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
     return slm
 
 
-def _t_test(slm, contrast):
+def t_test(slm, contrast):
 
     # T statistics for a contrast in a univariate or multivariate model.
     # Inputs

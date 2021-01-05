@@ -12,34 +12,38 @@ def fdr(slm, mask=None):
 
     Parameters
     ----------
-    slm : :class:`dict`
-        Standard linear model returned by :func:`brainstat.stats.models.linear_model`;
-        see Notes for details.
-    mask : :func:`numpy.array`, optional
+    slm : dict
+        Standard linear model returned by the t_test function; see Notes for 
+        details.
+    mask : numpy.array, optional
         Only t-values where the mask is true are considered. Defaults to a
-        vector of ones. 
+        vector of ones.
 
     Returns
     -------
-    qval : :class:`dict`
+    qval : dict
         Contains the Q-values in field 'Q' and a copy of the mask in 'mask'.
+
+    See Also
+    --------
+    brainstat.stats.models.t_test : Computes t-values for a linear model. 
 
     Notes
     ------
     The slm dictionary must contain at least the following fields:
 
-    - slm['t'] (:func:`numpy.array`): a (1,v) array of t-values 
-    - slm['df'] (:func:`numpy.array`) of shape (1,1) containing the degrees of freedom 
-    - slm['k'] (:class:`int`) the number of variates. 
+    - slm['t'] (numpy.array): a (1,v) array of t-values
+    - slm['df'] (numpy.array) of shape (1,1) containing the degrees of freedom
+    - slm['k'] (int) the number of variates.
 
     Furthermore, slm may contain the following optional fields.
 
-    - slm['dfs'] (:func:`numpy.array`) a (1,v) array containing the effective degrees of freedom. 
-    - slm['resl'] (:func:`numpy.array`) a (e,v) array containing the sum over observations of squares of differences of normalized residuals along each edge. 
-    - slm['tri'] (:func:`numpy.array`) a (v,3) array containing a mesh's triangle indices 
-    - slm['lat'] (:func:`numpy.array`) a 3D array of 1's and 0's where 1's are inside the lattice. 
+    - slm['dfs'] (numpy.array) a (1,v) array containing the effective degrees of freedom.
+    - slm['resl'] (numpy.array) a (e,v) array containing the sum over observations of squares of differences of normalized residuals along each edge.
+    - slm['tri'] (numpy.array) a (v,3) array containing a mesh's triangle indices
+    - slm['lat'] (numpy.array) a 3D array of 1's and 0's where 1's are inside the lattice.
 
-    Note that slm['tri'] and slm['lat'] are mutually exclusive. 
+    Note that slm['tri'] and slm['lat'] are mutually exclusive.
     """
     l, v = np.shape(slm['t'])
 
