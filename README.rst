@@ -12,8 +12,7 @@ Welcome to BrainStat's documentation!
     :target: https://github.com/MICA-LAB/brainstat/actions
 .. image:: https://codecov.io/gh/MICA-LAB/BrainStat/branch/master/graph/badge.svg?token=5O9PVCT9GA
     :target: https://codecov.io/gh/MICA-LAB/BrainStat
-.. image::
-https://readthedocs.org/projects/brainstat/badge/?version=latest&style=plastic
+.. image:: https://readthedocs.org/projects/brainstat/badge/?version=latest&style=plastic
     :target: https://brainstat.readthedocs.io/en/latest/
 
 BrainStat is a toolbox for the statistical analysis and context decoding of
