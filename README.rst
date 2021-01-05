@@ -22,9 +22,11 @@ implemented in both python and matlab, the two most widely adopted programming
 languages in the neuroimaging and neuroinformatics communities. It is openly
 available, and complemented by an expansive `documentation <https://brainstat.readthedocs.io/en/latest/>`_. 
 
-.. image:: ./figures/brainstat_logo_bw.png
-
-
+.. image:: https://github.com/MICA-LAB/BrainStat/blob/master/docs/figures/brainstat_logo_bw.png?raw=true
+..
+    For some reason referencing the BrainStat image locally doesn't work, so
+    just linking to the image on Github instead. 
+    
 Developers
 ----------
 .. |seyma_s|   unicode:: U+015E .. CEDILLA S
