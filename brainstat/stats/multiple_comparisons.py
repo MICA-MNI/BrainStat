@@ -13,7 +13,7 @@ def fdr(slm, mask=None):
     Parameters
     ----------
     slm : dict
-        Standard linear model returned by the t_test function; see Notes for 
+        Standard linear model returned by the t_test function; see Notes for
         details.
     mask : numpy.array, optional
         Only t-values where the mask is true are considered. Defaults to a
@@ -26,7 +26,7 @@ def fdr(slm, mask=None):
 
     See Also
     --------
-    brainstat.stats.models.t_test : Computes t-values for a linear model. 
+    brainstat.stats.models.t_test : Computes t-values for a linear model.
 
     Notes
     ------
