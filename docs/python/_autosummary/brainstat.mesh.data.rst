@@ -12,7 +12,7 @@ brainstat.mesh.data
    .. rubric:: Functions
 
    .. autosummary::
-      :toctree:                                          <-- add this line
+      :toctree:
    
       mesh_normalize
       mesh_smooth

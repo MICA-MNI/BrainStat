@@ -12,7 +12,7 @@ brainstat.mesh.utils
    .. rubric:: Functions
 
    .. autosummary::
-      :toctree:                                          <-- add this line
+      :toctree:
    
       mesh_average
       mesh_edges

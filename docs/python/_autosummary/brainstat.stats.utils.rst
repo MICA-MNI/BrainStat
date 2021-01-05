@@ -12,7 +12,7 @@ brainstat.stats.utils
    .. rubric:: Functions
 
    .. autosummary::
-      :toctree:                                          <-- add this line
+      :toctree:
    
       colon
       interp1

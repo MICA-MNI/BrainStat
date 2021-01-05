@@ -12,7 +12,7 @@ brainstat.unassigned.utils
    .. rubric:: Functions
 
    .. autosummary::
-      :toctree:                                          <-- add this line
+      :toctree:
    
       fetch_tutorial_data
    

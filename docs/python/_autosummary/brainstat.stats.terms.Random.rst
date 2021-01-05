@@ -1,12 +1,12 @@
-﻿brainstat.stats.terms.Random
+brainstat.stats.terms.Random
 ============================
 
 .. currentmodule:: brainstat.stats.terms
 
 .. autoclass:: Random
-   :members:                                    <-- add at least this line
-   :show-inheritance:                           <-- plus I want to show inheritance...
-   :inherited-members:                          <-- ...and inherited members too
+   :members:
+   :show-inheritance:
+   :inherited-members:
 
    
    .. automethod:: __init__

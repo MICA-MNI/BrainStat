@@ -1,4 +1,4 @@
-﻿brainstat.stats.models
+brainstat.stats.models
 ======================
 
 .. automodule:: brainstat.stats.models
@@ -12,7 +12,7 @@
    .. rubric:: Functions
 
    .. autosummary::
-      :toctree:                                          <-- add this line
+      :toctree:
    
       f_test
       linear_model

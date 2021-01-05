@@ -12,7 +12,7 @@ brainstat.unassigned.deprecated
    .. rubric:: Functions
 
    .. autosummary::
-      :toctree:                                          <-- add this line
+      :toctree:
    
       deprecated
    

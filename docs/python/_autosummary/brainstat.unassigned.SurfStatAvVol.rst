@@ -12,7 +12,7 @@ brainstat.unassigned.SurfStatAvVol
    .. rubric:: Functions
 
    .. autosummary::
-      :toctree:                                          <-- add this line
+      :toctree:
    
       SurfStatAvVol
    

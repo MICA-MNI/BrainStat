@@ -12,7 +12,7 @@ brainstat.stats.terms
    .. rubric:: Functions
 
    .. autosummary::
-      :toctree:                                          <-- add this line
+      :toctree:
    
       check_duplicate_names
       check_names
@@ -27,7 +27,7 @@ brainstat.stats.terms
    .. rubric:: Classes
 
    .. autosummary::
-      :toctree:                                          <-- add this line
+      :toctree:
    
       Random
       Term

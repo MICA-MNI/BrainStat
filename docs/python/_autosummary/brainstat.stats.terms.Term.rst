@@ -1,12 +1,12 @@
-﻿brainstat.stats.terms.Term
+brainstat.stats.terms.Term
 ==========================
 
 .. currentmodule:: brainstat.stats.terms
 
 .. autoclass:: Term
-   :members:                                    <-- add at least this line
-   :show-inheritance:                           <-- plus I want to show inheritance...
-   :inherited-members:                          <-- ...and inherited members too
+   :members:
+   :show-inheritance:
+   :inherited-members:
 
    
    .. automethod:: __init__
