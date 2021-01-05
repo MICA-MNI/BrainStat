@@ -7,38 +7,39 @@ from .models import _peak_clus, _resels
 from .utils import interp1, colon
 
 
-def _fdr(slm, mask=None):
+def fdr(slm, mask=None):
     """Q-values for False Discovey Rate of resels.
 
     Parameters
     ----------
-    slm : a dictionary with mandatory keys 't', 'df', and 'k'.
-        slm['t'] : numpy array of shape (1,v),
-            v is the number of vertices.
-        slm['df'] : numpy array of shape (1,1),
-            degrees of freedom.
-        slm['k'] : int,
-            number of variates.
-    Optional parameters:
-        mask : numpy array of shape (v), dtype 'bool',
-            by default ones(1,v).
-        slm['dfs'] : numpy array of shape (1,v),
-            effective degrees of freedom.
-        slm['resl'] : numpy array of shape (e,v),
-            matrix of sum over observations of squares of
-            differences of normalized residuals along each edge.
-        slm['tri'] : numpy array of shape (t,3),
-            triangle indices, 1-based, t is the number of triangles,
-        or,
-        slm['lat'] : 3D numpy array of 1's and 0's (1:in, 0:out).
+    slm : :class:`dict`
+        Standard linear model returned by :func:`brainstat.stats.models.linear_model`;
+        see Notes for details.
+    mask : :func:`numpy.array`, optional
+        Only t-values where the mask is true are considered. Defaults to a
+        vector of ones. 
 
     Returns
     -------
-    qval : a dictionary with keys 'Q' and 'mask'
-        qval['Q'] : numpy array of shape (1,v),
-            vector of Q-values.
-        qval['mask'] : copy of mask.
+    qval : :class:`dict`
+        Contains the Q-values in field 'Q' and a copy of the mask in 'mask'.
 
+    Notes
+    ------
+    The slm dictionary must contain at least the following fields:
+
+    - slm['t'] (:func:`numpy.array`): a (1,v) array of t-values 
+    - slm['df'] (:func:`numpy.array`) of shape (1,1) containing the degrees of freedom 
+    - slm['k'] (:class:`int`) the number of variates. 
+
+    Furthermore, slm may contain the following optional fields.
+
+    - slm['dfs'] (:func:`numpy.array`) a (1,v) array containing the effective degrees of freedom. 
+    - slm['resl'] (:func:`numpy.array`) a (e,v) array containing the sum over observations of squares of differences of normalized residuals along each edge. 
+    - slm['tri'] (:func:`numpy.array`) a (v,3) array containing a mesh's triangle indices 
+    - slm['lat'] (:func:`numpy.array`) a 3D array of 1's and 0's where 1's are inside the lattice. 
+
+    Note that slm['tri'] and slm['lat'] are mutually exclusive. 
     """
     l, v = np.shape(slm['t'])
 
@@ -59,7 +60,7 @@ def _fdr(slm, mask=None):
         reselspvert = np.ones((v))
 
     varA = np.append(10, slm['t'][0, mask.astype(bool)])
-    P_val = _stat_threshold(df=df, p_val_peak=varA,
+    P_val = stat_threshold(df=df, p_val_peak=varA,
                            nvar=float(slm['k']), nprint=0)[0]
     P_val = P_val[1:len(P_val)]
     nx = len(P_val)
@@ -87,7 +88,7 @@ def _fdr(slm, mask=None):
     return qval
 
 
-def _random_field_theory(slm, mask=None, clusthresh=0.001):
+def random_field_theory(slm, mask=None, clusthresh=0.001):
     """Corrected P-values for vertices and clusters.
 
     Parameters
@@ -168,7 +169,7 @@ def _random_field_theory(slm, mask=None, clusthresh=0.001):
     if v == 1:
         varA = varA = np.concatenate((np.array([10]), slm['t'][0]))
         pval = {}
-        pval['P'] = _stat_threshold(df=df, p_val_peak=varA,
+        pval['P'] = stat_threshold(df=df, p_val_peak=varA,
                                    nvar=float(slm['k']), nprint=0)[0]
         pval['P'] = pval['P'][1]
         peak = []
@@ -178,7 +179,7 @@ def _random_field_theory(slm, mask=None, clusthresh=0.001):
         return pval, peak, clus, clusid
 
     if clusthresh < 1:
-        thresh = _stat_threshold(df=df, p_val_peak=clusthresh,
+        thresh = stat_threshold(df=df, p_val_peak=clusthresh,
                                 nvar=float(slm['k']), nprint=0)[0]
         thresh = float(thresh[0])
     else:
@@ -190,7 +191,7 @@ def _random_field_theory(slm, mask=None, clusthresh=0.001):
     if np.max(slm['t'][0, mask]) < thresh:
         pval = {}
         varA = np.concatenate((np.array([[10]]), slm['t']), axis=1)
-        pval['P'] = _stat_threshold(search_volume=resels, num_voxels=N,
+        pval['P'] = stat_threshold(search_volume=resels, num_voxels=N,
                                    fwhm=1, df=df,
                                    p_val_peak=varA.flatten(),
                                    nvar=float(slm['k']), nprint=0)[0]
@@ -204,7 +205,7 @@ def _random_field_theory(slm, mask=None, clusthresh=0.001):
         varA = np.concatenate((np.array([[10]]), peak['t'].T, slm['t']),
                               axis=1)
         varB = np.concatenate((np.array([[10]]), clus['resels']))
-        pp, clpval, _, _, _, _, = _stat_threshold(search_volume=resels,
+        pp, clpval, _, _, _, _, = stat_threshold(search_volume=resels,
                                                  num_voxels=N, fwhm=1,
                                                  df=df,
                                                  p_val_peak=varA.flatten(),
@@ -225,7 +226,7 @@ def _random_field_theory(slm, mask=None, clusthresh=0.001):
                                      np.arange(0, slm['k'])/2)/ndf
             varA = np.convolve(resels.flatten(), sphere.flatten())
             varB = np.concatenate((np.array([[10]]), clus['resels']))
-            pp, clpval, _, _, _, _, = _stat_threshold(search_volume=varA,
+            pp, clpval, _, _, _, _, = stat_threshold(search_volume=varA,
                                                      num_voxels=math.inf, fwhm=1.0,
                                                      df=df, cluster_threshold=thresh,
                                                      p_val_extent=varB, nprint=0)
@@ -235,7 +236,7 @@ def _random_field_theory(slm, mask=None, clusthresh=0.001):
         y = np.concatenate((np.array([[1]]), clus['P']), axis=0)
         pval['C'] = interp1d(x.flatten(), y.flatten())(clusid)
 
-    tlim = _stat_threshold(search_volume=resels, num_voxels=N, fwhm=1,
+    tlim = stat_threshold(search_volume=resels, num_voxels=N, fwhm=1,
                           df=df, p_val_peak=np.array([0.5, 1]),
                           nvar=float(slm['k']), nprint=0)[0]
     tlim = tlim[1]
@@ -245,9 +246,9 @@ def _random_field_theory(slm, mask=None, clusthresh=0.001):
     return pval, peak, clus, clusid
 
 
-def _stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
-                    p_val_peak=0.05, cluster_threshold=0.001, p_val_extent=0.05, nconj=1,
-                    nvar=1, EC_file=None, expr=None, nprint=5):
+def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
+                   p_val_peak=0.05, cluster_threshold=0.001, p_val_extent=0.05, nconj=1,
+                   nvar=1, EC_file=None, expr=None, nprint=5):
     """Thresholds and P-values of peaks and clusters of random fields in any D.
 
     Parameters

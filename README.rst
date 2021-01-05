@@ -1,9 +1,6 @@
 BrainStat : A toolbox for statistical analysis of neuroimaging data
 ===================================================================
 
-Welcome to BrainStat's documentation!
-======================================
-
 .. image:: https://img.shields.io/pypi/l/brainspace?label=License
     :target: https://opensource.org/licenses/BSD-3-Clause
 .. image:: https://dev.azure.com/MICA-LAB/brainstat/_apis/build/status/MICA-LAB.BrainStat?branchName=master
@@ -14,6 +11,8 @@ Welcome to BrainStat's documentation!
     :target: https://codecov.io/gh/MICA-LAB/BrainStat
 .. image:: https://readthedocs.org/projects/brainstat/badge/?version=latest&style=plastic
     :target: https://brainstat.readthedocs.io/en/latest/
+
+Welcome to BrainStat's documentation!
 
 BrainStat is a toolbox for the statistical analysis and context decoding of
 neuroimaging data. It implements both univariate and multivariate linear models
