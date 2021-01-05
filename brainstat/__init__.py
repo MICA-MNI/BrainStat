@@ -1,1 +1,1 @@
-""" Test for sphinx autosummary """
+"""Neuroimaging statistics toolbox."""
