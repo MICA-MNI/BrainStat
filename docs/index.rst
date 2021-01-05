@@ -5,9 +5,10 @@
     :caption: Table of Contents:
     :hidden:
 
-    theory
-    install
-    python/index
-    matlab/index
-    references
-    funding
+    generic/theory
+    generic/install
+    generic/tutorials
+    python/api
+    matlab/api
+    generic/references
+    generic/funding
