@@ -27,7 +27,7 @@ def dummy_test(infile, expfile):
     if 'mask' in idic.keys():
         mask = idic['mask']
 
-    resels_py, reselspvert_py, edg_py =  resels(slm,mask)
+    resels_py, reselspvert_py, edg_py =  compute_resels(slm,mask)
 
     out = {}
     out['resels']      = resels_py
