@@ -630,7 +630,7 @@ def t_test(slm, contrast):
     return slm
 
 
-def _peak_clus(slm, mask, thresh, reselspvert=None, edg=None):
+def peak_clus(slm, mask, thresh, reselspvert=None, edg=None):
     """ Finds peaks (local maxima) and clusters for surface data.
     Parameters
     ----------
@@ -804,7 +804,7 @@ def _peak_clus(slm, mask, thresh, reselspvert=None, edg=None):
     return peak, clus, clusid
 
 
-def _resels(slm, mask=None):
+def resels(slm, mask=None):
     """ SurfStatResels of surface or volume data inside a mask.
 
     Parameters

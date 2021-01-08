@@ -1,7 +1,7 @@
 import numpy as np
 import pickle
 from .testutil import datadir
-from brainstat.stats.models import _peak_clus
+from brainstat.stats.models import peak_clus
 
 
 def dummy_test(infile, expfile):

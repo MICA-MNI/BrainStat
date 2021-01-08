@@ -3,7 +3,7 @@ import numpy as np
 from scipy.interpolate import interp1d
 from scipy.special import betaln, gammaln, gamma
 import math
-from .models import _peak_clus, _resels
+from .models import peak_clus, resels
 from .utils import interp1, colon
 
 
@@ -59,7 +59,7 @@ def fdr(slm, mask=None):
         df[0, ndf-1] = slm['dfs'][0, mask > 0].mean()
 
     if 'du' in slm:
-        resels, reselspvert, edg = _resels(slm, mask.flatten())
+        resels, reselspvert, edg = resels(slm, mask.flatten())
     else:
         reselspvert = np.ones((v))
 
@@ -204,7 +204,7 @@ def random_field_theory(slm, mask=None, clusthresh=0.001):
         clus = []
         clusid = []
     else:
-        peak, clus, clusid = _peak_clus(slm, mask, thresh, reselspvert, edg)
+        peak, clus, clusid = peak_clus(slm, mask, thresh, reselspvert, edg)
         slm['t'] = slm['t'].reshape(1, slm['t'].size)
         varA = np.concatenate((np.array([[10]]), peak['t'].T, slm['t']),
                               axis=1)
