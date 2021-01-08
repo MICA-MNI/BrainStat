@@ -1,3 +1,5 @@
+"""Python implementation of MATLAB functions."""
+
 from scipy.interpolate import interp1d
 import numpy as np
 

@@ -1,7 +1,7 @@
 import numpy as np
 import pickle
 from .testutil import datadir
-from brainstat.stats.multiple_comparisons import _fdr
+from brainstat.stats.multiple_comparisons import fdr
 
 
 def dummy_test(infile, expfile):
@@ -51,7 +51,7 @@ def dummy_test(infile, expfile):
         slm['SSE']    = idic['SSE']
 
     # run _fdr
-    outdic = _fdr(slm, mask)
+    outdic = fdr(slm, mask)
 
     # load expected outout data
     efile  = open(expfile, 'br')

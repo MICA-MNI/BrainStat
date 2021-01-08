@@ -1,3 +1,5 @@
+"""Classes for fixed, mixed, and random effects."""
+
 import re
 
 import numpy as np
