@@ -1,7 +1,7 @@
 import numpy as np
 import pickle
 from .testutil import datadir
-from brainstat.stats.multiple_comparisons import _random_field_theory
+from brainstat.stats.multiple_comparisons import random_field_theory
 
 
 def dummy_test(infile, expfile):
@@ -51,7 +51,7 @@ def dummy_test(infile, expfile):
         slm['sd'] = idic['sd']
 
 
-    PY_pval, PY_peak, PY_clus, PY_clusid = _random_field_theory(slm, mask, clusthresh)
+    PY_pval, PY_peak, PY_clus, PY_clusid = random_field_theory(slm, mask, clusthresh)
 
     # load expected outout data
     efile  = open(expfile, 'br')

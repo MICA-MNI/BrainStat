@@ -1,7 +1,7 @@
 import numpy as np
 import pickle
 from .testutil import datadir
-from brainstat.stats.models import _t_test
+from brainstat.stats.models import t_test
 
 
 def dummy_test(infile, expfile):
@@ -39,7 +39,7 @@ def dummy_test(infile, expfile):
 
 
     # run _t_test
-    outdic = _t_test(slm, contrast)
+    outdic = t_test(slm, contrast)
 
     # load expected outout data
     efile  = open(expfile, 'br')

@@ -1,7 +1,7 @@
 import numpy as np
 import pickle
 from .testutil import datadir
-from brainstat.stats.multiple_comparisons import _stat_threshold
+from brainstat.stats.multiple_comparisons import stat_threshold
 
 
 def dummy_test(infile, expfile):
@@ -12,7 +12,7 @@ def dummy_test(infile, expfile):
     ifile.close()
 
     # run stat_threshold
-    A, B, C, D, E, F = _stat_threshold(idic["search_volume"],
+    A, B, C, D, E, F = stat_threshold(idic["search_volume"],
                                       idic["num_voxels"],
                                       idic["fwhm"],
                                       idic["df"],
