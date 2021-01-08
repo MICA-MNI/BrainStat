@@ -1,7 +1,7 @@
 import numpy as np
 import pickle
 from .testutil import datadir
-from brainstat.stats.multiple_comparisons import resels
+from brainstat.stats.multiple_comparisons import compute_resels
 
 
 def dummy_test(infile, expfile):
@@ -27,7 +27,7 @@ def dummy_test(infile, expfile):
     if 'mask' in idic.keys():
         mask = idic['mask']
 
-    resels_py, reselspvert_py, edg_py =  resels(slm,mask)
+    resels_py, reselspvert_py, edg_py =  compute_resels(slm,mask)
 
     out = {}
     out['resels']      = resels_py
