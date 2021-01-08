@@ -63,7 +63,7 @@ def fdr(slm, mask=None):
         df[0, ndf-1] = slm['dfs'][0, mask > 0].mean()
 
     if 'du' in slm:
-        resels, reselspvert, edg = resels(slm, mask.flatten())
+        resels, reselspvert, edg = compute_resels(slm, mask.flatten())
     else:
         reselspvert = np.ones((v))
 
@@ -151,7 +151,7 @@ def random_field_theory(slm, mask=None, clusthresh=0.001):
         clus['nverts'] : 2D numpy array of shape (nc,1).
             Number of vertices in cluster.
         clus['resels'] : 2D numpy array of shape (nc,1).
-            _resels in the cluster.
+            resels in the cluster.
         clus['P'] : 2D numpy array of shape (nc,1).
             Corrected P-values for the cluster.
     clusid : 2D numpy array of shape (1,v).
@@ -193,7 +193,7 @@ def random_field_theory(slm, mask=None, clusthresh=0.001):
     else:
         thresh = clusthresh
 
-    resels, reselspvert, edg = _resels(slm, mask)
+    resels, reselspvert, edg = compute_resels(slm, mask)
     N = mask.sum()
 
     if np.max(slm['t'][0, mask]) < thresh:
@@ -934,7 +934,7 @@ def peak_clus(slm, mask, thresh, reselspvert=None, edg=None):
     return peak, clus, clusid
 
 
-def resels(slm, mask=None):
+def compute_resels(slm, mask=None):
     """ SurfStatResels of surface or volume data inside a mask.
 
     Parameters
