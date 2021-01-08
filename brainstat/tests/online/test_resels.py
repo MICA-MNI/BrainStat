@@ -1,7 +1,7 @@
 import numpy as np
 import pickle
 from .testutil import datadir
-from brainstat.stats.models import resels
+from brainstat.stats.multiple_comparisons import resels
 
 
 def dummy_test(infile, expfile):

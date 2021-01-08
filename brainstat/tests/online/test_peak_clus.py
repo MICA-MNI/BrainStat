@@ -1,7 +1,7 @@
 import numpy as np
 import pickle
 from .testutil import datadir
-from brainstat.stats.models import peak_clus
+from brainstat.stats.multiple_comparisons import peak_clus
 
 
 def dummy_test(infile, expfile):
@@ -34,7 +34,7 @@ def dummy_test(infile, expfile):
 
 
     # call python function
-    P_peak, P_clus, P_clusid = _peak_clus(slm, mask, thresh,
+    P_peak, P_clus, P_clusid = peak_clus(slm, mask, thresh,
                                                 reselspvert, edg)
 
     # load expected outout data
