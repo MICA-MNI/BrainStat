@@ -1,4 +1,4 @@
-brainstat.stats.multiple\_comparisons
+﻿brainstat.stats.multiple\_comparisons
 =====================================
 
 .. automodule:: brainstat.stats.multiple_comparisons
@@ -14,7 +14,9 @@ brainstat.stats.multiple\_comparisons
    .. autosummary::
       :toctree:
    
+      compute_resels
       fdr
+      peak_clus
       random_field_theory
       stat_threshold
    
