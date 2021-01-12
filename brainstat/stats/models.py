@@ -47,7 +47,7 @@ def f_test(slm1, slm2):
 
     - slm['k'] : (numpy.array) Number of variates.
     - slm['df'] : (numpy.array) two-element vector containing [df1-df2, df2] where df1 and df2 are the min/max of the input dfs.
-    - slm['t'] : Matrix of non-zero eigenvalues, in descending order, derived using Roy's maximum root. 
+    - slm['t'] : Matrix of non-zero eigenvalues, in descending order, derived using Roy's maximum root.
 
     """
 
@@ -193,8 +193,8 @@ def linear_model(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
     - slm['k'] : (numpy.array) Number of variates.
     - slm['r'] : (numpy.array) Coefficients of the first (q-1) components of 'V' divided by their sum. Coefficients are clamped to a minimum of 0.01 * standard deviation.
     - slm['dr'] : (numpy.array) Increments of 'r' = 0.1 * sd.
-    - slm['resl'] : (numpy.array) Sum over observations of squares of differences of normalized residuals along each edge. Only returned if `surf is not None`.  
-    - slm['tri'] : (numpy.array) Triangle indices of the surface. Only return when `surf is not None`. 
+    - slm['resl'] : (numpy.array) Sum over observations of squares of differences of normalized residuals along each edge. Only returned if `surf is not None`.
+    - slm['tri'] : (numpy.array) Triangle indices of the surface. Only return when `surf is not None`.
     - slm['lat'] : (numpy.array) Neighbors in the input lattice.
 
     """
@@ -417,18 +417,18 @@ def t_test(slm, contrast):
     Parameters
     ----------
     slm : dict
-        Standard linear model, see Notes for details. 
+        Standard linear model, see Notes for details.
     contrast : numpy.array
         Vector containing the contrast in observations.
 
     Returns
     -------
     slm : dict
-        Standard linear model, see Notes for details. 
+        Standard linear model, see Notes for details.
 
     Notes
     -----
-    The input model should be the output model of linear_model. It should 
+    The input model should be the output model of linear_model. It should
     contain the following fields:
 
     - slm['X'] : (numpy.array) the design matrix.
@@ -439,8 +439,8 @@ def t_test(slm, contrast):
     - slm['k'] : (numpy.array) Number of variates.
     - slm['r'] : (numpy.array) Coefficients of the first (q-1) components of 'V' divided by their sum. Coefficients are clamped to a minimum of 0.01 * standard deviation.
     - slm['dr'] : (numpy.array) Increments of 'r' = 0.1 * sd.
-    - slm['resl'] : (numpy.array) Sum over observations of squares of differences of normalized residuals along each edge. Only returned if `surf is not None`.  
-    - slm['tri'] : (numpy.array) Triangle indices of the surface. Only return when `surf is not None`. 
+    - slm['resl'] : (numpy.array) Sum over observations of squares of differences of normalized residuals along each edge. Only returned if `surf is not None`.
+    - slm['tri'] : (numpy.array) Triangle indices of the surface. Only return when `surf is not None`.
     - slm['lat'] : (numpy.array) Neighbors in the input lattice.
 
     The output model will add the following fields.

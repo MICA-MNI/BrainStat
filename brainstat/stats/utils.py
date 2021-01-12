@@ -17,7 +17,7 @@ def row_ismember(a, b):
     Returns
     -------
     numpy.array
-        Indices of rows in a that occur in b. 
+        Indices of rows in a that occur in b.
     """
 
     bind = {}
@@ -38,7 +38,7 @@ def interp1(x, y, ix, kind='linear'):
         y coordinates of training data.
     ix : (numpy.array)
         coordinates of the interpolated points.
-    kind (numpy.array) 
+    kind (numpy.array)
         type of interpolation; see scipy.interpolate.interp1d for options.
 
     Returns
@@ -57,16 +57,16 @@ def ismember(A, B, rows=False):
 
     Parameters
     ----------
-    A : (numpy.array) 
+    A : (numpy.array)
         1D or 2D array
     B : (numpy.array)
         1D or 2D array
-    rows : (logical) 
+    rows : (logical)
         If true test for row correspondence rather than element correpondence.
 
     Returns
     -------
-    logical 
+    logical
         Boolean of the same size as A denoting which elements (or rows) occur in B.
     numpy.array
         Indices of matching elements/rows in A.
@@ -116,12 +116,12 @@ def colon(start, stop, increment=1):
         Starting scalar number of the range.
     stop :  (int)
         Stopping scalar number of the range.
-    increment (float) 
+    increment (float)
         Increments of the range.
 
     Returns
     -------
-    numpy.array 
+    numpy.array
         The requested numbers.
     """
     r = np.arange(start, stop, increment)
