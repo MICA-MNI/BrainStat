@@ -7,7 +7,7 @@ from nilearn.plotting.surf_plotting import load_surf_mesh
 
 # surface mesh plotting based on coords & triangles only
 def subplot_surf(coords, 
-                 faces, 
+                 tri, 
                  bg_map,
                  fig, 
                  limits,
@@ -25,16 +25,16 @@ def subplot_surf(coords,
     p3dcollec = ax.plot_trisurf(coords[:, 0], 
                                 coords[:, 1], 
                                 coords[:, 2],
-                                triangles = faces, 
+                                triangles = tri, 
                                 linewidth=0.,
                                 antialiased=False)
 
-    face_colors = np.ones((faces.shape[0], 4))
+    face_colors = np.ones((tri.shape[0], 4))
 
     if bg_map.shape[0] != coords.shape[0]:
         raise ValueError('The bg_map does not have the same number '
                          'of vertices as the mesh.')
-    bg_faces = np.mean(bg_map[faces], axis=1)
+    bg_faces = np.mean(bg_map[tri], axis=1)
     bg_faces = bg_faces - bg_faces.min()
     bg_faces = bg_faces / bg_faces.max()
 
@@ -49,7 +49,7 @@ def subplot_surf(coords,
 
 # surface mesh plotting based on coords & triangles only + surface data on top
 def subplot_surfstat(coords, 
-                     faces,
+                     tri,
                      bg_map,
                      stat_map, 
                      fig,
@@ -83,7 +83,7 @@ def subplot_surfstat(coords,
     p3dcollec = ax.plot_trisurf(coords[:, 0], 
                                 coords[:, 1], 
                                 coords[:, 2],
-                                triangles = faces,
+                                triangles = tri,
                                 linewidth=0.,
                                 antialiased = False)
     mask_lenient = None
@@ -94,15 +94,15 @@ def subplot_surfstat(coords,
         cutoff = 2 
         if mask_lenient: 
             cutoff = 0
-        fmask = np.where(cmask[faces].sum(axis=1) > cutoff)[0]
+        fmask = np.where(cmask[tri].sum(axis=1) > cutoff)[0]
         
     if bg_map is not None or surf_map is not None:
-        face_colors = np.ones((faces.shape[0], 4))
+        face_colors = np.ones((tri.shape[0], 4))
         if bg_map is not None:
             if bg_map.shape[0] != coords.shape[0]:
                 raise ValueError('The bg_map does not have the same number '
                                  'of vertices as the mesh.')
-            bg_faces = np.mean(bg_map[faces], axis=1)
+            bg_faces = np.mean(bg_map[tri], axis=1)
             bg_faces = bg_faces - bg_faces.min()
             bg_faces = bg_faces / bg_faces.max()
             # control background darkness
@@ -120,7 +120,7 @@ def subplot_surfstat(coords,
                              'of vertices as the mesh.')
 
         # create face values from vertex values by mean (can also be median ;)
-        stat_map_faces = np.mean(stat_map[faces], axis=1)
+        stat_map_faces = np.mean(stat_map[tri], axis=1)
 
         if vmin is None:
             vmin = np.nanmin(stat_map_faces)
@@ -157,7 +157,7 @@ def plot_surfstat(surf_mesh,
                   threshold = None):
  
     coords = surf_mesh['coords']
-    faces  = surf_mesh['faces']
+    tri    = surf_mesh['tri']
     
     if stat_map is None:
         limits = [-70, 50]
@@ -177,17 +177,17 @@ def plot_surfstat(surf_mesh,
         
     if stat_map is None:
         # plot left hemisphere (lateral & medial)
-        subplot_surf(coords[0:10242,:], faces[0:20480,:], bg_map[0:10242], 
+        subplot_surf(coords[0:10242,:], tri[0:20480,:], bg_map[0:10242], 
                      fig, limits, 141, darkness, alpha, elev = 0, azim=180)
         
-        subplot_surf(coords[0:10242,:], faces[0:20480,:], bg_map[0:10242], 
+        subplot_surf(coords[0:10242,:], tri[0:20480,:], bg_map[0:10242], 
                      fig, limits, 142, darkness, alpha, elev = 0, azim=0)
         
         # plot right hemisphere (medial & lateral)
-        subplot_surf(coords[10242:,:], faces[20480:,:], bg_map[10242:], 
+        subplot_surf(coords[10242:,:], tri[20480:,:], bg_map[10242:], 
                      fig, limits, 143, darkness, alpha, elev = 0, azim=180)
         
-        subplot_surf(coords[10242:,:], faces[20480:,:], bg_map[10242:], 
+        subplot_surf(coords[10242:,:], tri[20480:,:], bg_map[10242:], 
                      fig, limits, 144, darkness, alpha, elev = 0, azim=0)
         
     else:
@@ -197,22 +197,22 @@ def plot_surfstat(surf_mesh,
             mask_l = mask[np.where(mask < 10242)]
             mask_r = mask[np.where(mask >= 10242)] - 10242
         
-        subplot_surfstat(coords[0:10242,:], faces[0:20480,:], bg_map[0:10242], 
+        subplot_surfstat(coords[0:10242,:], tri[0:20480,:], bg_map[0:10242], 
                          stat_map[0:10242], fig, limits, 141, darkness, alpha,
                          elev=0, azim=180, mask = mask_l)
                         
-        subplot_surfstat(coords[0:10242,:], faces[0:20480,:], bg_map[0:10242], 
+        subplot_surfstat(coords[0:10242,:], tri[0:20480,:], bg_map[0:10242], 
                          stat_map[0:10242], fig, limits, 142, darkness, alpha,
                          elev=0, azim = 0, cmap = cmap, mask = mask_l)
 
-        subplot_surfstat(coords[10242:,:], faces[20480:,:], bg_map[10242:], 
+        subplot_surfstat(coords[10242:,:], tri[20480:,:], bg_map[10242:], 
                          stat_map[10242:], fig, limits, 143, darkness, alpha,
                          elev=0, azim = 180, cmap = cmap, mask = mask_r)
                          
-        subplot_surfstat(coords[10242:,:], faces[20480:,:], bg_map[10242:], 
+        subplot_surfstat(coords[10242:,:], tri[20480:,:], bg_map[10242:], 
                          stat_map[10242:], fig, limits, 144, darkness, alpha,
                          elev=0, azim = 0, cmap = cmap, mask = mask_r)        
         
     return fig
 
-    
+ 
