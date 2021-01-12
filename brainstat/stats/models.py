@@ -196,7 +196,7 @@ def linear_model(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
     - slm['resl'] : (numpy.array) Sum over observations of squares of differences of normalized residuals along each edge. Only returned if `surf is not None`.  
     - slm['tri'] : (numpy.array) Triangle indices of the surface. Only return when `surf is not None`. 
     - slm['lat'] : (numpy.array) Neighbors in the input lattice.
-    
+
     """
 
     n, v = Y.shape[:2]  # number of samples x number of points
@@ -442,7 +442,7 @@ def t_test(slm, contrast):
     - slm['resl'] : (numpy.array) Sum over observations of squares of differences of normalized residuals along each edge. Only returned if `surf is not None`.  
     - slm['tri'] : (numpy.array) Triangle indices of the surface. Only return when `surf is not None`. 
     - slm['lat'] : (numpy.array) Neighbors in the input lattice.
-    
+
     The output model will add the following fields.
     - slm['c'] : (numpy.array), contrasts in coefficents of the linear model.
     - slm['k'] : (int) number of variates
