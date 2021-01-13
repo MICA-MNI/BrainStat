@@ -56,11 +56,11 @@ def subplot_surfstat(coords,
                      alpha,
                      elev,
                      azim,
-                     cmap = None,
-                     vmin = None,
-                     vmax = None,
-                     mask = None,
-                     threshold = None):
+                     cmap,
+                     vmin,
+                     vmax,
+                     mask,
+                     threshold):
 
 
     fig.subplots_adjust(wspace=0, hspace=0)
@@ -195,19 +195,24 @@ def plot_surfstat(surf_mesh,
 
         subplot_surfstat(coords[0:lenCorL,:], tri[0:lenTriL,:], bg_map[0:lenCorL],
                          stat_map[0:lenCorL], fig, limits, 141, darkness, alpha,
-                         elev=0, azim=180, mask = mask_l)
+                         elev=0, azim=180, mask = mask_l,
+                         cmap = cmap, vmin = vmin, vmax = vmax, threshold = threshold)
 
         subplot_surfstat(coords[0:lenCorL,:], tri[0:lenTriL,:], bg_map[0:lenCorL],
                          stat_map[0:lenCorL], fig, limits, 142, darkness, alpha,
-                         elev=0, azim = 0, cmap = cmap, mask = mask_l)
+                         elev=0, azim = 0, mask = mask_l,
+                         cmap = cmap, vmin = vmin, vmax = vmax, threshold = threshold)
 
         subplot_surfstat(coords[lenCorL:,:], tri[lenTriL:,:], bg_map[lenCorL:],
                          stat_map[lenCorL:], fig, limits, 143, darkness, alpha,
-                         elev=0, azim = 180, cmap = cmap, mask = mask_r)
+                         elev=0, azim = 180, mask = mask_r,
+                         cmap = cmap, vmin = vmin, vmax = vmax, threshold = threshold)
 
         subplot_surfstat(coords[lenCorL:,:], tri[lenTriL:,:], bg_map[lenCorL:],
                          stat_map[lenCorL:], fig, limits, 144, darkness, alpha,
-                         elev=0, azim = 0, cmap = cmap, mask = mask_r)
+                         elev=0, azim = 0, mask = mask_r,
+                         cmap = cmap, vmin = vmin, vmax = vmax, threshold = threshold)
+
 
     return fig
 
