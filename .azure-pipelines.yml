@@ -1,6 +1,5 @@
 # Trigger on all branches, only for changes in the matlab directory.
-
-# NOTE: Triggers are overriden from within the Azure interface!
+# Note: This doesn't seem to work - looks like it triggers on all pushes.
 trigger:
   batch: true
   branches:
