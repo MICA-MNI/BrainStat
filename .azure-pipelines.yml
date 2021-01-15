@@ -1,7 +1,9 @@
+# Trigger on all branches, only for changes in the matlab directory.
 trigger:
-  branches:
-    include:
-      - '*'
+  batch: true
+  paths: 
+    include: 
+      - matlab
 
 # Set languages and operating system.
 pool:
