@@ -1,4 +1,4 @@
-# Trigger on all branches, only for changes in the matlab directory.
+# Trigger on all branches but only for changes in the matlab directory.
 # Note: This doesn't seem to work - looks like it triggers on all pushes.
 trigger:
   batch: true
