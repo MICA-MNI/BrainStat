@@ -1,4 +1,4 @@
-# Trigger on all branches, only for changes in the matlab directory.
+# Trigger on all branches but only for changes in the matlab directory.
 trigger:
   batch: true
   paths: 
