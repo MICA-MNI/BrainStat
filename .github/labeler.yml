@@ -1,11 +1,17 @@
 Documentation:
+  - docs/*
   - docs/**/*
-  - *.rst
-  - *.md
+  - ./*.rst
+  - ./*.md
 
 Python:
+  - brainstat/*
   - brainstat/**/*
 
 MATLAB:
+  - matlab/*
   - matlab/**/*
 
+Github:
+  - .github/*
+  - .github/**/*
