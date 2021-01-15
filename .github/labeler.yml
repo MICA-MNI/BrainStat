@@ -1,0 +1,11 @@
+Documentation:
+  - docs/**/*
+  - *.rst
+  - *.md
+
+Python:
+  - brainstat/**/*
+
+MATLAB:
+  - matlab/**/*
+
