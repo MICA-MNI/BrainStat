@@ -1,6 +1,10 @@
 # Trigger on all branches, only for changes in the matlab directory.
+# Note: This doesn't seem to work - looks like it triggers on all pushes.
 trigger:
   batch: true
+  branches:
+    include:
+      - '*'
   paths: 
     include: 
       - matlab
@@ -18,7 +22,7 @@ strategy:
 #      implementation_version: '3.7'
     MATLAB 2020a:
       implementation_language: 'matlab'
-      implementation_version: 'R2020a'
+      implementation_version: 'latest'
 
 steps:
   # Install Python/MATLAB
