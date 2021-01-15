@@ -3,7 +3,9 @@ on:
   push:
     branches:
       - 'master'
-      - 'code_coverage' 
+    paths:
+      - 'brainstat/**'
+
 jobs:
   codecov:
     name: Codecov Workflow

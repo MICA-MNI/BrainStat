@@ -1,12 +1,19 @@
 name: Python CI
 
-on: [push]
+on: 
+  push:
+    branches:
+      - master
+  pull_request:
+    paths:
+      - 'brainstat/**'
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         python-version: [3.6, 3.7, 3.8]
 
