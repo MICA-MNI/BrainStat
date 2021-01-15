@@ -2,8 +2,9 @@ name: Python CI
 
 on: 
   push:
-    paths:
-      - 'brainstat/**'
+    pull_request:
+      paths:
+        - 'brainstat/**'
 
 jobs:
   build:
