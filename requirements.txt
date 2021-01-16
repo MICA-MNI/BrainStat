@@ -8,3 +8,5 @@ pandas
 pytest
 scikit_learn
 scipy>=1.3.3
+trimesh
+pyembree
