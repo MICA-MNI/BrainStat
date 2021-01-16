@@ -5,6 +5,7 @@ from brainspace.mesh.mesh_io import read_surface
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 from brainspace.mesh.mesh_elements import get_points, get_cells
 import trimesh
+import pdb
 
 def surface_to_volume(pial_mesh, wm_mesh, labels, volume_template, volume_save, verbose=False):
     """Projects surface labels to the cortical ribbon.
@@ -43,10 +44,9 @@ def surface_to_volume(pial_mesh, wm_mesh, labels, volume_template, volume_save, 
     if verbose:
         print("Constructing new nifti image.")
     new_data = np.zeros(nii.shape)
-    ribbon_points = ribbon_points.astype(int)
+    ribbon_points = np.rint(ribbon_points, np.ones(ribbon_points.shape, dtype=int), casting='unsafe')
     for i in range(ribbon_labels.shape[0]):
         new_data[ribbon_points[i,0], ribbon_points[i,1],ribbon_points[i,2]] = ribbon_labels[i]
-    
     new_nii = nib.Nifti1Image(new_data, nii.affine, nii.header)
     nib.save(new_nii, volume_save)
     
@@ -75,9 +75,9 @@ def cortical_ribbon(pial_mesh, wm_mesh, nii, mesh_distance=6, verbose=False):
 
     # Get world coordinates.
     x, y, z, _ = np.meshgrid(range(nii.shape[0]), 
-                          range(nii.shape[1]), 
-                          range(nii.shape[2]),
-                          0)
+                            range(nii.shape[1]), 
+                            range(nii.shape[2]),
+                            0)
     
     points = np.reshape(np.concatenate((x,y,z), axis=3), (-1,3), order='F')
     world_coord = nib.affines.apply_affine(nii.affine, points)
@@ -114,12 +114,11 @@ def cortical_ribbon(pial_mesh, wm_mesh, nii, mesh_distance=6, verbose=False):
     wm_trimesh = trimesh.ray.ray_pyembree.RayMeshIntersector(
                     trimesh.Trimesh(vertices = np.array(get_points(wm_mesh)), 
                                     faces = np.array(get_cells(wm_mesh))))
-    
+
     inside_wm = wm_trimesh.contains_points(world_coord)
     inside_pial = pial_trimesh.contains_points(world_coord)
     inside_ribbon = world_coord[inside_pial & ~inside_wm, :]
     ribbon_points = nib.affines.apply_affine(np.linalg.inv(nii.affine), inside_ribbon)
-  
     return ribbon_points
 
 def ribbon_nearest_neighbor(pial_mesh, wm_mesh, labels, nii, points):
@@ -142,6 +141,13 @@ def ribbon_nearest_neighbor(pial_mesh, wm_mesh, labels, nii, points):
     -------
     numpy.array
         Interpolated value for each input point. 
+
+    Notes
+    -----
+    Strictly, this function will work outside the cortical ribbon too and assign
+    any point to its label on the nearest mesh. An adventurous user could use
+    this for nearest neighbour surface to volume anywhere in the brain, although
+    such usage is not offically supported.
     """
     labels = nib.gifti.giftiio.read(labels).agg_data()
     mesh_coord = np.concatenate((get_points(pial_mesh), get_points(wm_mesh)), axis=0)
