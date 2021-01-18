@@ -37,7 +37,8 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx.ext.intersphinx',
     'sphinx.ext.doctest',
-    'sphinxcontrib.matlab'
+    'sphinxcontrib.matlab',
+    'nbsphinx'
 ]
 
 # Napoleon settings
