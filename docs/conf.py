@@ -38,8 +38,14 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinx.ext.doctest',
     'sphinxcontrib.matlab',
-    'nbsphinx'
+    'sphinx_gallery.gen_gallery'
 ]
+
+# Sphinx gallery settings.
+sphinx_gallery_conf = {
+    'examples_dirs': 'python/tutorials',
+    'gallery_dirs': 'python/generated_tutorials'
+}
 
 # Napoleon settings
 napoleon_google_docstring = False
