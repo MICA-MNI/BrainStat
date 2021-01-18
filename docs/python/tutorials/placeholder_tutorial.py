@@ -7,14 +7,14 @@ In this example we will do absolutely nothing, because its a placeholder!
 Requirements
 ------------
 This tutorial requires nothing of you, absolutely nothing! Great, right?
-In case you want to do something though, you can ``pip`` install this package. 
+In case you want to do something though, you can ``pip`` install this package.
 You don't need to though::
 
     pip install numpy
 
 
 .. note::
-    This is a note. 
+    This is a note.
 """
 
 #################################################################
