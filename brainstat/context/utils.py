@@ -8,6 +8,7 @@ import gzip
 import shutil
 from brainspace.mesh.mesh_io import read_surface
 
+
 def combine_parcellations(files, output_file):
     """Combines multiple nifti files into one.
 
@@ -16,7 +17,7 @@ def combine_parcellations(files, output_file):
     files : list
         List of strings containing the paths to nifti files.
     output_file : str
-        Path to the output file. 
+        Path to the output file.
 
     Notes
     -----
@@ -34,7 +35,6 @@ def combine_parcellations(files, output_file):
             img[img==0] = nii.get_fdata()[img==0]
     new_nii = nib.Nifti1Image(img, affine, header)
     nib.save(new_nii, output_file)
-
 
 
 def load_mesh_labels(label_file, as_int=True):
@@ -63,6 +63,7 @@ def load_mesh_labels(label_file, as_int=True):
     if as_int:
         labels = np.round(labels).astype(int)
     return labels
+
 
 def read_surface_gz(filename):
     """Extension of brainspace's read_surface to include .gz files.

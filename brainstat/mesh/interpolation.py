@@ -17,21 +17,21 @@ def surface_to_volume(pial_mesh, wm_mesh, labels, volume_template, volume_save, 
     wm_mesh : str, BSPolyData
         Filename of a pial mesh or a BSPolyData object of the same.
     labels : str, numpy.ndarray
-        Filename of a .label.gii or .shape.gii file, or a numpy array 
+        Filename of a .label.gii or .shape.gii file, or a numpy array
         containing the labels.
     volume_template : str, nibabel.nifti1.Nifti1Image
-        Filename of a nifti image in the same space as the mesh files or a 
+        Filename of a nifti image in the same space as the mesh files or a
         NIfTI image loaded with nibabel.
     volume_save : str
         Filename to which the label image will be saved.
     verbose : bool
-        If True, returns printed output, defaults to False.  
+        If True, returns printed output, defaults to False.
     """
 
     if not isinstance(pial_mesh, BSPolyData):
         pial_mesh = read_surface(pial_mesh)
     if not isinstance(wm_mesh, BSPolyData):
-        wm_mesh = read_surface(wm_mesh) 
+        wm_mesh = read_surface(wm_mesh)
     if not isinstance(volume_template, nib.nifti1.Nifti1Image):
         volume_template = nib.load(volume_template)
 
@@ -49,10 +49,11 @@ def surface_to_volume(pial_mesh, wm_mesh, labels, volume_template, volume_save, 
     ribbon_points = np.rint(ribbon_points, np.ones(ribbon_points.shape, dtype=int), casting='unsafe')
     for i in range(ribbon_labels.shape[0]):
         new_data[ribbon_points[i,0], ribbon_points[i,1],ribbon_points[i,2]] = ribbon_labels[i]
-    
+
     new_nii = nib.Nifti1Image(new_data, volume_template.affine) #, volume_template.header)
     nib.save(new_nii, volume_save)
-    
+
+
 def cortical_ribbon(pial_mesh, wm_mesh, nii, mesh_distance=6, verbose=False):
     """ Finds voxels inside of the cortical ribbon.
 
@@ -62,13 +63,13 @@ def cortical_ribbon(pial_mesh, wm_mesh, nii, mesh_distance=6, verbose=False):
         Pial mesh.
     wm_mesh : BSPolyData
         White matter mesh.
-    nii : Nibabel nifti 
-        Nifti image containing the space in which to output the ribbon. 
+    nii : Nibabel nifti
+        Nifti image containing the space in which to output the ribbon.
     mesh_distance : int, optional
         Maximum distance from the cortical mesh at which the ribbon may occur.
         Used to reduce the search space, by default 6.
     verbose : bool
-        If True, returns printed output, defaults to False.  
+        If True, returns printed output, defaults to False.
 
     Returns
     -------
@@ -83,18 +84,18 @@ def cortical_ribbon(pial_mesh, wm_mesh, nii, mesh_distance=6, verbose=False):
 
 
     # Get world coordinates.
-    x, y, z, _ = np.meshgrid(range(nii.shape[0]), 
-                            range(nii.shape[1]), 
+    x, y, z, _ = np.meshgrid(range(nii.shape[0]),
+                            range(nii.shape[1]),
                             range(nii.shape[2]),
                             0)
-    
+
     points = np.reshape(np.concatenate((x,y,z), axis=3), (-1,3), order='F')
     world_coord = nib.affines.apply_affine(nii.affine, points)
-    
+
     if verbose:
         print("Discarding points that exceed the minima/maxima of the pial mesh.")
     # Discard points that exceed any of the maxima/minima
-    pial_points = np.array(get_points(pial_mesh))   
+    pial_points = np.array(get_points(pial_mesh))
     discard = np.any(
         (world_coord > np.amax(pial_points, axis=0)) | # If points exceed maximum coordinates
         (world_coord < np.amin(pial_points, axis=0)), # If points are lower than minimum coordinates
@@ -118,10 +119,10 @@ def cortical_ribbon(pial_mesh, wm_mesh, nii, mesh_distance=6, verbose=False):
     if verbose:
         print("Retaining only points that are inside the pial but not the WM mesh.")
     pial_trimesh = trimesh.ray.ray_pyembree.RayMeshIntersector(
-                    trimesh.Trimesh(vertices = np.array(get_points(pial_mesh)), 
+                    trimesh.Trimesh(vertices = np.array(get_points(pial_mesh)),
                                     faces = np.array(get_cells(pial_mesh))))
     wm_trimesh = trimesh.ray.ray_pyembree.RayMeshIntersector(
-                    trimesh.Trimesh(vertices = np.array(get_points(wm_mesh)), 
+                    trimesh.Trimesh(vertices = np.array(get_points(wm_mesh)),
                                     faces = np.array(get_cells(wm_mesh))))
 
     inside_wm = wm_trimesh.contains_points(world_coord)
@@ -130,8 +131,9 @@ def cortical_ribbon(pial_mesh, wm_mesh, nii, mesh_distance=6, verbose=False):
     ribbon_points = nib.affines.apply_affine(np.linalg.inv(nii.affine), inside_ribbon)
     return ribbon_points
 
+
 def ribbon_nearest_neighbor(pial_mesh, wm_mesh, labels, nii, points):
-    """Performs nearest neighbor interpolation in the cortical ribbon. 
+    """Performs nearest neighbor interpolation in the cortical ribbon.
 
     Parameters
     ----------
@@ -140,7 +142,7 @@ def ribbon_nearest_neighbor(pial_mesh, wm_mesh, labels, nii, points):
     wm_mesh : BSPolydata
         White matter mesh.
     labels : str, numpy.ndarray
-        Filename of a .label.gii or .shape.gii file, or a numpy array 
+        Filename of a .label.gii or .shape.gii file, or a numpy array
         containing the labels.
     nii : Nibabel nifti
         Reference nifti image.
@@ -150,7 +152,7 @@ def ribbon_nearest_neighbor(pial_mesh, wm_mesh, labels, nii, points):
     Returns
     -------
     numpy.array
-        Interpolated value for each input point. 
+        Interpolated value for each input point.
 
     Notes
     -----

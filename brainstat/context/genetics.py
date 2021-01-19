@@ -9,6 +9,7 @@ from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 from brainstat.mesh.interpolation import surface_to_volume
 from .utils import load_mesh_labels, combine_parcellations, read_surface_gz
 
+
 def surface_genetic_expression(
                         pial,
                         white,
@@ -35,7 +36,7 @@ def surface_genetic_expression(
                         data_dir=None,
                         verbose=1,
                         n_proc=1):
-    """Computes genetic expression of surface parcels. 
+    """Computes genetic expression of surface parcels.
 
     Parameters
     ----------
@@ -46,24 +47,24 @@ def surface_genetic_expression(
         Path of a white matter surface file, BSPolyData of a pial surface or a
         list containing multiple of the aforementioned.
     labels : str, numpy.ndarray, list
-        Path to a label file for the surfaces, numpy array containing the 
+        Path to a label file for the surfaces, numpy array containing the
         labels, or a list containing multiple of the aforementioned.
     volume_template : str, nibabel.nifti1.Nifti1Image
-        Path to a nifti file to use as a template for the surface to volume 
+        Path to a nifti file to use as a template for the surface to volume
         procedure, or a loaded NIfTI image.
-    
-    For details of the remaining parameters please consult the 
+
+    For details of the remaining parameters please consult the
     abagen.get_expression_data() documentation. All its parameters bar "atlas"
-    are valid input parameters. 
+    are valid input parameters.
 
     Returns
     -------
     pandas.DataFrame
-        Dataframe containing the expression of each gene within each region. 
+        Dataframe containing the expression of each gene within each region.
 
     Notes
     -----
-    An equal number of pial/white surfaces and labels must be provided. If 
+    An equal number of pial/white surfaces and labels must be provided. If
     parcellations overlap across surfaces, then the labels are kept for the
     first provided surface.
 
@@ -76,7 +77,7 @@ def surface_genetic_expression(
     >>> destrieux_atlas = datasets.fetch_atlas_surf_destrieux()
     >>> parcellation = destrieux_atlas['map_left']
     >>> mni152 = datasets.load_mni152_template()
-    >>> surface_genetic_expression(fsaverage['pial_left'], fsaverage['white_left'], 
+    >>> surface_genetic_expression(fsaverage['pial_left'], fsaverage['white_left'],
     ...    parcellation, mni152)
     """
 
@@ -96,8 +97,8 @@ def surface_genetic_expression(
 
     for i in range(len(pial)):
         if not isinstance(pial[i], BSPolyData):
-            pial[i] = read_surface_gz(pial[i]) 
-        
+            pial[i] = read_surface_gz(pial[i])
+
         if not isinstance(white[i], BSPolyData):
             white[i] = read_surface_gz(white[i])
 
