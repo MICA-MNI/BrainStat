@@ -6,6 +6,7 @@ from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 from brainspace.mesh.mesh_elements import get_points, get_cells
 import trimesh
 
+
 def surface_to_volume(pial_mesh, wm_mesh, labels, volume_template, volume_save, verbose=False):
     """Projects surface labels to the cortical ribbon.
 
@@ -74,6 +75,12 @@ def cortical_ribbon(pial_mesh, wm_mesh, nii, mesh_distance=6, verbose=False):
     numpy.array
         Matrix coordinates of voxels inside the cortical ribbon.
     """
+
+    try:
+        import pyembree
+    except:
+        ModuleNotFoundError('The package pyembree is required for this function. You can install it with the conda package manager: `conda install -c conda-forge pyembree`')
+
 
     # Get world coordinates.
     x, y, z, _ = np.meshgrid(range(nii.shape[0]), 
