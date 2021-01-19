@@ -5,7 +5,6 @@ from brainspace.mesh.mesh_io import read_surface
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 from brainspace.mesh.mesh_elements import get_points, get_cells
 import trimesh
-import pdb
 
 def surface_to_volume(pial_mesh, wm_mesh, labels, volume_template, volume_save, verbose=False):
     """Projects surface labels to the cortical ribbon.
@@ -16,10 +15,12 @@ def surface_to_volume(pial_mesh, wm_mesh, labels, volume_template, volume_save, 
         Filename of a pial mesh or a BSPolyData object of the same.
     wm_mesh : str, BSPolyData
         Filename of a pial mesh or a BSPolyData object of the same.
-    labels : str
-        Filename of a .label.gii containing the cortical labels.
-    volume_template : str
-        Filename of a nifti image in the same space as the mesh files.
+    labels : str, numpy.ndarray
+        Filename of a .label.gii or .shape.gii file, or a numpy array 
+        containing the labels.
+    volume_template : str, nibabel.nifti1.Nifti1Image
+        Filename of a nifti image in the same space as the mesh files or a 
+        NIfTI image loaded with nibabel.
     volume_save : str
         Filename to which the label image will be saved.
     verbose : bool
@@ -29,25 +30,26 @@ def surface_to_volume(pial_mesh, wm_mesh, labels, volume_template, volume_save, 
     if not isinstance(pial_mesh, BSPolyData):
         pial_mesh = read_surface(pial_mesh)
     if not isinstance(wm_mesh, BSPolyData):
-        wm_mesh = read_surface(wm_mesh)
-    
-    nii = nib.load(volume_template)
+        wm_mesh = read_surface(wm_mesh) 
+    if not isinstance(volume_template, nib.nifti1.Nifti1Image):
+        volume_template = nib.load(volume_template)
 
     if verbose:
         print("Computing voxels inside the cortical ribbon.")
-    ribbon_points = cortical_ribbon(pial_mesh, wm_mesh, nii, verbose=verbose)
+    ribbon_points = cortical_ribbon(pial_mesh, wm_mesh, volume_template, verbose=verbose)
 
     if verbose:
         print("Computing labels for cortical ribbon voxels.")
-    ribbon_labels = ribbon_nearest_neighbor(pial_mesh, wm_mesh, labels, nii, ribbon_points)
+    ribbon_labels = ribbon_nearest_neighbor(pial_mesh, wm_mesh, labels, volume_template, ribbon_points)
 
     if verbose:
         print("Constructing new nifti image.")
-    new_data = np.zeros(nii.shape)
+    new_data = np.zeros(volume_template.shape)
     ribbon_points = np.rint(ribbon_points, np.ones(ribbon_points.shape, dtype=int), casting='unsafe')
     for i in range(ribbon_labels.shape[0]):
         new_data[ribbon_points[i,0], ribbon_points[i,1],ribbon_points[i,2]] = ribbon_labels[i]
-    new_nii = nib.Nifti1Image(new_data, nii.affine, nii.header)
+    
+    new_nii = nib.Nifti1Image(new_data, volume_template.affine) #, volume_template.header)
     nib.save(new_nii, volume_save)
     
 def cortical_ribbon(pial_mesh, wm_mesh, nii, mesh_distance=6, verbose=False):
@@ -130,8 +132,9 @@ def ribbon_nearest_neighbor(pial_mesh, wm_mesh, labels, nii, points):
         Pial mesh.
     wm_mesh : BSPolydata
         White matter mesh.
-    labels : str
-        Filename of a .label.gii or .shape.gii file.
+    labels : str, numpy.ndarray
+        Filename of a .label.gii or .shape.gii file, or a numpy array 
+        containing the labels.
     nii : Nibabel nifti
         Reference nifti image.
     points : numpy.array
@@ -149,7 +152,8 @@ def ribbon_nearest_neighbor(pial_mesh, wm_mesh, labels, nii, points):
     this for nearest neighbour surface to volume anywhere in the brain, although
     such usage is not offically supported.
     """
-    labels = nib.gifti.giftiio.read(labels).agg_data()
+    if not isinstance(labels, np.ndarray):
+        labels = nib.gifti.giftiio.read(labels).agg_data()
     mesh_coord = np.concatenate((get_points(pial_mesh), get_points(wm_mesh)), axis=0)
     coord = nib.affines.apply_affine(nii.affine, points)
 
