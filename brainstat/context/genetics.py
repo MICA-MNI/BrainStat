@@ -124,8 +124,6 @@ def surface_genetic_expression(
 
     # Use abagen to grab expression data.
     print("If you use BrainStat's genetics functionality, please cite abagen (https://abagen.readthedocs.io/en/stable/citing.html).")
-    import pdb
-    pdb.set_trace()
     expression = get_expression_data(
                                P_name,
                                atlas_info=atlas_info,
