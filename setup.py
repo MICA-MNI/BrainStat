@@ -41,6 +41,7 @@ setuptools.setup(
         'gitpython',
     ],
     install_requires=[
+        'abagen',
         'brainspace>=0.1.1',
         'nibabel',
         'nilearn>=0.7.0',
