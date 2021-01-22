@@ -1,3 +1,5 @@
+"""Operations on meshes."""
+
 import numpy as np
 from brainspace.mesh.mesh_io import read_surface
 from brainspace.mesh.mesh_creation import build_polydata
