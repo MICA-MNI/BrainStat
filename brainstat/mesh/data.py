@@ -1,3 +1,5 @@
+"""Operations on data on a mesh."""
+
 import numpy as np
 from numpy_groupies import aggregate
 from .utils import mesh_edges
@@ -52,56 +54,6 @@ def mesh_normalize(Y, mask=None, subdiv='s'):
         Y = Y / Yav
 
     return Y, np.squeeze(Yav)
-
-
-def mesh_standardize(Y, mask=None, subdiv='s'):
-    """Standardizes by subtracting the global mean, or dividing it.
-
-    Parameters
-    ----------
-    Y : numpy array of shape (n x v)
-        Data to be standardized.
-    mask : numpy boolean array of shape (1 x v), optional
-        True is included, False is excluded. If None, no mask is applied, by
-        default 'None'.
-    subdiv : str, optional
-        If 's', demeans Y; if 'd' standardizes to mean 0, standard deviation
-        100.
-
-    Returns
-    -------
-    Y: numpy array of shape (n x v)
-        Standardized data.
-    Ym: numpy array of shape (n x 1)
-        Mean of the input Y along the mask.
-    """
-
-    Y = np.array(Y, dtype='float64')
-
-    if mask is None:
-        mask = np.array(np.ones(Y.shape[1]), dtype=bool)
-
-    if np.ndim(Y) < 2:
-        sys.exit('input array should be np.ndims >= 2, tip: reshape it!')
-    elif np.ndim(Y) == 2:
-        Ym = Y[:, mask].mean(axis=1)
-        Ym = Ym.reshape(len(Ym), 1)
-        for i in range(0, Y.shape[0]):
-            if subdiv == 's':
-                Y[i, :] = Y[i, :] - Ym[i]
-            elif subdiv == 'd':
-                Y[i, :] = (Y[i, :]/Ym[i] - 1) * 100
-
-    elif np.ndim(Y) > 2:
-        Ym = np.mean(Y[:, mask, 0], axis=1)
-        Ym = Ym.reshape(len(Ym), 1)
-        for i in range(0, Y.shape[0]):
-            if subdiv == 's':
-                Y[i, :, :] = Y[i, :, :] - Ym[i]
-            elif subdiv == 'd':
-                Y[i, :, :] = (Y[i, :, :]/Ym[i] - 1) * 100
-
-    return Y, Ym
 
 
 def mesh_smooth(Y, surf, FWHM):
@@ -173,3 +125,53 @@ def mesh_smooth(Y, surf, FWHM):
         print('Done')
 
     return Y
+
+
+def mesh_standardize(Y, mask=None, subdiv='s'):
+    """Standardizes by subtracting the global mean, or dividing it.
+
+    Parameters
+    ----------
+    Y : numpy array of shape (n x v)
+        Data to be standardized.
+    mask : numpy boolean array of shape (1 x v), optional
+        True is included, False is excluded. If None, no mask is applied, by
+        default 'None'.
+    subdiv : str, optional
+        If 's', demeans Y; if 'd' standardizes to mean 0, standard deviation
+        100.
+
+    Returns
+    -------
+    Y: numpy array of shape (n x v)
+        Standardized data.
+    Ym: numpy array of shape (n x 1)
+        Mean of the input Y along the mask.
+    """
+
+    Y = np.array(Y, dtype='float64')
+
+    if mask is None:
+        mask = np.array(np.ones(Y.shape[1]), dtype=bool)
+
+    if np.ndim(Y) < 2:
+        sys.exit('input array should be np.ndims >= 2, tip: reshape it!')
+    elif np.ndim(Y) == 2:
+        Ym = Y[:, mask].mean(axis=1)
+        Ym = Ym.reshape(len(Ym), 1)
+        for i in range(0, Y.shape[0]):
+            if subdiv == 's':
+                Y[i, :] = Y[i, :] - Ym[i]
+            elif subdiv == 'd':
+                Y[i, :] = (Y[i, :]/Ym[i] - 1) * 100
+
+    elif np.ndim(Y) > 2:
+        Ym = np.mean(Y[:, mask, 0], axis=1)
+        Ym = Ym.reshape(len(Ym), 1)
+        for i in range(0, Y.shape[0]):
+            if subdiv == 's':
+                Y[i, :, :] = Y[i, :, :] - Ym[i]
+            elif subdiv == 'd':
+                Y[i, :, :] = (Y[i, :, :]/Ym[i] - 1) * 100
+
+    return Y, Ym
