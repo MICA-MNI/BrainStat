@@ -2,20 +2,20 @@
 
 import os
 import tempfile
+import nibabel as nib
+from pathlib import Path
 
 from neurosynth.base.dataset import download
 import nimare
 from nimare.decode import discrete
-from nimare.tests.utils import get_test_data_path
 from .utils import mutli_surface_to_volume
-from pathlib import Path
 
 
 def surface_decode(
         pial,
         white,
         labels,
-        threshold,
+        threshold=0,
         interpolation='linear',
         decoder='neurosynth',
         data_dir=None,
@@ -34,10 +34,10 @@ def surface_decode(
     labels : str, numpy.ndarray, list
         Path to a label file for the surfaces, numpy array containing the
         labels, or a list containing multiple of the aforementioned.
-    threshold : float, int
-        Value at which to threshold the labels in volume space. Voxels below
-        this value are set to 0.
-    interpolation : str
+    threshold : float, int, optional
+        Value at which to threshold the labels in volume space. Voxels equal to
+        or below this value are set to 0, defaults to 0.
+    interpolation : str, optional
         Either 'nearest' for nearest neighbor interpolation, or 'linear'
         for trilinear interpolation, by default 'linear'.
     decoder : str, optional
@@ -62,14 +62,16 @@ def surface_decode(
     """
 
     if data_dir is None:
-        data_dir = str(Path.home())
+        data_dir = os.path.join(str(Path.home()),'nimare_data')
 
     dset = fetch_dataset(data_dir)
 
-    nii = mutli_surface_to_volume(pial, white, dset.masker.mask_img,
-                                  labels, verbose=verbose, interpolation=interpolation)
-
-    ids = dset.get_studies_by_mask(nii.get_fdata() > threshold)
+    F = tempfile.NamedTemporaryFile(suffix='.nii.gz')
+    mutli_surface_to_volume(pial, white, dset.masker.mask_img,
+                            labels, F.name, verbose=verbose, interpolation=interpolation)
+    nii = nib.load(F.name)
+    nii2 = nib.Nifti1Image((nii.get_fdata() > threshold).astype(float), nii.affine)
+    ids = dset.get_studies_by_mask(nii2)
 
     print("If you use BrainStat's surface decoder, please cite NiMARE (https://zenodo.org/record/4408504#.YBBPAZNKjzU)).")
     if decoder is 'neurosynth':
