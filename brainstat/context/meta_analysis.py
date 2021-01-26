@@ -80,9 +80,8 @@ def surface_decode(
         decoder = discrete.BrainMapDecoder(correction=correction)
 
     decoder.fit(dset)
-    decoded_df = decoder.transform(ids=ids)
-    decoded_df.sort_values(by="probReverse", ascending=False).head()
-    return decoded_df
+    return decoder.transform(ids=ids)
+
 
 
 def fetch_dataset(data_dir, keep_neurosynth=False):
