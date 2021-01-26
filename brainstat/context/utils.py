@@ -10,9 +10,10 @@ from brainspace.mesh.mesh_io import read_surface
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 from brainstat.mesh.interpolation import surface_to_volume
 
-def mutli_surface_to_volume(pial, white, volume_template, labels, interpolation='nearest', 
-    verbose=True):
-    """Interpolates multiple surfaces to the volume. 
+
+def mutli_surface_to_volume(pial, white, volume_template, labels, interpolation='nearest',
+                            verbose=True):
+    """Interpolates multiple surfaces to the volume.
 
     Parameters
     ----------
@@ -32,7 +33,7 @@ def mutli_surface_to_volume(pial, white, volume_template, labels, interpolation=
         Either 'nearest' for nearest neighbor interpolation, or 'linear'
         for trilinear interpolation, defaults to 'nearest'.
     verbose : boolean
-        If true, returns verbose output to console, defaults to true. 
+        If true, returns verbose output to console, defaults to true.
 
     Returns
     -------
@@ -45,7 +46,6 @@ def mutli_surface_to_volume(pial, white, volume_template, labels, interpolation=
     parcellations overlap across surfaces, then the labels are kept for the
     first provided surface.
     """
-
 
     # Deal with variety of ways to provide input.
     if type(pial) is not type(white):
@@ -72,16 +72,16 @@ def mutli_surface_to_volume(pial, white, volume_template, labels, interpolation=
         volume_template = nib.load(volume_template)
 
     for i in range(len(labels)):
-        if not isinstance(labels[i],np.ndarray):
+        if not isinstance(labels[i], np.ndarray):
             labels[i] = load_mesh_labels(labels[i])
 
     # Surface data to volume.
     T = []
     for i in range(len(pial)):
         T.append(tempfile.NamedTemporaryFile(suffix='.nii.gz'))
-        surface_to_volume(pial[i], white[i], labels[i], volume_template, T[i].name, 
-            interpolation=interpolation, verbose=verbose>0)
-    
+        surface_to_volume(pial[i], white[i], labels[i], volume_template, T[i].name,
+                          interpolation=interpolation, verbose=verbose > 0)
+
     if len(T) > 1:
         P = tempfile.TemporaryFile(suffix='.nii.gz')
         P_name = P.name
@@ -116,7 +116,7 @@ def combine_parcellations(files, output_file):
             affine = nii.affine
             header = nii.header
         else:
-            img[img==0] = nii.get_fdata()[img==0]
+            img[img == 0] = nii.get_fdata()[img == 0]
     new_nii = nib.Nifti1Image(img, affine, header)
     nib.save(new_nii, output_file)
 
