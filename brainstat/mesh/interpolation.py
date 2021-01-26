@@ -48,7 +48,7 @@ def surface_to_volume(pial_mesh, wm_mesh, labels, volume_template, volume_save,
     if verbose:
         print("Computing labels for cortical ribbon voxels.")
     ribbon_labels = ribbon_interpolation(
-        pial_mesh, wm_mesh, labels, volume_template, ribbon_points)
+        pial_mesh, wm_mesh, labels, volume_template, ribbon_points, interpolation=interpolation)
 
     if verbose:
         print("Constructing new nifti image.")

@@ -43,8 +43,10 @@ setuptools.setup(
     install_requires=[
         'abagen',
         'brainspace>=0.1.1',
+        'neurosynth'
         'nibabel',
         'nilearn>=0.7.0',
+        'nimare',
         'numpy>=1.16.5',
         'numpy_groupies',
         'pandas',
