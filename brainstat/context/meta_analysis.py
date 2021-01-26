@@ -62,7 +62,7 @@ def surface_decode(
     """
 
     if data_dir is None:
-        data_dir = os.path.join(str(Path.home()),'nimare_data')
+        data_dir = os.path.join(str(Path.home()), 'nimare_data')
 
     dset = fetch_dataset(data_dir)
 
@@ -70,7 +70,8 @@ def surface_decode(
     mutli_surface_to_volume(pial, white, dset.masker.mask_img,
                             labels, F.name, verbose=verbose, interpolation=interpolation)
     nii = nib.load(F.name)
-    nii2 = nib.Nifti1Image((nii.get_fdata() > threshold).astype(float), nii.affine)
+    nii2 = nib.Nifti1Image(
+        (nii.get_fdata() > threshold).astype(float), nii.affine)
     ids = dset.get_studies_by_mask(nii2)
 
     print("If you use BrainStat's surface decoder, please cite NiMARE (https://zenodo.org/record/4408504#.YBBPAZNKjzU)).")
@@ -81,7 +82,6 @@ def surface_decode(
 
     decoder.fit(dset)
     return decoder.transform(ids=ids)
-
 
 
 def fetch_dataset(data_dir, keep_neurosynth=False):
