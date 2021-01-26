@@ -1,6 +1,7 @@
 import nibabel as nib
 import numpy as np
 from scipy.interpolate.ndgriddata import NearestNDInterpolator, LinearNDInterpolator
+from scipy.spatial import cKDTree
 from brainspace.mesh.mesh_io import read_surface
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 from brainspace.mesh.mesh_elements import get_points, get_cells
