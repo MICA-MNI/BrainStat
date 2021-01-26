@@ -28,7 +28,7 @@ def surface_to_volume(pial_mesh, wm_mesh, labels, volume_template, volume_save,
         Filename to which the label image will be saved.
     interpolation : str
         Either 'nearest' for nearest neighbor interpolation, or 'linear'
-        for trilinear interpolation, defaults to 'nearest'. 
+        for trilinear interpolation, defaults to 'nearest'.
     verbose : bool
         If True, returns printed output, defaults to False.
     """
@@ -89,7 +89,10 @@ def cortical_ribbon(pial_mesh, wm_mesh, nii, mesh_distance=6, verbose=False):
     try:
         import pyembree
     except ImportError:
-        ModuleNotFoundError('The package pyembree is required for this function. You can install it with the conda package manager: `conda install -c conda-forge pyembree`.')
+        ModuleNotFoundError(
+            'The package pyembree is required for this function. '
+            + 'You can install it with the conda package manager: ' +
+            '`conda install -c conda-forge pyembree`.')
 
     # Get world coordinates.
     x, y, z, _ = np.meshgrid(range(nii.shape[0]),
@@ -176,13 +179,13 @@ def ribbon_interpolation(pial_mesh, wm_mesh, labels, nii, points, interpolation=
 
     if not isinstance(labels, np.ndarray):
         labels = nib.gifti.giftiio.read(labels).agg_data()
-    
+
     mesh_coord = np.concatenate(
         (get_points(pial_mesh), get_points(wm_mesh)), axis=0)
-    
+
     # Repeat labels as we concatenate the pial/white meshes.
     labels = np.concatenate((labels, labels))
-    
+
     ribbon_coord = nib.affines.apply_affine(nii.affine, points)
 
     if interpolation is 'nearest':
