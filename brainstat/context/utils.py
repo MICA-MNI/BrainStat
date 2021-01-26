@@ -11,8 +11,8 @@ from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 from brainstat.mesh.interpolation import surface_to_volume
 
 
-def mutli_surface_to_volume(pial, white, volume_template, labels, output_file, 
-    interpolation='nearest', verbose=True):
+def mutli_surface_to_volume(pial, white, volume_template, labels, output_file,
+                            interpolation='nearest', verbose=True):
     """Interpolates multiple surfaces to the volume.
 
     Parameters
@@ -27,7 +27,7 @@ def mutli_surface_to_volume(pial, white, volume_template, labels, output_file,
         Path to a label file for the surfaces, numpy array containing the
         labels, or a list containing multiple of the aforementioned.
     output_file: str
-        Path to the output file, must end in .nii or .nii.gz. 
+        Path to the output file, must end in .nii or .nii.gz.
     volume_template : str, nibabel.nifti1.Nifti1Image
         Path to a nifti file to use as a template for the surface to volume
         procedure, or a loaded NIfTI image.
