@@ -83,10 +83,10 @@ def surface_genetic_expression(
     # Use abagen to grab expression data.
     print("If you use BrainStat's genetics functionality, please cite abagen (https://abagen.readthedocs.io/en/stable/citing.html).")
     with tempfile.NamedTemporaryFile(suffix='.nii.gz') as f:
-        nib.save(nii, f)
+        nib.save(nii, f.name)
 
         expression = get_expression_data(
-            f,
+            f.name,
             atlas_info=atlas_info,
             ibf_threshold=ibf_threshold,
             probe_selection=probe_selection,
