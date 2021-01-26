@@ -11,8 +11,8 @@ from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 from brainstat.mesh.interpolation import surface_to_volume
 
 
-def mutli_surface_to_volume(pial, white, volume_template, labels, interpolation='nearest',
-                            verbose=True):
+def mutli_surface_to_volume(pial, white, volume_template, labels, output_file, 
+    interpolation='nearest', verbose=True):
     """Interpolates multiple surfaces to the volume.
 
     Parameters
@@ -26,6 +26,8 @@ def mutli_surface_to_volume(pial, white, volume_template, labels, interpolation=
     labels : str, numpy.ndarray, list
         Path to a label file for the surfaces, numpy array containing the
         labels, or a list containing multiple of the aforementioned.
+    output_file: str
+        Path to the output file, must end in .nii or .nii.gz. 
     volume_template : str, nibabel.nifti1.Nifti1Image
         Path to a nifti file to use as a template for the surface to volume
         procedure, or a loaded NIfTI image.
@@ -34,11 +36,6 @@ def mutli_surface_to_volume(pial, white, volume_template, labels, interpolation=
         for trilinear interpolation, defaults to 'nearest'.
     verbose : boolean
         If true, returns verbose output to console, defaults to true.
-
-    Returns
-    -------
-    nibabel NIfTI image
-        Nibabel nifti image containing the combined parcellations in volume space.
 
     Notes
     -----
@@ -83,14 +80,10 @@ def mutli_surface_to_volume(pial, white, volume_template, labels, interpolation=
                           interpolation=interpolation, verbose=verbose > 0)
 
     if len(T) > 1:
-        P = tempfile.TemporaryFile(suffix='.nii.gz')
-        P_name = P.name
         T_names = [x.name for x in T]
-        combine_parcellations(T_names, P_name)
+        combine_parcellations(T_names, output_file)
     else:
-        P_name = T[0].name
-
-    return nib.load(P_name)
+        shutil.copy(T[0].name, output_file)
 
 
 def combine_parcellations(files, output_file):

@@ -1,7 +1,6 @@
 """Genetic decoding using abagen."""
 
 from abagen import get_expression_data
-import nibabel as nib
 from .utils import mutli_surface_to_volume
 import tempfile
 
@@ -77,14 +76,12 @@ def surface_genetic_expression(
     ...    parcellation, mni152)
     """
 
-    nii = mutli_surface_to_volume(pial, white, volume_template,
-                                  labels, verbose=verbose > 0)
-
-    # Use abagen to grab expression data.
-    print("If you use BrainStat's genetics functionality, please cite abagen (https://abagen.readthedocs.io/en/stable/citing.html).")
     with tempfile.NamedTemporaryFile(suffix='.nii.gz') as f:
-        nib.save(nii, f.name)
+        mutli_surface_to_volume(pial, white, volume_template,
+            labels, f.name, verbose=verbose > 0)
 
+        # Use abagen to grab expression data.
+        print("If you use BrainStat's genetics functionality, please cite abagen (https://abagen.readthedocs.io/en/stable/citing.html).")
         expression = get_expression_data(
             f.name,
             atlas_info=atlas_info,
