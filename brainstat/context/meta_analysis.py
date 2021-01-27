@@ -216,8 +216,8 @@ def fetch_neurosynth_dataset(data_dir, return_pkl=True, verbose=False):
     if not os.path.isdir(data_dir):
         os.mkdir(data_dir)
 
-    data_file = os.path.join(data_dir, 'database.txt')
-    if not os.path.isfile(data_file):
+    dataset_file = os.path.join(data_dir, 'database.txt')
+    if not os.path.isfile(dataset_file):
         if verbose:
             print("Downloading the Neurosynth dataset.")
         download(data_dir, unpack=True)
@@ -231,4 +231,4 @@ def fetch_neurosynth_dataset(data_dir, return_pkl=True, verbose=False):
             dataset.save(pkl_file)
         return pkl_file
 
-    return (data_file, feature_file)
+    return (dataset_file, feature_file)
