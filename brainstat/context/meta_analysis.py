@@ -227,7 +227,6 @@ def fetch_neurosynth_dataset(data_dir, return_pkl=True, verbose=False):
         pkl_file = os.path.join(data_dir, 'dataset.pkl')
         if not os.path.isfile(pkl_file):
             print("Converting Neurosynth data to a .pkl file. This may take a while.")
-            dataset_file, feature_file = fetch_neurosynth_dataset(data_dir)
             dataset = Dataset(dataset_file, feature_file)
             dataset.save(pkl_file)
         return pkl_file
