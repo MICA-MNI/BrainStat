@@ -15,13 +15,13 @@ from .utils import mutli_surface_to_volume
 
 
 def surface_decode_neurosynth(
-    pial,
-    white,
-    labels,
-    interpolation='linear',
-    data_dir=None,
-    volume_template=None,
-    verbose=True):
+        pial,
+        white,
+        labels,
+        interpolation='linear',
+        data_dir=None,
+        volume_template=None,
+        verbose=True):
     """Decodes surface data with Neurosynth
 
     Parameters
@@ -63,13 +63,12 @@ def surface_decode_neurosynth(
     dataset_file, feature_file = fetch_neurosynth_dataset(data_dir)
     dataset = Dataset(dataset_file, feature_file)
     decoder = decode.Decoder(dataset)
-    
+
     # Interpolate surface data to the volume and decode.
     with tempfile.NamedTemporaryFile(suffix='.nii.gz') as F:
         mutli_surface_to_volume(pial, white, volume_template,
                                 labels, F.name, verbose=verbose, interpolation=interpolation)
         return decoder.decode(F)
-
 
 
 def surface_decode_nimare(
@@ -154,14 +153,15 @@ def fetch_nimare_dataset(data_dir, keep_neurosynth=False):
         Path to the directory where the dataset will be saved.
     keep_neurosynth : bool, optional
         If true, then the neurosynth data files are kept, by default False.
-    
+
     Returns
     -------
     nimare.Dataset
         Downloaded NiMARE dataset.
     """
 
-    nimare_file = os.path.join(data_dir, "neurosynth_nimare_with_abstracts.pkl.gz")
+    nimare_file = os.path.join(
+        data_dir, "neurosynth_nimare_with_abstracts.pkl.gz")
     if os.path.isfile(nimare_file):
         dset = nimare.dataset.Dataset.load(os.path.join(
             data_dir, "neurosynth_nimare_with_abstracts.pkl.gz"))
@@ -177,8 +177,9 @@ def fetch_nimare_dataset(data_dir, keep_neurosynth=False):
         ns_dir = D.name
 
     ns_data_file, ns_feature_file = fetch_neurosynth_dataset(ns_dir)
-    
-    dset = nimare.io.convert_neurosynth_to_dataset(ns_data_file, ns_feature_file)
+
+    dset = nimare.io.convert_neurosynth_to_dataset(
+        ns_data_file, ns_feature_file)
     dset = nimare.extract.download_abstracts(dset, "tsalo006@fiu.edu")
     dset.save(os.path.join(data_dir, "neurosynth_nimare_with_abstracts.pkl.gz"))
 
@@ -186,6 +187,7 @@ def fetch_nimare_dataset(data_dir, keep_neurosynth=False):
         D.cleanup()
 
     return dset
+
 
 def fetch_neurosynth_dataset(data_dir):
     """Downloads the Neurosynth dataset
@@ -198,14 +200,14 @@ def fetch_neurosynth_dataset(data_dir):
     Returns
     -------
     str
-        Path to the database.txt file. 
+        Path to the database.txt file.
     str
         Path to the features.txt file.
 
     """
     if not os.path.isdir(data_dir):
-        os.mkdir(data_dir)       
-    
+        os.mkdir(data_dir)
+
     data_file = os.path.join(data_dir, 'data', 'database.txt')
     if not os.path.isfile(data_file):
         download(data_dir, unpack=True)
