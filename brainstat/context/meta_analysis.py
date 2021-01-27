@@ -179,7 +179,7 @@ def fetch_nimare_dataset(data_dir, keep_neurosynth=False):
         D = tempfile.TemporaryDirectory()
         ns_dir = D.name
 
-    ns_data_file, ns_feature_file = fetch_neurosynth_dataset(ns_dir)
+    ns_data_file, ns_feature_file = fetch_neurosynth_dataset(ns_dir, return_pkl=False)
 
     dset = nimare.io.convert_neurosynth_to_dataset(
         ns_data_file, ns_feature_file)
