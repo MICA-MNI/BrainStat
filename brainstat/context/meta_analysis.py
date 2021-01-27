@@ -63,8 +63,8 @@ def surface_decode_neurosynth(
     if volume_template is None:
         volume_template = nil_datasets.load_mni152_template()
 
-    dataset_file, feature_file = fetch_neurosynth_dataset(data_dir)
-    dataset = Dataset(dataset_file, feature_file)
+    dataset_file = fetch_neurosynth_dataset(data_dir, return_pkl=True, verbose=verbose)
+    dataset = Dataset.load(dataset_file)
     decoder = decode.Decoder(dataset, features=features)
 
     # Interpolate surface data to the volume and decode.
@@ -192,20 +192,25 @@ def fetch_nimare_dataset(data_dir, keep_neurosynth=False):
     return dset
 
 
-def fetch_neurosynth_dataset(data_dir):
+def fetch_neurosynth_dataset(data_dir, return_pkl=True, verbose=False):
     """Downloads the Neurosynth dataset
 
     Parameters
     ----------
     data_dir : str
         Directory in which to download the dataset.
+    return_pkl : bool
+        If true, creates and returns the .pkl file. Otherwise returns
+        the dataset and features files.
+    verbose : bool
+        If true prints additional output to the console, by default False.
 
     Returns
     -------
-    str
-        Path to the database.txt file.
-    str
-        Path to the features.txt file.
+    tuple, str
+        If save_pkl is false, returns a tuple containing the path to the
+        database.txt and the features.txt file. Otherwise returns the path
+        to the .pkl file. 
 
     """
     if not os.path.isdir(data_dir):
@@ -213,7 +218,18 @@ def fetch_neurosynth_dataset(data_dir):
 
     data_file = os.path.join(data_dir, 'database.txt')
     if not os.path.isfile(data_file):
+        if verbose:
+            print("Downloading the Neurosynth dataset.")
         download(data_dir, unpack=True)
     feature_file = os.path.join(data_dir, 'features.txt')
 
-    return data_file, feature_file
+    if return_pkl:
+        pkl_file = os.path.join(data_dir, 'dataset.pkl')
+        if not os.path.isfile(pkl_file):
+            print("Converting Neurosynth data to a .pkl file. This may take a while.")
+            dataset_file, feature_file = fetch_neurosynth_dataset(data_dir)
+            dataset = Dataset(dataset_file, feature_file)
+            dataset.save(pkl_file)
+        return pkl_file
+
+    return (data_file, feature_file)
