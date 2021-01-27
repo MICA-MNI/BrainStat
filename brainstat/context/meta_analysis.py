@@ -21,6 +21,7 @@ def surface_decode_neurosynth(
         interpolation='linear',
         data_dir=None,
         volume_template=None,
+        features=None,
         verbose=True):
     """Decodes surface data with Neurosynth
 
@@ -44,6 +45,8 @@ def surface_decode_neurosynth(
         your home directory, by default None.
     volume_template : str, nibabel.nifti1.Nifti1Image
         Filename of a nifti image in MNI152 space or a NIfTI image loaded with nibabel.
+    features : list
+        List of strings containing the names of features to include in the decoder. 
     verbose : bool, optional
         If true prints additional output to the console, by default True.
 
@@ -62,7 +65,7 @@ def surface_decode_neurosynth(
 
     dataset_file, feature_file = fetch_neurosynth_dataset(data_dir)
     dataset = Dataset(dataset_file, feature_file)
-    decoder = decode.Decoder(dataset)
+    decoder = decode.Decoder(dataset, features=features)
 
     # Interpolate surface data to the volume and decode.
     with tempfile.NamedTemporaryFile(suffix='.nii.gz') as F:
