@@ -208,9 +208,9 @@ def fetch_neurosynth_dataset(data_dir):
     if not os.path.isdir(data_dir):
         os.mkdir(data_dir)
 
-    data_file = os.path.join(data_dir, 'data', 'database.txt')
+    data_file = os.path.join(data_dir, 'database.txt')
     if not os.path.isfile(data_file):
         download(data_dir, unpack=True)
-    feature_file = os.path.join(data_dir, 'data', 'features.txt')
+    feature_file = os.path.join(data_dir, 'features.txt')
 
     return data_file, feature_file
