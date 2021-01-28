@@ -191,7 +191,7 @@ def fetch_nimare_dataset(data_dir, keep_neurosynth=False):
     if not os.path.isdir(data_dir):
         os.mkdir(data_dir)
 
-    neurosynth_exist = os.path.isfile(data_dir, "database.txt")
+    neurosynth_exist = os.path.isfile(os.path.join(data_dir, "database.txt"))
     if keep_neurosynth or neurosynth_exist:
         ns_dir = data_dir
     else:
