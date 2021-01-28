@@ -173,6 +173,7 @@ def fetch_nimare_dataset(data_dir, keep_neurosynth=False):
         Path to the directory where the dataset will be saved.
     keep_neurosynth : bool, optional
         If true, then the neurosynth data files are kept, by default False.
+        Note that this will not delete existing neurosynth files.
 
     Returns
     -------
@@ -190,7 +191,8 @@ def fetch_nimare_dataset(data_dir, keep_neurosynth=False):
     if not os.path.isdir(data_dir):
         os.mkdir(data_dir)
 
-    if keep_neurosynth:
+    neurosynth_exist = os.path.isfile(data_dir, "database.txt")
+    if keep_neurosynth or neurosynth_exist:
         ns_dir = data_dir
     else:
         D = tempfile.TemporaryDirectory()
