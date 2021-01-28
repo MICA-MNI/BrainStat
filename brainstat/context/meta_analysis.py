@@ -203,10 +203,7 @@ def fetch_nimare_dataset(data_dir, keep_neurosynth=False):
     dset = nimare.io.convert_neurosynth_to_dataset(ns_data_file, ns_feature_file)
     dset = nimare.extract.download_abstracts(dset, "tsalo006@fiu.edu")
     dset.save(os.path.join(data_dir, "neurosynth_nimare_with_abstracts.pkl.gz"))
-
-    if not keep_neurosynth:
-        D.cleanup()
-
+    
     return dset
 
 
