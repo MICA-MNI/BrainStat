@@ -8,8 +8,15 @@ from brainspace.mesh.mesh_elements import get_points, get_cells
 import trimesh
 
 
-def surface_to_volume(pial_mesh, wm_mesh, labels, volume_template, volume_save,
-                      interpolation='nearest', verbose=False):
+def surface_to_volume(
+    pial_mesh,
+    wm_mesh,
+    labels,
+    volume_template,
+    volume_save,
+    interpolation="nearest",
+    verbose=False,
+):
     """Projects surface labels to the cortical ribbon.
 
     Parameters
@@ -43,21 +50,30 @@ def surface_to_volume(pial_mesh, wm_mesh, labels, volume_template, volume_save,
     if verbose:
         print("Computing voxels inside the cortical ribbon.")
     ribbon_points = cortical_ribbon(
-        pial_mesh, wm_mesh, volume_template, verbose=verbose)
+        pial_mesh, wm_mesh, volume_template, verbose=verbose
+    )
 
     if verbose:
         print("Computing labels for cortical ribbon voxels.")
     ribbon_labels = ribbon_interpolation(
-        pial_mesh, wm_mesh, labels, volume_template, ribbon_points, interpolation=interpolation)
+        pial_mesh,
+        wm_mesh,
+        labels,
+        volume_template,
+        ribbon_points,
+        interpolation=interpolation,
+    )
 
     if verbose:
         print("Constructing new nifti image.")
     new_data = np.zeros(volume_template.shape)
-    ribbon_points = np.rint(ribbon_points, np.ones(
-        ribbon_points.shape, dtype=int), casting='unsafe')
+    ribbon_points = np.rint(
+        ribbon_points, np.ones(ribbon_points.shape, dtype=int), casting="unsafe"
+    )
     for i in range(ribbon_labels.shape[0]):
-        new_data[ribbon_points[i, 0], ribbon_points[i, 1],
-                 ribbon_points[i, 2]] = ribbon_labels[i]
+        new_data[
+            ribbon_points[i, 0], ribbon_points[i, 1], ribbon_points[i, 2]
+        ] = ribbon_labels[i]
 
     new_nii = nib.Nifti1Image(new_data, volume_template.affine)
     nib.save(new_nii, volume_save)
@@ -90,17 +106,17 @@ def cortical_ribbon(pial_mesh, wm_mesh, nii, mesh_distance=6, verbose=False):
         import pyembree
     except ImportError:
         ModuleNotFoundError(
-            'The package pyembree is required for this function. '
-            + 'You can install it with the conda package manager: ' +
-            '`conda install -c conda-forge pyembree`.')
+            "The package pyembree is required for this function. "
+            + "You can install it with the conda package manager: "
+            + "`conda install -c conda-forge pyembree`."
+        )
 
     # Get world coordinates.
-    x, y, z, _ = np.meshgrid(range(nii.shape[0]),
-                             range(nii.shape[1]),
-                             range(nii.shape[2]),
-                             0)
+    x, y, z, _ = np.meshgrid(
+        range(nii.shape[0]), range(nii.shape[1]), range(nii.shape[2]), 0
+    )
 
-    points = np.reshape(np.concatenate((x, y, z), axis=3), (-1, 3), order='F')
+    points = np.reshape(np.concatenate((x, y, z), axis=3), (-1, 3), order="F")
     world_coord = nib.affines.apply_affine(nii.affine, points)
 
     if verbose:
@@ -112,7 +128,7 @@ def cortical_ribbon(pial_mesh, wm_mesh, nii, mesh_distance=6, verbose=False):
         (world_coord > np.amax(pial_points, axis=0)) |
         # If points are lower than minimum coordinates
         (world_coord < np.amin(pial_points, axis=0)),
-        axis=1
+        axis=1,
     )
     world_coord = world_coord[np.logical_not(discard), :]
 
@@ -126,28 +142,35 @@ def cortical_ribbon(pial_mesh, wm_mesh, nii, mesh_distance=6, verbose=False):
     tree = cKDTree(wm_points)
     mindist_wm, _ = tree.query(world_coord)
 
-    world_coord = world_coord[(mindist_pial < mesh_distance) & (
-        mindist_wm < mesh_distance), :]
+    world_coord = world_coord[
+        (mindist_pial < mesh_distance) & (mindist_wm < mesh_distance), :
+    ]
 
     # Check which points are inside pial but not inside WM (i.e. ribbon)
     if verbose:
         print("Retaining only points that are inside the pial but not the WM mesh.")
     pial_trimesh = trimesh.ray.ray_pyembree.RayMeshIntersector(
-        trimesh.Trimesh(vertices=np.array(get_points(pial_mesh)),
-                        faces=np.array(get_cells(pial_mesh))))
+        trimesh.Trimesh(
+            vertices=np.array(get_points(pial_mesh)),
+            faces=np.array(get_cells(pial_mesh)),
+        )
+    )
     wm_trimesh = trimesh.ray.ray_pyembree.RayMeshIntersector(
-        trimesh.Trimesh(vertices=np.array(get_points(wm_mesh)),
-                        faces=np.array(get_cells(wm_mesh))))
+        trimesh.Trimesh(
+            vertices=np.array(get_points(wm_mesh)), faces=np.array(get_cells(wm_mesh))
+        )
+    )
 
     inside_wm = wm_trimesh.contains_points(world_coord)
     inside_pial = pial_trimesh.contains_points(world_coord)
     inside_ribbon = world_coord[inside_pial & ~inside_wm, :]
-    ribbon_points = nib.affines.apply_affine(
-        np.linalg.inv(nii.affine), inside_ribbon)
+    ribbon_points = nib.affines.apply_affine(np.linalg.inv(nii.affine), inside_ribbon)
     return ribbon_points
 
 
-def ribbon_interpolation(pial_mesh, wm_mesh, labels, nii, points, interpolation='nearest'):
+def ribbon_interpolation(
+    pial_mesh, wm_mesh, labels, nii, points, interpolation="nearest"
+):
     """Performs label interpolation in the cortical ribbon.
 
     Parameters
@@ -180,19 +203,18 @@ def ribbon_interpolation(pial_mesh, wm_mesh, labels, nii, points, interpolation=
     if not isinstance(labels, np.ndarray):
         labels = nib.gifti.giftiio.read(labels).agg_data()
 
-    mesh_coord = np.concatenate(
-        (get_points(pial_mesh), get_points(wm_mesh)), axis=0)
+    mesh_coord = np.concatenate((get_points(pial_mesh), get_points(wm_mesh)), axis=0)
 
     # Repeat labels as we concatenate the pial/white meshes.
     labels = np.concatenate((labels, labels))
 
     ribbon_coord = nib.affines.apply_affine(nii.affine, points)
 
-    if interpolation is 'nearest':
+    if interpolation is "nearest":
         interp = NearestNDInterpolator(mesh_coord, labels)
-    elif interpolation is 'linear':
+    elif interpolation is "linear":
         interp = LinearNDInterpolator(mesh_coord, labels)
     else:
-        ValueError('Unknown interpolation type.')
+        ValueError("Unknown interpolation type.")
 
     return interp(ribbon_coord)

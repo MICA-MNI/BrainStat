@@ -11,8 +11,15 @@ from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 from brainstat.mesh.interpolation import surface_to_volume
 
 
-def mutli_surface_to_volume(pial, white, volume_template, labels, output_file,
-                            interpolation='nearest', verbose=True):
+def mutli_surface_to_volume(
+    pial,
+    white,
+    volume_template,
+    labels,
+    output_file,
+    interpolation="nearest",
+    verbose=True,
+):
     """Interpolates multiple surfaces to the volume.
 
     Parameters
@@ -46,7 +53,7 @@ def mutli_surface_to_volume(pial, white, volume_template, labels, output_file,
 
     # Deal with variety of ways to provide input.
     if type(pial) is not type(white):
-        ValueError('Pial and white must be of the same type.')
+        ValueError("Pial and white must be of the same type.")
 
     if not isinstance(pial, list):
         pial = [pial]
@@ -56,7 +63,7 @@ def mutli_surface_to_volume(pial, white, volume_template, labels, output_file,
         labels = [labels]
 
     if len(pial) is not len(white):
-        ValueError('The same number of pial and white surfces must be provided.')
+        ValueError("The same number of pial and white surfces must be provided.")
 
     for i in range(len(pial)):
         if not isinstance(pial[i], BSPolyData):
@@ -75,9 +82,16 @@ def mutli_surface_to_volume(pial, white, volume_template, labels, output_file,
     # Surface data to volume.
     T = []
     for i in range(len(pial)):
-        T.append(tempfile.NamedTemporaryFile(suffix='.nii.gz'))
-        surface_to_volume(pial[i], white[i], labels[i], volume_template, T[i].name,
-                          interpolation=interpolation, verbose=verbose > 0)
+        T.append(tempfile.NamedTemporaryFile(suffix=".nii.gz"))
+        surface_to_volume(
+            pial[i],
+            white[i],
+            labels[i],
+            volume_template,
+            T[i].name,
+            interpolation=interpolation,
+            verbose=verbose > 0,
+        )
 
     if len(T) > 1:
         T_names = [x.name for x in T]
@@ -130,12 +144,12 @@ def load_mesh_labels(label_file, as_int=True):
         Labels in the file.
     """
 
-    if label_file.endswith('.gii'):
+    if label_file.endswith(".gii"):
         labels = nib.gifti.giftiio.read(label_file).agg_data()
-    elif label_file.endswith('.csv'):
+    elif label_file.endswith(".csv"):
         labels = np.loadtxt(label_file)
     else:
-        ValueError('Unrecognized label file type.')
+        ValueError("Unrecognized label file type.")
 
     if as_int:
         labels = np.round(labels).astype(int)
@@ -155,10 +169,10 @@ def read_surface_gz(filename):
     BSPolyData
         Surface mesh.
     """
-    if filename.endswith('.gz'):
+    if filename.endswith(".gz"):
         extension = os.path.splitext(filename[:-3])[-1]
         with tempfile.NamedTemporaryFile(suffix=extension) as f_tmp:
-            with gzip.open(filename, 'rb') as f_gz:
+            with gzip.open(filename, "rb") as f_gz:
                 shutil.copyfileobj(f_gz, f_tmp)
             return read_surface(f_tmp.name)
     else:

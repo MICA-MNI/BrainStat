@@ -15,14 +15,15 @@ from .utils import mutli_surface_to_volume
 
 
 def surface_decode_neurosynth(
-        pial,
-        white,
-        labels,
-        interpolation='linear',
-        data_dir=None,
-        volume_template=None,
-        features=None,
-        verbose=True):
+    pial,
+    white,
+    labels,
+    interpolation="linear",
+    data_dir=None,
+    volume_template=None,
+    features=None,
+    verbose=True,
+):
     """Decodes surface data with Neurosynth
 
     Parameters
@@ -58,7 +59,7 @@ def surface_decode_neurosynth(
 
     # Set up the Neurosynth decoder
     if data_dir is None:
-        data_dir = os.path.join(str(Path.home()), 'nimare_data')
+        data_dir = os.path.join(str(Path.home()), "nimare_data")
 
     if volume_template is None:
         volume_template = nil_datasets.load_mni152_template()
@@ -68,22 +69,30 @@ def surface_decode_neurosynth(
     decoder = decode.Decoder(dataset, features=features)
 
     # Interpolate surface data to the volume and decode.
-    with tempfile.NamedTemporaryFile(suffix='.nii.gz') as F:
-        mutli_surface_to_volume(pial, white, volume_template,
-                                labels, F.name, verbose=verbose, interpolation=interpolation)
+    with tempfile.NamedTemporaryFile(suffix=".nii.gz") as F:
+        mutli_surface_to_volume(
+            pial,
+            white,
+            volume_template,
+            labels,
+            F.name,
+            verbose=verbose,
+            interpolation=interpolation,
+        )
         return decoder.decode(F.name)
 
 
 def surface_decode_nimare(
-        pial,
-        white,
-        labels,
-        threshold=0,
-        interpolation='linear',
-        decoder='neurosynth',
-        data_dir=None,
-        verbose=True,
-        correction='fdr_bh'):
+    pial,
+    white,
+    labels,
+    threshold=0,
+    interpolation="linear",
+    decoder="neurosynth",
+    data_dir=None,
+    verbose=True,
+    correction="fdr_bh",
+):
     """Meta-analytic decoding of surface maps using NeuroSynth or Brainmap.
 
     Parameters
@@ -125,22 +134,30 @@ def surface_decode_nimare(
     """
 
     if data_dir is None:
-        data_dir = os.path.join(str(Path.home()), 'nimare_data')
+        data_dir = os.path.join(str(Path.home()), "nimare_data")
 
     dset = fetch_nimare_dataset(data_dir)
 
-    F = tempfile.NamedTemporaryFile(suffix='.nii.gz')
-    mutli_surface_to_volume(pial, white, dset.masker.mask_img,
-                            labels, F.name, verbose=verbose, interpolation=interpolation)
+    F = tempfile.NamedTemporaryFile(suffix=".nii.gz")
+    mutli_surface_to_volume(
+        pial,
+        white,
+        dset.masker.mask_img,
+        labels,
+        F.name,
+        verbose=verbose,
+        interpolation=interpolation,
+    )
     nii = nib.load(F.name)
-    nii2 = nib.Nifti1Image(
-        (nii.get_fdata() > threshold).astype(float), nii.affine)
+    nii2 = nib.Nifti1Image((nii.get_fdata() > threshold).astype(float), nii.affine)
     ids = dset.get_studies_by_mask(nii2)
 
-    print("If you use BrainStat's surface decoder, please cite NiMARE (https://zenodo.org/record/4408504#.YBBPAZNKjzU)).")
-    if decoder is 'neurosynth':
+    print(
+        "If you use BrainStat's surface decoder, please cite NiMARE (https://zenodo.org/record/4408504#.YBBPAZNKjzU))."
+    )
+    if decoder is "neurosynth":
         decoder = discrete.NeurosynthDecoder(correction=correction)
-    elif decoder is 'brainmap':
+    elif decoder is "brainmap":
         decoder = discrete.BrainMapDecoder(correction=correction)
 
     decoder.fit(dset)
@@ -163,11 +180,11 @@ def fetch_nimare_dataset(data_dir, keep_neurosynth=False):
         Downloaded NiMARE dataset.
     """
 
-    nimare_file = os.path.join(
-        data_dir, "neurosynth_nimare_with_abstracts.pkl.gz")
+    nimare_file = os.path.join(data_dir, "neurosynth_nimare_with_abstracts.pkl.gz")
     if os.path.isfile(nimare_file):
-        dset = nimare.dataset.Dataset.load(os.path.join(
-            data_dir, "neurosynth_nimare_with_abstracts.pkl.gz"))
+        dset = nimare.dataset.Dataset.load(
+            os.path.join(data_dir, "neurosynth_nimare_with_abstracts.pkl.gz")
+        )
         return dset
 
     if not os.path.isdir(data_dir):
@@ -181,8 +198,7 @@ def fetch_nimare_dataset(data_dir, keep_neurosynth=False):
 
     ns_data_file, ns_feature_file = fetch_neurosynth_dataset(ns_dir, return_pkl=False)
 
-    dset = nimare.io.convert_neurosynth_to_dataset(
-        ns_data_file, ns_feature_file)
+    dset = nimare.io.convert_neurosynth_to_dataset(ns_data_file, ns_feature_file)
     dset = nimare.extract.download_abstracts(dset, "tsalo006@fiu.edu")
     dset.save(os.path.join(data_dir, "neurosynth_nimare_with_abstracts.pkl.gz"))
 
@@ -216,15 +232,15 @@ def fetch_neurosynth_dataset(data_dir, return_pkl=True, verbose=False):
     if not os.path.isdir(data_dir):
         os.mkdir(data_dir)
 
-    dataset_file = os.path.join(data_dir, 'database.txt')
+    dataset_file = os.path.join(data_dir, "database.txt")
     if not os.path.isfile(dataset_file):
         if verbose:
             print("Downloading the Neurosynth dataset.")
         download(data_dir, unpack=True)
-    feature_file = os.path.join(data_dir, 'features.txt')
+    feature_file = os.path.join(data_dir, "features.txt")
 
     if return_pkl:
-        pkl_file = os.path.join(data_dir, 'dataset.pkl')
+        pkl_file = os.path.join(data_dir, "dataset.pkl")
         if not os.path.isfile(pkl_file):
             print("Converting Neurosynth data to a .pkl file. This may take a while.")
             dataset = Dataset(dataset_file, feature_file)
