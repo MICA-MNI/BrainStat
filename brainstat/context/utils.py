@@ -8,7 +8,7 @@ import gzip
 import shutil
 from brainspace.mesh.mesh_io import read_surface
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
-from brainstat.mesh.interpolation import surface_to_volume
+from brainstat.mesh.interpolate import surface_to_volume
 
 
 def mutli_surface_to_volume(
