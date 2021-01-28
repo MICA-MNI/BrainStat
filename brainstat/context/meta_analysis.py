@@ -71,7 +71,7 @@ def surface_decode_neurosynth(
     with tempfile.NamedTemporaryFile(suffix='.nii.gz') as F:
         mutli_surface_to_volume(pial, white, volume_template,
                                 labels, F.name, verbose=verbose, interpolation=interpolation)
-        return decoder.decode(F)
+        return decoder.decode(F.name)
 
 
 def surface_decode_nimare(
