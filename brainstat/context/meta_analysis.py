@@ -4,7 +4,6 @@ import os
 import tempfile
 import nibabel as nib
 from pathlib import Path
-from nilearn import datasets as nil_datasets
 
 from neurosynth.base.dataset import download, Dataset
 from neurosynth import decode
@@ -13,7 +12,7 @@ import nimare
 from nimare.decode.continuous import CorrelationDecoder
 from nimare.meta.cbma.mkda import MKDAChi2
 from .utils import mutli_surface_to_volume
-
+import pdb
 
 def surface_decode_nimare(
     pial,
@@ -67,36 +66,37 @@ def surface_decode_nimare(
 
     dset = fetch_nimare_dataset(data_dir)
 
-    stat_image = tempfile.NamedTemporaryFile(suffix=".nii.gz")
-    mask_image = tempfile.NamedTemporaryFile(suffix=".nii.gz")
-    mutli_surface_to_volume(
-        pial,
-        white,
-        dset.masker.mask_img,
-        stat_labels,
-        stat_image.name,
-        verbose=verbose,
-        interpolation=interpolation,
-    )
-    mutli_surface_to_volume(
-        pial,
-        white,
-        dset.masker.mask_img,
-        mask_labels,
-        mask_image.name,
-        verbose=verbose,
-        interpolation=interpolation,
-    )
+    with tempfile.NamedTemporaryFile(suffix=".nii.gz") as stat_image:
+        with tempfile.NamedTemporaryFile(suffix=".nii.gz") as mask_image:
+            mutli_surface_to_volume(
+                pial,
+                white,
+                dset.masker.mask_img,
+                stat_labels,
+                stat_image.name,
+                verbose=verbose,
+                interpolation=interpolation,
+            )
+            mutli_surface_to_volume(
+                pial,
+                white,
+                dset.masker.mask_img,
+                mask_labels,
+                mask_image.name,
+                verbose=verbose,
+                interpolation=interpolation,
+            )
 
-    print(
-        "If you use BrainStat's surface decoder, " + 
-        "please cite NiMARE (https://zenodo.org/record/4408504#.YBBPAZNKjzU))."
-    )
+            print(
+                "If you use BrainStat's surface decoder, " + 
+                "please cite NiMARE (https://zenodo.org/record/4408504#.YBBPAZNKjzU))."
+            )
 
-    meta = MKDAChi2(mask=mask_image.name)
-    decoder = CorrelationDecoder(meta_estimator=meta)
-    decoder.fit(dset)
-    return decoder.transform(stat_image.name)
+            meta = MKDAChi2(mask=mask_image.name)
+            decoder = CorrelationDecoder(meta_estimator=meta)
+            pdb.set_trace()
+            decoder.fit(dset)
+            return decoder.transform(stat_image.name)
 
 
 def fetch_nimare_dataset(data_dir, keep_neurosynth=False):
