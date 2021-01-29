@@ -2,17 +2,14 @@
 
 import os
 import tempfile
-import nibabel as nib
 from pathlib import Path
 
 from neurosynth.base.dataset import download, Dataset
-from neurosynth import decode
 
 import nimare
 from nimare.decode.continuous import CorrelationDecoder
 from nimare.meta.cbma.mkda import MKDAChi2
 from .utils import mutli_surface_to_volume
-import pdb
 
 def surface_decode_nimare(
     pial,
@@ -91,10 +88,9 @@ def surface_decode_nimare(
                 "If you use BrainStat's surface decoder, " + 
                 "please cite NiMARE (https://zenodo.org/record/4408504#.YBBPAZNKjzU))."
             )
-
+            dset.update_path('.') # Bit hackish but seems to fix a bug in the decoder. 
             meta = MKDAChi2(mask=mask_image.name)
             decoder = CorrelationDecoder(meta_estimator=meta)
-            pdb.set_trace()
             decoder.fit(dset)
             return decoder.transform(stat_image.name)
 
