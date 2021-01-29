@@ -90,7 +90,7 @@ def surface_decode_nimare(
                 "If you use BrainStat's surface decoder, " + 
                 "please cite NiMARE (https://zenodo.org/record/4408504#.YBBPAZNKjzU))."
             )
-            dset.update_path('.') # Bit hackish but seems to fix a bug in the decoder. 
+            dset.update_path(data_dir) # Bit hackish but seems to fix a bug in the decoder. 
             meta = MKDAChi2(mask=mask_image.name)
             decoder = CorrelationDecoder(feature_group=feature_group, features=features, meta_estimator=meta)
             decoder.fit(dset)
