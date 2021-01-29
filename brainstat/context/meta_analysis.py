@@ -92,6 +92,8 @@ def surface_decode_nimare(
     data_dir=None,
     verbose=True,
     correction="fdr_bh",
+    features=None,
+    feature_group=None,
 ):
     """Meta-analytic decoding of surface maps using NeuroSynth or Brainmap.
 
@@ -153,12 +155,15 @@ def surface_decode_nimare(
     ids = dset.get_studies_by_mask(nii2)
 
     print(
-        "If you use BrainStat's surface decoder, please cite NiMARE (https://zenodo.org/record/4408504#.YBBPAZNKjzU))."
+        "If you use BrainStat's surface decoder, " + 
+        "please cite NiMARE (https://zenodo.org/record/4408504#.YBBPAZNKjzU))."
     )
     if decoder is "neurosynth":
-        decoder = discrete.NeurosynthDecoder(correction=correction)
+        decoder = discrete.NeurosynthDecoder(feature_group=feature_group,
+            features=features, correction=correction)
     elif decoder is "brainmap":
-        decoder = discrete.BrainMapDecoder(correction=correction)
+        decoder = discrete.BrainMapDecoder(feature_group=feature_group,
+            features=features, correction=correction)
 
     decoder.fit(dset)
     return decoder.transform(ids=ids)
