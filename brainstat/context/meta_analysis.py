@@ -11,7 +11,7 @@ from neurosynth import decode
 
 import nimare
 from nimare.decode.continuous import CorrelationDecoder
-from nimare.meta.cmba.mkda import MKDAChi2
+from nimare.meta.cbma.mkda import MKDAChi2
 from .utils import mutli_surface_to_volume
 
 
