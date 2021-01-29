@@ -10,90 +10,19 @@ from neurosynth.base.dataset import download, Dataset
 from neurosynth import decode
 
 import nimare
-from nimare.decode import discrete
+from nimare.decode.continuous import CorrelationDecoder
+from nimare.meta.cmba.mkda import MKDAChi2
 from .utils import mutli_surface_to_volume
-
-
-def surface_decode_neurosynth(
-    pial,
-    white,
-    labels,
-    interpolation="linear",
-    data_dir=None,
-    volume_template=None,
-    features=None,
-    verbose=True,
-):
-    """Decodes surface data with Neurosynth
-
-    Parameters
-    ----------
-    pial : str, BSPolyData, list
-        Path of a pial surface file, BSPolyData of a pial surface or a list
-        containing multiple of the aforementioned.
-    white : str, BSPolyData, list
-        Path of a white matter surface file, BSPolyData of a pial surface or a
-        list containing multiple of the aforementioned.
-    labels : str, numpy.ndarray, list
-        Path to a label file for the surfaces, numpy array containing the
-        labels, or a list containing multiple of the aforementioned.
-    interpolation : str, optional
-        Either 'nearest' for nearest neighbor interpolation, or 'linear'
-        for trilinear interpolation, by default 'linear'.
-    data_dir : str, optional
-        The directory of the nimare dataset. If none exists, a new dataset will
-        be downloaded and saved to this path. If None, the directory defaults to
-        your home directory, by default None.
-    volume_template : str, nibabel.nifti1.Nifti1Image
-        Filename of a nifti image in MNI152 space or a NIfTI image loaded with nibabel.
-    features : list
-        List of strings containing the names of features to include in the decoder. 
-    verbose : bool, optional
-        If true prints additional output to the console, by default True.
-
-    Returns
-    -------
-    [type]
-        [description]
-    """
-
-    # Set up the Neurosynth decoder
-    if data_dir is None:
-        data_dir = os.path.join(str(Path.home()), "nimare_data")
-
-    if volume_template is None:
-        volume_template = nil_datasets.load_mni152_template()
-
-    dataset_file = fetch_neurosynth_dataset(data_dir, return_pkl=True, verbose=verbose)
-    dataset = Dataset.load(dataset_file)
-    decoder = decode.Decoder(dataset, features=features)
-
-    # Interpolate surface data to the volume and decode.
-    with tempfile.NamedTemporaryFile(suffix=".nii.gz") as F:
-        mutli_surface_to_volume(
-            pial,
-            white,
-            volume_template,
-            labels,
-            F.name,
-            verbose=verbose,
-            interpolation=interpolation,
-        )
-        return decoder.decode(F.name)
 
 
 def surface_decode_nimare(
     pial,
     white,
-    labels,
-    threshold=0,
+    stat_labels,
+    mask_labels,
     interpolation="linear",
-    decoder="neurosynth",
     data_dir=None,
     verbose=True,
-    correction="fdr_bh",
-    features=None,
-    feature_group=None,
 ):
     """Meta-analytic decoding of surface maps using NeuroSynth or Brainmap.
 
@@ -105,18 +34,16 @@ def surface_decode_nimare(
     white : str, BSPolyData, list
         Path of a white matter surface file, BSPolyData of a pial surface or a
         list containing multiple of the aforementioned.
-    labels : str, numpy.ndarray, list
+    stat_labels : str, numpy.ndarray, list
         Path to a label file for the surfaces, numpy array containing the
         labels, or a list containing multiple of the aforementioned.
-    threshold : float, int, optional
-        Value at which to threshold the labels in volume space. Voxels equal to
-        or below this value are set to 0, defaults to 0.
+    mask_labels : str, numpy.ndarray, list
+        Path to a mask file for the surfaces, numpy array containing the
+        mask, or a list containing multiple of the aforementioned. If None
+        all vertices are included in the mask. Defaults to None.
     interpolation : str, optional
         Either 'nearest' for nearest neighbor interpolation, or 'linear'
         for trilinear interpolation, by default 'linear'.
-    decoder : str, optional
-        Either 'neurosynth' for the neurosynth decoder or 'brainmap' for the
-        brainmap decoder, by default 'neurosynth'.
     data_dir : str, optional
         The directory of the nimare dataset. If none exists, a new dataset will
         be downloaded and saved to this path. If None, the directory defaults to
@@ -140,33 +67,36 @@ def surface_decode_nimare(
 
     dset = fetch_nimare_dataset(data_dir)
 
-    F = tempfile.NamedTemporaryFile(suffix=".nii.gz")
+    stat_image = tempfile.NamedTemporaryFile(suffix=".nii.gz")
+    mask_image = tempfile.NamedTemporaryFile(suffix=".nii.gz")
     mutli_surface_to_volume(
         pial,
         white,
         dset.masker.mask_img,
-        labels,
-        F.name,
+        stat_labels,
+        stat_image.name,
         verbose=verbose,
         interpolation=interpolation,
     )
-    nii = nib.load(F.name)
-    nii2 = nib.Nifti1Image((nii.get_fdata() > threshold).astype(float), nii.affine)
-    ids = dset.get_studies_by_mask(nii2)
+    mutli_surface_to_volume(
+        pial,
+        white,
+        dset.masker.mask_img,
+        mask_labels,
+        mask_image.name,
+        verbose=verbose,
+        interpolation=interpolation,
+    )
 
     print(
         "If you use BrainStat's surface decoder, " + 
         "please cite NiMARE (https://zenodo.org/record/4408504#.YBBPAZNKjzU))."
     )
-    if decoder is "neurosynth":
-        decoder = discrete.NeurosynthDecoder(feature_group=feature_group,
-            features=features, correction=correction)
-    elif decoder is "brainmap":
-        decoder = discrete.BrainMapDecoder(feature_group=feature_group,
-            features=features, correction=correction)
 
+    meta = MKDAChi2(mask=mask_image.name)
+    decoder = CorrelationDecoder(meta_estimator=meta)
     decoder.fit(dset)
-    return decoder.transform(ids=ids)
+    return decoder.transform(stat_image.name)
 
 
 def fetch_nimare_dataset(data_dir, keep_neurosynth=False):
