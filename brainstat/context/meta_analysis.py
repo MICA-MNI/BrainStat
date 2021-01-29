@@ -19,12 +19,14 @@ def surface_decode_nimare(
     interpolation="linear",
     data_dir=None,
     verbose=True,
+    feature_group=None,
+    features=None,
 ):
     """Meta-analytic decoding of surface maps using NeuroSynth or Brainmap.
 
     Parameters
     ----------
-     pial : str, BSPolyData, list
+    pial : str, BSPolyData, list
         Path of a pial surface file, BSPolyData of a pial surface or a list
         containing multiple of the aforementioned.
     white : str, BSPolyData, list
@@ -90,7 +92,7 @@ def surface_decode_nimare(
             )
             dset.update_path('.') # Bit hackish but seems to fix a bug in the decoder. 
             meta = MKDAChi2(mask=mask_image.name)
-            decoder = CorrelationDecoder(meta_estimator=meta)
+            decoder = CorrelationDecoder(feature_group=feature_group, features=features, meta_estimator=meta)
             decoder.fit(dset)
             return decoder.transform(stat_image.name)
 
