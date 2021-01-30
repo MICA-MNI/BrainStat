@@ -7,7 +7,7 @@ from pathlib import Path
 from neurosynth.base.dataset import download, Dataset
 
 import nimare
-from nimare.decode.continuous import CorrelationDecoder
+from nimare.decode import discrete
 from nimare.meta.cbma.mkda import MKDAChi2
 from .utils import mutli_surface_to_volume
 
@@ -19,6 +19,7 @@ def surface_decode_nimare(
     interpolation="linear",
     data_dir=None,
     verbose=True,
+    correction='fdr_bh',
     feature_group=None,
     features=None,
 ):
@@ -63,14 +64,14 @@ def surface_decode_nimare(
     if data_dir is None:
         data_dir = os.path.join(str(Path.home()), "nimare_data")
 
-    dset = fetch_nimare_dataset(data_dir)
+    dataset = fetch_nimare_dataset(data_dir)
 
     with tempfile.NamedTemporaryFile(suffix=".nii.gz") as stat_image:
         with tempfile.NamedTemporaryFile(suffix=".nii.gz") as mask_image:
             mutli_surface_to_volume(
                 pial,
                 white,
-                dset.masker.mask_img,
+                dataset.masker.mask_img,
                 stat_labels,
                 stat_image.name,
                 verbose=verbose,
@@ -79,7 +80,7 @@ def surface_decode_nimare(
             mutli_surface_to_volume(
                 pial,
                 white,
-                dset.masker.mask_img,
+                dataset.masker.mask_img,
                 mask_labels,
                 mask_image.name,
                 verbose=verbose,
@@ -90,14 +91,17 @@ def surface_decode_nimare(
                 "If you use BrainStat's surface decoder, " + 
                 "please cite NiMARE (https://zenodo.org/record/4408504#.YBBPAZNKjzU))."
             )
-            dset.update_path(data_dir) # Bit hackish but seems to fix a bug in the decoder. 
-            meta = MKDAChi2(mask=mask_image.name)
-            decoder = CorrelationDecoder(feature_group=feature_group, features=features, meta_estimator=meta)
-            decoder.fit(dset)
-            return decoder.transform(stat_image.name)
+            roi_ids = dataset.get_studies_by_mask(stat_image.name)
+            gm_ids = dataset.get_studies_by_mask(mask_image.name)
+            unselected_ids = list(set(roi_ids) - set(gm_ids))
+            decoder = discrete.NeurosynthDecoder(feature_group=feature_group, 
+                features=features,
+                correction=correction)
+            decoder.fit(dataset)
+            return decoder.transform(ids=roi_ids, ids2=unselected_ids)
 
 
-def fetch_nimare_dataset(data_dir, keep_neurosynth=False):
+def fetch_nimare_dataset(ßdata_dir, keep_neurosynth=False):
     """Downloads the nimare dataset and fetches its path.
 
     Parameters
