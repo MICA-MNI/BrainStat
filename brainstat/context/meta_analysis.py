@@ -101,7 +101,7 @@ def surface_decode_nimare(
             return decoder.transform(ids=roi_ids, ids2=unselected_ids)
 
 
-def fetch_nimare_dataset(ßdata_dir, keep_neurosynth=False):
+def fetch_nimare_dataset(data_dir, keep_neurosynth=False):
     """Downloads the nimare dataset and fetches its path.
 
     Parameters
