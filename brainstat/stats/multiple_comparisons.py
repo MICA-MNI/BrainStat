@@ -49,28 +49,27 @@ def fdr(slm, mask=None):
 
     Note that slm['tri'] and slm['lat'] are mutually exclusive.
     """
-    l, v = np.shape(slm['t'])
+    l, v = np.shape(slm["t"])
 
     if mask is None:
-        mask = np.ones((v), dtype='bool')
+        mask = np.ones((v), dtype="bool")
 
     df = np.zeros((2, 2))
-    ndf = len(np.array([slm['df']]))
-    df[0, 0:ndf] = slm['df']
-    df[1, 0:2] = np.array([slm['df']])[ndf-1]
+    ndf = len(np.array([slm["df"]]))
+    df[0, 0:ndf] = slm["df"]
+    df[1, 0:2] = np.array([slm["df"]])[ndf - 1]
 
-    if 'dfs' in slm:
-        df[0, ndf-1] = slm['dfs'][0, mask > 0].mean()
+    if "dfs" in slm:
+        df[0, ndf - 1] = slm["dfs"][0, mask > 0].mean()
 
-    if 'du' in slm:
+    if "du" in slm:
         resels, reselspvert, edg = compute_resels(slm, mask.flatten())
     else:
         reselspvert = np.ones((v))
 
-    varA = np.append(10, slm['t'][0, mask.astype(bool)])
-    P_val = stat_threshold(df=df, p_val_peak=varA,
-                           nvar=float(slm['k']), nprint=0)[0]
-    P_val = P_val[1:len(P_val)]
+    varA = np.append(10, slm["t"][0, mask.astype(bool)])
+    P_val = stat_threshold(df=df, p_val_peak=varA, nvar=float(slm["k"]), nprint=0)[0]
+    P_val = P_val[1 : len(P_val)]
     nx = len(P_val)
     index = P_val.argsort()
     P_sort = P_val[index]
@@ -81,17 +80,17 @@ def fdr(slm, mask=None):
     Q_sort = np.zeros((1, nx))
 
     for i in np.arange(nx, 0, -1):
-        if P_sort[i-1] < m:
-            m = P_sort[i-1]
-        Q_sort[0, i-1] = m
+        if P_sort[i - 1] < m:
+            m = P_sort[i - 1]
+        Q_sort[0, i - 1] = m
 
     Q = np.zeros((1, nx))
     Q[0, index] = Q_sort
 
     qval = {}
-    qval['Q'] = np.ones((mask.shape[0]))
-    qval['Q'][mask] = np.squeeze(Q[0, :])
-    qval['mask'] = mask
+    qval["Q"] = np.ones((mask.shape[0]))
+    qval["Q"][mask] = np.squeeze(Q[0, :])
+    qval["mask"] = mask
 
     return qval
 
@@ -161,25 +160,26 @@ def random_field_theory(slm, mask=None, clusthresh=0.001):
     & Evans, A.C. (1999). Detecting changes in nonisotropic images.
     Human Brain Mapping, 8:98-101.
     """
-    l, v = np.shape(slm['t'])
+    l, v = np.shape(slm["t"])
 
     if mask is None:
         mask = np.ones((v), dtype=bool)
 
     df = np.zeros((2, 2))
-    ndf = len(np.array([slm['df']]))
-    df[0, 0:ndf] = slm['df']
-    df[1, 0:2] = np.array([slm['df']])[ndf-1]
+    ndf = len(np.array([slm["df"]]))
+    df[0, 0:ndf] = slm["df"]
+    df[1, 0:2] = np.array([slm["df"]])[ndf - 1]
 
-    if 'dfs' in slm.keys():
-        df[0, ndf-1] = slm['dfs'][0, mask > 0].mean()
+    if "dfs" in slm.keys():
+        df[0, ndf - 1] = slm["dfs"][0, mask > 0].mean()
 
     if v == 1:
-        varA = varA = np.concatenate((np.array([10]), slm['t'][0]))
+        varA = varA = np.concatenate((np.array([10]), slm["t"][0]))
         pval = {}
-        pval['P'] = stat_threshold(df=df, p_val_peak=varA,
-                                   nvar=float(slm['k']), nprint=0)[0]
-        pval['P'] = pval['P'][1]
+        pval["P"] = stat_threshold(
+            df=df, p_val_peak=varA, nvar=float(slm["k"]), nprint=0
+        )[0]
+        pval["P"] = pval["P"][1]
         peak = []
         clus = []
         clusid = []
@@ -187,8 +187,9 @@ def random_field_theory(slm, mask=None, clusthresh=0.001):
         return pval, peak, clus, clusid
 
     if clusthresh < 1:
-        thresh = stat_threshold(df=df, p_val_peak=clusthresh,
-                                nvar=float(slm['k']), nprint=0)[0]
+        thresh = stat_threshold(
+            df=df, p_val_peak=clusthresh, nvar=float(slm["k"]), nprint=0
+        )[0]
         thresh = float(thresh[0])
     else:
         thresh = clusthresh
@@ -196,67 +197,101 @@ def random_field_theory(slm, mask=None, clusthresh=0.001):
     resels, reselspvert, edg = compute_resels(slm, mask)
     N = mask.sum()
 
-    if np.max(slm['t'][0, mask]) < thresh:
+    if np.max(slm["t"][0, mask]) < thresh:
         pval = {}
-        varA = np.concatenate((np.array([[10]]), slm['t']), axis=1)
-        pval['P'] = stat_threshold(search_volume=resels, num_voxels=N,
-                                   fwhm=1, df=df,
-                                   p_val_peak=varA.flatten(),
-                                   nvar=float(slm['k']), nprint=0)[0]
-        pval['P'] = pval['P'][1:v+1]
+        varA = np.concatenate((np.array([[10]]), slm["t"]), axis=1)
+        pval["P"] = stat_threshold(
+            search_volume=resels,
+            num_voxels=N,
+            fwhm=1,
+            df=df,
+            p_val_peak=varA.flatten(),
+            nvar=float(slm["k"]),
+            nprint=0,
+        )[0]
+        pval["P"] = pval["P"][1 : v + 1]
         peak = []
         clus = []
         clusid = []
     else:
         peak, clus, clusid = peak_clus(slm, mask, thresh, reselspvert, edg)
-        slm['t'] = slm['t'].reshape(1, slm['t'].size)
-        varA = np.concatenate((np.array([[10]]), peak['t'].T, slm['t']),
-                              axis=1)
-        varB = np.concatenate((np.array([[10]]), clus['resels']))
-        pp, clpval, _, _, _, _, = stat_threshold(search_volume=resels,
-                                                 num_voxels=N, fwhm=1,
-                                                 df=df,
-                                                 p_val_peak=varA.flatten(),
-                                                 cluster_threshold=thresh,
-                                                 p_val_extent=varB,
-                                                 nvar=float(slm['k']), nprint=0)
-        lenPP = len(pp[1:len(peak['t'])+1])
-        peak['P'] = pp[1:len(peak['t'])+1].reshape(lenPP, 1)
+        slm["t"] = slm["t"].reshape(1, slm["t"].size)
+        varA = np.concatenate((np.array([[10]]), peak["t"].T, slm["t"]), axis=1)
+        varB = np.concatenate((np.array([[10]]), clus["resels"]))
+        pp, clpval, _, _, _, _, = stat_threshold(
+            search_volume=resels,
+            num_voxels=N,
+            fwhm=1,
+            df=df,
+            p_val_peak=varA.flatten(),
+            cluster_threshold=thresh,
+            p_val_extent=varB,
+            nvar=float(slm["k"]),
+            nprint=0,
+        )
+        lenPP = len(pp[1 : len(peak["t"]) + 1])
+        peak["P"] = pp[1 : len(peak["t"]) + 1].reshape(lenPP, 1)
         pval = {}
-        pval['P'] = pp[len(peak['t']) + np.arange(1, v+1)]
+        pval["P"] = pp[len(peak["t"]) + np.arange(1, v + 1)]
 
-        if slm['k'] > 1:
-            j = np.arange(slm['k'])[::-2]
-            sphere = np.zeros((1, int(slm['k'])))
-            sphere[:, j] = np.exp((j+1)*np.log(2) + (j/2)*np.log(math.pi) +
-                                  gammaln((slm['k']+1)/2) - gammaln(j+1) - gammaln((slm['k']+1-j)/2))
-            sphere = sphere*np.power(4*np.log(2), -
-                                     np.arange(0, slm['k'])/2)/ndf
+        if slm["k"] > 1:
+            j = np.arange(slm["k"])[::-2]
+            sphere = np.zeros((1, int(slm["k"])))
+            sphere[:, j] = np.exp(
+                (j + 1) * np.log(2)
+                + (j / 2) * np.log(math.pi)
+                + gammaln((slm["k"] + 1) / 2)
+                - gammaln(j + 1)
+                - gammaln((slm["k"] + 1 - j) / 2)
+            )
+            sphere = sphere * np.power(4 * np.log(2), -np.arange(0, slm["k"]) / 2) / ndf
             varA = np.convolve(resels.flatten(), sphere.flatten())
-            varB = np.concatenate((np.array([[10]]), clus['resels']))
-            pp, clpval, _, _, _, _, = stat_threshold(search_volume=varA,
-                                                     num_voxels=math.inf, fwhm=1.0,
-                                                     df=df, cluster_threshold=thresh,
-                                                     p_val_extent=varB, nprint=0)
+            varB = np.concatenate((np.array([[10]]), clus["resels"]))
+            pp, clpval, _, _, _, _, = stat_threshold(
+                search_volume=varA,
+                num_voxels=math.inf,
+                fwhm=1.0,
+                df=df,
+                cluster_threshold=thresh,
+                p_val_extent=varB,
+                nprint=0,
+            )
 
-        clus['P'] = clpval[1:len(clpval)]
-        x = np.concatenate((np.array([[0]]), clus['clusid']), axis=0)
-        y = np.concatenate((np.array([[1]]), clus['P']), axis=0)
-        pval['C'] = interp1d(x.flatten(), y.flatten())(clusid)
+        clus["P"] = clpval[1 : len(clpval)]
+        x = np.concatenate((np.array([[0]]), clus["clusid"]), axis=0)
+        y = np.concatenate((np.array([[1]]), clus["P"]), axis=0)
+        pval["C"] = interp1d(x.flatten(), y.flatten())(clusid)
 
-    tlim = stat_threshold(search_volume=resels, num_voxels=N, fwhm=1,
-                          df=df, p_val_peak=np.array([0.5, 1]),
-                          nvar=float(slm['k']), nprint=0)[0]
+    tlim = stat_threshold(
+        search_volume=resels,
+        num_voxels=N,
+        fwhm=1,
+        df=df,
+        p_val_peak=np.array([0.5, 1]),
+        nvar=float(slm["k"]),
+        nprint=0,
+    )[0]
     tlim = tlim[1]
-    pval['P'] = pval['P'] * (slm['t'][0, :] > tlim) + (slm['t'][0, :] <= tlim)
-    pval['mask'] = mask
+    pval["P"] = pval["P"] * (slm["t"][0, :] > tlim) + (slm["t"][0, :] <= tlim)
+    pval["mask"] = mask
 
     return pval, peak, clus, clusid
 
 
-def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
-                   p_val_peak=0.05, cluster_threshold=0.001, p_val_extent=0.05, nconj=1,
-                   nvar=1, EC_file=None, expr=None, nprint=5):
+def stat_threshold(
+    search_volume=0,
+    num_voxels=1,
+    fwhm=0.0,
+    df=math.inf,
+    p_val_peak=0.05,
+    cluster_threshold=0.001,
+    p_val_extent=0.05,
+    nconj=1,
+    nvar=1,
+    EC_file=None,
+    expr=None,
+    nprint=5,
+):
     """Thresholds and P-values of peaks and clusters of random fields in any D.
 
     Parameters
@@ -307,7 +342,7 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
         n = x.size
         ix = np.array(ix)
         ix_shape = ix.shape
-        ix = ix.flatten('F')
+        ix = ix.flatten("F")
 
         mx = np.array(x[0], ndmin=1)
         my = np.array(y[0], ndmin=1)
@@ -324,7 +359,7 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
                 out.append(math.nan)
             else:
                 out.append(interp1(mx, my, ix[i]))
-        out = np.reshape(out, ix_shape, order='F')
+        out = np.reshape(out, ix_shape, order="F")
         return out
 
     # Deal with the input
@@ -355,16 +390,21 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
 
     # Set the search volume.
     if search_volume.shape[1] == 1:
-        radius = (search_volume / (4/3*math.pi)) ** (1/3)
-        search_volume = np.c_[np.ones(radius.shape),
-                              4 * radius,
-                              2 * radius ** 2 * math.pi,
-                              search_volume]
+        radius = (search_volume / (4 / 3 * math.pi)) ** (1 / 3)
+        search_volume = np.c_[
+            np.ones(radius.shape), 4 * radius, 2 * radius ** 2 * math.pi, search_volume
+        ]
 
     if search_volume.shape[0] == 1:
-        search_volume = np.concatenate((search_volume,
-                                        np.concatenate((np.ones((1, 1)), np.zeros((1, search_volume.size-1))), axis=1)),
-                                       axis=0)
+        search_volume = np.concatenate(
+            (
+                search_volume,
+                np.concatenate(
+                    (np.ones((1, 1)), np.zeros((1, search_volume.size - 1))), axis=1
+                ),
+            ),
+            axis=0,
+        )
 
     lsv = search_volume.shape[1]
     if all(fwhm > 0):
@@ -375,7 +415,7 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
         fwhm_inv = np.expand_dims(fwhm_inv, axis=1)
 
     resels = search_volume * fwhm_inv ** np.arange(0, lsv)
-    invol = resels * (4*np.log(2)) ** (np.arange(0, lsv)/2)
+    invol = resels * (4 * np.log(2)) ** (np.arange(0, lsv) / 2)
 
     D = np.sum(invol != 0, axis=1) - 1
 
@@ -405,8 +445,8 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
         df2 = math.inf
     df0 = df1 + df2
 
-    dfw1 = df[1:3, 0].astype('float64')
-    dfw2 = df[1:3, 1].astype('float64')
+    dfw1 = df[1:3, 0].astype("float64")
+    dfw2 = df[1:3, 1].astype("float64")
     dfw1[dfw1 >= 1000] = math.inf
     dfw2[dfw2 >= 1000] = math.inf
     if nvar.size == 1:
@@ -416,60 +456,82 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
         print(D)
         print(nvar)
         print(df2)
-        print('Cannot do scale space.')
+        print("Cannot do scale space.")
         return
     Dlim = D + np.array([scale > 1, 0])
     DD = Dlim + nvar - 1
 
     # Values of the F statistic:
-    t = (np.arange(1000, 0, -1)/100) ** 4
+    t = (np.arange(1000, 0, -1) / 100) ** 4
 
     # Find the upper tail probs cumulating the F density using Simpson's rule:
     if math.isinf(df2):
-        u = df1*t
-        b = np.exp(-u/2-np.log(2*math.pi)/2+np.log(u)/4)*df1**(1/4)*4/100
+        u = df1 * t
+        b = (
+            np.exp(-u / 2 - np.log(2 * math.pi) / 2 + np.log(u) / 4)
+            * df1 ** (1 / 4)
+            * 4
+            / 100
+        )
     else:
-        u = df1*t/df2
-        b = np.exp(-df0/2*np.log(1+u)+np.log(u)/4 -
-                   betaln(1/2, (df0-1)/2))*(df1/df2)**(1/4)*4/100
+        u = df1 * t / df2
+        b = (
+            np.exp(
+                -df0 / 2 * np.log(1 + u) + np.log(u) / 4 - betaln(1 / 2, (df0 - 1) / 2)
+            )
+            * (df1 / df2) ** (1 / 4)
+            * 4
+            / 100
+        )
 
     t = np.r_[t, 0]
     b = np.r_[b, 0]
     n = t.size
     sb = np.cumsum(b)
-    sb1 = np.cumsum(b * (-1) ** np.arange(1, n+1))
-    pt1 = sb + sb1/3 - b/3
-    pt2 = sb - sb1/3 - b/3
-    tau = np.zeros((n, DD[0]+1, DD[1]+1))
+    sb1 = np.cumsum(b * (-1) ** np.arange(1, n + 1))
+    pt1 = sb + sb1 / 3 - b / 3
+    pt2 = sb - sb1 / 3 - b / 3
+    tau = np.zeros((n, DD[0] + 1, DD[1] + 1))
     tau[0:n:2, 0, 0] = pt1[0:n:2]
     tau[1:n:2, 0, 0] = pt2[1:n:2]
-    tau[n-1, 0, 0] = 1
+    tau[n - 1, 0, 0] = 1
     tau[tau > 1] = 1
 
     # Find the EC densities:
     u = df1 * t
-    for d in range(1, np.max(DD)+1):
-        e_loop = np.min([np.min(DD), d])+1
+    for d in range(1, np.max(DD) + 1):
+        e_loop = np.min([np.min(DD), d]) + 1
         for e in range(0, e_loop):
             s1 = 0
-            cons = -((d+e)/2+1)*np.log(math.pi)+gammaln(d)+gammaln(e+1)
-            for k in colon(0, (d-1+e)/2):
-                j, i = np.meshgrid(np.arange(0, k+1), np.arange(0, k+1))
+            cons = -((d + e) / 2 + 1) * np.log(math.pi) + gammaln(d) + gammaln(e + 1)
+            for k in colon(0, (d - 1 + e) / 2):
+                j, i = np.meshgrid(np.arange(0, k + 1), np.arange(0, k + 1))
                 if df2 == math.inf:
-                    q1 = np.log(math.pi)/2-((d+e-1)/2+i+j)*np.log(2)
+                    q1 = np.log(math.pi) / 2 - ((d + e - 1) / 2 + i + j) * np.log(2)
                 else:
-                    q1 = (df0-1-d-e)*np.log(2)+gammaln((df0-d)/2+i)+gammaln((df0-e) /
-                                                                            2+j)-gammalni(df0-d-e+i+j+k)-((d+e-1)/2-k)*np.log(df2)
-                q2 = cons-gammalni(i+1)-gammalni(j+1)-gammalni(k-i-j+1) - \
-                    gammalni(d-k-i+j)-gammalni(e-k-j+i+1)
-                s2 = np.sum(np.exp(q1+q2))
+                    q1 = (
+                        (df0 - 1 - d - e) * np.log(2)
+                        + gammaln((df0 - d) / 2 + i)
+                        + gammaln((df0 - e) / 2 + j)
+                        - gammalni(df0 - d - e + i + j + k)
+                        - ((d + e - 1) / 2 - k) * np.log(df2)
+                    )
+                q2 = (
+                    cons
+                    - gammalni(i + 1)
+                    - gammalni(j + 1)
+                    - gammalni(k - i - j + 1)
+                    - gammalni(d - k - i + j)
+                    - gammalni(e - k - j + i + 1)
+                )
+                s2 = np.sum(np.exp(q1 + q2))
                 if s2 > 0:
-                    s1 = s1+(-1)**k*u**((d+e-1)/2-k)*s2
+                    s1 = s1 + (-1) ** k * u ** ((d + e - 1) / 2 - k) * s2
 
             if df2 == math.inf:
-                s1 = s1 * np.exp(-u/2)
+                s1 = s1 * np.exp(-u / 2)
             else:
-                s1 = s1 * np.exp(-(df0-2)/2*np.log(1+u/df2))
+                s1 = s1 * np.exp(-(df0 - 2) / 2 * np.log(1 + u / df2))
 
             if DD[0] >= DD[1]:
                 tau[:, d, e] = s1
@@ -483,74 +545,95 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
     # For multivariate statistics, add a sphere to the search region:
     a = np.zeros((2, np.max(nvar)))
     for k in range(0, 2):
-        j = colon((nvar[k]-1), 0, -2)
-        a[k, j] = np.exp(j*np.log(2)+j/2*np.log(math.pi) +
-                         gammaln((nvar[k]+1)/2)-gammaln((nvar[k]+1-j)/2)-gammaln(j+1))
+        j = colon((nvar[k] - 1), 0, -2)
+        a[k, j] = np.exp(
+            j * np.log(2)
+            + j / 2 * np.log(math.pi)
+            + gammaln((nvar[k] + 1) / 2)
+            - gammaln((nvar[k] + 1 - j) / 2)
+            - gammaln(j + 1)
+        )
 
-    rho = np.zeros((n, Dlim[0]+1, Dlim[1]+1))
+    rho = np.zeros((n, Dlim[0] + 1, Dlim[1] + 1))
 
     for k in range(0, nvar[0]):
         for l in range(0, nvar[1]):
-            rho = rho + a[0, k] * a[1, l] * \
-                tau[:, k:Dlim[0]+k+1, l:Dlim[1]+l+1]
+            rho = (
+                rho
+                + a[0, k] * a[1, l] * tau[:, k : Dlim[0] + k + 1, l : Dlim[1] + l + 1]
+            )
 
     if is_tstat:
         if all(nvar == 1):
-            t = np.r_[np.sqrt(t[0:n-1]), -np.sqrt(t)[::-1]]
-            rho = np.r_[rho[0:n-1, :, :], rho[::-1, :, :]]/2
-            for i in range(0, D[0]+1):
-                for j in range(0, D[1]+1):
-                    rho[n-1+np.arange(0, n), i, j] = - \
-                        (-1)**(i+j)*rho[n-1+np.arange(0, n), i, j]
-            rho[n-1+np.arange(0, n), 0, 0] = rho[n-1+np.arange(0, n), 0, 0] + 1
-            n = 2 * n-1
+            t = np.r_[np.sqrt(t[0 : n - 1]), -np.sqrt(t)[::-1]]
+            rho = np.r_[rho[0 : n - 1, :, :], rho[::-1, :, :]] / 2
+            for i in range(0, D[0] + 1):
+                for j in range(0, D[1] + 1):
+                    rho[n - 1 + np.arange(0, n), i, j] = (
+                        -(-1) ** (i + j) * rho[n - 1 + np.arange(0, n), i, j]
+                    )
+            rho[n - 1 + np.arange(0, n), 0, 0] = rho[n - 1 + np.arange(0, n), 0, 0] + 1
+            n = 2 * n - 1
         else:
             t = np.sqrt(t)
 
     # For scale space.
     if scale > 1:
-        kappa = D[0]/2
-        tau = np.zeros(n, D[0]+1)
-        for d in range(0, D[0]+1):
+        kappa = D[0] / 2
+        tau = np.zeros(n, D[0] + 1)
+        for d in range(0, D[0] + 1):
             s1 = 0
-            for k in range(0, d/2+1):
-                s1 = s1+(-1) ^ k/(1-2*k)*np.exp(gammaln(d+1)-gammaln(k+1)-gammaln(d-2*k+1)
-                                                + (1/2-k)*np.log(kappa)-k*np.log(4*math.pi)) * rho[:, d+1-2*k, 1]
+            for k in range(0, d / 2 + 1):
+                s1 = (
+                    s1 + (-1)
+                    ^ k
+                    / (1 - 2 * k)
+                    * np.exp(
+                        gammaln(d + 1)
+                        - gammaln(k + 1)
+                        - gammaln(d - 2 * k + 1)
+                        + (1 / 2 - k) * np.log(kappa)
+                        - k * np.log(4 * math.pi)
+                    )
+                    * rho[:, d + 1 - 2 * k, 1]
+                )
             if d == 0:
                 cons = np.log(scale)
             else:
-                cons = (1-1/scale**d)/d
-            tau[:, d] = rho[:, d, 1] * (1+1/scale**d) / 2 + s1 * cons
-        rho[:, 0:D[1], 0] = tau
+                cons = (1 - 1 / scale ** d) / d
+            tau[:, d] = rho[:, d, 1] * (1 + 1 / scale ** d) / 2 + s1 * cons
+        rho[:, 0 : D[1], 0] = tau
 
     if D[1] == 0:
         d = D[0]
         if nconj > 1:
             # Conjunctions
-            b = gamma((np.arange(1, d+2)/2)) / gamma(1/2)
-            for i in range(0, d+1):
+            b = gamma((np.arange(1, d + 2) / 2)) / gamma(1 / 2)
+            for i in range(0, d + 1):
                 rho[:, i, 0] = rho[:, i, 0] / b[i]
-            m1 = np.zeros((n, d+1, d+1))
-            for i in range(0, d+1):
-                j = np.arange(i, d+1)
-                m1[:, i, j] = rho[:, j-i, 0]
+            m1 = np.zeros((n, d + 1, d + 1))
+            for i in range(0, d + 1):
+                j = np.arange(i, d + 1)
+                m1[:, i, j] = rho[:, j - i, 0]
             m2 = np.zeros(m1.shape)
-            for _ in range(2, nconj+1):
-                for i in range(0, d+1):
-                    for j in range(0, d+1):
+            for _ in range(2, nconj + 1):
+                for i in range(0, d + 1):
+                    for j in range(0, d + 1):
                         m2[:, i, j] = np.sum(
-                            rho[:, 0:d-i+1, 0] * m1[:, i:d+1, j], axis=1)
+                            rho[:, 0 : d - i + 1, 0] * m1[:, i : d + 1, j], axis=1
+                        )
                 m1 = m2
-            for i in range(0, d+1):
-                rho[:, i, 0] = m1[:, 0, i]*b[i]
+            for i in range(0, d + 1):
+                rho[:, i, 0] = m1[:, 0, i] * b[i]
         if EC_file is not None:
             raise ValueError(
-                'EC File support has not been implemented. We are not living in the 90s anymore.')
+                "EC File support has not been implemented. We are not living in the 90s anymore."
+            )
 
     if all(fwhm > 0):
         pval_rf = np.zeros(n)
-        for i in range(0, D[0]+1):
-            for j in range(0, D[1]+1):
+        for i in range(0, D[0] + 1):
+            for j in range(0, D[1] + 1):
                 pval_rf = pval_rf + invol[0, i] * invol[1, j] * rho[:, i, j]
     else:
         pval_rf = math.inf
@@ -567,8 +650,13 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
             pval = np.minimum(pval_rf, pval_bon)
         if isinstance(pval_rf, np.ndarray) and isinstance(pval_bon, np.ndarray):
             # this will ignore nan values in arrays while finding minimum
-            pval_tmp = np.concatenate((pval_rf.reshape(pval_rf.shape[0], 1),
-                                       pval_bon.reshape(pval_bon.shape[0], 1)), axis=1)
+            pval_tmp = np.concatenate(
+                (
+                    pval_rf.reshape(pval_rf.shape[0], 1),
+                    pval_bon.reshape(pval_bon.shape[0], 1),
+                ),
+                axis=1,
+            )
             pval = np.nanmin(pval_tmp, axis=1)
 
     tlim = 1
@@ -580,16 +668,23 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
         # p_val_peak is treated as peak value
         P_val_peak = interp1(t, pval, p_val_peak)
         i = np.isnan(P_val_peak)
-        P_val_peak[i] = (is_tstat and (p_val_peak[i] < 0))
+        P_val_peak[i] = is_tstat and (p_val_peak[i] < 0)
         peak_threshold = P_val_peak
         if p_val_peak.size <= nprint:
             print(P_val_peak)
 
     if np.all(fwhm <= 0) or np.any(num_voxels < 0):
-        peak_threshold_1 = p_val_peak + float('nan')
-        extent_threshold = p_val_extent + float('nan')
-        extent_threshold_1 = extent_threshold + float('nan')
-        return peak_threshold, extent_threshold, peak_threshold_1, extent_threshold_1, t, rho
+        peak_threshold_1 = p_val_peak + float("nan")
+        extent_threshold = p_val_extent + float("nan")
+        extent_threshold_1 = extent_threshold + float("nan")
+        return (
+            peak_threshold,
+            extent_threshold,
+            peak_threshold_1,
+            extent_threshold_1,
+            t,
+            rho,
+        )
 
     # Cluster threshold:
 
@@ -613,36 +708,50 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
         # p_val_peak is treated as a peak value
         P_val_peak_1 = interp1(t, pval, p_val_peak)
         i = np.isnan(P_val_peak)
-        P_val_peak_1[i] = (is_tstat and (p_val_peak[i] < 0))
+        P_val_peak_1[i] = is_tstat and (p_val_peak[i] < 0)
         peak_threshold_1 = P_val_peak_1
         if p_val_peak.size <= nprint:
             print(P_val_peak_1)
 
     if d == 0 or nconj > 1 or nvar[0] > 1 or scale > 1:
-        extent_threshold = p_val_extent + float('nan')
+        extent_threshold = p_val_extent + float("nan")
         extent_threshold_1 = extent_threshold
         if p_val_extent.size <= nprint:
             print(extent_threshold)
             print(extent_threshold_1)
-        return peak_threshold, extent_threshold, peak_threshold_1, extent_threshold_1, t, rho
+        return (
+            peak_threshold,
+            extent_threshold,
+            peak_threshold_1,
+            extent_threshold_1,
+            t,
+            rho,
+        )
 
     # Expected number of clusters
     EL = invol[0, D[0]] * invol[1, D[1]] * rhoD
-    cons = gamma(d/2+1)*(4*np.log(2))**(d/2)/fwhm[0]**D[0]/fwhm[1]**D[1]*rhoD/p
+    cons = (
+        gamma(d / 2 + 1)
+        * (4 * np.log(2)) ** (d / 2)
+        / fwhm[0] ** D[0]
+        / fwhm[1] ** D[1]
+        * rhoD
+        / p
+    )
 
     if df2 == math.inf and dfw1[0] == math.inf and dfw1[1] == math.inf:
         if p_val_extent.flatten()[0] <= tlim:
-            pS = -np.log(1-p_val_extent)/EL
-            extent_threshold = (-np.log(pS))**(d/2)/cons
-            pS = -np.log(1-p_val_extent)
-            extent_threshold_1 = (-np.log(pS))**(d/2)/cons
+            pS = -np.log(1 - p_val_extent) / EL
+            extent_threshold = (-np.log(pS)) ** (d / 2) / cons
+            pS = -np.log(1 - p_val_extent)
+            extent_threshold_1 = (-np.log(pS)) ** (d / 2) / cons
             if p_val_extent.size <= nprint:
                 print(extent_threshold)
                 print(extent_threshold_1)
         else:
             # p_val_extent is now treated as a spatial extent:
-            pS = np.exp(-(p_val_extent*cons)**(2/d))
-            P_val_extent = 1 - np.exp(-pS*EL)
+            pS = np.exp(-(p_val_extent * cons) ** (2 / d))
+            P_val_extent = 1 - np.exp(-pS * EL)
             extent_threshold = P_val_extent
             P_val_extent_1 = 1 - np.exp(-pS)
             extent_threshold_1 = P_val_extent_1
@@ -651,113 +760,139 @@ def stat_threshold(search_volume=0, num_voxels=1, fwhm=0.0, df=math.inf,
                 print(P_val_extent_1)
     else:
         # Find dbn of S by taking logs then using fft for convolution:
-        ny = 2**12
-        a = d/2
-        b2 = a * 10 * np.max([np.sqrt(2/(np.min([df1+df2, np.min(dfw1)]))), 1])
+        ny = 2 ** 12
+        a = d / 2
+        b2 = a * 10 * np.max([np.sqrt(2 / (np.min([df1 + df2, np.min(dfw1)]))), 1])
         if df2 < math.inf:
-            b1 = a * np.log((1-(1-0.000001)**(2/(df2-d)))*df2/2)
+            b1 = a * np.log((1 - (1 - 0.000001) ** (2 / (df2 - d))) * df2 / 2)
         else:
-            b1 = a * np.log(-np.log(1-0.000001))
+            b1 = a * np.log(-np.log(1 - 0.000001))
 
-        dy = (b2-b1)/ny
-        b1 = round(b1/dy)*dy
+        dy = (b2 - b1) / ny
+        b1 = round(b1 / dy) * dy
         y = np.arange(0, ny) * dy + b1
-        numrv = (1+(d+(D[0] > 0)+(D[1] > 0))*(df2 < math.inf) +
-                 (D[0]*(dfw1[0] < math.inf)+(dfw2[0] < math.inf))*(D[0] > 0) +
-                 (D[1]*(dfw1[1] < math.inf)+(dfw2[1] < math.inf))*(D[1] > 0))
+        numrv = (
+            1
+            + (d + (D[0] > 0) + (D[1] > 0)) * (df2 < math.inf)
+            + (D[0] * (dfw1[0] < math.inf) + (dfw2[0] < math.inf)) * (D[0] > 0)
+            + (D[1] * (dfw1[1] < math.inf) + (dfw2[1] < math.inf)) * (D[1] > 0)
+        )
         f = np.zeros((ny, numrv))
         if f.ndim == 1:
             f = np.expand_dims(f, axis=1)
         mu = np.zeros(numrv)
         if df2 < math.inf:
             # Density of log(Beta(1,(df2-d)/2)^(d/2)):
-            yy = np.exp(y/a)/df2*2
-            yy = yy*(yy < 1)
-            f[:, 0] = (1-yy) ** ((df2-d)/2-1) * ((df2-d)/2) * yy / a
-            mu[0] = np.exp(gammaln(a+1)+gammaln((df2-d+2)/2) -
-                           gammaln((df2+2)/2)+a*np.log(df2/2))
+            yy = np.exp(y / a) / df2 * 2
+            yy = yy * (yy < 1)
+            f[:, 0] = (1 - yy) ** ((df2 - d) / 2 - 1) * ((df2 - d) / 2) * yy / a
+            mu[0] = np.exp(
+                gammaln(a + 1)
+                + gammaln((df2 - d + 2) / 2)
+                - gammaln((df2 + 2) / 2)
+                + a * np.log(df2 / 2)
+            )
         else:
             # Density of log(exp(1)^(d/2)):
             yy = np.exp(y / a)
             f[:, 0] = np.exp(-yy) * yy / a
-            mu[0] = np.exp(gammaln(a+1))
+            mu[0] = np.exp(gammaln(a + 1))
 
         nuv = np.array([])
         aav = np.array([])
         if df2 < math.inf:
-            nuv = df2+2-np.arange(1, d+1)
-            aav = np.ones((1, d))*(-1/2)
+            nuv = df2 + 2 - np.arange(1, d + 1)
+            aav = np.ones((1, d)) * (-1 / 2)
             for k in range(0, 2):
                 if D[k] > 0:
-                    nuv = np.append(df1+df2-D[k], nuv)
-                    aav = np.append(D[k]/2, aav)
+                    nuv = np.append(df1 + df2 - D[k], nuv)
+                    aav = np.append(D[k] / 2, aav)
 
         for k in range(0, 2):
             if dfw1[k] < math.inf and D[k] > 0:
                 if dfw1[k] > df_limit:
                     nuv = np.append(
-                        nuv, dfw1[k]-dfw1[k]/dfw2[k]-np.arange(0, D[k]))
+                        nuv, dfw1[k] - dfw1[k] / dfw2[k] - np.arange(0, D[k])
+                    )
                 else:
                     nuv = np.append(
-                        nuv, (dfw1[k] - dfw1[k]/dfw2[k]) * np.ones((1, D[k])))
-                aav = np.append(aav, (1/2) * np.ones((1, D[k])))
+                        nuv, (dfw1[k] - dfw1[k] / dfw2[k]) * np.ones((1, D[k]))
+                    )
+                aav = np.append(aav, (1 / 2) * np.ones((1, D[k])))
             if dfw2[k] < math.inf:
                 nuv = np.append(nuv, dfw2[k])
-                aav = np.append(aav, -D[k]/2)
+                aav = np.append(aav, -D[k] / 2)
 
-        for i in range(0, numrv-1):
+        for i in range(0, numrv - 1):
             nu = nuv[i]
             aa = aav[i]
             yy = y / aa + np.log(nu)
             # Density of log((chi^2_nu/nu)^aa):
-            f[:, i+1] = np.exp(nu/2*yy-np.exp(yy)/2-(nu/2)
-                               * np.log(2)-gammaln(nu/2))/abs(aa)
-            mu[i+1] = np.exp(gammaln(nu/2+aa)-gammaln(nu/2)-aa*np.log(nu/2))
+            f[:, i + 1] = np.exp(
+                nu / 2 * yy - np.exp(yy) / 2 - (nu / 2) * np.log(2) - gammaln(nu / 2)
+            ) / abs(aa)
+            mu[i + 1] = np.exp(
+                gammaln(nu / 2 + aa) - gammaln(nu / 2) - aa * np.log(nu / 2)
+            )
 
         # Check: plot(y,f); sum(f*dy,1) should be 1
 
-        omega = 2*math.pi*np.arange(0, ny)/ny/dy
-        shift = (np.cos(-b1*omega) + np.sin(-b1*omega)*1j) * dy
-        prodfft = np.prod(np.fft.fft(f, axis=0), axis=1) * shift ** (numrv-1)
+        omega = 2 * math.pi * np.arange(0, ny) / ny / dy
+        shift = (np.cos(-b1 * omega) + np.sin(-b1 * omega) * 1j) * dy
+        prodfft = np.prod(np.fft.fft(f, axis=0), axis=1) * shift ** (numrv - 1)
 
         # Density of Y=log(B^(d/2)*U^(d/2)/sqrt(det(Q)))
         ff = np.real(np.fft.ifft(prodfft, axis=0))
         # Check: plot(y,ff); sum(ff*dy) should be 1
         mu0 = np.prod(mu)
         # Check: plot(y,ff.*exp(y)); sum(ff.*exp(y)*dy.*(y<10)) should equal mu0
-        alpha = p/rhoD/mu0*fwhm[0]**D[0]*fwhm[1]**D[1]/(4*np.log(2))**(d/2)
+        alpha = (
+            p
+            / rhoD
+            / mu0
+            * fwhm[0] ** D[0]
+            * fwhm[1] ** D[1]
+            / (4 * np.log(2)) ** (d / 2)
+        )
 
         # Integrate the density to get the p-value for one cluster:
-        pS = np.cumsum(np.flip(ff))*dy
+        pS = np.cumsum(np.flip(ff)) * dy
         pS = np.flip(pS)
 
         # The number of clusters is Poisson with mean EL:
-        pSmax = 1 - np.exp(-pS*EL)
+        pSmax = 1 - np.exp(-pS * EL)
         if p_val_extent.flatten()[0] <= tlim:
             yval = minterp1(-pSmax, y, -p_val_extent)
             # Spaytial extent is alpha*exp(Y) -dy/2 correction for mid-point rule:
-            extent_threshold = alpha * np.exp(yval-dy/2)
+            extent_threshold = alpha * np.exp(yval - dy / 2)
             # For a single cluster:
             yval = minterp1(-pS, y, -p_val_extent)
-            extent_threshold_1 = alpha*np.exp(yval-dy/2)
+            extent_threshold_1 = alpha * np.exp(yval - dy / 2)
             if p_val_extent.size <= nprint:
                 print(extent_threshold)
                 print(extent_threshold_1)
         else:
             # p_val_extent is now treated as a spatial extent:
-            logpval = np.log(p_val_extent/alpha+(p_val_extent <= 0))+dy/2
+            logpval = np.log(p_val_extent / alpha + (p_val_extent <= 0)) + dy / 2
             P_val_extent = interp1(y, pSmax, logpval)
-            extent_threshold = P_val_extent * \
-                (p_val_extent > 0)+(p_val_extent <= 0)
+            extent_threshold = P_val_extent * (p_val_extent > 0) + (p_val_extent <= 0)
             # For a single cluster:
             P_val_extent_1 = interp1(y, pS, logpval)
-            extent_threshold_1 = P_val_extent_1 * \
-                (p_val_extent > 0)+(p_val_extent <= 0)
+            extent_threshold_1 = P_val_extent_1 * (p_val_extent > 0) + (
+                p_val_extent <= 0
+            )
             if p_val_extent.size <= nprint:
                 print(P_val_extent)
                 print(P_val_extent_1)
 
-    return peak_threshold, extent_threshold, peak_threshold_1, extent_threshold_1, t, rho
+    return (
+        peak_threshold,
+        extent_threshold,
+        peak_threshold_1,
+        extent_threshold_1,
+        t,
+        rho,
+    )
 
 
 def peak_clus(slm, mask, thresh, reselspvert=None, edg=None):
@@ -813,8 +948,8 @@ def peak_clus(slm, mask, thresh, reselspvert=None, edg=None):
     if edg is None:
         edg = mesh_edges(slm)
 
-    l, v = np.shape(slm['t'])
-    slm_t = copy.deepcopy(slm['t'])
+    l, v = np.shape(slm["t"])
+    slm_t = copy.deepcopy(slm["t"])
     slm_t[0, ~mask.astype(bool)] = slm_t[0, :].min()
     t1 = slm_t[0, edg[:, 0]]
     t2 = slm_t[0, edg[:, 1]]
@@ -833,28 +968,27 @@ def peak_clus(slm, mask, thresh, reselspvert=None, edg=None):
 
     voxid = np.cumsum(excurset)
     edg = voxid[edg[np.all(excurset[edg], 1), :]]
-    nf = np.arange(1, n+1)
+    nf = np.arange(1, n + 1)
 
     # Find cluster id's in nf (from Numerical Recipes in C, page 346):
-    for el in range(1, edg.shape[0]+1):
-        j = edg[el-1, 0]
-        k = edg[el-1, 1]
-        while nf[j-1] != j:
-            j = nf[j-1]
-        while nf[k-1] != k:
-            k = nf[k-1]
+    for el in range(1, edg.shape[0] + 1):
+        j = edg[el - 1, 0]
+        k = edg[el - 1, 1]
+        while nf[j - 1] != j:
+            j = nf[j - 1]
+        while nf[k - 1] != k:
+            k = nf[k - 1]
         if j != k:
-            nf[j-1] = k
+            nf[j - 1] = k
 
-    for j in range(1, n+1):
-        while nf[j-1] != nf[nf[j-1]-1]:
-            nf[j-1] = nf[nf[j-1]-1]
+    for j in range(1, n + 1):
+        while nf[j - 1] != nf[nf[j - 1] - 1]:
+            nf[j - 1] = nf[nf[j - 1] - 1]
 
     vox = np.argwhere(excurset) + 1
     ivox = np.argwhere(np.in1d(vox, lmvox)) + 1
-    clmid = nf[ivox-1]
-    uclmid, iclmid, jclmid = np.unique(clmid,
-                                       return_index=True, return_inverse=True)
+    clmid = nf[ivox - 1]
+    uclmid, iclmid, jclmid = np.unique(clmid, return_index=True, return_inverse=True)
     iclmid = iclmid + 1
     jclmid = jclmid + 1
     ucid = np.unique(nf)
@@ -866,39 +1000,49 @@ def peak_clus(slm, mask, thresh, reselspvert=None, edg=None):
     if reselspvert is None:
         reselsvox = np.ones(np.shape(vox))
     else:
-        reselsvox = reselspvert[vox-1]
+        reselsvox = reselspvert[vox - 1]
 
     # calling matlab-python version for scipy's interp1d
-    nf1 = interp1(np.append(0, ucid), np.arange(0, nclus+1), nf,
-                  kind='nearest')
+    nf1 = interp1(np.append(0, ucid), np.arange(0, nclus + 1), nf, kind="nearest")
 
     # if k>1, find volume of cluster in added sphere
-    if 'k' not in slm or slm['k'] == 1:
+    if "k" not in slm or slm["k"] == 1:
         ucrsl = np.bincount(nf1.astype(int), reselsvox.flatten())
-    if 'k' in slm and slm['k'] == 2:
+    if "k" in slm and slm["k"] == 2:
         if l == 1:
-            ndf = len(np.array([slm['df']]))
-            r = 2 * np.arccos((thresh / slm_t[0, vox-1])**(float(1)/ndf))
+            ndf = len(np.array([slm["df"]]))
+            r = 2 * np.arccos((thresh / slm_t[0, vox - 1]) ** (float(1) / ndf))
         else:
-            r = 2 * np.arccos(np.sqrt((thresh - slm_t[1, vox-1]) *
-                                      (thresh >= slm_t[1, vox-1]) /
-                                      (slm_t[0, vox-1] - slm_t[1, vox-1])))
+            r = 2 * np.arccos(
+                np.sqrt(
+                    (thresh - slm_t[1, vox - 1])
+                    * (thresh >= slm_t[1, vox - 1])
+                    / (slm_t[0, vox - 1] - slm_t[1, vox - 1])
+                )
+            )
         ucrsl = np.bincount(nf1.astype(int), (r.T * reselsvox.T).flatten())
-    if 'k' in slm and slm['k'] == 3:
+    if "k" in slm and slm["k"] == 3:
         if l == 1:
-            ndf = len(np.array([slm['df']]))
-            r = 2 * math.pi * (1 - (thresh / slm_t[0, vox-1]) **
-                               (float(1)/ndf))
+            ndf = len(np.array([slm["df"]]))
+            r = 2 * math.pi * (1 - (thresh / slm_t[0, vox - 1]) ** (float(1) / ndf))
         else:
             nt = 20
-            theta = (np.arange(1, nt+1, 1) - 1/2) / nt * math.pi / 2
-            s = (np.cos(theta)**2 * slm_t[1, vox-1]).T
+            theta = (np.arange(1, nt + 1, 1) - 1 / 2) / nt * math.pi / 2
+            s = (np.cos(theta) ** 2 * slm_t[1, vox - 1]).T
             if l == 3:
-                s = s + ((np.sin(theta)**2) * slm_t[2, vox-1]).T
-            r = 2 * math.pi * (1 - np.sqrt((thresh-s)*(thresh >= s) /
-                                           (np.ones((nt, 1)) *
-                                            slm_t[0, vox-1].T -
-                                            s))).mean(axis=0)
+                s = s + ((np.sin(theta) ** 2) * slm_t[2, vox - 1]).T
+            r = (
+                2
+                * math.pi
+                * (
+                    1
+                    - np.sqrt(
+                        (thresh - s)
+                        * (thresh >= s)
+                        / (np.ones((nt, 1)) * slm_t[0, vox - 1].T - s)
+                    )
+                ).mean(axis=0)
+            )
         ucrsl = np.bincount(nf1.astype(int), (r.T * reselsvox.T).flatten())
 
     # and their ranks (in ascending order)
@@ -908,28 +1052,35 @@ def peak_clus(slm, mask, thresh, reselspvert=None, edg=None):
 
     lmid = lmvox[ismember(lmvox, vox)[0]]
 
-    varA = slm_t[0, (lmid-1)]
+    varA = slm_t[0, (lmid - 1)]
     varB = lmid
-    varC = rankrsl[0, jclmid-1]
-    varALL = np.concatenate((varA.reshape(len(varA), 1),
-                             varB.reshape(len(varB), 1),
-                             varC.reshape(len(varC), 1)), axis=1)
-    lm = np.flipud(varALL[varALL[:, 0].argsort(), ])
-    varNEW = np.concatenate((rankrsl.T, ucvol.reshape(len(ucvol), 1),
-                             ucrsl.reshape(len(ucrsl), 1)[1:]), axis=1)
-    cl = varNEW[varNEW[:, 0].argsort(), ]
+    varC = rankrsl[0, jclmid - 1]
+    varALL = np.concatenate(
+        (
+            varA.reshape(len(varA), 1),
+            varB.reshape(len(varB), 1),
+            varC.reshape(len(varC), 1),
+        ),
+        axis=1,
+    )
+    lm = np.flipud(varALL[varALL[:, 0].argsort(),])
+    varNEW = np.concatenate(
+        (rankrsl.T, ucvol.reshape(len(ucvol), 1), ucrsl.reshape(len(ucrsl), 1)[1:]),
+        axis=1,
+    )
+    cl = varNEW[varNEW[:, 0].argsort(),]
     clusid = np.zeros((1, v))
-    clusid[0, (vox-1).T] = interp1(np.append(0, ucid),
-                                   np.append(0, rankrsl), nf,
-                                   kind='nearest')
+    clusid[0, (vox - 1).T] = interp1(
+        np.append(0, ucid), np.append(0, rankrsl), nf, kind="nearest"
+    )
     peak = {}
-    peak['t'] = lm[:, 0].reshape(len(lm[:, 0]), 1)
-    peak['vertid'] = lm[:, 1].reshape(len(lm[:, 1]), 1)
-    peak['clusid'] = lm[:, 2].reshape(len(lm[:, 2]), 1)
+    peak["t"] = lm[:, 0].reshape(len(lm[:, 0]), 1)
+    peak["vertid"] = lm[:, 1].reshape(len(lm[:, 1]), 1)
+    peak["clusid"] = lm[:, 2].reshape(len(lm[:, 2]), 1)
     clus = {}
-    clus['clusid'] = cl[:, 0].reshape(len(cl[:, 0]), 1)
-    clus['nverts'] = cl[:, 1].reshape(len(cl[:, 1]), 1)
-    clus['resels'] = cl[:, 2] .reshape(len(cl[:, 2]), 1)
+    clus["clusid"] = cl[:, 0].reshape(len(cl[:, 0]), 1)
+    clus["nverts"] = cl[:, 1].reshape(len(cl[:, 1]), 1)
+    clus["resels"] = cl[:, 2].reshape(len(cl[:, 2]), 1)
 
     return peak, clus, clusid
 
@@ -965,19 +1116,20 @@ def compute_resels(slm, mask=None):
     def pacos(x):
         return np.arccos(np.minimum(np.abs(x), 1) * np.sign(x))
 
-    if 'tri' in slm:
+    if "tri" in slm:
         # Get unique edges. Subtract 1 from edges to conform to Python's
         # counting from 0 - RV
-        tri = np.sort(slm['tri'])-1
-        edg = np.unique(np.vstack((tri[:, (0, 1)], tri[:, (0, 2)],
-                                   tri[:, (1, 2)])), axis=0)
+        tri = np.sort(slm["tri"]) - 1
+        edg = np.unique(
+            np.vstack((tri[:, (0, 1)], tri[:, (0, 2)], tri[:, (1, 2)])), axis=0
+        )
 
         # If no mask is provided, create one with all included vertices set to
         # 1. If mask is provided, simply grab the number of vertices from mask.
         if mask is None:
-            v = np.amax(edg)+1
+            v = np.amax(edg) + 1
             mask = np.full(v, False)
-            mask[edg-1] = True
+            mask[edg - 1] = True
         else:
             # if np.ndim(mask) > 1:
             #    mask = np.squeeze(mask)
@@ -987,7 +1139,7 @@ def compute_resels(slm, mask=None):
 
         # Compute the Lipschitz–Killing curvatures (LKC)
         m = np.sum(mask)
-        if 'resl' in slm:
+        if "resl" in slm:
             lkc = np.zeros((3, 3))
         else:
             lkc = np.zeros((1, 3))
@@ -997,8 +1149,8 @@ def compute_resels(slm, mask=None):
         maskedg = np.all(mask[edg], axis=1)
         lkc[0, 1] = np.sum(maskedg)
 
-        if 'resl' in slm:
-            r1 = np.mean(np.sqrt(slm['resl'][maskedg, :]), axis=1)
+        if "resl" in slm:
+            r1 = np.mean(np.sqrt(slm["resl"][maskedg, :]), axis=1)
             lkc[1, 1] = np.sum(r1)
         # LKC of triangles
         # Made an adjustment from the MATLAB implementation:
@@ -1007,186 +1159,282 @@ def compute_resels(slm, mask=None):
         # defined during the computation of reselspvert. - RV
         masktri = np.all(mask[tri], 1)
         lkc[0, 2] = np.sum(masktri)
-        if 'resl' in slm:
+        if "resl" in slm:
             loc = row_ismember(tri[masktri, :][:, [0, 1]], edg)
-            l12 = slm['resl'][loc, :]
+            l12 = slm["resl"][loc, :]
             loc = row_ismember(tri[masktri, :][:, [0, 2]], edg)
-            l13 = slm['resl'][loc, :]
+            l13 = slm["resl"][loc, :]
             loc = row_ismember(tri[masktri, :][:, [1, 2]], edg)
-            l23 = slm['resl'][loc, :]
-            a = np.fmax(4*l12*l13-(l12+l13-l23)**2, 0)
-            r2 = np.mean(np.sqrt(a), axis=1)/4
-            lkc[1, 2] = np.sum(np.mean(np.sqrt(l12) +
-                                       np.sqrt(l13)+np.sqrt(l23), axis=1))/2
+            l23 = slm["resl"][loc, :]
+            a = np.fmax(4 * l12 * l13 - (l12 + l13 - l23) ** 2, 0)
+            r2 = np.mean(np.sqrt(a), axis=1) / 4
+            lkc[1, 2] = (
+                np.sum(np.mean(np.sqrt(l12) + np.sqrt(l13) + np.sqrt(l23), axis=1)) / 2
+            )
             lkc[2, 2] = np.nansum(r2, axis=0)
 
             # Compute resels per mask vertex
             reselspvert = np.zeros(v)
             for j in range(0, 3):
-                reselspvert = reselspvert + \
-                    np.bincount(tri[masktri, j], weights=r2, minlength=v)
+                reselspvert = reselspvert + np.bincount(
+                    tri[masktri, j], weights=r2, minlength=v
+                )
             D = 2
-            reselspvert = reselspvert / (D+1) / np.sqrt(4*np.log(2)) ** D
+            reselspvert = reselspvert / (D + 1) / np.sqrt(4 * np.log(2)) ** D
         else:
             reselspvert = None
 
-    if 'lat' in slm:
+    if "lat" in slm:
         edg = mesh_edges(slm)
         # The lattice is filled with 5 alternating tetrahedra per cube
-        I, J, K = np.shape(slm['lat'])
-        IJ = I*J
-        i, j = np.meshgrid(range(1, I+1), range(1, J+1))
+        I, J, K = np.shape(slm["lat"])
+        IJ = I * J
+        i, j = np.meshgrid(range(1, I + 1), range(1, J + 1))
         i = np.squeeze(np.reshape(i, (-1, 1)))
         j = np.squeeze(np.reshape(j, (-1, 1)))
 
-        c1 = np.argwhere((((i+j) % 2) == 0) & (i < I) & (j < J))
-        c2 = np.argwhere((((i+j) % 2) == 0) & (i > 1) & (j < J))
-        c11 = np.argwhere((((i+j) % 2) == 0) & (i == I) & (j < J))
-        c21 = np.argwhere((((i+j) % 2) == 0) & (i == I) & (j > 1))
-        c12 = np.argwhere((((i+j) % 2) == 0) & (i < I) & (j == J))
-        c22 = np.argwhere((((i+j) % 2) == 0) & (i > 1) & (j == J))
+        c1 = np.argwhere((((i + j) % 2) == 0) & (i < I) & (j < J))
+        c2 = np.argwhere((((i + j) % 2) == 0) & (i > 1) & (j < J))
+        c11 = np.argwhere((((i + j) % 2) == 0) & (i == I) & (j < J))
+        c21 = np.argwhere((((i + j) % 2) == 0) & (i == I) & (j > 1))
+        c12 = np.argwhere((((i + j) % 2) == 0) & (i < I) & (j == J))
+        c22 = np.argwhere((((i + j) % 2) == 0) & (i > 1) & (j == J))
 
         # outcome is 1 lower than MATLAB due to 0-1 counting difference. - RV
-        d1 = np.argwhere((((i+j) % 2) == 1) & (i < I) & (j < J))+IJ
-        d2 = np.argwhere((((i+j) % 2) == 1) & (i > 1) & (j < J))+IJ
+        d1 = np.argwhere((((i + j) % 2) == 1) & (i < I) & (j < J)) + IJ
+        d2 = np.argwhere((((i + j) % 2) == 1) & (i > 1) & (j < J)) + IJ
 
-        tri1 = cat((
-            cat((c1, c1+1, c1+1+I), axis=1),
-            cat((c1, c1+I, c1+1+I), axis=1),
-            cat((c2-1, c2, c2-1+I), axis=1),
-            cat((c2, c2-1+I, c2+I), axis=1)),
-            axis=0)
-        tri2 = cat((
-            cat((c1,    c1+1,    c1+1+IJ), axis=1),
-            cat((c1,    c1+IJ,   c1+1+IJ), axis=1),
-            cat((c1,    c1+I,    c1+I+IJ), axis=1),
-            cat((c1,     c1+IJ,   c1+I+IJ), axis=1),
-            cat((c1,     c1+1+I,  c1+1+IJ), axis=1),
-            cat((c1,     c1+1+I,  c1+I+IJ), axis=1),
-            cat((c1,     c1+1+IJ, c1+I+IJ), axis=1),
-            cat((c1+1+I, c1+1+IJ, c1+I+IJ), axis=1),
-            cat((c2-1,   c2,      c2-1+IJ), axis=1),
-            cat((c2,     c2-1+IJ, c2+IJ), axis=1),
-            cat((c2-1,   c2-1+I,  c2-1+IJ), axis=1),
-            cat((c2-1+I, c2-1+IJ, c2-1+I+IJ), axis=1),
-            cat((c2,     c2-1+I,  c2+I+IJ), axis=1),
-            cat((c2,     c2-1+IJ, c2+I+IJ), axis=1),
-            cat((c2,     c2-1+I,  c2-1+IJ), axis=1),
-            cat((c2-1+I, c2-1+IJ, c2+I+IJ), axis=1),
-            cat((c11,    c11+I,    c11+I+IJ), axis=1),
-            cat((c11,    c11+IJ,   c11+I+IJ), axis=1),
-            cat((c21-I,  c21,      c21-I+IJ), axis=1),
-            cat((c21,    c21-I+IJ, c21+IJ), axis=1),
-            cat((c12,    c12+1,    c12+1+IJ), axis=1),
-            cat((c12,    c12+IJ,   c12+1+IJ), axis=1),
-            cat((c22-1,  c22,      c22-1+IJ), axis=1),
-            cat((c22,    c22-1+IJ, c22+IJ), axis=1)),
-            axis=0)
-        tri3 = cat((
-            cat((d1,     d1+1,    d1+1+I), axis=1),
-            cat((d1,     d1+I,    d1+1+I), axis=1),
-            cat((d2-1,   d2,      d2-1+I), axis=1),
-            cat((d2,     d2-1+I,  d2+I), axis=1)),
-            axis=0)
-        tet1 = cat((
-            cat((c1,     c1+1,    c1+1+I,    c1+1+IJ), axis=1),
-            cat((c1,     c1+I,    c1+1+I,    c1+I+IJ), axis=1),
-            cat((c1,     c1+1+I,  c1+1+IJ,   c1+I+IJ), axis=1),
-            cat((c1,     c1+IJ,   c1+1+IJ,   c1+I+IJ), axis=1),
-            cat((c1+1+I, c1+1+IJ, c1+I+IJ,   c1+1+I+IJ), axis=1),
-            cat((c2-1,   c2,      c2-1+I,    c2-1+IJ), axis=1),
-            cat((c2,     c2-1+I,  c2+I,      c2+I+IJ), axis=1),
-            cat((c2,     c2-1+I,  c2-1+IJ,   c2+I+IJ), axis=1),
-            cat((c2,     c2-1+IJ, c2+IJ,     c2+I+IJ), axis=1),
-            cat((c2-1+I, c2-1+IJ, c2-1+I+IJ, c2+I+IJ), axis=1)),
-            axis=0)
+        tri1 = cat(
+            (
+                cat((c1, c1 + 1, c1 + 1 + I), axis=1),
+                cat((c1, c1 + I, c1 + 1 + I), axis=1),
+                cat((c2 - 1, c2, c2 - 1 + I), axis=1),
+                cat((c2, c2 - 1 + I, c2 + I), axis=1),
+            ),
+            axis=0,
+        )
+        tri2 = cat(
+            (
+                cat((c1, c1 + 1, c1 + 1 + IJ), axis=1),
+                cat((c1, c1 + IJ, c1 + 1 + IJ), axis=1),
+                cat((c1, c1 + I, c1 + I + IJ), axis=1),
+                cat((c1, c1 + IJ, c1 + I + IJ), axis=1),
+                cat((c1, c1 + 1 + I, c1 + 1 + IJ), axis=1),
+                cat((c1, c1 + 1 + I, c1 + I + IJ), axis=1),
+                cat((c1, c1 + 1 + IJ, c1 + I + IJ), axis=1),
+                cat((c1 + 1 + I, c1 + 1 + IJ, c1 + I + IJ), axis=1),
+                cat((c2 - 1, c2, c2 - 1 + IJ), axis=1),
+                cat((c2, c2 - 1 + IJ, c2 + IJ), axis=1),
+                cat((c2 - 1, c2 - 1 + I, c2 - 1 + IJ), axis=1),
+                cat((c2 - 1 + I, c2 - 1 + IJ, c2 - 1 + I + IJ), axis=1),
+                cat((c2, c2 - 1 + I, c2 + I + IJ), axis=1),
+                cat((c2, c2 - 1 + IJ, c2 + I + IJ), axis=1),
+                cat((c2, c2 - 1 + I, c2 - 1 + IJ), axis=1),
+                cat((c2 - 1 + I, c2 - 1 + IJ, c2 + I + IJ), axis=1),
+                cat((c11, c11 + I, c11 + I + IJ), axis=1),
+                cat((c11, c11 + IJ, c11 + I + IJ), axis=1),
+                cat((c21 - I, c21, c21 - I + IJ), axis=1),
+                cat((c21, c21 - I + IJ, c21 + IJ), axis=1),
+                cat((c12, c12 + 1, c12 + 1 + IJ), axis=1),
+                cat((c12, c12 + IJ, c12 + 1 + IJ), axis=1),
+                cat((c22 - 1, c22, c22 - 1 + IJ), axis=1),
+                cat((c22, c22 - 1 + IJ, c22 + IJ), axis=1),
+            ),
+            axis=0,
+        )
+        tri3 = cat(
+            (
+                cat((d1, d1 + 1, d1 + 1 + I), axis=1),
+                cat((d1, d1 + I, d1 + 1 + I), axis=1),
+                cat((d2 - 1, d2, d2 - 1 + I), axis=1),
+                cat((d2, d2 - 1 + I, d2 + I), axis=1),
+            ),
+            axis=0,
+        )
+        tet1 = cat(
+            (
+                cat((c1, c1 + 1, c1 + 1 + I, c1 + 1 + IJ), axis=1),
+                cat((c1, c1 + I, c1 + 1 + I, c1 + I + IJ), axis=1),
+                cat((c1, c1 + 1 + I, c1 + 1 + IJ, c1 + I + IJ), axis=1),
+                cat((c1, c1 + IJ, c1 + 1 + IJ, c1 + I + IJ), axis=1),
+                cat((c1 + 1 + I, c1 + 1 + IJ, c1 + I + IJ, c1 + 1 + I + IJ), axis=1),
+                cat((c2 - 1, c2, c2 - 1 + I, c2 - 1 + IJ), axis=1),
+                cat((c2, c2 - 1 + I, c2 + I, c2 + I + IJ), axis=1),
+                cat((c2, c2 - 1 + I, c2 - 1 + IJ, c2 + I + IJ), axis=1),
+                cat((c2, c2 - 1 + IJ, c2 + IJ, c2 + I + IJ), axis=1),
+                cat((c2 - 1 + I, c2 - 1 + IJ, c2 - 1 + I + IJ, c2 + I + IJ), axis=1),
+            ),
+            axis=0,
+        )
 
-        v = np.int(np.round(np.sum(slm['lat'])))
+        v = np.int(np.round(np.sum(slm["lat"])))
         if mask is None:
             mask = np.ones(v, dtype=bool)
 
         reselspvert = np.zeros(v)
-        vs = np.cumsum(np.squeeze(np.sum(np.sum(slm['lat'], axis=0), axis=0)))
-        vs = cat((np.zeros(1), vs, np.expand_dims(vs[K-1], axis=0)), axis=0)
+        vs = np.cumsum(np.squeeze(np.sum(np.sum(slm["lat"], axis=0), axis=0)))
+        vs = cat((np.zeros(1), vs, np.expand_dims(vs[K - 1], axis=0)), axis=0)
         vs = vs.astype(int)
         es = 0
         lat = np.zeros((I, J, 2))
-        lat[:, :, 0] = slm['lat'][:, :, 0]
+        lat[:, :, 0] = slm["lat"][:, :, 0]
         lkc = np.zeros((4, 4))
         for k in range(0, K):
-            f = (k+1) % 2
-            if k < (K-1):
-                lat[:, :, f] = slm['lat'][:, :, k+1]
+            f = (k + 1) % 2
+            if k < (K - 1):
+                lat[:, :, f] = slm["lat"][:, :, k + 1]
             else:
                 lat[:, :, f] = np.zeros((I, J))
-            vid = (np.cumsum(lat.flatten('F')) *
-                   np.reshape(lat.T, -1)).astype(int)
+            vid = (np.cumsum(lat.flatten("F")) * np.reshape(lat.T, -1)).astype(int)
             if f:
-                edg1 = edg[np.logical_and(edg[:, 0] > (vs[k]-1),
-                                          edg[:, 0] <= (vs[k+1]-1)), :]-vs[k]
-                edg2 = edg[np.logical_and(edg[:, 0] > (vs[k]-1),
-                                          edg[:, 1] <= (vs[k+2]-1)), :]-vs[k]
+                edg1 = (
+                    edg[
+                        np.logical_and(
+                            edg[:, 0] > (vs[k] - 1), edg[:, 0] <= (vs[k + 1] - 1)
+                        ),
+                        :,
+                    ]
+                    - vs[k]
+                )
+                edg2 = (
+                    edg[
+                        np.logical_and(
+                            edg[:, 0] > (vs[k] - 1), edg[:, 1] <= (vs[k + 2] - 1)
+                        ),
+                        :,
+                    ]
+                    - vs[k]
+                )
                 # Added a -1 - RV
-                tri = cat((vid[tri1[np.all(np.reshape(lat.flatten('F')[tri1],
-                                                      tri1.shape), 1), :]],
-                           vid[tri2[np.all(np.reshape(lat.flatten('F')[tri2],
-                                                      tri2.shape), 1), :]]),
-                          axis=0)-1
-                mask1 = mask[np.arange(vs[k], vs[k+2])]
+                tri = (
+                    cat(
+                        (
+                            vid[
+                                tri1[
+                                    np.all(
+                                        np.reshape(lat.flatten("F")[tri1], tri1.shape),
+                                        1,
+                                    ),
+                                    :,
+                                ]
+                            ],
+                            vid[
+                                tri2[
+                                    np.all(
+                                        np.reshape(lat.flatten("F")[tri2], tri2.shape),
+                                        1,
+                                    ),
+                                    :,
+                                ]
+                            ],
+                        ),
+                        axis=0,
+                    )
+                    - 1
+                )
+                mask1 = mask[np.arange(vs[k], vs[k + 2])]
             else:
-                edg1 = cat((
-                    edg[np.logical_and(edg[:, 0] > (vs[k]-1), edg[:, 1] <=
-                                       (vs[k+1]-1)), :] - vs[k] + vs[k+2] - vs[k+1],
-                    cat((
-                        np.expand_dims(edg[np.logical_and(edg[:, 0] <=
-                                                          (vs[k+1]-1),
-                                                          edg[:, 1] >
-                                                          (vs[k+1]-1)), 1]
-                                       - vs[k+1], axis=1),
-                        np.expand_dims(edg[np.logical_and(edg[:, 0] <=
-                                                          (vs[k+1]-1),
-                                                          edg[:, 1] >
-                                                          (vs[k+1]-1)), 0]
-                                       - vs[k] + vs[k+2]
-                                       - vs[k+1], axis=1)),
-                        axis=1)),
-                    axis=0)
-                edg2 = cat((edg1, edg[np.logical_and(edg[:, 0] > (vs[k+1]-1),
-                                                     edg[:, 1] <= (vs[k+2]-1)), :] - vs[k+1]), axis=0)
+                edg1 = cat(
+                    (
+                        edg[
+                            np.logical_and(
+                                edg[:, 0] > (vs[k] - 1), edg[:, 1] <= (vs[k + 1] - 1)
+                            ),
+                            :,
+                        ]
+                        - vs[k]
+                        + vs[k + 2]
+                        - vs[k + 1],
+                        cat(
+                            (
+                                np.expand_dims(
+                                    edg[
+                                        np.logical_and(
+                                            edg[:, 0] <= (vs[k + 1] - 1),
+                                            edg[:, 1] > (vs[k + 1] - 1),
+                                        ),
+                                        1,
+                                    ]
+                                    - vs[k + 1],
+                                    axis=1,
+                                ),
+                                np.expand_dims(
+                                    edg[
+                                        np.logical_and(
+                                            edg[:, 0] <= (vs[k + 1] - 1),
+                                            edg[:, 1] > (vs[k + 1] - 1),
+                                        ),
+                                        0,
+                                    ]
+                                    - vs[k]
+                                    + vs[k + 2]
+                                    - vs[k + 1],
+                                    axis=1,
+                                ),
+                            ),
+                            axis=1,
+                        ),
+                    ),
+                    axis=0,
+                )
+                edg2 = cat(
+                    (
+                        edg1,
+                        edg[
+                            np.logical_and(
+                                edg[:, 0] > (vs[k + 1] - 1),
+                                edg[:, 1] <= (vs[k + 2] - 1),
+                            ),
+                            :,
+                        ]
+                        - vs[k + 1],
+                    ),
+                    axis=0,
+                )
                 # Added a -1 - RV
-                tri = cat((vid[tri3[np.all(lat.flatten('F')[tri3], axis=1), :]],
-                           vid[tri2[np.all(lat.flatten('F')[tri2], axis=1), :]]),
-                          axis=0)-1
-                mask1 = cat((
-                    mask[np.arange(vs[k+1], vs[k+2])],
-                    mask[np.arange(vs[k],   vs[k+1])]))
+                tri = (
+                    cat(
+                        (
+                            vid[tri3[np.all(lat.flatten("F")[tri3], axis=1), :]],
+                            vid[tri2[np.all(lat.flatten("F")[tri2], axis=1), :]],
+                        ),
+                        axis=0,
+                    )
+                    - 1
+                )
+                mask1 = cat(
+                    (
+                        mask[np.arange(vs[k + 1], vs[k + 2])],
+                        mask[np.arange(vs[k], vs[k + 1])],
+                    )
+                )
             # Added a -1 -RV
-            tet = vid[tet1[np.all(lat.flatten('F')[tet1], axis=1), :]]-1
+            tet = vid[tet1[np.all(lat.flatten("F")[tet1], axis=1), :]] - 1
             m1 = np.max(edg2[:, 0])
-            ue = edg2[:, 0] + m1 * (edg2[:, 1]-1)
+            ue = edg2[:, 0] + m1 * (edg2[:, 1] - 1)
             e = edg2.shape[0]
             ae = np.arange(0, e)
             if e < 2 ** 31:
-                sparsedg = csr_matrix((ae, (ue, np.zeros(ue.shape, dtype=int))),
-                                      dtype=np.int)
+                sparsedg = csr_matrix(
+                    (ae, (ue, np.zeros(ue.shape, dtype=int))), dtype=np.int
+                )
                 sparsedg.eliminate_zeros()
             ##
             lkc1 = np.zeros((4, 4))
-            lkc1[0, 0] = np.sum(mask[np.arange(vs[k], vs[k+1])])
+            lkc1[0, 0] = np.sum(mask[np.arange(vs[k], vs[k + 1])])
 
             # LKC of edges
             maskedg = np.all(mask1[edg1], axis=1)
 
             lkc1[0, 1] = np.sum(maskedg)
-            if 'resl' in slm:
-                r1 = np.mean(np.sqrt(slm['resl'][np.argwhere(maskedg)+es, :]),
-                             axis=1)
+            if "resl" in slm:
+                r1 = np.mean(np.sqrt(slm["resl"][np.argwhere(maskedg) + es, :]), axis=1)
                 lkc1[1, 1] = np.sum(r1)
 
             # LKC of triangles
             masktri = np.all(mask1[tri], axis=1).flatten()
             lkc1[0, 2] = np.sum(masktri)
-            if 'resl' in slm:
+            if "resl" in slm:
                 if all(masktri == False):
                     # Set these variables to empty arrays to match the MATLAB
                     # implementation.
@@ -1194,23 +1442,66 @@ def compute_resels(slm, mask=None):
                     lkc1[2, 2] = 0
                 else:
                     if e < 2 ** 31:
-                        l12 = slm['resl'][sparsedg[tri[masktri, 0] + m1 *
-                                                   (tri[masktri, 1]-1), 0].toarray() + es, :]
-                        l13 = slm['resl'][sparsedg[tri[masktri, 0] + m1 *
-                                                   (tri[masktri, 2]-1), 0].toarray() + es, :]
-                        l23 = slm['resl'][sparsedg[tri[masktri, 1] + m1 *
-                                                   (tri[masktri, 2]-1), 0].toarray() + es, :]
+                        l12 = slm["resl"][
+                            sparsedg[
+                                tri[masktri, 0] + m1 * (tri[masktri, 1] - 1), 0
+                            ].toarray()
+                            + es,
+                            :,
+                        ]
+                        l13 = slm["resl"][
+                            sparsedg[
+                                tri[masktri, 0] + m1 * (tri[masktri, 2] - 1), 0
+                            ].toarray()
+                            + es,
+                            :,
+                        ]
+                        l23 = slm["resl"][
+                            sparsedg[
+                                tri[masktri, 1] + m1 * (tri[masktri, 2] - 1), 0
+                            ].toarray()
+                            + es,
+                            :,
+                        ]
                     else:
-                        l12 = slm['resl'][interp1(ue, ae, tri[masktri, 0] + m1 *
-                                                  (tri[masktri, 1] - 1), kind='nearest') + es, :]
-                        l13 = slm['resl'][interp1(ue, ae, tri[masktri, 0] + m1 *
-                                                  (tri[masktri, 2] - 1), kind='nearest') + es, :]
-                        l23 = slm['resl'][interp1(ue, ae, tri[masktri, 1] + m1 *
-                                                  (tri[masktri, 2] - 1), kind='nearest') + es, :]
-                    a = np.fmax(4 * l12 * l13 - (l12+l13-l23) ** 2, 0)
-                    r2 = np.mean(np.sqrt(a), axis=1)/4
-                    lkc1[1, 2] = np.sum(np.mean(np.sqrt(l12) + np.sqrt(l13) +
-                                                np.sqrt(l23), axis=1))/2
+                        l12 = slm["resl"][
+                            interp1(
+                                ue,
+                                ae,
+                                tri[masktri, 0] + m1 * (tri[masktri, 1] - 1),
+                                kind="nearest",
+                            )
+                            + es,
+                            :,
+                        ]
+                        l13 = slm["resl"][
+                            interp1(
+                                ue,
+                                ae,
+                                tri[masktri, 0] + m1 * (tri[masktri, 2] - 1),
+                                kind="nearest",
+                            )
+                            + es,
+                            :,
+                        ]
+                        l23 = slm["resl"][
+                            interp1(
+                                ue,
+                                ae,
+                                tri[masktri, 1] + m1 * (tri[masktri, 2] - 1),
+                                kind="nearest",
+                            )
+                            + es,
+                            :,
+                        ]
+                    a = np.fmax(4 * l12 * l13 - (l12 + l13 - l23) ** 2, 0)
+                    r2 = np.mean(np.sqrt(a), axis=1) / 4
+                    lkc1[1, 2] = (
+                        np.sum(
+                            np.mean(np.sqrt(l12) + np.sqrt(l13) + np.sqrt(l23), axis=1)
+                        )
+                        / 2
+                    )
                     lkc1[2, 2] = np.sum(r2)
 
                 # The following if-statement has nargout >=2 in MATLAB,
@@ -1220,40 +1511,130 @@ def compute_resels(slm, mask=None):
                         if f:
                             v1 = tri[masktri, j] + vs[k]
                         else:
-                            v1 = tri[masktri, j] + vs[k+1]
-                            v1 = v1 - int(vs > vs[k+2]) * (vs[k+2]-vs[k])
+                            v1 = tri[masktri, j] + vs[k + 1]
+                            v1 = v1 - int(vs > vs[k + 2]) * (vs[k + 2] - vs[k])
                         reselspvert += np.bincount(v1, r2, v)
 
             # LKC of tetrahedra
             masktet = np.all(mask1[tet], axis=1).flatten()
             lkc1[0, 3] = np.sum(masktet)
-            if 'resl' in slm and k < (K-1):
+            if "resl" in slm and k < (K - 1):
                 if e < 2 ** 31:
-                    l12 = slm['resl'][(sparsedg[tet[masktet, 0] + m1 *
-                                                (tet[masktet, 1]-1), 0].toarray() + es).tolist(), :]
-                    l13 = slm['resl'][(sparsedg[tet[masktet, 0] + m1 *
-                                                (tet[masktet, 2]-1), 0].toarray() + es).tolist(), :]
-                    l23 = slm['resl'][(sparsedg[tet[masktet, 1] + m1 *
-                                                (tet[masktet, 2]-1), 0].toarray() + es).tolist(), :]
-                    l14 = slm['resl'][(sparsedg[tet[masktet, 0] + m1 *
-                                                (tet[masktet, 3]-1), 0].toarray() + es).tolist(), :]
-                    l24 = slm['resl'][(sparsedg[tet[masktet, 1] + m1 *
-                                                (tet[masktet, 3]-1), 0].toarray() + es).tolist(), :]
-                    l34 = slm['resl'][(sparsedg[tet[masktet, 2] + m1 *
-                                                (tet[masktet, 3]-1), 0].toarray() + es).tolist(), :]
+                    l12 = slm["resl"][
+                        (
+                            sparsedg[
+                                tet[masktet, 0] + m1 * (tet[masktet, 1] - 1), 0
+                            ].toarray()
+                            + es
+                        ).tolist(),
+                        :,
+                    ]
+                    l13 = slm["resl"][
+                        (
+                            sparsedg[
+                                tet[masktet, 0] + m1 * (tet[masktet, 2] - 1), 0
+                            ].toarray()
+                            + es
+                        ).tolist(),
+                        :,
+                    ]
+                    l23 = slm["resl"][
+                        (
+                            sparsedg[
+                                tet[masktet, 1] + m1 * (tet[masktet, 2] - 1), 0
+                            ].toarray()
+                            + es
+                        ).tolist(),
+                        :,
+                    ]
+                    l14 = slm["resl"][
+                        (
+                            sparsedg[
+                                tet[masktet, 0] + m1 * (tet[masktet, 3] - 1), 0
+                            ].toarray()
+                            + es
+                        ).tolist(),
+                        :,
+                    ]
+                    l24 = slm["resl"][
+                        (
+                            sparsedg[
+                                tet[masktet, 1] + m1 * (tet[masktet, 3] - 1), 0
+                            ].toarray()
+                            + es
+                        ).tolist(),
+                        :,
+                    ]
+                    l34 = slm["resl"][
+                        (
+                            sparsedg[
+                                tet[masktet, 2] + m1 * (tet[masktet, 3] - 1), 0
+                            ].toarray()
+                            + es
+                        ).tolist(),
+                        :,
+                    ]
                 else:
-                    l12 = slm['resl'][interp1(ue, ae, tet[masktet, 0] + m1 *
-                                              (tet[masktet, 1]-1), kind='nearest')+es, :]
-                    l13 = slm['resl'][interp1(ue, ae, tet[masktet, 0] + m1 *
-                                              (tet[masktet, 2]-1), kind='nearest')+es, :]
-                    l23 = slm['resl'][interp1(ue, ae, tet[masktet, 1] + m1 *
-                                              (tet[masktet, 2]-1), kind='nearest')+es, :]
-                    l14 = slm['resl'][interp1(ue, ae, tet[masktet, 0] + m1 *
-                                              (tet[masktet, 3]-1), kind='nearest')+es, :]
-                    l24 = slm['resl'][interp1(ue, ae, tet[masktet, 1] + m1 *
-                                              (tet[masktet, 3]-1), kind='nearest')+es, :]
-                    l34 = slm['resl'][interp1(ue, ae, tet[masktet, 2] + m1 *
-                                              (tet[masktet, 3]-1), kind='nearest')+es, :]
+                    l12 = slm["resl"][
+                        interp1(
+                            ue,
+                            ae,
+                            tet[masktet, 0] + m1 * (tet[masktet, 1] - 1),
+                            kind="nearest",
+                        )
+                        + es,
+                        :,
+                    ]
+                    l13 = slm["resl"][
+                        interp1(
+                            ue,
+                            ae,
+                            tet[masktet, 0] + m1 * (tet[masktet, 2] - 1),
+                            kind="nearest",
+                        )
+                        + es,
+                        :,
+                    ]
+                    l23 = slm["resl"][
+                        interp1(
+                            ue,
+                            ae,
+                            tet[masktet, 1] + m1 * (tet[masktet, 2] - 1),
+                            kind="nearest",
+                        )
+                        + es,
+                        :,
+                    ]
+                    l14 = slm["resl"][
+                        interp1(
+                            ue,
+                            ae,
+                            tet[masktet, 0] + m1 * (tet[masktet, 3] - 1),
+                            kind="nearest",
+                        )
+                        + es,
+                        :,
+                    ]
+                    l24 = slm["resl"][
+                        interp1(
+                            ue,
+                            ae,
+                            tet[masktet, 1] + m1 * (tet[masktet, 3] - 1),
+                            kind="nearest",
+                        )
+                        + es,
+                        :,
+                    ]
+                    l34 = slm["resl"][
+                        interp1(
+                            ue,
+                            ae,
+                            tet[masktet, 2] + m1 * (tet[masktet, 3] - 1),
+                            kind="nearest",
+                        )
+                        + es,
+                        :,
+                    ]
                 a4 = np.fmax(4 * l12 * l13 - (l12 + l13 - l23) ** 2, 0)
                 a3 = np.fmax(4 * l12 * l14 - (l12 + l14 - l24) ** 2, 0)
                 a2 = np.fmax(4 * l13 * l14 - (l13 + l14 - l34) ** 2, 0)
@@ -1264,32 +1645,93 @@ def compute_resels(slm, mask=None):
                 d14 = 4 * l14 * l23 - (l12 + l34 - l24 - l13) ** 2
 
                 h = np.logical_or(a1 <= 0, a2 <= 0)
-                delta12 = np.sum(np.mean(np.sqrt(l34) * pacos((d12-a1-a2) /
-                                                              np.sqrt(a1 * a2 + h) / 2 * (1-h) + h), axis=1))
+                delta12 = np.sum(
+                    np.mean(
+                        np.sqrt(l34)
+                        * pacos(
+                            (d12 - a1 - a2) / np.sqrt(a1 * a2 + h) / 2 * (1 - h) + h
+                        ),
+                        axis=1,
+                    )
+                )
                 h = np.logical_or(a1 <= 0, a3 <= 0)
-                delta13 = np.sum(np.mean(np.sqrt(l24) * pacos((d13-a1-a3) /
-                                                              np.sqrt(a1 * a3 + h) / 2 * (1-h) + h), axis=1))
+                delta13 = np.sum(
+                    np.mean(
+                        np.sqrt(l24)
+                        * pacos(
+                            (d13 - a1 - a3) / np.sqrt(a1 * a3 + h) / 2 * (1 - h) + h
+                        ),
+                        axis=1,
+                    )
+                )
                 h = np.logical_or(a1 <= 0, a4 <= 0)
-                delta14 = np.sum(np.mean(np.sqrt(l23) * pacos((d14-a1-a4) /
-                                                              np.sqrt(a1 * a4 + h) / 2 * (1-h) + h), axis=1))
+                delta14 = np.sum(
+                    np.mean(
+                        np.sqrt(l23)
+                        * pacos(
+                            (d14 - a1 - a4) / np.sqrt(a1 * a4 + h) / 2 * (1 - h) + h
+                        ),
+                        axis=1,
+                    )
+                )
                 h = np.logical_or(a2 <= 0, a3 <= 0)
-                delta23 = np.sum(np.mean(np.sqrt(l14) * pacos((d14-a2-a3) /
-                                                              np.sqrt(a2 * a3 + h) / 2 * (1-h) + h), axis=1))
+                delta23 = np.sum(
+                    np.mean(
+                        np.sqrt(l14)
+                        * pacos(
+                            (d14 - a2 - a3) / np.sqrt(a2 * a3 + h) / 2 * (1 - h) + h
+                        ),
+                        axis=1,
+                    )
+                )
                 h = np.logical_or(a2 <= 0, a4 <= 0)
-                delta24 = np.sum(np.mean(np.sqrt(l13) * pacos((d13-a2-a4) /
-                                                              np.sqrt(a2 * a4 + h) / 2 * (1-h) + h), axis=1))
+                delta24 = np.sum(
+                    np.mean(
+                        np.sqrt(l13)
+                        * pacos(
+                            (d13 - a2 - a4) / np.sqrt(a2 * a4 + h) / 2 * (1 - h) + h
+                        ),
+                        axis=1,
+                    )
+                )
                 h = np.logical_or(a3 <= 0, a4 <= 0)
-                delta34 = np.sum(np.mean(np.sqrt(l12) * pacos((d12-a3-a4) /
-                                                              np.sqrt(a3 * a4 + h) / 2 * (1-h) + h), axis=1))
+                delta34 = np.sum(
+                    np.mean(
+                        np.sqrt(l12)
+                        * pacos(
+                            (d12 - a3 - a4) / np.sqrt(a3 * a4 + h) / 2 * (1 - h) + h
+                        ),
+                        axis=1,
+                    )
+                )
 
-                r3 = np.squeeze(np.mean(np.sqrt(np.fmax((4 * a1 * a2 -
-                                                         (a1 + a2 - d12) ** 2) / (l34 + (l34 <= 0)) *
-                                                        (l34 > 0), 0)), axis=1) / 48)
+                r3 = np.squeeze(
+                    np.mean(
+                        np.sqrt(
+                            np.fmax(
+                                (4 * a1 * a2 - (a1 + a2 - d12) ** 2)
+                                / (l34 + (l34 <= 0))
+                                * (l34 > 0),
+                                0,
+                            )
+                        ),
+                        axis=1,
+                    )
+                    / 48
+                )
 
-                lkc1[1, 3] = (delta12 + delta13 + delta14 + delta23 + delta24 +
-                              delta34)/(2 * np.pi)
-                lkc1[2, 3] = np.sum(np.mean(np.sqrt(a1) + np.sqrt(a2) +
-                                            np.sqrt(a3) + np.sqrt(a4), axis=1))/8
+                lkc1[1, 3] = (
+                    delta12 + delta13 + delta14 + delta23 + delta24 + delta34
+                ) / (2 * np.pi)
+                lkc1[2, 3] = (
+                    np.sum(
+                        np.mean(
+                            np.sqrt(a1) + np.sqrt(a2) + np.sqrt(a3) + np.sqrt(a4),
+                            axis=1,
+                        )
+                    )
+                    / 8
+                )
                 lkc1[3, 3] = np.sum(r3)
 
                 # Original MATLAB code has a if nargout>=2 here, ignore it
@@ -1298,8 +1740,8 @@ def compute_resels(slm, mask=None):
                     if f:
                         v1 = tet[masktet, j] + vs[k]
                     else:
-                        v1 = tet[masktet, j] + vs[k+1]
-                        v1 = v1 - (v1 > (vs[k+2]-1)) * (vs[k+2] - vs[k])
+                        v1 = tet[masktet, j] + vs[k + 1]
+                        v1 = v1 - (v1 > (vs[k + 2] - 1)) * (vs[k + 2] - vs[k])
                     if np.ndim(r3) == 0:
                         r3 = r3.tolist()
                         r3 = [r3]
@@ -1310,16 +1752,16 @@ def compute_resels(slm, mask=None):
         # Original MATLAB code has a if nargout>=2 here,
         # ignore it as no equivalent exists in Python - RV.
         D = 2 + (K > 1)
-        reselspvert = reselspvert / (D+1) / np.sqrt(4*np.log(2)) ** D
+        reselspvert = reselspvert / (D + 1) / np.sqrt(4 * np.log(2)) ** D
 
     # Compute resels - RV
-    D1 = lkc.shape[0]-1
-    D2 = lkc.shape[1]-1
-    tpltz = toeplitz((-1)**(np.arange(0, D1+1)), (-1)**(np.arange(0, D2+1)))
+    D1 = lkc.shape[0] - 1
+    D2 = lkc.shape[1] - 1
+    tpltz = toeplitz((-1) ** (np.arange(0, D1 + 1)), (-1) ** (np.arange(0, D2 + 1)))
     lkcs = np.sum(tpltz * lkc, axis=1).T
-    lkcs = np.trim_zeros(lkcs, trim='b')
+    lkcs = np.trim_zeros(lkcs, trim="b")
     lkcs = np.atleast_2d(lkcs)
-    D = lkcs.shape[1]-1
-    resels = lkcs / np.sqrt(4*np.log(2))**np.arange(0, D+1)
+    D = lkcs.shape[1] - 1
+    resels = lkcs / np.sqrt(4 * np.log(2)) ** np.arange(0, D + 1)
 
     return resels, reselspvert, edg

@@ -61,12 +61,14 @@ def to_df(x, n=1, names=None, idx=None):
     if names is None and (idx is not None or not has_names):
         if idx is None:
             idx = 0
-        names = ['x%d' % i for i in range(idx, idx + x.shape[1])]
+        names = ["x%d" % i for i in range(idx, idx + x.shape[1])]
 
     if names is not None:
         if len(names) != x.shape[1]:
-            raise ValueError('Number of columns {} does not coincide with '
-                             'column names {}'.format(x.shape[1], names))
+            raise ValueError(
+                "Number of columns {} does not coincide with "
+                "column names {}".format(x.shape[1], names)
+            )
         x.columns = names
 
     return pd.get_dummies(x)
@@ -118,8 +120,7 @@ def check_duplicate_names(df1, df2=None):
     else:
         names = np.intersect1d(df1.columns, df2.columns)
     if names.size > 0:
-        raise ValueError('Variables must have different names: {}'.
-                         format(names))
+        raise ValueError("Variables must have different names: {}".format(names))
 
 
 def remove_duplicate_columns(df, tol=1e-8):
@@ -208,11 +209,12 @@ class Term:
         elif self.shape[0] == 1 and df.shape[0] > 1:
             self.m = to_df(self.m, n=df.shape[0])
         elif not df.empty and self.shape[0] != df.shape[0]:
-            raise ValueError('Cannot broadcast shape {} to '
-                             '{}.'.format(df.shape, self.shape))
+            raise ValueError(
+                "Cannot broadcast shape {} to " "{}.".format(df.shape, self.shape)
+            )
         return df
 
-    def _add(self, t, side='right'):
+    def _add(self, t, side="right"):
         if isinstance(t, Random):
             return NotImplemented
 
@@ -230,7 +232,7 @@ class Term:
         check_duplicate_names(df, df2=self.m)
         terms = [self.m, df]
         names = [self.names, list(df.columns)]
-        if side == 'right':
+        if side == "right":
             terms = terms[::-1]
             names = names[::-1]
         df = pd.concat(terms, axis=1)
@@ -242,7 +244,7 @@ class Term:
         return self._add(t)
 
     def __radd__(self, t):
-        return self._add(t, side='right')
+        return self._add(t, side="right")
 
     def __sub__(self, t):
         if self.empty:
@@ -254,11 +256,11 @@ class Term:
         df.index = self.m.index
 
         m = self.m / self.m.abs().sum(0)
-        merged = m.T.merge(df.T, how='outer', indicator=True)
-        mask = (merged._merge.values == 'left_only')[:self.m.shape[1]]
+        merged = m.T.merge(df.T, how="outer", indicator=True)
+        mask = (merged._merge.values == "left_only")[: self.m.shape[1]]
         return Term(self.m[self.m.columns[mask]])
 
-    def _mul(self, t, side='left'):
+    def _mul(self, t, side="left"):
         if isinstance(t, Random):
             return NotImplemented
 
@@ -268,10 +270,10 @@ class Term:
             if t == 1:
                 return self
             m = self.m * t
-            if side == 'right':
-                names = ['{}*{}'.format(t, k) for k in self.names]
+            if side == "right":
+                names = ["{}*{}".format(t, k) for k in self.names]
             else:
-                names = ['{}*{}'.format(k, t) for k in self.names]
+                names = ["{}*{}".format(k, t) for k in self.names]
             return Term(m, names=names)
 
         df = self._broadcast(t)
@@ -281,10 +283,10 @@ class Term:
         names = []
         for c in df.columns:
             prod.append(df[[c]].values * self.m)
-            if side == 'left':
-                names.extend(['{}*{}'.format(k, c) for k in self.names])
+            if side == "left":
+                names.extend(["{}*{}".format(k, c) for k in self.names])
             else:
-                names.extend(['{}*{}'.format(c, k) for k in self.names])
+                names.extend(["{}*{}".format(c, k) for k in self.names])
 
         df = pd.concat(prod, axis=1)
         df.columns = names
@@ -295,7 +297,7 @@ class Term:
         return self._mul(t)
 
     def __rmul__(self, t):
-        return self._mul(t, side='right')
+        return self._mul(t, side="right")
 
     def __pow__(self, p):
         if p > 1:
@@ -327,7 +329,7 @@ class Term:
     def __getattr__(self, name):
         if name in self.names:
             return self.m[name].values
-        if name in {'shape', 'size', 'empty'}:
+        if name in {"shape", "size", "empty"}:
             return getattr(self.m, name)
         return super().__getattribute__(name)
 
@@ -377,8 +379,9 @@ class Random:
 
     """
 
-    def __init__(self, ran=None, fix=None, name_ran=None, name_fix=None,
-                 ranisvar=False):
+    def __init__(
+        self, ran=None, fix=None, name_ran=None, name_fix=None, ranisvar=False
+    ):
 
         if isinstance(ran, Random):
             self.mean = ran.mean
@@ -391,10 +394,10 @@ class Random:
             ran = to_df(ran)
             if not ranisvar:
                 if ran.size == 1:
-                    name_ran = 'I'
+                    name_ran = "I"
                     v = ran.values.flat[0]
                     if v != 1:
-                        name_ran += '{}**2'.format(v)
+                        name_ran += "{}**2".format(v)
                 else:
                     name = check_names(ran)
                     if name is not None and name_ran is None:
@@ -408,16 +411,16 @@ class Random:
     def broadcast_to(self, r1, r2):
         if r1.variance.shape[0] == 1:
             v = np.eye(max(r2.shape[0], int(np.sqrt(r2.shape[2]))))
-            return Term(v.ravel(), names='I')
+            return Term(v.ravel(), names="I")
         return r1.variance
 
-    def _add(self, r, side='right'):
+    def _add(self, r, side="right"):
         if not isinstance(r, Random):
             r = Random(fix=r)
 
         r.variance = self.broadcast_to(r, self)
         self.variance = self.broadcast_to(self, r)
-        if side == 'left':
+        if side == "left":
             ran = self.variance + r.variance
             fix = self.mean + r.mean
         else:
@@ -430,14 +433,14 @@ class Random:
         return self._add(r)
 
     def __radd__(self, r):
-        return self._add(r, side='right')
+        return self._add(r, side="right")
 
-    def _sub(self, r, side='left'):
+    def _sub(self, r, side="left"):
         if not isinstance(r, Random):
             r = Random(fix=r)
         r.variance = self.broadcast_to(r, self)
         self.variance = self.broadcast_to(self, r)
-        if side == 'left':
+        if side == "left":
             ran = self.variance - r.variance
             fix = self.mean - r.mean
         else:
@@ -449,15 +452,15 @@ class Random:
         return self._sub(r)
 
     def __rsub__(self, r):
-        return self._sub(r, side='right')
+        return self._sub(r, side="right")
 
-    def _mul(self, r, side='left'):
+    def _mul(self, r, side="left"):
         if not isinstance(r, Random):
             r = Random(fix=r)
         r.variance = self.broadcast_to(r, self)
         self.variance = self.broadcast_to(self, r)
 
-        if side == 'left':
+        if side == "left":
             ran = self.variance * r.variance
             fix = self.mean * r.mean
         else:
@@ -470,15 +473,14 @@ class Random:
         for i in range(x.shape[0]):
             for j in range(i + 1):
                 if i == j:
-                    t = t + Term(np.outer(x[i], x[j]).T.ravel(),
-                                 names=self.mean.names[i])
+                    t = t + Term(
+                        np.outer(x[i], x[j]).T.ravel(), names=self.mean.names[i]
+                    )
                 else:
                     xs = x[i] + x[j]
-                    xs_name = '({}+{})'.format(
-                        *[self.mean.names[k] for k in [i, j]])
+                    xs_name = "({}+{})".format(*[self.mean.names[k] for k in [i, j]])
                     xd = x[i] - x[j]
-                    xd_name = '({}-{})'.format(
-                        *[self.mean.names[k] for k in [i, j]])
+                    xd_name = "({}-{})".format(*[self.mean.names[k] for k in [i, j]])
 
                     v = np.outer(xs, xs) / 4
                     t = t + Term(v.ravel(), names=xs_name)
@@ -492,15 +494,12 @@ class Random:
         for i in range(x.shape[0]):
             for j in range(i + 1):
                 if i == j:
-                    t = t + Term(np.outer(x[i], x[j]).ravel(),
-                                 names=r.mean.names[i])
+                    t = t + Term(np.outer(x[i], x[j]).ravel(), names=r.mean.names[i])
                 else:
                     xs = x[i] + x[j]
-                    xs_name = '({}+{})'.format(
-                        *[r.mean.names[k] for k in [i, j]])
+                    xs_name = "({}+{})".format(*[r.mean.names[k] for k in [i, j]])
                     xd = x[i] - x[j]
-                    xd_name = '({}-{})'.format(
-                        *[r.mean.names[k] for k in [i, j]])
+                    xd_name = "({}-{})".format(*[r.mean.names[k] for k in [i, j]])
 
                     v = np.outer(xs, xs) / 4
                     t = t + Term(v.ravel(), names=xs_name)
@@ -513,7 +512,7 @@ class Random:
         return self._mul(r)
 
     def __rmul__(self, r):
-        return self._mul(r, side='right')
+        return self._mul(r, side="right")
 
     def __pow__(self, p):
         if p > 1:
@@ -529,5 +528,9 @@ class Random:
         return self.mean.shape + self.variance.shape
 
     def _repr_html_(self):
-        return 'Mean:\n' + self.mean._repr_html_() + '\n\nVariance:\n' + \
-               self.variance._repr_html_()
+        return (
+            "Mean:\n"
+            + self.mean._repr_html_()
+            + "\n\nVariance:\n"
+            + self.variance._repr_html_()
+        )

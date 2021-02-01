@@ -6,7 +6,7 @@ from .utils import mesh_edges
 import sys
 
 
-def mesh_normalize(Y, mask=None, subdiv='s'):
+def mesh_normalize(Y, mask=None, subdiv="s"):
     """Normalizes by subtracting the global mean, or dividing it.
 
     Parameters
@@ -28,10 +28,10 @@ def mesh_normalize(Y, mask=None, subdiv='s'):
         Mean of the input Y along the mask.
     """
 
-    Y = np.array(Y, dtype='float64')
+    Y = np.array(Y, dtype="float64")
 
     if np.ndim(Y) < 2:
-        sys.exit('input array should be np.ndims >= 2, tip: reshape it!')
+        sys.exit("input array should be np.ndims >= 2, tip: reshape it!")
     elif np.ndim(Y) == 2:
         n, v = np.shape(Y)
         k = 1
@@ -48,9 +48,9 @@ def mesh_normalize(Y, mask=None, subdiv='s'):
         Yav = np.mean(Y[:, mask, :], axis=1)
         Yav = np.expand_dims(Yav, axis=1)
 
-    if subdiv == 's':
+    if subdiv == "s":
         Y = Y - Yav
-    elif subdiv == 'd':
+    elif subdiv == "d":
         Y = Y / Yav
 
     return Y, np.squeeze(Yav)
@@ -74,10 +74,10 @@ def mesh_smooth(Y, surf, FWHM):
     Y : numpy array of shape (n,v) or (n,v,k),
         smoothed data.
     """
-    niter = int(np.ceil(pow(FWHM, 2) / (2*np.log(2))))
+    niter = int(np.ceil(pow(FWHM, 2) / (2 * np.log(2))))
 
     if isinstance(Y, np.ndarray):
-        Y = np.array(Y, dtype='float')
+        Y = np.array(Y, dtype="float")
         if np.ndim(Y) == 2:
             n, v = np.shape(Y)
             k = 1
@@ -88,19 +88,19 @@ def mesh_smooth(Y, surf, FWHM):
             isnum = True
 
     edg = mesh_edges(surf) + 1
-    agg_1 = aggregate(edg[:, 0], 2, size=(v+1))
-    agg_2 = aggregate(edg[:, 1], 2, size=(v+1))
+    agg_1 = aggregate(edg[:, 0], 2, size=(v + 1))
+    agg_2 = aggregate(edg[:, 1], 2, size=(v + 1))
     Y1 = (agg_1 + agg_2)[1:]
 
     if n > 1:
-        print(' %i x %i surfaces to smooth, %% remaining: 100 ' % (n, k))
+        print(" %i x %i surfaces to smooth, %% remaining: 100 " % (n, k))
 
-    n10 = np.floor(n/10)
+    n10 = np.floor(n / 10)
 
     for i in range(0, n):
 
-        if n10 != 0 and np.remainder(i+1, n10) == 0:
-            print('%s ' % str(int(100-(i+1)/n10*10)), end='')
+        if n10 != 0 and np.remainder(i + 1, n10) == 0:
+            print("%s " % str(int(100 - (i + 1) / n10 * 10)), end="")
 
         for j in range(0, k):
             if isnum:
@@ -110,10 +110,10 @@ def mesh_smooth(Y, surf, FWHM):
                 elif np.ndim(Y) == 3:
                     Ys = Y[i, :, j]
 
-                for itera in range(1, niter+1):
-                    Yedg = Ys[edg[:, 0]-1] + Ys[edg[:, 1]-1]
-                    agg_tmp1 = aggregate(edg[:, 0], Yedg, size=(v+1))[1:]
-                    agg_tmp2 = aggregate(edg[:, 1], Yedg, size=(v+1))[1:]
+                for itera in range(1, niter + 1):
+                    Yedg = Ys[edg[:, 0] - 1] + Ys[edg[:, 1] - 1]
+                    agg_tmp1 = aggregate(edg[:, 0], Yedg, size=(v + 1))[1:]
+                    agg_tmp2 = aggregate(edg[:, 1], Yedg, size=(v + 1))[1:]
                     Ys = (agg_tmp1 + agg_tmp2) / Y1
 
                 if np.ndim(Y) == 2:
@@ -122,12 +122,12 @@ def mesh_smooth(Y, surf, FWHM):
                 elif np.ndim(Y) == 3:
                     Y[i, :, j] = Ys
     if n > 1:
-        print('Done')
+        print("Done")
 
     return Y
 
 
-def mesh_standardize(Y, mask=None, subdiv='s'):
+def mesh_standardize(Y, mask=None, subdiv="s"):
     """Standardizes by subtracting the global mean, or dividing it.
 
     Parameters
@@ -149,29 +149,29 @@ def mesh_standardize(Y, mask=None, subdiv='s'):
         Mean of the input Y along the mask.
     """
 
-    Y = np.array(Y, dtype='float64')
+    Y = np.array(Y, dtype="float64")
 
     if mask is None:
         mask = np.array(np.ones(Y.shape[1]), dtype=bool)
 
     if np.ndim(Y) < 2:
-        sys.exit('input array should be np.ndims >= 2, tip: reshape it!')
+        sys.exit("input array should be np.ndims >= 2, tip: reshape it!")
     elif np.ndim(Y) == 2:
         Ym = Y[:, mask].mean(axis=1)
         Ym = Ym.reshape(len(Ym), 1)
         for i in range(0, Y.shape[0]):
-            if subdiv == 's':
+            if subdiv == "s":
                 Y[i, :] = Y[i, :] - Ym[i]
-            elif subdiv == 'd':
-                Y[i, :] = (Y[i, :]/Ym[i] - 1) * 100
+            elif subdiv == "d":
+                Y[i, :] = (Y[i, :] / Ym[i] - 1) * 100
 
     elif np.ndim(Y) > 2:
         Ym = np.mean(Y[:, mask, 0], axis=1)
         Ym = Ym.reshape(len(Ym), 1)
         for i in range(0, Y.shape[0]):
-            if subdiv == 's':
+            if subdiv == "s":
                 Y[i, :, :] = Y[i, :, :] - Ym[i]
-            elif subdiv == 'd':
-                Y[i, :, :] = (Y[i, :, :]/Ym[i] - 1) * 100
+            elif subdiv == "d":
+                Y[i, :, :] = (Y[i, :, :] / Ym[i] - 1) * 100
 
     return Y, Ym

@@ -1,2 +1,1 @@
 """Neuroimaging statistics toolbox."""
-
