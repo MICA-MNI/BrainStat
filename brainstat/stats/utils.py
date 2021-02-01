@@ -28,7 +28,7 @@ def row_ismember(a, b):
 
 
 def interp1(x, y, ix, kind="linear"):
-    """ Interpolation between datapoints.
+    """Interpolation between datapoints.
 
     Parameters
     ----------
@@ -53,7 +53,7 @@ def interp1(x, y, ix, kind="linear"):
 
 
 def ismember(A, B, rows=False):
-    """ Tests whether elements of A appear in B.
+    """Tests whether elements of A appear in B.
 
     Parameters
     ----------
@@ -107,7 +107,7 @@ def ismember(A, B, rows=False):
 
 
 def colon(start, stop, increment=1):
-    """ Generates a range of numbers including the stop number.
+    """Generates a range of numbers including the stop number.
 
     Parameters
     ----------

@@ -570,7 +570,7 @@ def stat_threshold(
             for i in range(0, D[0] + 1):
                 for j in range(0, D[1] + 1):
                     rho[n - 1 + np.arange(0, n), i, j] = (
-                        -(-1) ** (i + j) * rho[n - 1 + np.arange(0, n), i, j]
+                        -((-1) ** (i + j)) * rho[n - 1 + np.arange(0, n), i, j]
                     )
             rho[n - 1 + np.arange(0, n), 0, 0] = rho[n - 1 + np.arange(0, n), 0, 0] + 1
             n = 2 * n - 1
@@ -750,7 +750,7 @@ def stat_threshold(
                 print(extent_threshold_1)
         else:
             # p_val_extent is now treated as a spatial extent:
-            pS = np.exp(-(p_val_extent * cons) ** (2 / d))
+            pS = np.exp(-((p_val_extent * cons) ** (2 / d)))
             P_val_extent = 1 - np.exp(-pS * EL)
             extent_threshold = P_val_extent
             P_val_extent_1 = 1 - np.exp(-pS)
@@ -896,7 +896,7 @@ def stat_threshold(
 
 
 def peak_clus(slm, mask, thresh, reselspvert=None, edg=None):
-    """ Finds peaks (local maxima) and clusters for surface data.
+    """Finds peaks (local maxima) and clusters for surface data.
     Parameters
     ----------
     slm : a dictionary, mandatory keys: 't', 'tri' (or 'lat'),
@@ -1063,12 +1063,18 @@ def peak_clus(slm, mask, thresh, reselspvert=None, edg=None):
         ),
         axis=1,
     )
-    lm = np.flipud(varALL[varALL[:, 0].argsort(),])
+    lm = np.flipud(
+        varALL[
+            varALL[:, 0].argsort(),
+        ]
+    )
     varNEW = np.concatenate(
         (rankrsl.T, ucvol.reshape(len(ucvol), 1), ucrsl.reshape(len(ucrsl), 1)[1:]),
         axis=1,
     )
-    cl = varNEW[varNEW[:, 0].argsort(),]
+    cl = varNEW[
+        varNEW[:, 0].argsort(),
+    ]
     clusid = np.zeros((1, v))
     clusid[0, (vox - 1).T] = interp1(
         np.append(0, ucid), np.append(0, rankrsl), nf, kind="nearest"
@@ -1086,7 +1092,7 @@ def peak_clus(slm, mask, thresh, reselspvert=None, edg=None):
 
 
 def compute_resels(slm, mask=None):
-    """ SurfStatResels of surface or volume data inside a mask.
+    """SurfStatResels of surface or volume data inside a mask.
 
     Parameters
     ----------

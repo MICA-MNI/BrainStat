@@ -16,7 +16,7 @@ def check_names(x):
 
 
 def to_df(x, n=1, names=None, idx=None):
-    """ Convert input to DataFrame.
+    """Convert input to DataFrame.
 
     Parameters
     ----------
@@ -124,7 +124,7 @@ def check_duplicate_names(df1, df2=None):
 
 
 def remove_duplicate_columns(df, tol=1e-8):
-    """ Remove duplicate columns.
+    """Remove duplicate columns.
 
     Parameters
     ----------

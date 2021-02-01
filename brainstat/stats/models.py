@@ -160,7 +160,7 @@ def f_test(slm1, slm2):
 
 
 def linear_model(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
-    """ Fits linear mixed effects models to surface data and estimates resels.
+    """Fits linear mixed effects models to surface data and estimates resels.
 
     Parameters
     ----------
