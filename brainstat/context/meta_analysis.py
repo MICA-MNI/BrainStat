@@ -11,6 +11,7 @@ from nimare.decode import discrete
 from nimare.meta.cbma.mkda import MKDAChi2
 from .utils import mutli_surface_to_volume
 
+
 def surface_decode_nimare(
     pial,
     white,
@@ -19,7 +20,7 @@ def surface_decode_nimare(
     interpolation="linear",
     data_dir=None,
     verbose=True,
-    correction='fdr_bh',
+    correction="fdr_bh",
     feature_group=None,
     features=None,
 ):
@@ -88,15 +89,15 @@ def surface_decode_nimare(
             )
 
             print(
-                "If you use BrainStat's surface decoder, " + 
-                "please cite NiMARE (https://zenodo.org/record/4408504#.YBBPAZNKjzU))."
+                "If you use BrainStat's surface decoder, "
+                + "please cite NiMARE (https://zenodo.org/record/4408504#.YBBPAZNKjzU))."
             )
             roi_ids = dataset.get_studies_by_mask(stat_image.name)
             gm_ids = dataset.get_studies_by_mask(mask_image.name)
             unselected_ids = list(set(roi_ids) - set(gm_ids))
-            decoder = discrete.NeurosynthDecoder(feature_group=feature_group, 
-                features=features,
-                correction=correction)
+            decoder = discrete.NeurosynthDecoder(
+                feature_group=feature_group, features=features, correction=correction
+            )
             decoder.fit(dataset)
             return decoder.transform(ids=roi_ids, ids2=unselected_ids)
 
@@ -140,7 +141,7 @@ def fetch_nimare_dataset(data_dir, keep_neurosynth=False):
     dset = nimare.io.convert_neurosynth_to_dataset(ns_data_file, ns_feature_file)
     dset = nimare.extract.download_abstracts(dset, "tsalo006@fiu.edu")
     dset.save(os.path.join(data_dir, "neurosynth_nimare_with_abstracts.pkl.gz"))
-    
+
     return dset
 
 
