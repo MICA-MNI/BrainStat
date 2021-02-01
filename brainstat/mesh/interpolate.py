@@ -80,7 +80,7 @@ def surface_to_volume(
 
 
 def cortical_ribbon(pial_mesh, wm_mesh, nii, mesh_distance=6, verbose=False):
-    """ Finds voxels inside of the cortical ribbon.
+    """Finds voxels inside of the cortical ribbon.
 
     Parameters
     ----------
