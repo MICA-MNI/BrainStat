@@ -163,7 +163,7 @@ def fetch_neurosynth_dataset(data_dir, return_pkl=True, verbose=False):
     tuple, str
         If save_pkl is false, returns a tuple containing the path to the
         database.txt and the features.txt file. Otherwise returns the path
-        to the .pkl file. 
+        to the .pkl file.
 
     """
     if not os.path.isdir(data_dir):

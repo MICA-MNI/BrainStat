@@ -185,7 +185,7 @@ def load_enigma_histology(parcellation, n=None):
     Parameters
     ----------
     parcellation : str
-        Name of a parcellation. Valid values are: 'aparc', 'glasser', 
+        Name of a parcellation. Valid values are: 'aparc', 'glasser',
         'schaefer'.
     n : int, optional
         Number of regions in the parcellation. Only used for schaefer
@@ -198,8 +198,8 @@ def load_enigma_histology(parcellation, n=None):
 
     Notes
     -----
-    This function is likely to be removed in a future update. It is strongly 
-    discouraged to use this function. 
+    This function is likely to be removed in a future update. It is strongly
+    discouraged to use this function.
     """
 
     import enigmatoolbox
