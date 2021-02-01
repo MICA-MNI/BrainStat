@@ -9,6 +9,7 @@ import shutil
 from brainspace.mesh.mesh_io import read_surface
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 from brainstat.mesh.interpolate import surface_to_volume
+import enigmatoolbox
 
 
 def mutli_surface_to_volume(
@@ -201,13 +202,6 @@ def load_enigma_histology(parcellation, n=None):
     This function is likely to be removed in a future update. It is strongly 
     discouraged to use this function. 
     """
-
-    try:
-        import enigmatoolbox
-    except ModuleNotFoundError:
-        ImportError(
-            "The enigma toolbox was not found. Please install it from https://github.com/MICA-MNI/ENIGMA."
-        )
 
     module_dir = os.path.dirname(enigmatoolbox.__file__)
     histology_dir = os.path.join(module_dir, "histology")
