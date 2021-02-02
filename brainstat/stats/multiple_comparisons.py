@@ -132,30 +132,30 @@ def random_field_theory(slm, mask=None, clusthresh=0.001):
     Returns
     -------
     pval : a dictionary with keys 'P', 'C', 'mask'.
-        pval['P'] : 2D numpy array of shape (1,v).
+        pval['P'] : numpy array of shape (v).
             Corrected P-values for vertices.
-        pval['C'] : 2D numpy array of shape (1,v).
+        pval['C'] : numpy array of shape (v).
             Corrected P-values for clusters.
         pval['mask'] : copy of input mask.
     peak : a dictionary with keys 't', 'vertid', 'clusid', 'P'.
-        peak['t'] : 2D numpy array of shape (np,1).
+        peak['t'] : numpy array of shape (np).
             Peaks (local maxima).
-        peak['vertid'] : 2D numpy array of shape (np,1).
+        peak['vertid'] : numpy array of shape (np).
             Vertex.
-        peak['clusid'] : 2D numpy array of shape (np,1).
+        peak['clusid'] : numpy array of shape (np).
             Cluster id numbers.
-        peak['P'] : 2D numpy array of shape (np,1).
+        peak['P'] : numpy array of shape (np).
             Corrected P-values for the peak.
     clus : a dictionary with keys 'clusid', 'nverts', 'resels', 'P.'
-        clus['clusid'] : 2D numpy array of shape (nc,1).
+        clus['clusid'] : numpy array of shape (nc).
             Cluster id numbers
-        clus['nverts'] : 2D numpy array of shape (nc,1).
+        clus['nverts'] : numpy array of shape (nc).
             Number of vertices in cluster.
-        clus['resels'] : 2D numpy array of shape (nc,1).
+        clus['resels'] : numpy array of shape (nc).
             resels in the cluster.
-        clus['P'] : 2D numpy array of shape (nc,1).
+        clus['P'] : numpy array of shape (nc).
             Corrected P-values for the cluster.
-    clusid : 2D numpy array of shape (1,v).
+    clusid : numpy array of shape (v).
         Cluster id's for each vertex.
 
     Reference: Worsley, K.J., Andermann, M., Koulis, T., MacDonald, D.
@@ -252,6 +252,13 @@ def random_field_theory(slm, mask=None, clusthresh=0.001):
     tlim = tlim[1]
     pval['P'] = pval['P'] * (slm['t'][0, :] > tlim) + (slm['t'][0, :] <= tlim)
     pval['mask'] = mask
+
+    # Squeeze the outputs - this should probably be done in-code rather than this 
+    # hackish way at the end.
+    pval = {k: np.squeeze(v) for k, v in pval.items()}
+    peak = {k: np.squeeze(v) for k, v in peak.items()}
+    clus = {k: np.squeeze(v) for k, v in clus.items()}
+    clusid = {k: np.squeeze(v) for k, v in clusid.items()}
 
     return pval, peak, clus, clusid
 
