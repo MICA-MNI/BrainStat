@@ -160,8 +160,8 @@ def linear_model(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
 
     Parameters
     ----------
-    Y : numpy.array, Term
-        Input data of shape (samples, vertices) or (samples, vertices, features).
+    Y : numpy array
+        Input data of shape (samples, vertices, features).
     M : Term, Random
         Design matrix.
     surf : dict, BSPolyData, optional
@@ -198,9 +198,6 @@ def linear_model(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
     - slm['lat'] : (numpy.array) Neighbors in the input lattice.
 
     """
-
-    if isinstance(Y, Term):
-        Y = Y.m.to_numpy()
 
     n, v = Y.shape[:2]  # number of samples x number of points
     k = 1 if Y.ndim == 2 else Y.shape[2]  # number of features
@@ -421,7 +418,7 @@ def t_test(slm, contrast):
     ----------
     slm : dict
         Standard linear model, see Notes for details.
-    contrast : numpy.array, Term
+    contrast : numpy.array
         Vector containing the contrast in observations.
 
     Returns
@@ -464,9 +461,6 @@ def t_test(slm, contrast):
     design matrix in slm.X. Note that the redundant columns of the design matrix
     have weights given by the rows of null(slm.X,'r')'
     """
-
-    if isinstance(contrast, Term):
-        contrast = contrast.m.to_numpy()
 
     def null(A, eps=1e-15):
         u, s, vh = scipy.linalg.svd(A)
