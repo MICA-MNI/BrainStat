@@ -31,14 +31,14 @@ release = '0.0.1'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.autosummary',
-    'sphinx.ext.viewcode',
-    'sphinx.ext.napoleon',
-    'sphinx.ext.intersphinx',
-    'sphinx.ext.doctest',
-    'sphinxcontrib.matlab',
-    'sphinx_gallery.gen_gallery'
+    'sphinx.ext.autodoc', # Automatic documentation
+    'sphinx.ext.autosummary', # Automatic documentation
+    'sphinx.ext.viewcode', # Add source code link
+    'sphinx.ext.napoleon', # Parses docstrings
+    'sphinx.ext.intersphinx', # Links code to other packages
+    'sphinx.ext.doctest', # Runs doctests
+    'sphinxcontrib.matlab', # MATLAB plugin
+    'sphinx_gallery.gen_gallery', # Example gallery
 ]
 
 # Sphinx gallery settings.
