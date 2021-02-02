@@ -8,7 +8,7 @@ example data loader functions into BrainStat this tutorial will be modified
 accordingly. Until such time, we will rely on randomly generated data and sample
 data from BrainSpace.
 
-Setting up a fixed effects model
+Setting up a linear model
 ---------------------------------
 Lets start setting up a basic model. Recall that fixed linear models take the
 form of :math:`Y = \\beta_0 + \\beta_1x_1 + ... + \\beta_nx_n + \\varepsilon` where
@@ -61,8 +61,9 @@ model_interaction = term_intercept + term_age + term_sex + term_age * term_sex
 ###################################################################
 # Now, lets imagine we have some cortical marker (e.g. cortical thickness) for
 # each subject and we want to evaluate whether this marker changes with age
-# whilst correcting for effects of sex and age-sex interactions. We could do so
-# as follows:
+# whilst correcting for effects of sex and age-sex interactions. Note that
+# BrainStat's univariate tests are one-tailed, so the sign of the contrast
+# matters!
 
 
 ###################################################################
@@ -74,17 +75,47 @@ from brainstat.stats.models import linear_model, t_test
 surf_lh, _ = load_conte69()
 Y = np.random.rand(subjects, 32492) # Surface has 32492 vertices.
 slm = linear_model(Y, model_interaction, surf_lh)
-slm = t_test(slm, age)
+slm = t_test(slm, -age)
 print(slm['t']) # These are the t-values of the model.
 
 
 ###################################################################
 # Never forget: with great models come great multiple comparisons corrections.
 # BrainStat provides two methods for these corrections: FDR and random field theory.
-# In this example we'll show you how to use random field theory.
+# In this example we'll show you how to use random field theory to find significant 
+# results at alpha=0.05.
 
 
 ###################################################################
 
 from brainstat.stats.multiple_comparisons import random_field_theory
+
+alpha = 0.05
 P, _, _, _ = random_field_theory(slm)
+print(P['P'] < alpha)
+
+###################################################################
+# As said before, univariate tests in BrainStat use a one-tailed test. If you
+# want to get a two-tailed text, simply run contrast as well as its negative and
+# adjust the alpha accordingly.
+
+
+###################################################################
+
+slm_basic = linear_model(Y, model_interaction, surf_lh)
+
+slm1 = t_test(slm_basic, -age)
+slm2 = t_test(slm_basic, age)
+
+P1, _, _, _ = random_field_theory(slm1)
+P2, _, _, _ = random_field_theory(slm2)
+print(np.logical_or(P1['P'] < alpha/2, P2['P'] < alpha/2))
+
+
+###################################################################
+# Planned changes to this tutorial:
+# - Include real data.
+# - Visualize results on the surface instead of printing.
+
+
+###################################################################
