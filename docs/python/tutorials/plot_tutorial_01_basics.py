@@ -16,19 +16,39 @@ form of :math:`Y = \\beta_0 + \\beta_1x_1 + ... + \\beta_nx_n + \\varepsilon` wh
 variable :math:`x_i`, and :math:`\\varepsilon` is the error term. In BrainStat we
 can easily set up such a model as follows.
 
-First lets generate some random data to play with. We'll set up a model with age
-and sex as explanatory variables, where age falls in the range 18-35 and sex is 
-either 0 or 1.  
+First lets load some example data to play around with. We'll load age, IQ, and left
+hemispheric cortical thickness for a few subjects. 
 """
+
+
 
 ###################################################################
 
-
+import brainstat
+import os
+from brainstat.tutorial.utils import fetch_tutorial_data 
+from brainstat.context.utils import read_surface_gz
 import numpy as np
+import nibabel as nib
+from nilearn.datasets import fetch_surf_fsaverage
 
-subjects = 20
-age = np.random.randint(low=18, high=36, size=(subjects))
-sex = np.random.randint(low=0, high=2, size=(subjects)) 
+brainstat_dir = os.path.dirname(brainstat.__file__)
+data_dir = os.path.join(brainstat_dir, 'tutorial')
+
+n = 10
+tutorial_data = fetch_tutorial_data(n_subjects=n, data_dir=data_dir)
+age = tutorial_data['demographics']['AGE'].to_numpy()
+iq = tutorial_data['demographics']['IQ'].to_numpy()
+
+# Reshape the thickness files such that left and right hemispheres are in the same row. 
+files = np.reshape(np.array(tutorial_data['image_files']),(-1,2))
+
+# We'll use only the left hemisphere in this tutorial.
+thickness = np.zeros((n,10242))
+for i in range(n):
+    thickness[i,:] = np.squeeze(nib.load(files[i,0]).get_fdata())
+
+pial_left = read_surface_gz(fetch_surf_fsaverage()['pial_left'])
 
 
 ###################################################################
@@ -44,8 +64,8 @@ sex = np.random.randint(low=0, high=2, size=(subjects))
 from brainstat.stats.terms import Term
 term_intercept = Term(1, names='intercept')
 term_age = Term(age, 'age')
-term_sex = Term(sex, 'sex')
-model = term_intercept + term_age + term_sex
+term_iq = Term(iq, 'iq')
+model = term_intercept + term_age + term_iq
 
 
 ###################################################################
@@ -55,7 +75,7 @@ model = term_intercept + term_age + term_sex
 ###################################################################
 
 
-model_interaction = term_intercept + term_age + term_sex + term_age * term_sex
+model_interaction = term_intercept + term_age + term_iq + term_age * term_iq
 
 
 ###################################################################
@@ -69,12 +89,10 @@ model_interaction = term_intercept + term_age + term_sex + term_age * term_sex
 ###################################################################
 
 
-from brainspace.datasets import load_conte69
 from brainstat.stats.models import linear_model, t_test
 
-surf_lh, _ = load_conte69()
-Y = np.random.rand(subjects, 32492) # Surface has 32492 vertices.
-slm = linear_model(Y, model_interaction, surf_lh)
+Y = np.random.rand(n, 32492) # Surface has 32492 vertices.
+slm = linear_model(Y, model_interaction, pial_left)
 slm = t_test(slm, -age)
 print(slm['t']) # These are the t-values of the model.
 
@@ -102,7 +120,7 @@ print(P['P'] < alpha)
 
 ###################################################################
 
-slm_basic = linear_model(Y, model_interaction, surf_lh)
+slm_basic = linear_model(Y, model_interaction, pial_left)
 
 slm1 = t_test(slm_basic, -age)
 slm2 = t_test(slm_basic, age)
@@ -114,7 +132,6 @@ print(np.logical_or(P1['P'] < alpha/2, P2['P'] < alpha/2))
 
 ###################################################################
 # Planned changes to this tutorial:
-# - Include real data.
 # - Visualize results on the surface instead of printing.
 
 
