@@ -155,8 +155,8 @@ class Term:
     x : array-like or DataFrame, optional
         If None, the term is empty. Default is None.
     names : str or list of str, optional
-        Names for each column in `x`. If None, it defauts to {'x0', 'x1', ...}.
-        Default is None.
+        Names for each column in `x`. If None, it defaults to 'intercept' if x
+        is a scalar or {'x0', 'x1', ...} otherwise. Default is None.
 
     Attributes
     ----------
@@ -194,6 +194,9 @@ class Term:
         if isinstance(x, Term):
             self.m = x.m
             return
+
+        if np.isscalar(x) and names is None:
+            names = ['intercept']
 
         if isinstance(names, str):
             names = [names]
