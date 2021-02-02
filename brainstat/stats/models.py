@@ -201,7 +201,7 @@ def linear_model(Y, M, surf=None, niter=1, thetalim=0.01, drlim=0.1):
 
     if isinstance(Y, Term):
         Y = Y.m.to_numpy()
-    
+
     n, v = Y.shape[:2]  # number of samples x number of points
     k = 1 if Y.ndim == 2 else Y.shape[2]  # number of features
 
