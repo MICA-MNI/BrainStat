@@ -642,4 +642,5 @@ def t_test(slm, contrast):
         slm['t'] = np.multiply(
             np.sqrt(slm['t'] + (slm['t'] <= 0)), (slm['t'] > 0))
 
+    slm['t'] = np.squeeze(slm['t'])
     return slm

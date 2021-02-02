@@ -49,7 +49,8 @@ def fdr(slm, mask=None):
 
     Note that slm['tri'] and slm['lat'] are mutually exclusive.
     """
-    l, v = np.shape(slm['t'])
+    slm['t'] = np.atleast_2d(slm['t'])
+    _, v = np.shape(slm['t'])
 
     if mask is None:
         mask = np.ones((v), dtype='bool')
@@ -161,7 +162,8 @@ def random_field_theory(slm, mask=None, clusthresh=0.001):
     & Evans, A.C. (1999). Detecting changes in nonisotropic images.
     Human Brain Mapping, 8:98-101.
     """
-    l, v = np.shape(slm['t'])
+    slm['t'] = np.atleast_2d(slm['t'])
+    _, v = np.shape(slm['t'])
 
     if mask is None:
         mask = np.ones((v), dtype=bool)
@@ -813,6 +815,7 @@ def peak_clus(slm, mask, thresh, reselspvert=None, edg=None):
     if edg is None:
         edg = mesh_edges(slm)
 
+    slm['t'] = np.atleast_2d(slm['t'])
     l, v = np.shape(slm['t'])
     slm_t = copy.deepcopy(slm['t'])
     slm_t[0, ~mask.astype(bool)] = slm_t[0, :].min()
