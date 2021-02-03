@@ -28,7 +28,7 @@ jobs:
         --wheel
         --outdir dist/
   publish:
-    -name: Publiish distribution to PyPi-test
+    - name: Publiish distribution to PyPi-test
       uses: pypa/gh-action-pypi-publish@master
       with:
         password: ${{ secrets.PYPI_TEST_API_TOKEN }}
