@@ -17,7 +17,7 @@ on:
         published_tag=$(git for-each-ref --sort=creatordate --format '%(refname)' refs/tags | awk -F "/" '{print $3}' | tail -n1)
         new_tag=$(cat setup.py | grep version | cut -d'"' -f 2)
         if [[ $new_tag != $published_tag ]]; then
-          echo "::set-output name=tag::$new_tag"
+          echo "::set-output name=tag::v$new_tag"
         else
           echo "::set-output name=tag::skip"
         fi
