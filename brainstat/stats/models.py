@@ -1,6 +1,7 @@
 """Creation, fitting, and comparison of linear models."""
 import warnings
 import numpy as np
+import math
 import numpy.linalg as la
 import scipy
 from scipy.linalg import null_space
@@ -512,12 +513,12 @@ def t_test(slm, contrast):
             q1, v = np.shape(slm['r'])
             q = q1 + 1
             nc = np.shape(slm['dr'])[1]
-            chunck = np.ceil(v / nc)
+            chunk = math.ceil(v / nc)
             irs = np.zeros((q1, v))
 
             for ic in range(1, nc+1):
-                v1 = 1 + (ic - 1) * chunck
-                v2 = np.min((v1 + chunck - 1, v))
+                v1 = 1 + (ic - 1) * chunk
+                v2 = np.min((v1 + chunk - 1, v))
                 vc = v2 - v1 + 1
 
                 irs[:, int(v1-1):int(v2)] = np.around(np.multiply(
