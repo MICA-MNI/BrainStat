@@ -18,5 +18,7 @@ dist
 .DS_Store
 __pycache__/
 
+.idea
+
 # test input data lives in a separate branch and will be pulled on demand
 /extern/test-data/
