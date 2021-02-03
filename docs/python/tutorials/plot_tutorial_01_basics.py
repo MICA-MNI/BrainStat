@@ -34,7 +34,7 @@ from nilearn.datasets import fetch_surf_fsaverage
 brainstat_dir = os.path.dirname(brainstat.__file__)
 data_dir = os.path.join(brainstat_dir, "tutorial")
 
-n = 10
+n = 20
 tutorial_data = fetch_tutorial_data(n_subjects=n, data_dir=data_dir)
 age = tutorial_data["demographics"]["AGE"].to_numpy()
 iq = tutorial_data["demographics"]["IQ"].to_numpy()
@@ -131,8 +131,27 @@ print(np.logical_or(P1["P"] < alpha / 2, P2["P"] < alpha / 2))
 
 
 ###################################################################
-# Planned changes to this tutorial:
-# - Visualize results on the surface instead of printing.
+# Now, imagine that instead of using a fixed effects model, you would prefer a
+# mixed effects model wherein handedness is a random variable. This is simple to
+# set up. All you need to do is initialize the handedness term with the Random
+# class instead, all other code remains identical.
 
 
 ###################################################################
+
+from brainstat.stats.terms import Random
+
+random_handedness = Random(tutorial_data['demographics']['HAND'], name_ran='Handedness')
+random_identity = Random(1, name_ran='identity')
+model_random = (
+                term_intercept + 
+                term_age + 
+                term_iq + 
+                term_age * term_iq +
+                random_handedness + 
+                random_identity
+)
+slm_random = linear_model(Y, model_random, pial_left)
+slm_random = t_test(slm_random, -age)
+P3, _, _, _ = random_field_theory(slm_random)
+print(P3)
