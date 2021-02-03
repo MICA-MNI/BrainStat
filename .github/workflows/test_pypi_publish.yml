@@ -1,9 +1,6 @@
 name: Publish Python to PyPi-test
 
-on: 
-  push: 
-    branches:
-      - pypi_test
+on: push
 
 jobs:
   build-n-publish:
