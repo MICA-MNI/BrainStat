@@ -1,7 +1,7 @@
 """Creation, fitting, and comparison of linear models."""
 import warnings
-import numpy as np
 import math
+import numpy as np
 import numpy.linalg as la
 import scipy
 from scipy.linalg import null_space
