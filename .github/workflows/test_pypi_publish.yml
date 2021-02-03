@@ -1,14 +1,12 @@
 name: PyPi-test Push
 
 on: 
-  push:
-    branches:
-    - master
-    - pypi_test
+  release:
+    types: [published]
+
 
 jobs:
   build:
-    if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
 
     steps:
