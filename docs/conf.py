@@ -64,6 +64,7 @@ intersphinx_mapping = {
     'sklearn': ('http://scikit-learn.org/stable', None),
     'scipy': ('https://docs.scipy.org/doc/scipy/reference', None),
     'brainstat': ('https://brainstat.readthedocs.io/en/latest', None),
+    'brainspace': ('https://brainspace.readthedocs.io/en/latest', None),
 }
 
 # Autosummary settings
