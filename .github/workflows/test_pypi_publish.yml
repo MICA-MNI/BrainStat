@@ -3,8 +3,8 @@ name: Publish Python to PyPi-test
 on: 
   push: 
     branches:
-      - master
-      - pypi_test
+      - 'master'
+      - 'pypi_test'
 
 jobs:
   build-n-publish:
