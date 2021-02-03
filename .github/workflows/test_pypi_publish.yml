@@ -2,6 +2,9 @@ name: PyPi-test Push
 
 on: 
   push:
+    branches:
+    - master
+    - test_pypi
 
 jobs:
   build:
