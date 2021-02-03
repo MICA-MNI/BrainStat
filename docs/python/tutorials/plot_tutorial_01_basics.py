@@ -4,7 +4,7 @@ Tutorial 01: Linear Models
 
 In this tutorial you will set up your first linear model with SurfStat. Please
 note that brainstat does not include sample data yet. Once we introduce
-example data loader functions into BrainStat this tutorial will be modified 
+example data loader functions into BrainStat this tutorial will be modified
 accordingly. Until such time, we will rely on randomly generated data and sample
 data from BrainSpace.
 
@@ -17,38 +17,37 @@ variable :math:`x_i`, and :math:`\\varepsilon` is the error term. In BrainStat w
 can easily set up such a model as follows.
 
 First lets load some example data to play around with. We'll load age, IQ, and left
-hemispheric cortical thickness for a few subjects. 
+hemispheric cortical thickness for a few subjects.
 """
-
 
 
 ###################################################################
 
 import brainstat
 import os
-from brainstat.tutorial.utils import fetch_tutorial_data 
+from brainstat.tutorial.utils import fetch_tutorial_data
 from brainstat.context.utils import read_surface_gz
 import numpy as np
 import nibabel as nib
 from nilearn.datasets import fetch_surf_fsaverage
 
 brainstat_dir = os.path.dirname(brainstat.__file__)
-data_dir = os.path.join(brainstat_dir, 'tutorial')
+data_dir = os.path.join(brainstat_dir, "tutorial")
 
 n = 10
 tutorial_data = fetch_tutorial_data(n_subjects=n, data_dir=data_dir)
-age = tutorial_data['demographics']['AGE'].to_numpy()
-iq = tutorial_data['demographics']['IQ'].to_numpy()
+age = tutorial_data["demographics"]["AGE"].to_numpy()
+iq = tutorial_data["demographics"]["IQ"].to_numpy()
 
-# Reshape the thickness files such that left and right hemispheres are in the same row. 
-files = np.reshape(np.array(tutorial_data['image_files']),(-1,2))
+# Reshape the thickness files such that left and right hemispheres are in the same row.
+files = np.reshape(np.array(tutorial_data["image_files"]), (-1, 2))
 
 # We'll use only the left hemisphere in this tutorial.
-thickness = np.zeros((n,10242))
+thickness = np.zeros((n, 10242))
 for i in range(n):
-    thickness[i,:] = np.squeeze(nib.load(files[i,0]).get_fdata())
+    thickness[i, :] = np.squeeze(nib.load(files[i, 0]).get_fdata())
 
-pial_left = read_surface_gz(fetch_surf_fsaverage()['pial_left'])
+pial_left = read_surface_gz(fetch_surf_fsaverage()["pial_left"])
 
 
 ###################################################################
@@ -62,9 +61,10 @@ pial_left = read_surface_gz(fetch_surf_fsaverage()['pial_left'])
 
 
 from brainstat.stats.terms import Term
-term_intercept = Term(1, names='intercept')
-term_age = Term(age, 'age')
-term_iq = Term(iq, 'iq')
+
+term_intercept = Term(1, names="intercept")
+term_age = Term(age, "age")
+term_iq = Term(iq, "iq")
 model = term_intercept + term_age + term_iq
 
 
@@ -91,16 +91,16 @@ model_interaction = term_intercept + term_age + term_iq + term_age * term_iq
 
 from brainstat.stats.models import linear_model, t_test
 
-Y = np.random.rand(n, 32492) # Surface has 32492 vertices.
+Y = np.random.rand(n, 10242)  # Surface has 10242 vertices.
 slm = linear_model(Y, model_interaction, pial_left)
 slm = t_test(slm, -age)
-print(slm['t']) # These are the t-values of the model.
+print(slm["t"])  # These are the t-values of the model.
 
 
 ###################################################################
 # Never forget: with great models come great multiple comparisons corrections.
 # BrainStat provides two methods for these corrections: FDR and random field theory.
-# In this example we'll show you how to use random field theory to find significant 
+# In this example we'll show you how to use random field theory to find significant
 # results at alpha=0.05.
 
 
@@ -110,7 +110,7 @@ from brainstat.stats.multiple_comparisons import random_field_theory
 
 alpha = 0.05
 P, _, _, _ = random_field_theory(slm)
-print(P['P'] < alpha)
+print(P["P"] < alpha)
 
 ###################################################################
 # As said before, univariate tests in BrainStat use a one-tailed test. If you
@@ -127,7 +127,7 @@ slm2 = t_test(slm_basic, age)
 
 P1, _, _, _ = random_field_theory(slm1)
 P2, _, _, _ = random_field_theory(slm2)
-print(np.logical_or(P1['P'] < alpha/2, P2['P'] < alpha/2))
+print(np.logical_or(P1["P"] < alpha / 2, P2["P"] < alpha / 2))
 
 
 ###################################################################
