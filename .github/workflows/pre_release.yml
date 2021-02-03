@@ -1,9 +1,9 @@
-name: "tagged-release"
+name: "pre_release"
 
 on:
   push:
-    tags:
-      - "v*"
+    branches:
+      - master
 
 jobs:
   tagged-release:
@@ -16,12 +16,10 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: 3.8
-    
-    - name: Install brainstat.
+    - name: Install build.
       run: |
         python -m pip install --upgrade pip
         python -m pip install build --user
-    
     - name: Build binary wheel and tarball.
       run: |
         python -m build --sdist --wheel --outdir dist/
@@ -29,13 +27,9 @@ jobs:
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          prerelease: false
+          automatic_release_tag: "latest"
+          prerelease: true
+          title: "Development Build"
           files: |
             LICENSE
             dist/*
-    
-    - name: Publish to PyPi test.
-      uses: pypa/gh-action-pypi-publish@master
-      with:
-        password: ${{ secrets.PYPI_TEST_API_TOKEN }}
-        repository_url: https://test.pypi.org/legacy/
