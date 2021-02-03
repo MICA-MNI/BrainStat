@@ -60,8 +60,10 @@ napoleon_use_rtype = False
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3/', None),
     'numpy': ('http://docs.scipy.org/doc/numpy/', None),
+    'nilearn': ('https://nilearn.github.io/', None),
     'sklearn': ('http://scikit-learn.org/stable', None),
     'scipy': ('https://docs.scipy.org/doc/scipy/reference', None),
+    'brainstat': ('https://brainstat.readthedocs.io/en/latest', None),
 }
 
 # Autosummary settings
