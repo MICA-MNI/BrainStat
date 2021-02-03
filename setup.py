@@ -17,7 +17,7 @@ with open("README.rst", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="brainstat",
-    version="0.0.1-alpha.1",
+    version="0.0.1-alpha.2",
     author="MNI-MICA Lab and MPI-CNG Lab",
     author_email="reinder.vosdewael@gmail.com, sheymaba@gmail.com",
     description="A toolbox for statistical analysis of neuroimaging data",
