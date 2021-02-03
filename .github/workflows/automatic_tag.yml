@@ -1,0 +1,29 @@
+name: "automatic_tag"
+
+on:
+  push:
+    branches:
+      - master
+
+  tagged-release:
+    name: "Automatic_Tag"
+    runs-on: "ubuntu-latest"
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Check for new tag
+      id: tag
+      run: |
+        published_tag=$(git for-each-ref --sort=creatordate --format '%(refname)' refs/tags | awk -F "/" '{print $3}' | tail -n1)
+        new_tag=$(cat setup.py | grep version | cut -d'"' -f 2)
+        if [[ $new_tag != $published_tag ]]; then
+          echo "::set-output name=tag::$new_tag"
+        else
+          echo "::set-output name=tag::skip"
+        fi
+    - name: Create Tag
+      if: steps.tag.outputs.new_tag != 'skip'
+      uses: tvdias/github-tagger@v0.0.1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ steps.tag.outputs.new_tag }}
