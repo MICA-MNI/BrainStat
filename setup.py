@@ -22,7 +22,7 @@ setuptools.setup(
     author_email="reinder.vosdewael@gmail.com, sheymaba@gmail.com",
     description="A toolbox for statistical analysis of neuroimaging data",
     long_description=long_description,
-    long_description_content_type="text/restructuredtext",
+    long_description_content_type="text/x-rst",
     url="https://github.com/MICA-LAB/BrainStat",
     packages=setuptools.find_packages(),
     license='BSD',
