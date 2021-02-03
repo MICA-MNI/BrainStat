@@ -23,12 +23,12 @@ hemispheric cortical thickness for a few subjects.
 
 ###################################################################
 
-import brainstat
-import os
-from brainstat.tutorial.utils import fetch_tutorial_data
-from brainstat.context.utils import read_surface_gz
 import numpy as np
 import nibabel as nib
+import os
+import brainstat
+from brainstat.tutorial.utils import fetch_tutorial_data
+from brainstat.context.utils import read_surface_gz
 from nilearn.datasets import fetch_surf_fsaverage
 
 brainstat_dir = os.path.dirname(brainstat.__file__)
