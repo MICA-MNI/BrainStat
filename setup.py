@@ -19,7 +19,7 @@ setuptools.setup(
     name="brainstat",
     version="0.0.1",
     author="MNI-MICA Lab and MPI-CNG Lab",
-    author_email="reinder.vosdewael@gmail.com & sheymaba@gmail.com",
+    author_email="reinder.vosdewael@gmail.com, sheymaba@gmail.com",
     description="A toolbox for statistical analysis of neuroimaging data",
     long_description=long_description,
     long_description_content_type="text/restructuredtext",
