@@ -4,7 +4,7 @@ on:
   push:
     branches:
     - master
-    - test_pypi
+    - pypi_test
 
 jobs:
   build:
