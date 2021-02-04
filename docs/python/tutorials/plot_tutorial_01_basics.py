@@ -144,11 +144,11 @@ from brainstat.stats.terms import Random
 random_handedness = Random(tutorial_data['demographics']['HAND'], name_ran='Handedness')
 random_identity = Random(1, name_ran='identity')
 model_random = (
-                term_intercept + 
-                term_age + 
-                term_iq + 
+                term_intercept +
+                term_age +
+                term_iq +
                 term_age * term_iq +
-                random_handedness + 
+                random_handedness +
                 random_identity
 )
 slm_random = linear_model(Y, model_random, pial_left)
