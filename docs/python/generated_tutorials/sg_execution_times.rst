@@ -1,0 +1,12 @@
+
+:orphan:
+
+.. _sphx_glr_python_generated_tutorials_sg_execution_times:
+
+Computation times
+=================
+**00:01.694** total execution time for **python_generated_tutorials** files:
+
++--------------------------------------------------------------------------------------------------------+-----------+--------+
+| :ref:`sphx_glr_python_generated_tutorials_plot_tutorial_01_basics.py` (``plot_tutorial_01_basics.py``) | 00:01.694 | 0.0 MB |
++--------------------------------------------------------------------------------------------------------+-----------+--------+
