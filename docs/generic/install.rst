@@ -13,9 +13,6 @@ BrainStat is compatible with Python 3.6-3.8. Compatibility with 3.9 is in the
 works.
 
 
-Installation
-^^^^^^^^^^^^
-
 BrainStat can be installed using ``pip`` (NOTE: This doesn't work yet!): ::
 
     pip install brainstat
