@@ -185,14 +185,19 @@ if isfield(slm,'tri')
         r2=mean(sqrt(a),2)/4;
         lkc(2,3)=sum(mean(sqrt(l12)+sqrt(l13)+sqrt(l23),2))/2;
         lkc(3,3)=sum(r2);
-    end
-    if nargout>=2
-        reselspvert=zeros(v,1);
-        for j=1:3
-            reselspvert=reselspvert+accumarray(tri(masktri,j),r2,[v 1]);
+
+        % RV: The following if-statement was not nested in the original
+        % surfstat implementation. I nested it because r2 is not defined if
+        % slm.resl doesn't exist, hence an error would occur when nargout>1
+        % and slm.resl did not exist.
+        if nargout>=2
+            reselspvert=zeros(v,1);
+            for j=1:3
+                reselspvert=reselspvert+accumarray(tri(masktri,j),r2,[v 1]);
+            end
+            D=2;
+            reselspvert=reselspvert'/(D+1)/sqrt(4*log(2))^D;
         end
-        D=2;
-        reselspvert=reselspvert'/(D+1)/sqrt(4*log(2))^D;
     end
 end
 %%

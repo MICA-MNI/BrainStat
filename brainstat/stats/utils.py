@@ -1,91 +1,132 @@
-import warnings
-from pathlib import Path
-import pandas as pd
-from sklearn.utils import Bunch
-from nilearn.datasets.utils import (_get_dataset_dir, _fetch_files)
+"""Python implementation of MATLAB functions."""
+
+from scipy.interpolate import interp1d
+import numpy as np
 
 
-def fetch_tutorial_data(n_subjects=20, data_dir=None, resume=True, verbose=1):
-
-    """Download and load the surfstat tutorial dataset.
+def row_ismember(a, b):
+    """Tests whether rows of a occur in b.
 
     Parameters
     ----------
-    n_subjects: int, optional
-        The number of subjects to load from maximum of 100 subjects.
-        By default, 20 subjects will be loaded. If None is given,
-        all 100 subjects will be loaded.
-    data_dir: string, optional
-        Path of the data directory. Used to force data storage in a specified
-        location. If None, data will be download to ~ (home directory).
-        Default: None
-    resume: bool, optional
-        If true, try resuming download if possible
+    a : numpy.array
+        a 2D array with the same number of columns as b.
+    b : numpy.array
+        a 2D array with the same number of columns as a.
 
     Returns
     -------
-    data: sklearn.datasets.base.Bunch
-        Dictionary-like object, the interest attributes are :
-         - 'image_files': Paths to image files in mgh format
-         - 'demographics': Path to CSV file containing demographic information
+    numpy.array
+        Indices of rows in a that occur in b.
+    """
 
-    References
+    bind = {}
+    for i, elt in enumerate(b):
+        if tuple(elt) not in bind:
+            bind[tuple(elt)] = i
+    return [bind.get(tuple(itm), None) for itm in a]
+
+
+def interp1(x, y, ix, kind='linear'):
+    """ Interpolation between datapoints.
+
+    Parameters
     ----------
+    x : (numpy.array)
+        x coordinates of training data.
+    y : (numpy.array)
+        y coordinates of training data.
+    ix : (numpy.array)
+        coordinates of the interpolated points.
+    kind (numpy.array)
+        type of interpolation; see scipy.interpolate.interp1d for options.
 
-    :Download: https://box.bic.mni.mcgill.ca/s/wMPF2vj7EoYWELV
+    Returns
+    -------
+    numpy.array
+        interpolated y coordinates.
+    """
+
+    f = interp1d(x, y, kind)
+    iy = f(ix)
+    return iy
+
+
+def ismember(A, B, rows=False):
+    """ Tests whether elements of A appear in B.
+
+    Parameters
+    ----------
+    A : (numpy.array)
+        1D or 2D array
+    B : (numpy.array)
+        1D or 2D array
+    rows : (logical)
+        If true test for row correspondence rather than element correpondence.
+
+    Returns
+    -------
+    logical
+        Boolean of the same size as A denoting which elements (or rows) occur in B.
+    numpy.array
+        Indices of matching elements/rows in A.
+
+    Notes
+    -----
+    For row-wise comparisons, row_ismember should be significantly faster.
 
     """
 
-    # set dataset url
-    url = "https://box.bic.mni.mcgill.ca/s/wMPF2vj7EoYWELV"
+    if rows:
+        # Get rows of A that are in B.
+        equality = np.equal(np.expand_dims(A, axis=2),
+                            np.expand_dims(B.T, axis=0))
+        equal_rows = np.squeeze(np.all(equality, axis=1))
+        bool_array = np.any(equal_rows, 1)
+
+        # Get location of elements in B.
+        locations = np.zeros(bool_array.shape) + np.nan
+        for i in range(0, equal_rows.shape[0]):
+            nz = np.nonzero(equal_rows[i, :])
+            if nz[0].size != 0:
+                locations[i] = nz[0]
+
+    else:
+        # Get values of A that are in B.
+        bool_vector = np.in1d(A, B)
+        bool_array = np.reshape(bool_vector, A.shape)
+
+        # Get location of elements in B. Transpose B and A to get MATLAB behavior (i.e. column first)
+        val, locB = np.unique(B.T, return_index=True)
+        idx = np.flatnonzero(bool_array)
+        locations = np.zeros(A.size) + np.nan
+        Aflat = A.T.flat
+        for i in range(0, idx.size):
+            locations[idx[i]] = locB[np.argwhere(val == Aflat[idx[i]])]
+        locations = np.reshape(locations, A.shape)
+    return bool_array, locations
 
 
-    # set data_dir, if not directly set use ~ as default
-    if data_dir is None:
-        data_dir = str(Path.home())
+def colon(start, stop, increment=1):
+    """ Generates a range of numbers including the stop number.
 
-    # set dataset name and get its corresponding directory
-    dataset_name = "brainstat_tutorial"
-    data_dir = _get_dataset_dir(dataset_name, data_dir=data_dir,
-                                verbose=verbose)
+    Parameters
+    ----------
+    start : (int)
+        Starting scalar number of the range.
+    stop :  (int)
+        Stopping scalar number of the range.
+    increment (float)
+        Increments of the range.
 
-    # set download information for demographic file
-    files = [
-        (
-            "brainstat_tutorial_df.csv",
-            url + "/download?path=%2FSurfStat_tutorial_data&files=myStudy.csv",
-            {"move": "brainstat_tutorial_df.csv"},
-        )
-    ]
-
-    # download demographic file
-    path_to_demographics = _fetch_files(data_dir, files, verbose=verbose)[0]
-
-    # set ids based on complete dataset from demographic file
-    ids = pd.read_csv(path_to_demographics)["ID2"].tolist()
-
-    # set and check subjects, in total and subset
-    max_subjects = len(ids)
-    if n_subjects is None:
-        n_subjects = max_subjects
-    if n_subjects > max_subjects:
-        warnings.warn('Warning: there are only %d subjects' % max_subjects)
-        n_subjects = max_subjects
-    ids = ids[:n_subjects]
-
-    # restrict demographic information to subset of subjects
-    df_tmp = pd.read_csv(path_to_demographics)
-    df_tmp = df_tmp[df_tmp['ID2'].isin(ids)]
-
-    # set download information for image files and download them
-    # for hemi in ['lh', 'rh']:
-    image_files =_fetch_files(data_dir,
-                    [("thickness/{}_{}2fsaverage5_20.mgh".format(subj, hemi),
-                    url + "/download?path=%2F&files=brainstat_tutorial.zip",
-                    {"uncompress": True, "move": "brainstat_tutorial.zip"},)
-                    for subj in ids for hemi in ['lh', 'rh']
-                                            ],)
-
-    # pack everything in a scikit-learn bunch and return it
-    return Bunch(demographics=df_tmp,
-                 image_files=image_files)
+    Returns
+    -------
+    numpy.array
+        The requested numbers.
+    """
+    r = np.arange(start, stop, increment)
+    if (start > stop and increment > 0) or (start < stop and increment < 0):
+        return r
+    elif start == stop or r[-1] + increment == stop:
+        r = np.append(r, stop)
+    return r
