@@ -1,7 +1,7 @@
-.. _plot_hemispheres_matlab:
+.. _volume_viewer_matlab:
 
 ==================
-plot_hemispheres
+volume_viewer
 ==================
 
 ------------------
@@ -16,7 +16,7 @@ Plots data in a volume (`source code
 Usage
 ------------------
 
-::
+.. code-block:: matlab
 
    obj = volume_viewer(structural,overlay,varargin);
 
