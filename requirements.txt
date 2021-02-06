@@ -1,6 +1,7 @@
 abagen
 brainspace>=0.1.1
 gitpython
+jupytext
 neurosynth
 nibabel
 nilearn>=0.7.0
