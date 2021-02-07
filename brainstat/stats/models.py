@@ -531,11 +531,11 @@ def t_test(slm, contrast):
             # mixed effect
             q1, v = np.shape(slm["r"])
             q = q1 + 1
-            nc = np.shape(slm['dr'])[1]
+            nc = np.shape(slm["dr"])[1]
             chunk = math.ceil(v / nc)
             irs = np.zeros((q1, v))
 
-            for ic in range(1, nc+1):
+            for ic in range(1, nc + 1):
                 v1 = 1 + (ic - 1) * chunk
                 v2 = np.min((v1 + chunk - 1, v))
 
