@@ -197,7 +197,7 @@ class Term:
             return
 
         if np.isscalar(x) and names is None:
-            names = ['intercept']
+            names = ["intercept"]
 
         if isinstance(names, str):
             names = [names]
