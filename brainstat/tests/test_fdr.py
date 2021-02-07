@@ -7,54 +7,54 @@ from brainstat.stats.multiple_comparisons import fdr
 def dummy_test(infile, expfile):
 
     # load input test data
-    ifile = open(infile, 'br')
-    idic  = pickle.load(ifile)
+    ifile = open(infile, "br")
+    idic = pickle.load(ifile)
     ifile.close()
 
     slm = {}
-    slm['t']  = idic['t']
-    slm['df'] = idic['df']
-    slm['k']  = idic['k']
+    slm["t"] = idic["t"]
+    slm["df"] = idic["df"]
+    slm["k"] = idic["k"]
 
     # check other potential keys in input
-    if 'dfs' in idic.keys():
-        slm['dfs'] = idic['dfs']
+    if "dfs" in idic.keys():
+        slm["dfs"] = idic["dfs"]
 
-    if 'resl' in idic.keys():
-        slm['resl'] = idic['resl']
+    if "resl" in idic.keys():
+        slm["resl"] = idic["resl"]
 
-    if 'tri' in idic.keys():
-        slm['tri']    = idic['tri']
+    if "tri" in idic.keys():
+        slm["tri"] = idic["tri"]
 
-    if 'lat' in idic.keys():
-        slm['tri']    = idic['tri']
+    if "lat" in idic.keys():
+        slm["tri"] = idic["tri"]
 
-    if 'mask' in idic.keys():
-        mask = idic['mask']
+    if "mask" in idic.keys():
+        mask = idic["mask"]
     else:
         mask = None
 
     # non-sense input for _fdr, but potentially produced by SurfStatLinMod
-    if 'du' in idic.keys():
-        slm['du'] = idic['du']
+    if "du" in idic.keys():
+        slm["du"] = idic["du"]
 
-    if 'c' in idic.keys():
-        slm['c']    = idic['c']
+    if "c" in idic.keys():
+        slm["c"] = idic["c"]
 
-    if 'ef' in idic.keys():
-        slm['ef']    = idic['ef']
+    if "ef" in idic.keys():
+        slm["ef"] = idic["ef"]
 
-    if 'sd' in idic.keys():
-        slm['sd']    = idic['sd']
+    if "sd" in idic.keys():
+        slm["sd"] = idic["sd"]
 
-    if 'SSE' in idic.keys():
-        slm['SSE']    = idic['SSE']
+    if "SSE" in idic.keys():
+        slm["SSE"] = idic["SSE"]
 
     # run _fdr
     outdic = fdr(slm, mask)
 
     # load expected outout data
-    efile  = open(expfile, 'br')
+    efile = open(expfile, "br")
     expdic = pickle.load(efile)
     efile.close()
 
@@ -72,8 +72,8 @@ def test_01():
     # ['t'] : np array, shape (1, 64984), float64
     # ['df'] : np array, shape (1, 1), uint16
     # ['k'] : np array, shape (1, 1), uint8
-    infile  = datadir('statq_01_IN.pkl')
-    expfile = datadir('statq_01_OUT.pkl')
+    infile = datadir("statq_01_IN.pkl")
+    expfile = datadir("statq_01_OUT.pkl")
     dummy_test(infile, expfile)
 
 
@@ -82,8 +82,8 @@ def test_02():
     # ['t'] : np array, shape (1, 9850), float64
     # ['df'] : np array, shape (1, 1), int64
     # ['k'] : int
-    infile  = datadir('statq_02_IN.pkl')
-    expfile = datadir('statq_02_OUT.pkl')
+    infile = datadir("statq_02_IN.pkl")
+    expfile = datadir("statq_02_OUT.pkl")
     dummy_test(infile, expfile)
 
 
@@ -92,8 +92,8 @@ def test_03():
     # ['t'] :  np array, shape (1, 2139), float64
     # ['df'] : np array, shape (1, 1), int64
     # ['k'] :  int
-    infile  = datadir('statq_03_IN.pkl')
-    expfile = datadir('statq_03_OUT.pkl')
+    infile = datadir("statq_03_IN.pkl")
+    expfile = datadir("statq_03_OUT.pkl")
     dummy_test(infile, expfile)
 
 
@@ -103,8 +103,8 @@ def test_04():
     # ['df'] : np array, shape (1, 1), int64
     # ['k'] : int
     # ['mask'] : np array, shape (2475,), bool
-    infile  = datadir('statq_04_IN.pkl')
-    expfile = datadir('statq_04_OUT.pkl')
+    infile = datadir("statq_04_IN.pkl")
+    expfile = datadir("statq_04_OUT.pkl")
     dummy_test(infile, expfile)
 
 
@@ -114,8 +114,8 @@ def test_05():
     # ['df'] : np array, shape (1, 1), int64
     # ['k'] : int
     # ['dfs'] : np array, shape (1, 1998), int64
-    infile  = datadir('statq_05_IN.pkl')
-    expfile = datadir('statq_05_OUT.pkl')
+    infile = datadir("statq_05_IN.pkl")
+    expfile = datadir("statq_05_OUT.pkl")
     dummy_test(infile, expfile)
 
 
@@ -126,8 +126,8 @@ def test_06():
     # ['k'] : int
     # ['dfs'] : np array, shape (1, 3328), int64
     # ['mask'] : np array, shape (3328,), bool
-    infile  = datadir('statq_06_IN.pkl')
-    expfile = datadir('statq_06_OUT.pkl')
+    infile = datadir("statq_06_IN.pkl")
+    expfile = datadir("statq_06_OUT.pkl")
     dummy_test(infile, expfile)
 
 
@@ -139,8 +139,8 @@ def test_07():
     # ['dfs'] : np array, shape (1, 9512), int64
     # ['mask'] : np array, shape (9512,), bool
     # ['tri'] : np array, shape (1724, 3), int64
-    infile  = datadir('statq_07_IN.pkl')
-    expfile = datadir('statq_07_OUT.pkl')
+    infile = datadir("statq_07_IN.pkl")
+    expfile = datadir("statq_07_OUT.pkl")
     dummy_test(infile, expfile)
 
 
@@ -152,8 +152,8 @@ def test_08():
     # ['dfs'] : np array, shape (1, 1520), int64
     # ['tri'] : np array, shape (4948, 3), int64
     # ['resl'] : np array, shape (1520, 1), float64
-    infile  = datadir('statq_08_IN.pkl')
-    expfile = datadir('statq_08_OUT.pkl')
+    infile = datadir("statq_08_IN.pkl")
+    expfile = datadir("statq_08_OUT.pkl")
     dummy_test(infile, expfile)
 
 
@@ -167,8 +167,8 @@ def test_09():
     # ['resl'] : np array, shape (8199, 1), float64
     # ['dfs'] : np array, shape (1, 4397), float64
     # ['du'] : int
-    infile  = datadir('statq_09_IN.pkl')
-    expfile = datadir('statq_09_OUT.pkl')
+    infile = datadir("statq_09_IN.pkl")
+    expfile = datadir("statq_09_OUT.pkl")
     dummy_test(infile, expfile)
 
 
@@ -183,8 +183,8 @@ def test_10():
     # ['c'] : np array, shape (1, 2), float64
     # ['ef'] : np array, shape (1, 20484), float64
     # ['sd'] : np array, shape (1, 20484), float64
-    infile  = datadir('statq_10_IN.pkl')
-    expfile = datadir('statq_10_OUT.pkl')
+    infile = datadir("statq_10_IN.pkl")
+    expfile = datadir("statq_10_OUT.pkl")
     dummy_test(infile, expfile)
 
 
@@ -202,8 +202,8 @@ def test_11():
     # ['X'] : np array, shape (10, 2), float64
     # ['coef'] : np array, shape (2, 20484), float64
     # ['SSE'] : np array, shape (1, 20484), float64
-    infile  = datadir('statq_11_IN.pkl')
-    expfile = datadir('statq_11_OUT.pkl')
+    infile = datadir("statq_11_IN.pkl")
+    expfile = datadir("statq_11_OUT.pkl")
     dummy_test(infile, expfile)
 
 
@@ -221,8 +221,8 @@ def test_12():
     # ['coef'] : np array, shape (2, 20484), float64
     # ['SSE'] : np array, shape (1, 20484), float64
     # ['mask'] : np array, shape (20484,), bool
-    infile  = datadir('statq_12_IN.pkl')
-    expfile = datadir('statq_12_OUT.pkl')
+    infile = datadir("statq_12_IN.pkl")
+    expfile = datadir("statq_12_OUT.pkl")
     dummy_test(infile, expfile)
 
 
@@ -239,8 +239,8 @@ def test_13():
     # ['X'] : np array, shape (20, 9), uint16
     # ['coef'] : np array, shape (9, 20484), float64
     # ['SSE'] : np array, shape (1, 20484), float64
-    infile  = datadir('statq_13_IN.pkl')
-    expfile = datadir('statq_13_OUT.pkl')
+    infile = datadir("statq_13_IN.pkl")
+    expfile = datadir("statq_13_OUT.pkl")
     dummy_test(infile, expfile)
 
 
@@ -258,8 +258,6 @@ def test_14():
     # ['coef'] : np array, shape (9, 20484), float64
     # ['SSE'] : np array, shape (1, 20484), float64
     # ['mask'] : np array, shape (20484,), bool
-    infile  = datadir('statq_14_IN.pkl')
-    expfile = datadir('statq_14_OUT.pkl')
+    infile = datadir("statq_14_IN.pkl")
+    expfile = datadir("statq_14_OUT.pkl")
     dummy_test(infile, expfile)
-
-
