@@ -23,7 +23,6 @@ jobs:
     - name: Build binary wheel and tarball.
       run: |
         python -m build --sdist --wheel --outdir dist/
-
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
