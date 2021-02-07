@@ -7,6 +7,6 @@
 
     generic/install
     python/index
-    matlab/api
+    matlab/index
     generic/references
     generic/funding
