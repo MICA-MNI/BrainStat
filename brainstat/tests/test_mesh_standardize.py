@@ -7,32 +7,30 @@ from brainstat.mesh.data import mesh_standardize
 def dummy_test(infile, expfile):
 
     # load input test data
-    ifile = open(infile, 'br')
-    idic  = pickle.load(ifile)
+    ifile = open(infile, "br")
+    idic = pickle.load(ifile)
     ifile.close()
 
-    Y = idic['Y']
+    Y = idic["Y"]
 
     mask = None
-    subtractordivide = 's'
+    subtractordivide = "s"
 
+    if "mask" in idic.keys():
+        mask = idic["mask"]
 
-    if 'mask' in idic.keys():
-        mask = idic['mask']
-
-    if 'subtractordivide' in idic.keys():
-        subtractordivide = idic['subtractordivide']
-
+    if "subtractordivide" in idic.keys():
+        subtractordivide = idic["subtractordivide"]
 
     # run mesh_standardize
     Y_out, Ym_out = mesh_standardize(Y, mask, subtractordivide)
 
     # load expected outout data
-    efile  = open(expfile, 'br')
+    efile = open(expfile, "br")
     expdic = pickle.load(efile)
     efile.close()
-    Y_exp  = expdic['Python_Y']
-    Ym_exp = expdic['Python_Ym']
+    Y_exp = expdic["Python_Y"]
+    Ym_exp = expdic["Python_Ym"]
 
     testout = []
 
@@ -44,32 +42,30 @@ def dummy_test(infile, expfile):
 
 def test_01():
     # ['Y'] : np array, shape (1, 1), int64
-    infile  = datadir('statsta_01_IN.pkl')
-    expfile = datadir('statsta_01_OUT.pkl')
+    infile = datadir("statsta_01_IN.pkl")
+    expfile = datadir("statsta_01_OUT.pkl")
     dummy_test(infile, expfile)
 
 
 def test_02():
     # ['Y'] : np array, shape (1, 10), int64
     # ['mask'] : np array, shape (10,), bool
-    infile  = datadir('statsta_02_IN.pkl')
-    expfile = datadir('statsta_02_OUT.pkl')
+    infile = datadir("statsta_02_IN.pkl")
+    expfile = datadir("statsta_02_OUT.pkl")
     dummy_test(infile, expfile)
 
 
 def test_03():
     # ['Y'] : np array, shape (2, 10), int64
     # ['mask'] : np array, shape (10,), bool
-    infile  = datadir('statsta_03_IN.pkl')
-    expfile = datadir('statsta_03_OUT.pkl')
+    infile = datadir("statsta_03_IN.pkl")
+    expfile = datadir("statsta_03_OUT.pkl")
     dummy_test(infile, expfile)
 
 
 def test_04():
     # ['Y'] : np array, shape (3, 4, 2), float64
     # ['mask'] : np array, shape (4,), bool
-    infile  = datadir('statsta_04_IN.pkl')
-    expfile = datadir('statsta_04_OUT.pkl')
+    infile = datadir("statsta_04_IN.pkl")
+    expfile = datadir("statsta_04_OUT.pkl")
     dummy_test(infile, expfile)
-
-

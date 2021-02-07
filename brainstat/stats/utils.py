@@ -27,8 +27,8 @@ def row_ismember(a, b):
     return [bind.get(tuple(itm), None) for itm in a]
 
 
-def interp1(x, y, ix, kind='linear'):
-    """ Interpolation between datapoints.
+def interp1(x, y, ix, kind="linear"):
+    """Interpolation between datapoints.
 
     Parameters
     ----------
@@ -53,7 +53,7 @@ def interp1(x, y, ix, kind='linear'):
 
 
 def ismember(A, B, rows=False):
-    """ Tests whether elements of A appear in B.
+    """Tests whether elements of A appear in B.
 
     Parameters
     ----------
@@ -79,8 +79,7 @@ def ismember(A, B, rows=False):
 
     if rows:
         # Get rows of A that are in B.
-        equality = np.equal(np.expand_dims(A, axis=2),
-                            np.expand_dims(B.T, axis=0))
+        equality = np.equal(np.expand_dims(A, axis=2), np.expand_dims(B.T, axis=0))
         equal_rows = np.squeeze(np.all(equality, axis=1))
         bool_array = np.any(equal_rows, 1)
 
@@ -108,7 +107,7 @@ def ismember(A, B, rows=False):
 
 
 def colon(start, stop, increment=1):
-    """ Generates a range of numbers including the stop number.
+    """Generates a range of numbers including the stop number.
 
     Parameters
     ----------

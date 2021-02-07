@@ -11,6 +11,8 @@ BrainStat : A toolbox for statistical analysis of neuroimaging data
     :target: https://codecov.io/gh/MICA-LAB/BrainStat
 .. image:: https://readthedocs.org/projects/brainstat/badge/?version=latest&style=plastic
     :target: https://brainstat.readthedocs.io/en/latest/
+.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+    :target: https://github.com/psf/black
 
 Welcome to BrainStat's documentation!
 

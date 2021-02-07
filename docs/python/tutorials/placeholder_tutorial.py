@@ -30,6 +30,7 @@ You don't need to though::
 # Or code can be included as actual, executable code.
 
 import brainstat
+
 print(brainstat)
 
 # That's it that's all folks.
