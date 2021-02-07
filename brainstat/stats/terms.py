@@ -196,6 +196,9 @@ class Term:
             self.m = x.m
             return
 
+        if np.isscalar(x) and names is None:
+            names = ['intercept']
+
         if isinstance(names, str):
             names = [names]
 
