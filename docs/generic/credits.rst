@@ -1,6 +1,6 @@
-.. _references:
+.. _credits:
 
-References
+Credits
 ==============================
 
 Some references that are incorporated into BrainStat 

@@ -5,7 +5,7 @@
     :caption: Table of Contents:
     :hidden:
 
-    generic/install
+    generic/credits
     python/index
     matlab/index
     generic/references
