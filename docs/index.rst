@@ -7,8 +7,6 @@
 
     generic/install
     python/index
-    python/tutorial
-    matlab/api
-    matlab/tutorial
-    generic/credits
+    matlab/index
+    generic/references
     generic/funding

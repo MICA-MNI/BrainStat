@@ -1,6 +1,6 @@
 .. _examples_index:
 
-Tutorials:
+Tutorials
 ==========
 
 .. contents:: **Contents**
