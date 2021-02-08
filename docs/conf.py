@@ -86,14 +86,14 @@ sphinx_gallery.binder.gen_binder_rst = patched_gen_binder_rst
 sphinx_gallery_conf = {
     "examples_dirs": "python/tutorials",
     "gallery_dirs": "python/generated_tutorials",
-#    "binder": {
-#        "org": "MICA-LAB",
-#        "repo": "BrainStat",
-#        "branch": "python_tutorial",
-#        "binderhub_url": "https://mybinder.org",
-#        "dependencies": ["../requirements.txt"],
-#        "notebooks_dir": "docs/python/tutorials",
-#    },
+    #    "binder": {
+    #        "org": "MICA-LAB",
+    #        "repo": "BrainStat",
+    #        "branch": "python_tutorial",
+    #        "binderhub_url": "https://mybinder.org",
+    #        "dependencies": ["../requirements.txt"],
+    #        "notebooks_dir": "docs/python/tutorials",
+    #    },
 }
 
 # Napoleon settings
