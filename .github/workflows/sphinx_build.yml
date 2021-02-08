@@ -10,7 +10,9 @@ jobs:
     - name: Install libgl
       run: |
       apt-get install libgl1-mesa-glx
-    - uses: actions/checkout@v2
-    - uses: ammaraskar/sphinx-action@master
+    - name: Checkout Commit
+      uses: actions/checkout@v2
+    - name: Build the Docs
+      uses: ammaraskar/sphinx-action@master
       with:
         docs-folder: "docs/"
