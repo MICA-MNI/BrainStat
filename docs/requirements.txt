@@ -1,3 +1,4 @@
 Sphinx>=3.4.2
 sphinxcontrib-matlabdomain
 sphinx-gallery
+-r ../requirements.txt
