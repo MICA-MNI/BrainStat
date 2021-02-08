@@ -1,6 +1,10 @@
+.. _matlab_index:
+
+MATLAB Index
+=============
+
 .. toctree::
     :maxdepth: 1
     :caption: Table of Contents:
-    :hidden:
 
     volume_viewer
