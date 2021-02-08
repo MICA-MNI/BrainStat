@@ -82,7 +82,7 @@ extensions = [
 #     return rst
 
 
-sphinx_gallery.binder.gen_binder_rst = patched_gen_binder_rst
+# sphinx_gallery.binder.gen_binder_rst = patched_gen_binder_rst
 sphinx_gallery_conf = {
     "examples_dirs": "python/tutorials",
     "gallery_dirs": "python/generated_tutorials",
