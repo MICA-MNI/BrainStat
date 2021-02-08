@@ -12,9 +12,9 @@
 #
 import os
 import sys
+import sphinx_gallery.binder
 
 sys.path.insert(0, os.path.abspath(".."))
-
 
 # -- Project information -----------------------------------------------------
 
@@ -32,20 +32,68 @@ release = "0.0.1"
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    "sphinx.ext.autodoc",
-    "sphinx.ext.autosummary",
-    "sphinx.ext.viewcode",
-    "sphinx.ext.napoleon",
-    "sphinx.ext.intersphinx",
-    "sphinx.ext.doctest",
-    "sphinxcontrib.matlab",
-    "sphinx_gallery.gen_gallery",
+    "sphinx.ext.autodoc",  # Automatic documentation
+    "sphinx.ext.autosummary",  # Automatic documentation
+    "sphinx.ext.viewcode",  # Add source code link
+    "sphinx.ext.napoleon",  # Parses docstrings
+    "sphinx.ext.intersphinx",  # Links code to other packages
+    "sphinx.ext.doctest",  # Runs doctests
+    "sphinxcontrib.matlab",  # MATLAB plugin
+    "sphinx_gallery.gen_gallery",  # Example gallery
 ]
 
-# Sphinx gallery settings.
+
+# def patched_gen_binder_rst(fpath, binder_conf, gallery_conf):
+#     """Generate the RST + link for the Binder badge.
+#     Parameters
+#     ----------
+#     fpath: str
+#         The path to the `.py` file for which a Binder badge will be generated.
+#     binder_conf: dict or None
+#         If a dictionary it must have the following keys:
+#         'binderhub_url'
+#             The URL of the BinderHub instance that's running a Binder service.
+#         'org'
+#             The GitHub organization to which the documentation will be pushed.
+#         'repo'
+#             The GitHub repository to which the documentation will be pushed.
+#         'branch'
+#             The Git branch on which the documentation exists (e.g., gh-pages).
+#         'dependencies'
+#             A list of paths to dependency files that match the Binderspec.
+#     Returns
+#     -------
+#     rst : str
+#         The reStructuredText for the Binder badge that links to this file.
+#     """
+#     binder_conf = sphinx_gallery.binder.check_binder_conf(binder_conf)
+#     binder_url = sphinx_gallery.binder.gen_binder_url(fpath, binder_conf, gallery_conf)
+#     binder_url = binder_url.replace(
+#         gallery_conf["gallery_dirs"] + os.path.sep, ""
+#     ).replace("ipynb", "py")
+
+#     rst = (
+#         "\n"
+#         "  .. container:: binder-badge\n\n"
+#         "    .. image:: https://mybinder.org/badge_logo.svg\n"
+#         "      :target: {}\n"
+#         "      :width: 150 px\n"
+#     ).format(binder_url)
+#     return rst
+
+
+sphinx_gallery.binder.gen_binder_rst = patched_gen_binder_rst
 sphinx_gallery_conf = {
     "examples_dirs": "python/tutorials",
     "gallery_dirs": "python/generated_tutorials",
+    #    "binder": {
+    #        "org": "MICA-LAB",
+    #        "repo": "BrainStat",
+    #        "branch": "python_tutorial",
+    #        "binderhub_url": "https://mybinder.org",
+    #        "dependencies": ["../requirements.txt"],
+    #        "notebooks_dir": "docs/python/tutorials",
+    #    },
 }
 
 # Napoleon settings
@@ -61,8 +109,12 @@ napoleon_use_rtype = False
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3/", None),
     "numpy": ("http://docs.scipy.org/doc/numpy/", None),
+    "nilearn": ("https://nilearn.github.io/", None),
+    "nibabel": ("https://nipy.org/nibabel/", None),
     "sklearn": ("http://scikit-learn.org/stable", None),
     "scipy": ("https://docs.scipy.org/doc/scipy/reference", None),
+    "brainstat": ("https://brainstat.readthedocs.io/en/latest", None),
+    "brainspace": ("https://brainspace.readthedocs.io/en/latest", None),
 }
 
 # Autosummary settings

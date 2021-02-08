@@ -7,7 +7,7 @@ Python Index
     :maxdepth: 1
     :caption: Table of Contents:
 
-    ../python/generated_tutorials/index
+    generated_tutorials/index
 
 
 .. autosummary::
