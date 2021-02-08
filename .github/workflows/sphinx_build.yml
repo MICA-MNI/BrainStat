@@ -3,9 +3,13 @@ on:
 - pull_request
 
 jobs:
+  
   docs:
     runs-on: ubuntu-latest
     steps:
+    - name: Install libgl
+      run: |
+      apt-get install libgl1-mesa-glx
     - uses: actions/checkout@v2
     - uses: ammaraskar/sphinx-action@master
       with:
