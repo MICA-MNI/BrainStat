@@ -1,10 +1,9 @@
 import numpy as np
 import pickle
 from .testutil import datadir
-from brainstat.stats._models import linear_model
 from brainstat.stats.terms import Term
 from brainstat.stats.SLM import SLM
-from brainstat.stats.terms import Term
+
 
 def dummy_test(idic, oslm):
 
@@ -14,12 +13,13 @@ def dummy_test(idic, oslm):
     Y = idic["Y"]
     if 'tri' in idic.keys():
         slm.surf = {'tri' : idic["tri"]}
+
     if 'lat' in idic.keys():
         slm.surf = {'lat' : idic["lat"]}
     if 'coord' in idic.keys():
         slm.surf['coord'] = idic["coord"]
-    slm.linear_model(Y)
 
+    slm.linear_model(Y)
     for key in oslm.keys():
         comp = np.allclose(getattr(slm,key), oslm[key], rtol=1e-05, equal_nan=True)
         testout.append(comp)

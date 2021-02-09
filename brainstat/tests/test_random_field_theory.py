@@ -14,7 +14,10 @@ def dummy_test(infile, expfile):
 
     slm = SLM(Term(1), Term(1))
     for key in idic.keys():
-        setattr(slm, key, idic[key])
+        if key is 'clusthresh':
+            slm.cluster_threshold = idic[key]
+        else:
+            setattr(slm, key, idic[key])
 
     PY_pval, PY_peak, PY_clus, PY_clusid = random_field_theory(slm)
 
@@ -35,8 +38,6 @@ def dummy_test(infile, expfile):
         testout.append(comp)
 
     if isinstance(PY_peak, dict):
-        import pdb
-        pdb.set_trace()
         for key in PY_peak.keys():
             comp = np.allclose(PY_peak[key], O_peak[key], rtol=1e-05, equal_nan=True)
     else:

@@ -66,10 +66,10 @@ def linear_model(self, Y):
     # Get data from term/random
     V = None
     if isinstance(self.model, Random):
-        self.X, Vl = self.model.mean.matrix.values, self.model.variance.matrix.values
+        X, Vl = self.model.mean.matrix.values, self.model.variance.matrix.values
 
         # check in var contains intercept (constant term)
-        _, q = Vl.shape
+        n2, q = Vl.shape
         II = np.identity(n).ravel()
 
         r = II - Vl @ (la.pinv(Vl) @ II)
@@ -82,7 +82,7 @@ def linear_model(self, Y):
     else:  # No random term
         q = 1
         if isinstance(self.model, Term):
-            self.X = self.model.matrix.values
+            X = self.model.matrix.values
         else:
             if self.model.size > 1:
                 warnings.warn(
@@ -90,19 +90,22 @@ def linear_model(self, Y):
                     "t convert vectors to terms you can "
                     "get unexpected results :-("
                 )
-            self.X = self.model
+            X = self.model
 
-        if self.X.shape[0] == 1:
-            self.X = np.tile(self.X, (n, 1))
+        if X.shape[0] == 1:
+            X = np.tile(X, (n, 1))
 
     # check if term (x) contains intercept (constant term)
-    pinvX = la.pinv(self.X)
-    r = 1 - self.X @ pinvX.sum(1)
+    pinvX = la.pinv(X)
+    r = 1 - X @ pinvX.sum(1)
     if (r ** 2).mean() > np.finfo(float).eps:
         warnings.warn("Did you forget an error term, I? :-)")
 
-    p = self.X.shape[1]  # number of predictors
-    self.df = n - la.matrix_rank(self.X)  # degrees of freedom
+    p = X.shape[1]  # number of predictors
+    df = n - la.matrix_rank(X)  # degrees of freedom
+
+    self.df = df
+    self.X = X
 
     if k == 1:  # Univariate
 
@@ -110,14 +113,14 @@ def linear_model(self, Y):
 
             if V is None:  # OLS
                 coef = pinvX @ Y
-                Y = Y - self.X @ coef
+                Y = Y - X @ coef
 
             else:
                 V = V / np.diag(V).mean(0)
                 Vmh = la.inv(la.cholesky(V).T)
 
-                coef = (la.pinv(Vmh @ self.X) @ Vmh) @ Y
-                Y = Vmh @ Y - (Vmh @ self.X) @ coef
+                coef = (la.pinv(Vmh @ X) @ Vmh) @ Y
+                Y = Vmh @ Y - (Vmh @ X) @ coef
 
             sse = np.sum(Y ** 2, axis=0)
 
@@ -129,7 +132,7 @@ def linear_model(self, Y):
             slm_r = np.zeros((q1, v))
 
             # start Fisher scoring algorithm
-            R = np.eye(n) - self.X @ la.pinv(self.X)
+            R = np.eye(n) - X @ la.pinv(X)
             RVV = (V.T @ R.T).T
             E = Y.T @ (R.T @ RVV.T)
             E *= Y.T
@@ -145,7 +148,7 @@ def linear_model(self, Y):
             M = np.einsum("ijk,jil->kl", RVV, RVV, optimize="optimal")
 
             theta = la.pinv(M) @ E
-            tlim = np.sqrt(2 * np.diag(la.pinv(M))) * self._thetalim
+            tlim = np.sqrt(2 * np.diag(la.pinv(M))) * self.thetalim
             tlim = tlim[:, None] * theta.sum(0)
             m = theta < tlim
             theta[m] = tlim[m]
@@ -155,10 +158,10 @@ def linear_model(self, Y):
             m1 = np.diag(Vt)
             m2 = 2 * Vt.sum(0)
             Vr = m1[:q1] - m2[:q1] * slm_r.mean(1) + Vt.sum() * (r ** 2).mean(-1)
-            dr = np.sqrt(Vr) * self._drlim
+            dr = np.sqrt(Vr) * self.drlim
 
             # Extra Fisher scoring iterations
-            for it in range(self._niter):
+            for it in range(self.niter):
                 irs = np.round(r.T / dr)
                 ur, jr = np.unique(irs, axis=0, return_inverse=True)
                 nr = ur.shape[0]
@@ -170,8 +173,8 @@ def linear_model(self, Y):
                     Vs += (V[..., :q1] * rv).sum(-1)
 
                     Vinv = la.inv(Vs)
-                    VinvX = Vinv @ self.X
-                    G = la.pinv(self.X.T @ VinvX) @ VinvX.T
+                    VinvX = Vinv @ X
+                    G = la.pinv(X.T @ VinvX) @ VinvX.T
                     R = Vinv - VinvX @ G
 
                     RVV = (V.T @ R.T).T
@@ -182,7 +185,7 @@ def linear_model(self, Y):
                     M = np.einsum("ijk,jil->kl", RVV, RVV, optimize="optimal")
 
                     thetav = la.pinv(M) @ E
-                    tlim = np.sqrt(2 * np.diag(la.pinv(M))) * self._thetalim
+                    tlim = np.sqrt(2 * np.diag(la.pinv(M))) * self.thetalim
                     tlim = tlim[:, None] * thetav.sum(0)
 
                     m = thetav < tlim
@@ -207,7 +210,7 @@ def linear_model(self, Y):
 
                 # Vmh = la.inv(la.cholesky(Vs).T)
                 Vmh = la.inv(la.cholesky(Vs))
-                VmhX = Vmh @ self.X
+                VmhX = Vmh @ X
                 G = (la.pinv(VmhX.T @ VmhX) @ VmhX.T) @ Vmh
 
                 coef[:, iv] = G @ Y[:, iv]
@@ -216,8 +219,9 @@ def linear_model(self, Y):
                 sse[iv] = (Y[:, iv] ** 2).sum(0)
 
             self.r = r
-            self.dr = dr[:,None]
-        self.SSE = sse[None]
+            self.dr = dr[:, None]
+
+        sse = sse[None]
 
     else:  # multivariate
         if q > 1:
@@ -226,11 +230,11 @@ def linear_model(self, Y):
             )
 
         if V is None:
-            X2 = self.X
+            X2 = X
         else:
             V = V / np.diag(V).mean(0)
             Vmh = la.inv(la.cholesky(V)).T
-            X2 = Vmh @ self.X
+            X2 = Vmh @ X
             pinvX = la.pinv(X2)
             Y = Vmh @ Y
 
@@ -248,16 +252,18 @@ def linear_model(self, Y):
 
     self.coef = coef
     self.SSE = sse
-    self.V = V
 
-    if self.surf is not None:
+    if V is not None:
+        self.V = V
+
+    if self.surf is not None and (
+        isinstance(self.surf, BSPolyData) or ("tri" in self.surf or "lat" in self.surf)
+    ):
         if isinstance(self.surf, BSPolyData):
             self.tri = np.array(get_cells(self.surf)) + 1
         else:
-            if 'tri' in self.surf:
-                self.tri = self.surf['tri']
-            else:
-                self.lat = self.surf['lat']
+            key = "tri" if "tri" in self.surf else "lat"
+            setattr(self, key, self.surf[key])
 
         edges = mesh_edges(self.surf)
 
@@ -272,6 +278,7 @@ def linear_model(self, Y):
                 u = Y[i, :, j] / normr
                 resl[:, j] += np.diff(u[edges], axis=1).ravel() ** 2
         self.resl = resl
+
 
 def t_test(self):
     """T statistics for a contrast in a univariate or multivariate model.
