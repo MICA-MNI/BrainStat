@@ -1,8 +1,9 @@
 import numpy as np
 import pickle
 from .testutil import datadir
-from brainstat.stats.models import t_test
-
+from brainstat.stats._models import t_test
+from brainstat.stats.SLM import SLM
+from brainstat.stats.terms import Term
 
 def dummy_test(infile, expfile):
 
@@ -11,34 +12,12 @@ def dummy_test(infile, expfile):
     idic = pickle.load(ifile)
     ifile.close()
 
-    slm = {}
-    slm["X"] = idic["X"]
-    slm["df"] = idic["df"]
-    slm["coef"] = idic["coef"]
-    slm["SSE"] = idic["SSE"]
-
-    contrast = idic["contrast"]
-
-    if "V" in idic.keys():
-        slm["V"] = idic["V"]
-
-    if "SSE" in idic.keys():
-        slm["SSE"] = idic["SSE"]
-
-    if "r" in idic.keys():
-        slm["r"] = idic["r"]
-
-    if "dr" in idic.keys():
-        slm["dr"] = idic["dr"]
-
-    if "tri" in idic.keys():
-        slm["tri"] = idic["tri"]
-
-    if "resl" in idic.keys():
-        slm["resl"] = idic["resl"]
+    slm = SLM(Term(1), Term(1))
+    for key in idic.keys():
+        setattr(slm, key, idic[key])
 
     # run _t_test
-    outdic = t_test(slm, contrast)
+    t_test(slm)
 
     # load expected outout data
     efile = open(expfile, "br")
@@ -46,9 +25,8 @@ def dummy_test(infile, expfile):
     efile.close()
 
     testout = []
-
-    for key in outdic.keys():
-        comp = np.allclose(outdic[key], expdic[key], rtol=1e-05, equal_nan=True)
+    for key in expdic.keys():
+        comp = np.allclose(getattr(slm,key), expdic[key], rtol=1e-05, equal_nan=True)
         testout.append(comp)
 
     assert all(flag == True for (flag) in testout)

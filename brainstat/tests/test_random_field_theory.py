@@ -1,8 +1,9 @@
 import numpy as np
 import pickle
 from .testutil import datadir
-from brainstat.stats.multiple_comparisons import random_field_theory
-
+from brainstat.stats._multiple_comparisons import random_field_theory
+from brainstat.stats.SLM import SLM
+from brainstat.stats.terms import Term
 
 def dummy_test(infile, expfile):
 
@@ -11,46 +12,11 @@ def dummy_test(infile, expfile):
     idic = pickle.load(ifile)
     ifile.close()
 
-    slm = {}
-    slm["t"] = idic["t"]
-    slm["df"] = idic["df"]
-    slm["k"] = idic["k"]
-    slm["tri"] = idic["tri"]
+    slm = SLM(Term(1), Term(1))
+    for key in idic.keys():
+        setattr(slm, key, idic[key])
 
-    mask = None
-    clusthresh = 0.001
-
-    if "dfs" in idic.keys():
-        slm["dfs"] = idic["dfs"]
-
-    if "resl" in idic.keys():
-        slm["resl"] = idic["resl"]
-
-    if "mask" in idic.keys():
-        mask = idic["mask"]
-
-    if "clusthresh" in idic.keys():
-        clusthresh = idic["clusthresh"]
-
-    if "X" in idic.keys():
-        slm["X"] = idic["X"]
-
-    if "coef" in idic.keys():
-        slm["coef"] = idic["coef"]
-
-    if "SSE" in idic.keys():
-        slm["SSE"] = idic["SSE"]
-
-    if "c" in idic.keys():
-        slm["c"] = idic["c"]
-
-    if "ef" in idic.keys():
-        slm["ef"] = idic["ef"]
-
-    if "sd" in idic.keys():
-        slm["sd"] = idic["sd"]
-
-    PY_pval, PY_peak, PY_clus, PY_clusid = random_field_theory(slm, mask, clusthresh)
+    PY_pval, PY_peak, PY_clus, PY_clusid = random_field_theory(slm)
 
     # load expected outout data
     efile = open(expfile, "br")
@@ -68,14 +34,16 @@ def dummy_test(infile, expfile):
         comp = np.allclose(PY_pval[key], O_pval[key], rtol=1e-05, equal_nan=True)
         testout.append(comp)
 
-    if isinstance(PY_peak, (dict)):
+    if isinstance(PY_peak, dict):
+        import pdb
+        pdb.set_trace()
         for key in PY_peak.keys():
             comp = np.allclose(PY_peak[key], O_peak[key], rtol=1e-05, equal_nan=True)
     else:
         comp = np.allclose(PY_peak, O_peak, rtol=1e-05, equal_nan=True)
     testout.append(comp)
 
-    if isinstance(PY_peak, (dict)):
+    if isinstance(PY_peak, dict):
         for key in PY_clus.keys():
             comp = np.allclose(PY_clus[key], O_clus[key], rtol=1e-05, equal_nan=True)
     else:

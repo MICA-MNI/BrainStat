@@ -7,11 +7,11 @@ from scipy.linalg import toeplitz
 from scipy.sparse import csr_matrix
 import math
 import copy
-from .utils import interp1, colon, ismember, row_ismember
-from ..mesh.utils import mesh_edges
+from brainstat.stats.utils import interp1, colon, ismember, row_ismember
+from brainstat.mesh.utils import mesh_edges
 
 
-def fdr(self, mask=None):
+def fdr(self):
     """Q-values for False Discovey Rate of resels.
 
     Parameters
@@ -26,7 +26,7 @@ def fdr(self, mask=None):
     Returns
     -------
     qval : dict
-        Contains the Q-values in field 'Q' and a copy of the mask in 'mask'.
+        Contains the Q-values in field 'Q' and a copy of the mask in 'mask'\.
 
     See Also
     --------
@@ -51,8 +51,8 @@ def fdr(self, mask=None):
     """
     l, v = np.shape(self.t)
 
-    if mask is None:
-        mask = np.ones((v), dtype="bool")
+    if self.mask is None:
+        self.mask = np.ones((v), dtype="bool")
 
     df = np.zeros((2, 2))
     ndf = len(np.array([self.df]))
@@ -60,14 +60,14 @@ def fdr(self, mask=None):
     df[1, 0:2] = np.array([self.df])[ndf - 1]
 
     if self.dfs is not None:
-        df[0, ndf - 1] = self.dfs[0, mask > 0].mean()
+        df[0, ndf - 1] = self.dfs[0, self.mask > 0].mean()
 
     if self.du is not None:
-        resels, reselspvert, edg = compute_resels(self, mask.flatten())
+        resels, reselspvert, edg = compute_resels(self)
     else:
         reselspvert = np.ones((v))
 
-    varA = np.append(10, self.t[0, mask.astype(bool)])
+    varA = np.append(10, self.t[0, self.mask.astype(bool)])
     P_val = stat_threshold(df=df, p_val_peak=varA, nvar=float(self.k), nprint=0)[0]
     P_val = P_val[1 : len(P_val)]
     nx = len(P_val)
@@ -88,14 +88,14 @@ def fdr(self, mask=None):
     Q[0, index] = Q_sort
 
     qval = {}
-    qval["Q"] = np.ones((mask.shape[0]))
-    qval["Q"][mask] = np.squeeze(Q[0, :])
-    qval["mask"] = mask
+    qval["Q"] = np.ones((self.mask.shape[0]))
+    qval["Q"][self.mask] = np.squeeze(Q[0, :])
+    qval["mask"] = self.mask
 
     return qval
 
 
-def random_field_theory(self, mask=None, clusthresh=0.001):
+def random_field_theory(self):
     """Corrected P-values for vertices and clusters.
 
     Parameters
@@ -162,8 +162,8 @@ def random_field_theory(self, mask=None, clusthresh=0.001):
     """
     l, v = np.shape(self.t)
 
-    if mask is None:
-        mask = np.ones((v), dtype=bool)
+    if self.mask is None:
+        self.mask = np.ones((v), dtype=bool)
 
     df = np.zeros((2, 2))
     ndf = len(np.array([self.df]))
@@ -171,7 +171,7 @@ def random_field_theory(self, mask=None, clusthresh=0.001):
     df[1, 0:2] = np.array([self.df])[ndf - 1]
 
     if self.dfs is not None:
-        df[0, ndf - 1] = self.dfs[0, mask > 0].mean()
+        df[0, ndf - 1] = self.dfs[0, self.mask > 0].mean()
 
     if v == 1:
         varA = varA = np.concatenate((np.array([10]), self.t[0]))
@@ -186,18 +186,18 @@ def random_field_theory(self, mask=None, clusthresh=0.001):
         # only a single p-value is returned, and function is stopped.
         return pval, peak, clus, clusid
 
-    if clusthresh < 1:
+    if self.cluster_threshold < 1:
         thresh = stat_threshold(
-            df=df, p_val_peak=clusthresh, nvar=float(self.k), nprint=0
+            df=df, p_val_peak=self.cluster_threshold, nvar=float(self.k), nprint=0
         )[0]
         thresh = float(thresh[0])
     else:
-        thresh = clusthresh
+        thresh = self.cluster_threshold
 
-    resels, reselspvert, edg = compute_resels(self, mask)
-    N = mask.sum()
+    resels, reselspvert, edg = compute_resels(self)
+    N = self.mask.sum()
 
-    if np.max(self.t[0, mask]) < thresh:
+    if np.max(self.t[0, self.mask]) < thresh:
         pval = {}
         varA = np.concatenate((np.array([[10]]), self.t), axis=1)
         pval["P"] = stat_threshold(
@@ -214,7 +214,7 @@ def random_field_theory(self, mask=None, clusthresh=0.001):
         clus = []
         clusid = []
     else:
-        peak, clus, clusid = peak_clus(self, mask, thresh, reselspvert, edg)
+        peak, clus, clusid = peak_clus(self, thresh, reselspvert, edg)
         self.t = self.t.reshape(1, self.t.size)
         varA = np.concatenate((np.array([[10]]), peak["t"].T, self.t), axis=1)
         varB = np.concatenate((np.array([[10]]), clus["resels"]))
@@ -273,7 +273,7 @@ def random_field_theory(self, mask=None, clusthresh=0.001):
     )[0]
     tlim = tlim[1]
     pval["P"] = pval["P"] * (self.t[0, :] > tlim) + (self.t[0, :] <= tlim)
-    pval["mask"] = mask
+    pval["mask"] = self.mask
 
     return pval, peak, clus, clusid
 
@@ -895,7 +895,7 @@ def stat_threshold(
     )
 
 
-def peak_clus(self, mask, thresh, reselspvert=None, edg=None):
+def peak_clus(self, thresh, reselspvert=None, edg=None):
     """Finds peaks (local maxima) and clusters for surface data.
     Parameters
     ----------
@@ -950,7 +950,7 @@ def peak_clus(self, mask, thresh, reselspvert=None, edg=None):
 
     l, v = np.shape(self.t)
     slm_t = copy.deepcopy(self.t)
-    slm_t[0, ~mask.astype(bool)] = slm_t[0, :].min()
+    slm_t[0, ~self.mask.astype(bool)] = slm_t[0, :].min()
     t1 = slm_t[0, edg[:, 0]]
     t2 = slm_t[0, edg[:, 1]]
     islm = np.ones((1, v))
@@ -1091,7 +1091,7 @@ def peak_clus(self, mask, thresh, reselspvert=None, edg=None):
     return peak, clus, clusid
 
 
-def compute_resels(self, mask=None):
+def compute_resels(self):
     """SurfStatResels of surface or volume data inside a mask.
 
     Parameters
@@ -1132,19 +1132,19 @@ def compute_resels(self, mask=None):
 
         # If no mask is provided, create one with all included vertices set to
         # 1. If mask is provided, simply grab the number of vertices from mask.
-        if mask is None:
+        if self.mask is None:
             v = np.amax(edg) + 1
-            mask = np.full(v, False)
-            mask[edg - 1] = True
+            self.mask = np.full(v, False)
+            self.mask[edg - 1] = True
         else:
             # if np.ndim(mask) > 1:
             #    mask = np.squeeze(mask)
             #    if mask.shape[0] > 1:
             #        mask = mask.T
-            v = mask.size
+            v = self.mask.size
 
         # Compute the Lipschitz–Killing curvatures (LKC)
-        m = np.sum(mask)
+        m = np.sum(self.mask)
         if self.resl is not None:
             lkc = np.zeros((3, 3))
         else:
@@ -1152,7 +1152,7 @@ def compute_resels(self, mask=None):
         lkc[0, 0] = m
 
         # LKC of edges
-        maskedg = np.all(mask[edg], axis=1)
+        maskedg = np.all(self.mask[edg], axis=1)
         lkc[0, 1] = np.sum(maskedg)
 
         if self.resl is not None:
@@ -1163,7 +1163,7 @@ def compute_resels(self, mask=None):
         # The reselspvert computation is included in the if-statement.
         # MATLAB errors when the if statement is false as variable r2 is not
         # defined during the computation of reselspvert. - RV
-        masktri = np.all(mask[tri], 1)
+        masktri = np.all(self.mask[tri], 1)
         lkc[0, 2] = np.sum(masktri)
         if self.resl is not None:
             loc = row_ismember(tri[masktri, :][:, [0, 1]], edg)
@@ -1274,8 +1274,8 @@ def compute_resels(self, mask=None):
         )
 
         v = np.int(np.round(np.sum(self.lat)))
-        if mask is None:
-            mask = np.ones(v, dtype=bool)
+        if self.mask is None:
+            self.mask = np.ones(v, dtype=bool)
 
         reselspvert = np.zeros(v)
         vs = np.cumsum(np.squeeze(np.sum(np.sum(self.lat, axis=0), axis=0)))
@@ -1338,7 +1338,7 @@ def compute_resels(self, mask=None):
                     )
                     - 1
                 )
-                mask1 = mask[np.arange(vs[k], vs[k + 2])]
+                mask1 = self.mask[np.arange(vs[k], vs[k + 2])]
             else:
                 edg1 = cat(
                     (
@@ -1410,8 +1410,8 @@ def compute_resels(self, mask=None):
                 )
                 mask1 = cat(
                     (
-                        mask[np.arange(vs[k + 1], vs[k + 2])],
-                        mask[np.arange(vs[k], vs[k + 1])],
+                        self.mask[np.arange(vs[k + 1], vs[k + 2])],
+                        self.mask[np.arange(vs[k], vs[k + 1])],
                     )
                 )
             # Added a -1 -RV
@@ -1427,20 +1427,20 @@ def compute_resels(self, mask=None):
                 sparsedg.eliminate_zeros()
             ##
             lkc1 = np.zeros((4, 4))
-            lkc1[0, 0] = np.sum(mask[np.arange(vs[k], vs[k + 1])])
+            lkc1[0, 0] = np.sum(self.mask[np.arange(vs[k], vs[k + 1])])
 
             # LKC of edges
             maskedg = np.all(mask1[edg1], axis=1)
 
             lkc1[0, 1] = np.sum(maskedg)
-            if slm.resl is not None:
+            if self.resl is not None:
                 r1 = np.mean(np.sqrt(self.resl[np.argwhere(maskedg) + es, :]), axis=1)
                 lkc1[1, 1] = np.sum(r1)
 
             # LKC of triangles
             masktri = np.all(mask1[tri], axis=1).flatten()
             lkc1[0, 2] = np.sum(masktri)
-            if slm.resl is not None:
+            if self.resl is not None:
                 if all(masktri == False):
                     # Set these variables to empty arrays to match the MATLAB
                     # implementation.
@@ -1524,7 +1524,7 @@ def compute_resels(self, mask=None):
             # LKC of tetrahedra
             masktet = np.all(mask1[tet], axis=1).flatten()
             lkc1[0, 3] = np.sum(masktet)
-            if slm.resl is not None and k < (K - 1):
+            if self.resl is not None and k < (K - 1):
                 if e < 2 ** 31:
                     l12 = self.resl[
                         (
