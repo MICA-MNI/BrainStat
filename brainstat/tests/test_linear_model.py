@@ -11,17 +11,17 @@ def dummy_test(idic, oslm):
 
     slm = SLM(idic["M"], Term(1))
     Y = idic["Y"]
-    if 'tri' in idic.keys():
-        slm.surf = {'tri' : idic["tri"]}
+    if "tri" in idic.keys():
+        slm.surf = {"tri": idic["tri"]}
 
-    if 'lat' in idic.keys():
-        slm.surf = {'lat' : idic["lat"]}
-    if 'coord' in idic.keys():
-        slm.surf['coord'] = idic["coord"]
+    if "lat" in idic.keys():
+        slm.surf = {"lat": idic["lat"]}
+    if "coord" in idic.keys():
+        slm.surf["coord"] = idic["coord"]
 
     slm.linear_model(Y)
     for key in oslm.keys():
-        comp = np.allclose(getattr(slm,key), oslm[key], rtol=1e-05, equal_nan=True)
+        comp = np.allclose(getattr(slm, key), oslm[key], rtol=1e-05, equal_nan=True)
         testout.append(comp)
     assert all(flag == True for (flag) in testout)
 
@@ -101,7 +101,6 @@ def test_05():
     dummy_test(idic, oslm)
 
 
-
 def test_06():
     # similar to test_03, shapes of ['Y'] and ['M'] changed
     # ['Y'] : np array, (93, 41, 57), dtype('float64')
@@ -115,7 +114,6 @@ def test_06():
     oslm = pickle.load(ofile)
     ofile.close()
     dummy_test(idic, oslm)
-
 
 
 def test_07():
@@ -133,7 +131,6 @@ def test_07():
     dummy_test(idic, oslm)
 
 
-
 def test_08():
     # ['Y'] and ['M'] mid. sized 2D arrays + optional ['tri'] input for surf
     # ['Y'] : np array, (93, 43), dtype('float64')
@@ -148,7 +145,6 @@ def test_08():
     oslm = pickle.load(ofile)
     ofile.close()
     dummy_test(idic, oslm)
-
 
 
 def test_09():
@@ -183,7 +179,6 @@ def test_10():
     dummy_test(idic, oslm)
 
 
-
 def test_11():
     # similar to test_03 + optional ['lat'] input for surf
     # ['Y'] : np array, (45, 27, 3), dtype('float64')
@@ -200,7 +195,6 @@ def test_11():
     dummy_test(idic, oslm)
 
 
-
 def test_12():
     # real dataset, ['Y'] 20k columns, ['age'] modelling with Term, ['tri'] 40k vertex
     # ['Y'] : np array, (10, 20484), dtype('float64')
@@ -214,12 +208,11 @@ def test_12():
     ifile.close()
     age = idic["age"]
     AGE = Term(np.array(age), "AGE")
-    idic['M'] = 1 + AGE
+    idic["M"] = 1 + AGE
     ofile = open(expfile, "br")
     oslm = pickle.load(ofile)
     ofile.close()
     dummy_test(idic, oslm)
-
 
 
 def test_13():
@@ -238,7 +231,7 @@ def test_13():
     ofile.close()
     age = idic["age"]
     AGE = Term(np.array(age), "AGE")
-    idic['M'] = 1 + AGE
+    idic["M"] = 1 + AGE
     dummy_test(idic, oslm)
 
 
@@ -258,7 +251,7 @@ def test_14():
     ofile.close()
     age = idic["age"]
     AGE = Term(np.array(age), "AGE")
-    idic['M'] = 1 + AGE
+    idic["M"] = 1 + AGE
     dummy_test(idic, oslm)
 
 
@@ -276,7 +269,7 @@ def test_15():
     ifile.close()
     params = idic["params"]
     colnames = list(idic["colnames"])
-    idic['M'] = Term(params, colnames)
+    idic["M"] = Term(params, colnames)
     ofile = open(expfile, "br")
     oslm = pickle.load(ofile)
     ofile.close()
@@ -295,7 +288,7 @@ def test_16():
     idic = pickle.load(ifile)
     ifile.close()
     params = idic["params"]
-    idic['M'] = Term(params)
+    idic["M"] = Term(params)
     ofile = open(expfile, "br")
     oslm = pickle.load(ofile)
     ofile.close()

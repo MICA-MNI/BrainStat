@@ -5,6 +5,7 @@ from brainstat.stats._multiple_comparisons import compute_resels
 from brainstat.stats.SLM import SLM
 from brainstat.stats.terms import Term
 
+
 def dummy_test(infile, expfile):
 
     # load input test data

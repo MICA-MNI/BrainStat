@@ -97,7 +97,6 @@ def fdr(self):
 
 def random_field_theory(self):
     """Corrected P-values for vertices and clusters.
-
     Parameters
     ----------
     slm : a dictionary with keys 't', 'df', 'k', 'resl', 'tri' (or 'lat'),
@@ -126,7 +125,6 @@ def random_field_theory(self):
     clusthresh: a float.
         P-value threshold or statistic threshold for defining clusters.
         By default: 0.001.
-
     Returns
     -------
     pval : a dictionary with keys 'P', 'C', 'mask'.
@@ -155,7 +153,6 @@ def random_field_theory(self):
             Corrected P-values for the cluster.
     clusid : 2D numpy array of shape (1,v).
         Cluster id's for each vertex.
-
     Reference: Worsley, K.J., Andermann, M., Koulis, T., MacDonald, D.
     & Evans, A.C. (1999). Detecting changes in nonisotropic images.
     Human Brain Mapping, 8:98-101.
@@ -1063,18 +1060,12 @@ def peak_clus(self, thresh, reselspvert=None, edg=None):
         ),
         axis=1,
     )
-    lm = np.flipud(
-        varALL[
-            varALL[:, 0].argsort(),
-        ]
-    )
+    lm = np.flipud(varALL[varALL[:, 0].argsort(),])
     varNEW = np.concatenate(
         (rankrsl.T, ucvol.reshape(len(ucvol), 1), ucrsl.reshape(len(ucrsl), 1)[1:]),
         axis=1,
     )
-    cl = varNEW[
-        varNEW[:, 0].argsort(),
-    ]
+    cl = varNEW[varNEW[:, 0].argsort(),]
     clusid = np.zeros((1, v))
     clusid[0, (vox - 1).T] = interp1(
         np.append(0, ucid), np.append(0, rankrsl), nf, kind="nearest"

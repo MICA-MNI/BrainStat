@@ -5,6 +5,7 @@ from brainstat.stats._multiple_comparisons import random_field_theory
 from brainstat.stats.SLM import SLM
 from brainstat.stats.terms import Term
 
+
 def dummy_test(infile, expfile):
 
     # load input test data
@@ -14,7 +15,7 @@ def dummy_test(infile, expfile):
 
     slm = SLM(Term(1), Term(1))
     for key in idic.keys():
-        if key is 'clusthresh':
+        if key is "clusthresh":
             slm.cluster_threshold = idic[key]
         else:
             setattr(slm, key, idic[key])

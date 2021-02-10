@@ -8,6 +8,7 @@ from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 import sys
 from ..stats.utils import colon
 
+
 def mesh_edges(surf):
     """Converts the triangles or lattices of a mesh to edges.
 
@@ -28,16 +29,16 @@ def mesh_edges(surf):
     # This doesn't strictly test that its BrainStat SLM, but we can't import
     # directly without causing a circular import.
     class_name = surf.__class__.__name__
-    if class_name is 'SLM':
+    if class_name is "SLM":
         if surf.tri is not None:
-            surf = {'tri': surf.tri}
+            surf = {"tri": surf.tri}
         elif surf.lat is not None:
-            surf = {'lat': surf.lat}
+            surf = {"lat": surf.lat}
         elif surf.surf is not None:
             return mesh_edges(surf.surf)
         else:
-            ValueError('SLM object does not have triangle/lattice data.')
-    
+            ValueError("SLM object does not have triangle/lattice data.")
+
     # For BSPolyData, simply use BrainSpace's functionality to grab edges.
     if isinstance(surf, BSPolyData):
         edg = get_edges(surf)

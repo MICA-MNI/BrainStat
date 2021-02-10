@@ -13,7 +13,7 @@ def dummy_test(infile, expfile):
     idic = pickle.load(ifile)
     ifile.close()
 
-    slm = SLM(Term(1),Term(1))
+    slm = SLM(Term(1), Term(1))
     slm.t = idic["t"]
     slm.tri = idic["tri"]
     slm.mask = idic["mask"]

@@ -5,6 +5,7 @@ from brainstat.stats._models import t_test
 from brainstat.stats.SLM import SLM
 from brainstat.stats.terms import Term
 
+
 def dummy_test(infile, expfile):
 
     # load input test data
@@ -26,7 +27,7 @@ def dummy_test(infile, expfile):
 
     testout = []
     for key in expdic.keys():
-        comp = np.allclose(getattr(slm,key), expdic[key], rtol=1e-05, equal_nan=True)
+        comp = np.allclose(getattr(slm, key), expdic[key], rtol=1e-05, equal_nan=True)
         testout.append(comp)
 
     assert all(flag == True for (flag) in testout)
