@@ -1060,12 +1060,18 @@ def peak_clus(self, thresh, reselspvert=None, edg=None):
         ),
         axis=1,
     )
-    lm = np.flipud(varALL[varALL[:, 0].argsort(),])
+    lm = np.flipud(
+        varALL[
+            varALL[:, 0].argsort(),
+        ]
+    )
     varNEW = np.concatenate(
         (rankrsl.T, ucvol.reshape(len(ucvol), 1), ucrsl.reshape(len(ucrsl), 1)[1:]),
         axis=1,
     )
-    cl = varNEW[varNEW[:, 0].argsort(),]
+    cl = varNEW[
+        varNEW[:, 0].argsort(),
+    ]
     clusid = np.zeros((1, v))
     clusid[0, (vox - 1).T] = interp1(
         np.append(0, ucid), np.append(0, rankrsl), nf, kind="nearest"

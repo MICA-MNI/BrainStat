@@ -128,7 +128,7 @@ def f_test(slm1, slm2):
         SSE1 = slm2.SSE
         SSE2 = slm1.SSE
         for key in slm1.__dict__:
-            setattr(slm, key, getattr(slm2, key))
+            setattr(slm, key, getattr(slm1, key))
 
     r = X1 - np.dot(np.dot(X2, np.linalg.pinv(X2)), X1)
     d = np.sum(r.flatten() ** 2) / np.sum(X1.flatten() ** 2)
