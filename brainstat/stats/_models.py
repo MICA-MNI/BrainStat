@@ -18,42 +18,10 @@ def linear_model(self, Y):
 
     Parameters
     ----------
+    self : brainstat.statts.SLM.SLM
+        Initialized SLM object.
     Y : numpy array
         Input data of shape (samples, vertices, features).
-    M : Term, Random
-        Design matrix.
-    surf : dict, BSPolyData, optional
-        Surface triangles (surf['tri']) or volumetric data (surf['lat']).
-        If 'tri', shape = (n_edges, 2). If 'lat', then it is a boolean 3D
-        array. Alternatively a BSPolyData object can be provided. Default is None.
-    niter : int, optional
-        Number of extra iterations of the Fisher scoring algorithm for fitting
-        mixed effects models. Default is 1.
-    thetalim : float, optional
-        Lower limit on variance coefficients, in sd's. Default is 0.01.
-    drlim : float, optional
-        Step of ratio of variance coefficients, in sd's. Default 0.1.
-
-    Returns
-    -------
-    slm : dict
-        Standard linear model; see Notes for details.
-
-    Notes
-    -----
-    The returned slm will have the following fields:
-
-    - slm['X'] : (numpy.array) the design matrix.
-    - slm['df'] (int) the degrees of freedom.
-    - slm['SSE'] : (numpy.array) sum of square errors.
-    - slm['coef'] : (numpy.array) coefficients of the linear model.
-    - slm['V'] : (numpy.array) Variance matrix bases, only included for mixed effects models.
-    - slm['k'] : (numpy.array) Number of variates.
-    - slm['r'] : (numpy.array) Coefficients of the first (q-1) components of 'V' divided by their sum. Coefficients are clamped to a minimum of 0.01 * standard deviation.
-    - slm['dr'] : (numpy.array) Increments of 'r' = 0.1 * sd.
-    - slm['resl'] : (numpy.array) Sum over observations of squares of differences of normalized residuals along each edge. Only returned if `surf is not None`.
-    - slm['tri'] : (numpy.array) Triangle indices of the surface. Only return when `surf is not None`.
-    - slm['lat'] : (numpy.array) Neighbors in the input lattice.
 
     """
 
@@ -285,50 +253,10 @@ def t_test(self):
 
     Parameters
     ----------
-    slm : dict
-        Standard linear model, see Notes for details.
-    contrast : numpy.array
-        Vector containing the contrast in observations.
+    self : brainstat.stats.SLM.SLM
+        SLM object that has already run linear_model
 
-    Returns
-    -------
-    slm : dict
-        Standard linear model, see Notes for details.
 
-    Notes
-    -----
-    The input model should be the output model of linear_model. It should
-    contain the following fields:
-
-    - slm['X'] : (numpy.array) the design matrix.
-    - slm['df'] (int) the degrees of freedom.
-    - slm['SSE'] : (numpy.array) sum of square errors.
-    - slm['coef'] : (numpy.array) coefficients of the linear model.
-    - slm['V'] : (numpy.array) Variance matrix bases, only included for mixed effects models.
-    - slm['k'] : (numpy.array) Number of variates.
-    - slm['r'] : (numpy.array) Coefficients of the first (q-1) components of 'V' divided by their sum. Coefficients are clamped to a minimum of 0.01 * standard deviation.
-    - slm['dr'] : (numpy.array) Increments of 'r' = 0.1 * sd.
-    - slm['resl'] : (numpy.array) Sum over observations of squares of differences of normalized residuals along each edge. Only returned if `surf is not None`.
-    - slm['tri'] : (numpy.array) Triangle indices of the surface. Only return when `surf is not None`.
-    - slm['lat'] : (numpy.array) Neighbors in the input lattice.
-
-    The output model will add the following fields.
-    - slm['c'] : (numpy.array), contrasts in coefficents of the linear model.
-    - slm['k'] : (int) number of variates
-    - slm['ef'] : (numpy.array) array of effects.
-    - slm['sd'] : (numpy.array) standard deviations of the effects.
-    - slm['t'] : (numpy.array) T-values computed with a t-test (univariate) or Hotelling T^2 (multivariate).
-    - slm['dfs'] : (numpy.array) effective degrees of freedom. Absent if q==1.
-
-    Note that the contrast in the observations is used to determine the intended
-    contrast in the model coefficients, slm.c. However there is some ambiguity
-    in this when the model contains redundant terms. An example of such a model
-    is 1 + Gender (Gender by itself does not contain redundant terms). Only one
-    of the ambiguous contrasts is estimable (i.e. has slm.sd < Inf), and this is
-    the one chosen, though it may not be the contrast that you intended. To
-    check this, compare the contrast in the coefficients slm.c to the actual
-    design matrix in slm.X. Note that the redundant columns of the design matrix
-    have weights given by the rows of null(slm.X,'r')'
     """
 
     if isinstance(self.contrast, Term):

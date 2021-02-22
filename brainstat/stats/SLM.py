@@ -1,3 +1,4 @@
+""" Standard Linear regression models. """
 from sklearn.base import BaseEstimator
 import warnings
 import numpy as np

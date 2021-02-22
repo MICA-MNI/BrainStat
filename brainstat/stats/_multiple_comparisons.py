@@ -16,38 +16,14 @@ def fdr(self):
 
     Parameters
     ----------
-    slm : dict
-        Standard linear model returned by the t_test function; see Notes for
-        details.
-    mask : numpy.array, optional
-        Only t-values where the mask is true are considered. Defaults to a
-        vector of ones.
+    self : brainstat.stats.SLM.SLM
+        SLM object with computed t-values.
 
     Returns
     -------
     qval : dict
-        Contains the Q-values in field 'Q' and a copy of the mask in 'mask'\.
+        Contains the Q-values in field 'Q' and a copy of the mask in 'mask'.
 
-    See Also
-    --------
-    brainstat.stats.models.t_test : Computes t-values for a linear model.
-
-    Notes
-    ------
-    The slm dictionary must contain at least the following fields:
-
-    - slm['t'] (numpy.array): a (1,v) array of t-values
-    - slm['df'] (numpy.array) of shape (1,1) containing the degrees of freedom
-    - slm['k'] (int) the number of variates.
-
-    Furthermore, slm may contain the following optional fields.
-
-    - slm['dfs'] (numpy.array) a (1,v) array containing the effective degrees of freedom.
-    - slm['resl'] (numpy.array) a (e,v) array containing the sum over observations of squares of differences of normalized residuals along each edge.
-    - slm['tri'] (numpy.array) a (v,3) array containing a mesh's triangle indices
-    - slm['lat'] (numpy.array) a 3D array of 1's and 0's where 1's are inside the lattice.
-
-    Note that slm['tri'] and slm['lat'] are mutually exclusive.
     """
     l, v = np.shape(self.t)
 
@@ -99,32 +75,9 @@ def random_field_theory(self):
     """Corrected P-values for vertices and clusters.
     Parameters
     ----------
-    slm : a dictionary with keys 't', 'df', 'k', 'resl', 'tri' (or 'lat'),
-        optional key 'dfs'.
-        slm['t'] : 2D numpy array of shape (l,v).
-            v is the number of vertices, slm['t'][0,:] is the test statistic,
-            rest of the rows are used to calculate cluster resels if
-            slm['k']>1. See F for the precise definition of extra rows.
-        surf['df'] : 2D numpy array of shape (1,1), dtype=int.
-            Degrees of freedom.
-        surf['k'] : an int.
-            Number of variates.
-        surf['resl'] : 2D numpy array of shape (e,k).
-            Sum over observations of squares of differences of normalized
-            residuals along each edge.
-        surf['tri'] : 2D numpy array of shape (3,t), dtype=int.
-            Triangle indices.
-        or,
-        surf['lat'] : 3D numpy array of shape (nx,ny,nz), 1's and 0's.
-            In fact, [nx,ny,nz] = size(volume).
-        surf['dfs'] : 2D numpy array of shape (1,v), dtype=int.
-            Optional effective degrees of freedom.
-    mask : 1D numpy array of shape (v), dtype=bool.
-        1=inside, 0=outside, v= number of vertices. By default: np.ones((v),
-        dtype=bool).
-    clusthresh: a float.
-        P-value threshold or statistic threshold for defining clusters.
-        By default: 0.001.
+    self : brainstat.stats.SLM.SLM
+        SLM object with computed t-values.
+
     Returns
     -------
     pval : a dictionary with keys 'P', 'C', 'mask'.
