@@ -9,8 +9,8 @@ Python:
   - brainstat/**/*
 
 MATLAB:
-  - matlab/*
-  - matlab/**/*
+  - brainstat_matlab/*
+  - brainstat_matlab/**/*
 
 Github:
   - .github/*

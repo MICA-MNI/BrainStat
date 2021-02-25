@@ -7,7 +7,7 @@ trigger:
       - '*'
   paths: 
     include: 
-      - matlab
+      - brainstat_matlab
 
 # Set languages and operating system.
 pool:
@@ -48,4 +48,4 @@ steps:
     condition: eq(variables.implementation_language, 'matlab')
     displayName: 'Run MATLAB unit tests.'
     inputs:
-      sourceFolder: 'matlab'
+      sourceFolder: 'brainstat_matlab'
