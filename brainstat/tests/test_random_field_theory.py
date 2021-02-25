@@ -15,7 +15,7 @@ def dummy_test(infile, expfile):
 
     slm = SLM(Term(1), Term(1))
     for key in idic.keys():
-        if key is "clusthresh":
+        if key == "clusthresh":
             slm.cluster_threshold = idic[key]
         else:
             setattr(slm, key, idic[key])
