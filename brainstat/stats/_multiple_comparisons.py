@@ -21,8 +21,8 @@ def fdr(self):
 
     Returns
     -------
-    qval : dict
-        Contains the Q-values in field 'Q' and a copy of the mask in 'mask'.
+    numpy.array
+        Q-values for false discovery rate of resels.
 
     """
     l, v = np.shape(self.t)
@@ -60,15 +60,13 @@ def fdr(self):
             m = P_sort[i - 1]
         Q_sort[0, i - 1] = m
 
-    Q = np.zeros((1, nx))
-    Q[0, index] = Q_sort
+    Q_tmp = np.zeros((1, nx))
+    Q_tmp[0, index] = Q_sort
 
-    qval = {}
-    qval["Q"] = np.ones((self.mask.shape[0]))
-    qval["Q"][self.mask] = np.squeeze(Q[0, :])
-    qval["mask"] = self.mask
+    Q = np.ones((self.mask.shape[0]))
+    Q[self.mask] = np.squeeze(Q_tmp[0, :])
 
-    return qval
+    return Q
 
 
 def random_field_theory(self):
@@ -85,7 +83,6 @@ def random_field_theory(self):
             Corrected P-values for vertices.
         pval['C'] : 2D numpy array of shape (1,v).
             Corrected P-values for clusters.
-        pval['mask'] : copy of input mask.
     peak : a dictionary with keys 't', 'vertid', 'clusid', 'P'.
         peak['t'] : 2D numpy array of shape (np,1).
             Peaks (local maxima).
@@ -223,7 +220,6 @@ def random_field_theory(self):
     )[0]
     tlim = tlim[1]
     pval["P"] = pval["P"] * (self.t[0, :] > tlim) + (self.t[0, :] <= tlim)
-    pval["mask"] = self.mask
 
     return pval, peak, clus, clusid
 

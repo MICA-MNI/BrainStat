@@ -17,21 +17,17 @@ def dummy_test(infile, expfile):
     for key in idic.keys():
         setattr(slm, key, idic[key])
 
-    # run _fdr
-    outdic = fdr(slm)
+    # run fdr
+    Q = fdr(slm)
 
     # load expected outout data
+    # Note: expected dicts contain a "mask" key. this has been removed in our
+    # current implementation.
     efile = open(expfile, "br")
     expdic = pickle.load(efile)
     efile.close()
 
-    testout = []
-
-    for key in outdic.keys():
-        comp = np.allclose(outdic[key], expdic[key], rtol=1e-05, equal_nan=True)
-        testout.append(comp)
-
-    assert all(flag == True for (flag) in testout)
+    assert np.all(Q == expdic["Q"])
 
 
 def test_01():

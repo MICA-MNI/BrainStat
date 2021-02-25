@@ -1,12 +1,12 @@
 """ Standard Linear regression models. """
-from sklearn.base import BaseEstimator
 import warnings
+import copy
 import numpy as np
 from cmath import sqrt
 from .terms import Term
 
 
-class SLM(BaseEstimator):
+class SLM:
     # Import class methods
     from ._models import linear_model, t_test
     from ._multiple_comparisons import fdr, random_field_theory
@@ -21,7 +21,7 @@ class SLM(BaseEstimator):
         niter=1,
         thetalim=0.01,
         drlim=0.1,
-        one_tailed=False,
+        two_tailed=True,
         cluster_threshold=0.001,
         mask=None,
     ):
@@ -33,11 +33,53 @@ class SLM(BaseEstimator):
         self.niter = niter
         self.thetalim = thetalim
         self.drlim = drlim
-        self.one_tailed = one_tailed
+        self.two_tailed = two_tailed
         self.cluster_threshold = cluster_threshold
         self.mask = mask
 
-        # Parameters created by functions.
+        # We have to initialize fit parameters for our unit tests here.
+        # TODO: remove this requirement.
+        self._reset_fit_parameters()
+
+    def fit(self, Y):
+        if Y.ndim > 2:
+            if not self.two_tailed and Y.shape[2] > 1:
+                raise ValueError(
+                    "One-tailed tests are not implemented for multivariate data."
+                )
+
+        self.reset_fit_parameters()
+        self.linear_model(Y)
+        self.t_test()
+        self.multiple_comparison_corrections()
+
+    def multiple_comparison_corrections(self):
+        """Performs multiple comparisons corrections."""
+        P1, Q1 = self._run_multiple_comparisons()
+
+        if self.two_tailed:
+            with copy.deepcopy(self) as obj:
+                obj.t = -obj.t
+                P2, Q2 = obj._run_multiple_comparisons()
+            self.P = _merge_rft(P1, P2)
+            self.Q = _merge_fdr(Q1, Q2)
+        else:
+            self.P = P1
+            self.Q = Q1
+
+    def _run_multiple_comparisons(self):
+        P = None
+        Q = None
+        if "rft" in self.correction:
+            P = self.random_field_theory(self.mask, self.cluster_threshold)
+        if "fdr" in self.correction:
+            Q = self.fdr(self.mask)
+        return P, Q
+
+    def _reset_fit_parameters(self):
+        """Sets empty parameters before fitting. Prevents issues arising from
+        using the same object to fit twice.
+        """
         self.X = None
         self.t = None
         self.df = None
@@ -58,15 +100,57 @@ class SLM(BaseEstimator):
         self.Q = None
         self.du = None
 
-    def fit(self, Y, mask=None):
-        self.linear_model(Y)
-        self.t_test()
-        if self._correction is "rft":
-            self.P = self.random_field_theory(mask, self.cluster_threshold)
-        elif self._correction is "fdr":
-            self.Q = self.fdr(mask)
 
-    # TODO: Add onetailed/twotailed
+def _merge_rft(P1, P2):
+    """Merge two one-tailed outputs of the random_field_theory function.
+
+    Parameters
+    ----------
+    P1 : dict
+        Output dict of random_field_theory
+    P2 : dict
+        Output dict of random_field_theory
+
+    Returns
+    -------
+    dict
+        Two-tailed version of the inputs.
+    """
+    if P1 is None and P2 is None:
+        return None
+
+    P = copy.deepcopy(P1)
+    for key1 in P:
+        for key2 in P[key1]:
+            if key2 in ["P", "C"]:
+                P[key1][key2] = _onetailed_to_twotailed(P1[key1][key2], P2[key1][key2])
+            else:
+                P[key1][key2] = [P1[key1][key2], P2[key1][key2]]
+
+
+def _merge_fdr(Q1, Q2):
+    """Merge two one-tailed outputs of the fdr function.
+
+    Parameters
+    ----------
+    Q1 : array-like, None
+        Q-values
+    Q2 : array-like, None
+        Q-values
+
+    Returns
+    -------
+    array-like
+        Two-tailed FDR p-values
+    """
+    if Q1 is None and Q2 is None:
+        return None
+    return _onetailed_to_twotailed(Q1, Q2)
+
+
+def _onetailed_to_twotailed(p1, p2):
+    """ Converts two one-tailed tests to a two-tailed test """
+    return np.minimum(p1, p2) * 2
 
 
 def f_test(slm1, slm2):
@@ -154,7 +238,7 @@ def f_test(slm1, slm2):
         k = np.around((np.sqrt(1 + 8 * k2) - 1) / 2)
         slm.k = np.array(k)
         if k > 3:
-            print("Roy" "s max root for k>3 not programmed yet.")
+            print("Roy's max root for k>3 not programmed yet.")
             return
 
         l = min(k, df1 - df2)
