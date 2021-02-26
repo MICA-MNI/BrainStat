@@ -7,6 +7,8 @@ from .terms import Term
 
 
 class SLM:
+    """Core Class for running BrainStat linear models
+    """
     # Import class methods
     from ._models import linear_model, t_test
     from ._multiple_comparisons import fdr, random_field_theory
@@ -16,6 +18,7 @@ class SLM:
         model,
         contrast,
         surf=None,
+        mask=None,
         *,
         correction=None,
         niter=1,
@@ -23,13 +26,48 @@ class SLM:
         drlim=0.1,
         two_tailed=True,
         cluster_threshold=0.001,
-        mask=None,
     ):
+        """Constructor for the SLM class.
+
+        Parameters
+        ----------
+        model : brainstat.stats.terms.Term
+            The linear model to be fitted of dimensions (observations, predictors).
+        contrast : array-like, brainstat.stats.terms.Term
+            Vector of contrasts in the observations. 
+        surf : dict, BSPolyData, optional
+            A surface provided as either a dictionary with keys 'tri' for its
+            faces (n-by-3 array) and 'coord' for its coordinates (3-by-n array),
+            or as a BrainSpace BSPolyData object by default None.
+        mask : array-like, optional
+            A mask containing True for vertices to include in the analysis, by
+            default None.
+        correction : str, list, optional
+            String or list of strings. If it contains "rft" a random field
+            theory multiple comparisons correction will be run. If it contains
+            "fdr" a false discovery rate multiple comparisons correction will be
+            run. Both may be provided. By default None.
+        niter : int, optional
+            Number of iterations of the Fisher scoring algorithm for fitting
+            mixed effects models, by default 1.
+        thetalim : float, optional
+            Lower limit on variance coefficients in standard deviations, by default 0.01.
+        drlim : float, optional
+            Step of ratio of variance coefficients in standard deviations, by default 0.1.
+        two_tailed : bool, optional
+            Determines whether to return two-tailed or one-tailed p-values. Note
+            that multivariate analyses can only be two-tailed, by default True.
+        cluster_threshold : float, optional
+            P-value threshold or statistic threshold for defining clusters in
+            random field theory, by default 0.001.
+        """
         # Input arguments.
         self.model = model
         self.contrast = contrast
         self.surf = surf
         self.correction = correction
+        if isinstance(self.correction, str):
+            self.correction = [self.correction]
         self.niter = niter
         self.thetalim = thetalim
         self.drlim = drlim
@@ -42,6 +80,19 @@ class SLM:
         self._reset_fit_parameters()
 
     def fit(self, Y):
+        """Fits the SLM model
+
+        Parameters
+        ----------
+        Y : numpy.array
+            Input data (observation, vertex, variate)
+
+        Raises
+        ------
+        ValueError
+            An error will be thrown when multivariate data is provided and a
+            one-tailed test is requested.
+        """
         if Y.ndim > 2:
             if not self.two_tailed and Y.shape[2] > 1:
                 raise ValueError(
@@ -68,6 +119,15 @@ class SLM:
             self.Q = Q1
 
     def _run_multiple_comparisons(self):
+        """Runs the multiple comparisons tests and returns their outputs. 
+
+        Returns
+        -------
+        dict, None
+            Results of random_field_theory. None if not requested.
+        np.array, None
+            Results of fdr. None if not requested.
+        """
         P = None
         Q = None
         if "rft" in self.correction:
@@ -158,37 +218,17 @@ def f_test(slm1, slm2):
 
     Parameters
     ----------
-    slm1 : dict
+    slm1 : brainstat.stats.SLM.SLM
         Standard linear model returned by the t_test function; see Notes for
         details.
-    slm2 : dict
+    slm2 : brainstat.stats.SLM.SLM
         Standard linear model returned by the t_test function; see Notes for
         details.
 
     Returns
     -------
-    slm : dict
-        Standard linear model; see Notes for details.
-
-    See Also
-    --------
-    brainstat.stats.models.t_test : Computes t-values for a linear model.
-
-    Notes
-    ------
-    The slm1 and slm2 dictionaries must contain the following fields:
-
-    - slm1['X'] : (numpy.array) the design matrix.
-    - slm1['df'] (numpy.array, int) the degrees of freedom.
-    - slm1['SSE'] : (numpy.array) sum of squares of errors.
-    - slm1['coef'] : (numpy.array) coefficients of the linear model.
-
-    Fields of the bigger model are copied to the ouput slm, and the following
-    fields are added/altered:
-
-    - slm['k'] : (numpy.array) Number of variates.
-    - slm['df'] : (numpy.array) two-element vector containing [df1-df2, df2] where df1 and df2 are the min/max of the input dfs.
-    - slm['t'] : Matrix of non-zero eigenvalues, in descending order, derived using Roy's maximum root.
+    brainstat.stats.SLM.SLM
+        Standard linear model with f-test results included.
 
     """
 
