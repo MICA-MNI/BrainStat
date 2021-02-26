@@ -7,8 +7,8 @@ from .terms import Term
 
 
 class SLM:
-    """Core Class for running BrainStat linear models
-    """
+    """Core Class for running BrainStat linear models"""
+
     # Import class methods
     from ._models import linear_model, t_test
     from ._multiple_comparisons import fdr, random_field_theory
@@ -34,7 +34,7 @@ class SLM:
         model : brainstat.stats.terms.Term
             The linear model to be fitted of dimensions (observations, predictors).
         contrast : array-like, brainstat.stats.terms.Term
-            Vector of contrasts in the observations. 
+            Vector of contrasts in the observations.
         surf : dict, BSPolyData, optional
             A surface provided as either a dictionary with keys 'tri' for its
             faces (n-by-3 array) and 'coord' for its coordinates (3-by-n array),
@@ -51,9 +51,11 @@ class SLM:
             Number of iterations of the Fisher scoring algorithm for fitting
             mixed effects models, by default 1.
         thetalim : float, optional
-            Lower limit on variance coefficients in standard deviations, by default 0.01.
+            Lower limit on variance coefficients in standard deviations, by
+            default 0.01.
         drlim : float, optional
-            Step of ratio of variance coefficients in standard deviations, by default 0.1.
+            Step of ratio of variance coefficients in standard deviations, by
+            default 0.1.
         two_tailed : bool, optional
             Determines whether to return two-tailed or one-tailed p-values. Note
             that multivariate analyses can only be two-tailed, by default True.
@@ -65,6 +67,7 @@ class SLM:
         self.model = model
         self.contrast = contrast
         self.surf = surf
+        self.mask = mask
         self.correction = correction
         if isinstance(self.correction, str):
             self.correction = [self.correction]
@@ -73,7 +76,6 @@ class SLM:
         self.drlim = drlim
         self.two_tailed = two_tailed
         self.cluster_threshold = cluster_threshold
-        self.mask = mask
 
         # We have to initialize fit parameters for our unit tests here.
         # TODO: remove this requirement.
@@ -119,7 +121,7 @@ class SLM:
             self.Q = Q1
 
     def _run_multiple_comparisons(self):
-        """Runs the multiple comparisons tests and returns their outputs. 
+        """Runs the multiple comparisons tests and returns their outputs.
 
         Returns
         -------
