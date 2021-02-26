@@ -30,7 +30,9 @@ def linear_model(self, Y):
 
     n, v = Y.shape[:2]  # number of samples x number of points
     k = 1 if Y.ndim == 2 else Y.shape[2]  # number of features
-
+    if Y.ndim == 3 and k == 1:
+        Y = Y[:,:,0]
+    
     # Get data from term/random
     V = None
     if isinstance(self.model, Random):
@@ -76,7 +78,7 @@ def linear_model(self, Y):
     self.X = X
 
     if k == 1:  # Univariate
-
+        
         if q == 1:  # Fixed effects
 
             if V is None:  # OLS
