@@ -27,7 +27,7 @@ def dummy_test(infile, expfile):
     expdic = pickle.load(efile)
     efile.close()
 
-    assert np.all(Q == expdic["Q"])
+    assert np.allclose(Q == expdic["Q"])
 
 
 def test_01():
