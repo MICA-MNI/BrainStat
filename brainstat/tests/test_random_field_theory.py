@@ -19,40 +19,28 @@ def dummy_test(infile, expfile):
             slm.cluster_threshold = idic[key]
         else:
             setattr(slm, key, idic[key])
-
-    PY_pval, PY_peak, PY_clus, PY_clusid = random_field_theory(slm)
+    empirical_output = random_field_theory(slm)
 
     # load expected outout data
     efile = open(expfile, "br")
     expdic = pickle.load(efile)
     efile.close()
-
-    O_pval = expdic["pval"]
-    O_peak = expdic["peak"]
-    O_clus = expdic["clus"]
-    O_clusid = expdic["clusid"]
+    expected_output = (expdic["pval"], expdic["peak"], expdic["clus"], expdic["clusid"])
 
     testout = []
-
-    for key in PY_pval.keys():
-        comp = np.allclose(PY_pval[key], O_pval[key], rtol=1e-05, equal_nan=True)
-        testout.append(comp)
-
-    if isinstance(PY_peak, dict):
-        for key in PY_peak.keys():
-            comp = np.allclose(PY_peak[key], O_peak[key], rtol=1e-05, equal_nan=True)
-    else:
-        comp = np.allclose(PY_peak, O_peak, rtol=1e-05, equal_nan=True)
-    testout.append(comp)
-
-    if isinstance(PY_peak, dict):
-        for key in PY_clus.keys():
-            comp = np.allclose(PY_clus[key], O_clus[key], rtol=1e-05, equal_nan=True)
-    else:
-        comp = np.allclose(PY_clus, O_clus, rtol=1e-05, equal_nan=True)
-    testout.append(comp)
-
-    testout.append(np.allclose(PY_clusid, O_clusid, rtol=1e-05, equal_nan=True))
+    for (empirical, expected) in zip(empirical_output, expected_output):
+        if isinstance(expected, dict):
+            for key in expected:
+                if key == "mask":
+                    continue
+                comp = np.allclose(
+                    empirical[key], expected[key], rtol=1e-05, equal_nan=True
+                )
+                testout.append(comp)
+        else:
+            if len(expected) is not 0:
+                comp = np.allclose(empirical, expected, rtol=1e-05, equal_nan=True)
+                testout.append(comp)
 
     assert all(flag == True for (flag) in testout)
 

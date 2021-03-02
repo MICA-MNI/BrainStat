@@ -59,7 +59,7 @@ def create_parameter_grid(samples):
     """
     predictors = 3
     model = [
-        Term(1) + Term(np.random.rand(samples, predictors), names=["y1", "y2", "y3"]),
+        Term(1) + Term(np.random.rand(samples, predictors), names=["y1", "y2", "y3"])
     ]
 
     Y_idx = [1, 2, 3]
