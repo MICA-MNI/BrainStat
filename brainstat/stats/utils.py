@@ -47,7 +47,7 @@ def interp1(x, y, ix, kind="linear"):
         interpolated y coordinates.
     """
 
-    f = interp1d(x, y, kind)
+    f = interp1d(x, y, kind, bounds_error=False, fill_value=np.nan)
     iy = f(ix)
     return iy
 

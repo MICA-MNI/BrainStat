@@ -1,6 +1,5 @@
 """ Standard Linear regression models. """
 import warnings
-import copy
 import numpy as np
 from cmath import sqrt
 from .terms import Term
@@ -77,6 +76,11 @@ class SLM:
         self.two_tailed = two_tailed
         self.cluster_threshold = cluster_threshold
 
+        # Error check
+        if self.surf is None:
+            if self.correction is not None and "rft" in self.correction:
+                raise ValueError("Random Field Theory corrections require a surface.")
+
         # We have to initialize fit parameters for our unit tests here.
         # TODO: remove this requirement.
         self._reset_fit_parameters()
@@ -96,24 +100,25 @@ class SLM:
             one-tailed test is requested.
         """
         if Y.ndim > 2:
-            if not self.two_tailed and Y.shape[2] > 1:
+            if (not self.two_tailed) and Y.shape[2] > 1:
                 raise ValueError(
                     "One-tailed tests are not implemented for multivariate data."
                 )
 
-        self.reset_fit_parameters()
+        self._reset_fit_parameters()
         self.linear_model(Y)
         self.t_test()
-        self.multiple_comparison_corrections()
+        if self.correction is not None:
+            self.multiple_comparison_corrections()
 
     def multiple_comparison_corrections(self):
         """Performs multiple comparisons corrections."""
         P1, Q1 = self._run_multiple_comparisons()
 
         if self.two_tailed:
-            with copy.deepcopy(self) as obj:
-                obj.t = -obj.t
-                P2, Q2 = obj._run_multiple_comparisons()
+            self.t = -self.t
+            P2, Q2 = self._run_multiple_comparisons()
+            self.t = -self.t
             self.P = _merge_rft(P1, P2)
             self.Q = _merge_fdr(Q1, Q2)
         else:
@@ -133,9 +138,10 @@ class SLM:
         P = None
         Q = None
         if "rft" in self.correction:
-            P = self.random_field_theory(self.mask, self.cluster_threshold)
+            P = {}
+            P["pval"], P["peak"], P["clus"], P["clusid"] = self.random_field_theory()
         if "fdr" in self.correction:
-            Q = self.fdr(self.mask)
+            Q = self.fdr()
         return P, Q
 
     def _reset_fit_parameters(self):
@@ -181,13 +187,18 @@ def _merge_rft(P1, P2):
     if P1 is None and P2 is None:
         return None
 
-    P = copy.deepcopy(P1)
-    for key1 in P:
-        for key2 in P[key1]:
-            if key2 in ["P", "C"]:
+    P = {}
+    for key1 in P1:
+        P[key1] = {}
+        if key1 == "clusid":
+            P[key1] = [P1[key1], P2[key1]]
+            continue
+        for key2 in P1[key1]:
+            if key2 == "P" and key1 == "pval":
                 P[key1][key2] = _onetailed_to_twotailed(P1[key1][key2], P2[key1][key2])
             else:
                 P[key1][key2] = [P1[key1][key2], P2[key1][key2]]
+    return P
 
 
 def _merge_fdr(Q1, Q2):

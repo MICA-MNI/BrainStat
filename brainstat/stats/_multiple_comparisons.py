@@ -157,9 +157,10 @@ def random_field_theory(self):
             nprint=0,
         )[0]
         pval["P"] = pval["P"][1 : v + 1]
-        peak = []
-        clus = []
-        clusid = []
+        pval["C"] = None
+        peak = {"t": None, "clusid": None, "vertid": None, "P": None}
+        clus = {"clusid": None, "nverts": None, "resels": None, "P": None}
+        clusid = None
     else:
         peak, clus, clusid = peak_clus(self, thresh, reselspvert, edg)
         self.t = self.t.reshape(1, self.t.size)
