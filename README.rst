@@ -1,7 +1,7 @@
 BrainStat : A toolbox for statistical analysis of neuroimaging data
 ===================================================================
 
-.. image:: https://img.shields.io/pypi/l/brainspace?label=License
+.. image:: https://img.shields.io/badge/License-BSD%203--Clause-blue.svg
     :target: https://opensource.org/licenses/BSD-3-Clause
 .. image:: https://dev.azure.com/MICA-LAB/brainstat/_apis/build/status/MICA-LAB.BrainStat?branchName=master
     :target: https://dev.azure.com/MICA-LAB/brainstat/_build/latest?definitionId=1&branchName=master
@@ -9,7 +9,7 @@ BrainStat : A toolbox for statistical analysis of neuroimaging data
     :target: https://github.com/MICA-LAB/brainstat/actions
 .. image:: https://codecov.io/gh/MICA-LAB/BrainStat/branch/master/graph/badge.svg?token=5O9PVCT9GA
     :target: https://codecov.io/gh/MICA-LAB/BrainStat
-.. image:: https://readthedocs.org/projects/brainstat/badge/?version=latest&style=plastic
+.. image:: https://readthedocs.org/projects/brainstat/badge/?version=master&style=plastic
     :target: https://brainstat.readthedocs.io/en/latest/
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
