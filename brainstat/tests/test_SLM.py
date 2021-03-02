@@ -15,9 +15,11 @@ def test_SLM():
         First exception that occurs in computing the SLM.
     """
     samples = 10
+    predictors = 3
 
-    grid = list(create_parameter_grid(samples))
-    Y = np.random.rand(samples, 10242, 3)
+    grid = list(create_parameter_grid(samples, predictors))
+    Y = np.random.rand(samples, 10242, predictors)
+
     for i in range(len(grid)):
         # Skip exceptions that we know error.
         if grid[i]["surf"] is None:
@@ -49,7 +51,7 @@ def test_SLM():
             raise e
 
 
-def create_parameter_grid(samples):
+def create_parameter_grid(samples, predictors):
     """Creates a parameter grid for the test function.
 
     Returns
@@ -57,7 +59,6 @@ def create_parameter_grid(samples):
     ParameterGrid
         All pairings of parameters to be run through the SLM class.
     """
-    predictors = 3
     model = [
         Term(1) + Term(np.random.rand(samples, predictors), names=["y1", "y2", "y3"])
     ]

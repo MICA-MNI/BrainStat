@@ -18,7 +18,7 @@ def linear_model(self, Y):
 
     Parameters
     ----------
-    self : brainstat.statts.SLM.SLM
+    self : brainstat.stats.SLM.SLM
         Initialized SLM object.
     Y : numpy array
         Input data of shape (samples, vertices, features).
@@ -39,7 +39,7 @@ def linear_model(self, Y):
         X, Vl = self.model.mean.matrix.values, self.model.variance.matrix.values
 
         # check in var contains intercept (constant term)
-        n2, q = Vl.shape
+        _, q = Vl.shape
         II = np.identity(n).ravel()
 
         r = II - Vl @ (la.pinv(Vl) @ II)
