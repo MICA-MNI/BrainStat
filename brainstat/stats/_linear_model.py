@@ -25,70 +25,137 @@ def linear_model(self, Y):
     Y = np.atleast_3d(Y)
     n_samples = Y.shape[0]
 
-    _set_design_matrix(self, n_samples)
+    self.X, self.V = _get_design_matrix(self, n_samples)
     _check_error_term(self.X)
 
     self.df = n_samples - la.matrix_rank(self.X)
-    residuals = _run_linear_model(self, Y)
+    residuals, self.V, self.coef, self.SSE, self.r, self.dr = _run_linear_model(self, Y)
+
     if self.surf is not None:
-        _compute_resls(self, residuals)
+       self.resl, mesh_connections =  _compute_resls(self, residuals)
+       key = list(mesh_connections.keys())[0]
+       setattr(self, key, mesh_connections[key])
 
 
 def _run_linear_model(self, Y):
+    """Runs a linear model and returns relevant parameters.
 
-    k = Y.shape[2]
+    Parameters
+    ----------
+    Y : numpy.array
+        Response variable matrix
+
+    Returns
+    -------
+    numpy.array
+        Model residuals.
+    numpy.array
+        Variance matrix bases.
+    numpy.array
+        Model coefficients.
+    numpy.array
+        Sum of squared errors.
+    numpy.array, None
+        Matrix of coefficients of the components of slm.V divided by their sum.
+        None is returned for fixed effects models. 
+    numpy.array, None
+        Vector of increments in slm.r None is returned for fixed effects models.
+
+    Raises
+    ------
+    ValueError
+        Returns an error if a multivariate mixed effects model is requested.
+    """
     n_random_effects = _get_n_random_effects(self)
-
-    if k == 1:  # Univariate
+    r = None
+    dr = None
+    if Y.shape[2] == 1:  # Univariate
         Y = Y[:, :, 0]
 
         if n_random_effects == 1:  # Fixed effects
-            residuals = _model_univariate_fixed_effects(self, Y)
+            residuals, V, coef, SSE = _model_univariate_fixed_effects(self, Y)
         else:  # mixed effects
-            residuals = _model_univariate_mixed_effects(self, Y)
+            residuals, V, coef, SSE, r, dr = _model_univariate_mixed_effects(self, Y)
 
     else:  # multivariate
         if n_random_effects > 1:
-            raise ValueError(
-                "Multivariate mixed effects models not yet " "implemented :-("
-            )
-        residuals = _model_multivariate_fixed_effects(self, Y)
-    return residuals
+            raise ValueError("Multivariate mixed effects models not implemented.")
+        residuals, V, coef, SSE = _model_multivariate_fixed_effects(self, Y)
+    return residuals, V, coef, SSE, r, dr
 
 
 def _model_univariate_fixed_effects(self, Y):
+    """Runs a univariate fixed effects linear model
 
+    Parameters
+    ----------
+    Y : numpy.array
+        Response variable matrix
+
+    Returns
+    -------
+    numpy.array
+        Model residuals.
+    numpy.array
+        Variance matrix bases.
+    numpy.array
+        Model coefficients.
+    numpy.array
+        Sum of squared errors.
+    """
     if self.V is None:  # OLS
-        self.coef = la.pinv(self.X) @ Y
-        residuals = Y - self.X @ self.coef
+        coef = la.pinv(self.X) @ Y
+        residuals = Y - self.X @ coef
+        V = None
 
     else:
-        self.V = self.V / np.diag(self.V).mean(0)
-        Vmh = la.inv(la.cholesky(self.V).T)
+        V = self.V / np.diag(self.V).mean(0)
+        Vmh = la.inv(la.cholesky(V).T)
 
-        self.coef = (la.pinv(Vmh @ self.X) @ Vmh) @ Y
-        residuals = Vmh @ Y - (Vmh @ self.X) @ self.coef
+        coef = (la.pinv(Vmh @ self.X) @ Vmh) @ Y
+        residuals = Vmh @ Y - (Vmh @ self.X) @ coef
 
-    self.SSE = np.sum(residuals ** 2, axis=0)
-    self.SSE = self.SSE[None]
+    SSE = np.sum(residuals ** 2, axis=0)
+    SSE = SSE[None]
 
-    return residuals
+    return residuals, V, coef, SSE
 
 
 def _model_univariate_mixed_effects(self, Y):
+    """Runs a univariate linear mixed effects model.
 
+    Parameters
+    ----------
+    Y : numpy.array
+        Response variable matrix
+
+    Returns
+    -------
+    numpy.array
+        Model residuals.
+    numpy.array
+        Variance matrix bases.
+    numpy.array
+        Model coefficients.
+    numpy.array
+        Sum of squared errors.
+    numpy.array
+        Matrix of coefficients of the components of slm.V divided by their sum.
+    numpy.array
+        Vector of increments in slm.r
+    """
     n_samples, n_vertices = Y.shape[:2]
     n_random_effects = _get_n_random_effects(self)
     n_predictors = self.X.shape[1]
 
     q1 = n_random_effects - 1
 
-    self.V /= np.diagonal(self.V, axis1=0, axis2=1).mean(-1)
+    V = self.V / np.diagonal(self.V, axis1=0, axis2=1).mean(-1)
     slm_r = np.zeros((q1, n_vertices))
 
     # start Fisher scoring algorithm
     R = np.eye(n_samples) - self.X @ la.pinv(self.X)
-    RVV = (self.V.T @ R.T).T
+    RVV = (V.T @ R.T).T
     E = Y.T @ (R.T @ RVV.T)
     E *= Y.T
     E = E.sum(-1)
@@ -96,7 +163,7 @@ def _model_univariate_mixed_effects(self, Y):
     RVV2 = np.zeros([n_samples, n_samples, n_random_effects])
     E2 = np.zeros([n_random_effects, n_vertices])
     for j in range(n_random_effects):
-        RV2 = R @ self.V[..., j]
+        RV2 = R @ V[..., j]
         E2[j] = (Y * ((RV2 @ R) @ Y)).sum(0)
         RVV2[..., j] = RV2
 
@@ -124,15 +191,15 @@ def _model_univariate_mixed_effects(self, Y):
             iv = jr == ir
             rv = r[:, iv].mean(1)
 
-            Vs = (1 - rv.sum()) * self.V[..., n_random_effects - 1]
-            Vs += (self.V[..., :q1] * rv).sum(-1)
+            Vs = (1 - rv.sum()) * V[..., n_random_effects - 1]
+            Vs += (V[..., :q1] * rv).sum(-1)
 
             Vinv = la.inv(Vs)
             VinvX = Vinv @ self.X
-            G = la.pinv(self.XX.T @ VinvX) @ VinvX.T
+            G = la.pinv(self.X.T @ VinvX) @ VinvX.T
             R = Vinv - VinvX @ G
 
-            RVV = (self.V.T @ R.T).T
+            RVV = (V.T @ R.T).T
             E = Y[:, iv].T @ (R.T @ RVV.T)
             E *= Y[:, iv].T
             E = E.sum(-1)
@@ -154,78 +221,117 @@ def _model_univariate_mixed_effects(self, Y):
     ur, jr = np.unique(irs, axis=0, return_inverse=True)
     nr = ur.shape[0]
 
-    self.coef = np.zeros((n_predictors, n_vertices))
-    self.SSE = np.zeros(n_vertices)
+    coef = np.zeros((n_predictors, n_vertices))
+    SSE = np.zeros(n_vertices)
+    residuals = Y
     for ir in range(nr):
         iv = jr == ir
         rv = r[:, iv].mean(1)
 
-        Vs = (1 - rv.sum()) * self.V[..., n_random_effects - 1]
-        Vs += (self.V[..., :q1] * rv).sum(-1)
+        Vs = (1 - rv.sum()) * V[..., n_random_effects - 1]
+        Vs += (V[..., :q1] * rv).sum(-1)
 
         # Vmh = la.inv(la.cholesky(Vs).T)
         Vmh = la.inv(la.cholesky(Vs))
         VmhX = Vmh @ self.X
         G = (la.pinv(VmhX.T @ VmhX) @ VmhX.T) @ Vmh
 
-        self.coef[:, iv] = G @ Y[:, iv]
+        coef[:, iv] = G @ Y[:, iv]
         R = Vmh - VmhX @ G
-        Y[:, iv] = R @ Y[:, iv]
-        self.SSE[iv] = (Y[:, iv] ** 2).sum(0)
-    self.SSE = self.SSE[None]
-
-    self.r = r
-    self.dr = dr[:, None]
+        residuals[:, iv] = R @ residuals[:, iv]
+        SSE[iv] = (Y[:, iv] ** 2).sum(0)
+    SSE = SSE[None]
+    return residuals, V, coef, SSE, r, dr[:, None]
 
 
 def _model_multivariate_fixed_effects(self, Y):
+    """Runs a multivariate linear fixed effects model.
 
+    Parameters
+    ----------
+    Y : numpy.array
+        Response variable matrix
+
+    Returns
+    -------
+    numpy.array
+        Model residuals.
+    numpy.array
+        Variance matrix bases.
+    numpy.array
+        Model coefficients.
+    numpy.array
+        Sum of squared errors.
+    """
     k = Y.shape[2]
     n_vertices = Y.shape[1]
 
     if self.V is None:
         X2 = self.X
+        V = self.V
         pinvX = la.pinv(self.X)
     else:
-        self.V = self.V / np.diag(self.V).mean(0)
-        Vmh = la.inv(la.cholesky(self.V)).T
+        V = self.V / np.diag(self.V).mean(0)
+        Vmh = la.inv(la.cholesky(V)).T
         X2 = Vmh @ self.X
         pinvX = la.pinv(X2)
         Y = Vmh @ Y
 
-    self.coef = pinvX @ Y.T.swapaxes(-1, -2)
-    Y = Y - (X2 @ self.coef).swapaxes(-1, -2).T
-    self.coef = self.coef.swapaxes(-1, -2).T
+    coef = pinvX @ Y.T.swapaxes(-1, -2)
+    residuals = Y - (X2 @ coef).swapaxes(-1, -2).T
+    coef = coef.swapaxes(-1, -2).T
 
     k2 = k * (k + 1) // 2
-    self.SSE = np.zeros((k2, n_vertices))
+    SSE = np.zeros((k2, n_vertices))
     j = -1
     for j1 in range(k):
         for j2 in range(j1 + 1):
             j = j + 1
-            self.SSE[j] = (Y[..., j1] * Y[..., j2]).sum(0)
-    return Y
+            SSE[j] = (residuals[..., j1] * residuals[..., j2]).sum(0)
+    return residuals, V, coef, SSE
 
 
-def _set_design_matrix(self, n_samples):
+def _get_design_matrix(self, n_samples):
+    """ Wrapper for fetching the design matrix
 
+    Parameters
+    ----------
+    n_samples : numpy.array
+        Scalar describing the number of samples.
+
+    Returns
+    -------
+    numpy.array
+        Design matrix
+    numpy.array, None
+        Variance matrix bases. Returns None for fixed effects models.
+
+    """
     if isinstance(self.model, Random):
-        _set_mixed_design(self)
+        X, V = _set_mixed_design(self)
     else:
-        _set_fixed_design(self, n_samples)
-
-
-def _get_n_random_effects(self):
-    if isinstance(self.model, Random):
-        _, n_random_effects = self.model.variance.matrix.values.shape[1]
-    else:
-        n_random_effects = 1
-    return n_random_effects
+        X = _set_fixed_design(self, n_samples)
+        V = None
+    return X, V
 
 
 def _set_mixed_design(self):
-    self.X = self.model.mean.matrix.values
-    n_samples = self.X.shape[0]
+    """ Fetches the design matrix from a mixed effects model.
+
+    Parameters
+    ----------
+    n_samples : numpy.array
+        Scalar describing the number of samples.
+
+    Returns
+    -------
+    numpy.array
+        Design matrix
+    numpy.array
+        Variance matrix bases.
+    """
+    X = self.model.mean.matrix.values
+    n_samples = X.shape[0]
     random_effects = self.model.variance.matrix.values
 
     # check in var contains intercept (constant term)
@@ -241,13 +347,28 @@ def _set_mixed_design(self):
         or n_random_effects == 1
         and np.abs(identity - random_effects.T).sum() > 0
     ):
-        self.V = random_effects.reshape(n_samples, n_samples, -1)
+        V = random_effects.reshape(n_samples, n_samples, -1)
+    else:
+        V = None
+
+    return X, V
 
 
 def _set_fixed_design(self, n_samples):
+    """ Fetches the design matrix from a fixed effects model.
 
+    Parameters
+    ----------
+    n_samples : numpy.array
+        Scalar describing the number of samples.
+
+    Returns
+    -------
+    numpy.array
+        Design matrix
+    """
     if isinstance(self.model, Term):
-        self.X = self.model.matrix.values
+        X = self.model.matrix.values
     else:
         if self.model.size > 1:
             warnings.warn(
@@ -255,35 +376,76 @@ def _set_fixed_design(self, n_samples):
                 "'t convert vectors to terms you can "
                 "get unexpected results :-("
             )
-        self.X = self.model
+        X = self.model
 
-    if self.X.shape[0] == 1:
-        self.X = np.tile(self.X, (n_samples, 1))
+    if X.shape[0] == 1:
+        X = np.tile(X, (n_samples, 1))
+    return X
 
 
 def _compute_resls(self, Y):
+    """Computes the sum over observations of squares of differences of
+    normalized residuals along each edge.
 
+    Parameters
+    ----------
+    Y : numpy.array
+        Response variable matrix.
+
+    Returns
+    -------
+    numpy.array
+        Sum over observations of squares of differences of normalized residuals
+        along each edge.
+    dict
+        Dictionary containing the mesh connections in either triangle or lattice
+        format. The dictionary's sole key is 'tri' for triangle connections or
+        'lat' for lattice connections.
+    """
     if isinstance(self.surf, BSPolyData):
-        self.tri = np.array(get_cells(self.surf)) + 1
+        mesh_connections = {'tri' : np.array(get_cells(self.surf)) + 1}
     else:
         key = "tri" if "tri" in self.surf else "lat"
-        setattr(self, key, self.surf[key])
+        mesh_connections = {key : self.surf[key]}
 
     edges = mesh_edges(self.surf)
 
     n_edges = edges.shape[0]
 
     Y = np.atleast_3d(Y)
-    self.resl = np.zeros((n_edges, Y.shape[2]))
+    resl = np.zeros((n_edges, Y.shape[2]))
 
     for j in range(Y.shape[2]):
         normr = np.sqrt(self.SSE[((j + 1) * (j + 2) // 2) - 1])
         for i in range(Y.shape[0]):
             u = Y[i, :, j] / normr
-            self.resl[:, j] += np.diff(u[edges], axis=1).ravel() ** 2
+            resl[:, j] += np.diff(u[edges], axis=1).ravel() ** 2
+    return resl, mesh_connections
 
 
 def _check_error_term(X):
+    """Checks whether an error term was provided.
+
+    Parameters
+    ----------
+    X : numpy.array
+        Design matrix.
+    """
     r = 1 - X @ la.pinv(X).sum(1)
     if (r ** 2).mean() > np.finfo(float).eps:
         warnings.warn("Did you forget an error term, I? :-)")
+
+
+def _get_n_random_effects(self):
+    """Gets the number of random effects.
+
+    Returns
+    -------
+    int
+        Number of random effects.
+    """
+    if isinstance(self.model, Random):
+        _, n_random_effects = self.model.variance.matrix.values.shape[1]
+    else:
+        n_random_effects = 1
+    return n_random_effects
