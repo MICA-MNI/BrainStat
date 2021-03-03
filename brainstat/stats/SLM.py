@@ -9,7 +9,8 @@ class SLM:
     """Core Class for running BrainStat linear models"""
 
     # Import class methods
-    from ._models import linear_model, t_test
+    from ._models import t_test
+    from ._linear_model import linear_model
     from ._multiple_comparisons import fdr, random_field_theory
 
     def __init__(
