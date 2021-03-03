@@ -32,9 +32,9 @@ def linear_model(self, Y):
     residuals, self.V, self.coef, self.SSE, self.r, self.dr = _run_linear_model(self, Y)
 
     if self.surf is not None:
-       self.resl, mesh_connections =  _compute_resls(self, residuals)
-       key = list(mesh_connections.keys())[0]
-       setattr(self, key, mesh_connections[key])
+        self.resl, mesh_connections = _compute_resls(self, residuals)
+        key = list(mesh_connections.keys())[0]
+        setattr(self, key, mesh_connections[key])
 
 
 def _run_linear_model(self, Y):
@@ -57,7 +57,7 @@ def _run_linear_model(self, Y):
         Sum of squared errors.
     numpy.array, None
         Matrix of coefficients of the components of slm.V divided by their sum.
-        None is returned for fixed effects models. 
+        None is returned for fixed effects models.
     numpy.array, None
         Vector of increments in slm.r None is returned for fixed effects models.
 
@@ -292,7 +292,7 @@ def _model_multivariate_fixed_effects(self, Y):
 
 
 def _get_design_matrix(self, n_samples):
-    """ Wrapper for fetching the design matrix
+    """Wrapper for fetching the design matrix
 
     Parameters
     ----------
@@ -316,7 +316,7 @@ def _get_design_matrix(self, n_samples):
 
 
 def _set_mixed_design(self):
-    """ Fetches the design matrix from a mixed effects model.
+    """Fetches the design matrix from a mixed effects model.
 
     Parameters
     ----------
@@ -355,7 +355,7 @@ def _set_mixed_design(self):
 
 
 def _set_fixed_design(self, n_samples):
-    """ Fetches the design matrix from a fixed effects model.
+    """Fetches the design matrix from a fixed effects model.
 
     Parameters
     ----------
@@ -403,10 +403,10 @@ def _compute_resls(self, Y):
         'lat' for lattice connections.
     """
     if isinstance(self.surf, BSPolyData):
-        mesh_connections = {'tri' : np.array(get_cells(self.surf)) + 1}
+        mesh_connections = {"tri": np.array(get_cells(self.surf)) + 1}
     else:
         key = "tri" if "tri" in self.surf else "lat"
-        mesh_connections = {key : self.surf[key]}
+        mesh_connections = {key: self.surf[key]}
 
     edges = mesh_edges(self.surf)
 
