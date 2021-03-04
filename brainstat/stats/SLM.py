@@ -6,6 +6,7 @@ from .terms import Term
 from .utils import apply_mask, undo_mask
 from brainstat.mesh.utils import mesh_edges, _mask_edges
 
+
 class SLM:
     """Core Class for running BrainStat linear models"""
 
@@ -175,14 +176,13 @@ class SLM:
         self.du = None
 
     def _unmask(self):
-        """Changes all masked parameters to their input dimensions.
-        """
+        """Changes all masked parameters to their input dimensions."""
         simple_unmask_parameters = ["t", "coef", "SSE", "r", "ef", "sd", "dfs"]
         for key in simple_unmask_parameters:
             attr = getattr(self, key)
             if attr is not None:
                 setattr(self, key, undo_mask(attr, self.mask, axis=1))
-        
+
         # slm.resl unmask
         if self.resl is not None:
             edges = mesh_edges(self.surf)

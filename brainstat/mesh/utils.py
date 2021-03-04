@@ -192,17 +192,16 @@ def mesh_edges(surf, mask=None):
 
 
 def _mask_edges(edges, mask):
-    #TODO: this section is sloppily written.
+    # TODO: this section is sloppily written.
     missing_edges = np.where(~mask)
     remove_edges = np.zeros(edges.shape, dtype=bool)
     for i in range(edges.shape[0]):
         for j in range(edges.shape[1]):
-            remove_edges[i,j] = (edges[i,j] == missing_edges).any()
+            remove_edges[i, j] = (edges[i, j] == missing_edges).any()
     idx = ~np.any(remove_edges, axis=1)
     edges = edges[idx, :]
     edges = _make_contiguous(edges)
     return edges, idx
-
 
 
 def mesh_average(filenames, fun=np.add, output_surfstat=False):
@@ -261,6 +260,7 @@ def mesh_average(filenames, fun=np.add, output_surfstat=False):
 
     return surface
 
+
 def _make_contiguous(Y):
     """Makes values of Y contiguous integers
 
@@ -272,7 +272,7 @@ def _make_contiguous(Y):
     Returns
     -------
     numpy.array
-        Array Y converted to contiguous numbers in range(np.unique(Y).size). 
+        Array Y converted to contiguous numbers in range(np.unique(Y).size).
     """
     val = np.unique(Y)
     for i in range(val.size):
