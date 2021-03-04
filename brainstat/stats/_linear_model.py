@@ -3,9 +3,9 @@ import numpy as np
 import numpy.linalg as la
 from brainstat.mesh.utils import mesh_edges
 from brainstat.stats.terms import Term, Random
+from brainstat.stats.utils import ismember
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 from brainspace.mesh.mesh_elements import get_cells
-from .terms import Term, Random
 
 
 def linear_model(self, Y):
@@ -23,6 +23,7 @@ def linear_model(self, Y):
     if isinstance(Y, Term):
         Y = Y.m.to_numpy()
     Y = np.atleast_3d(Y)
+
     n_samples = Y.shape[0]
 
     self.X, self.V = _get_design_matrix(self, n_samples)
@@ -69,6 +70,7 @@ def _run_linear_model(self, Y):
     n_random_effects = _get_n_random_effects(self)
     r = None
     dr = None
+
     if Y.shape[2] == 1:  # Univariate
         Y = Y[:, :, 0]
 
@@ -408,7 +410,7 @@ def _compute_resls(self, Y):
         key = "tri" if "tri" in self.surf else "lat"
         mesh_connections = {key: self.surf[key]}
 
-    edges = mesh_edges(self.surf)
+    edges = mesh_edges(self.surf, self.mask)
 
     n_edges = edges.shape[0]
 
@@ -420,6 +422,7 @@ def _compute_resls(self, Y):
         for i in range(Y.shape[0]):
             u = Y[i, :, j] / normr
             resl[:, j] += np.diff(u[edges], axis=1).ravel() ** 2
+
     return resl, mesh_connections
 
 
@@ -445,7 +448,7 @@ def _get_n_random_effects(self):
         Number of random effects.
     """
     if isinstance(self.model, Random):
-        _, n_random_effects = self.model.variance.matrix.values.shape[1]
+        n_random_effects = self.model.variance.matrix.values.shape[1]
     else:
         n_random_effects = 1
     return n_random_effects
