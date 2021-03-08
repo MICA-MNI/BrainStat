@@ -1,6 +1,6 @@
 classdef test_precomputed < matlab.unittest.TestCase
-    % For full details of each test, see the tests in the Python
-    % implementation. 
+    % For full details of each test, please see the tests in the 
+    % Python implementation. 
     
     methods (Test)
         function test_linmod(testCase)
