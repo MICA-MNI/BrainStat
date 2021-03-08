@@ -1,7 +1,9 @@
 import numpy as np
 import pickle
 from .testutil import datadir
-from brainstat.stats.multiple_comparisons import peak_clus
+from brainstat.stats._multiple_comparisons import peak_clus
+from brainstat.stats.SLM import SLM
+from brainstat.stats.terms import Term
 
 
 def dummy_test(infile, expfile):
@@ -11,11 +13,10 @@ def dummy_test(infile, expfile):
     idic = pickle.load(ifile)
     ifile.close()
 
-    slm = {}
-    slm["t"] = idic["t"]
-    slm["tri"] = idic["tri"]
-
-    mask = idic["mask"]
+    slm = SLM(Term(1), Term(1))
+    slm.t = idic["t"]
+    slm.tri = idic["tri"]
+    slm.mask = idic["mask"]
     thresh = idic["thresh"]
     reselspvert = None
     edg = None
@@ -27,13 +28,13 @@ def dummy_test(infile, expfile):
         edg = idic["edg"]
 
     if "k" in idic.keys():
-        slm["k"] = idic["k"]
+        slm.k = idic["k"]
 
     if "df" in idic.keys():
-        slm["df"] = idic["df"]
+        slm.df = idic["df"]
 
     # call python function
-    P_peak, P_clus, P_clusid = peak_clus(slm, mask, thresh, reselspvert, edg)
+    P_peak, P_clus, P_clusid = peak_clus(slm, thresh, reselspvert, edg)
 
     # load expected outout data
     efile = open(expfile, "br")
@@ -46,14 +47,14 @@ def dummy_test(infile, expfile):
 
     testout = []
 
-    if isinstance(P_peak, (dict)):
+    if isinstance(P_peak, dict):
         for key in P_peak.keys():
             comp = np.allclose(P_peak[key], O_peak[key], rtol=1e-05, equal_nan=True)
             testout.append(comp)
     else:
         comp = np.allclose(P_peak, O_peak, rtol=1e-05, equal_nan=True)
 
-    if isinstance(P_clus, (dict)):
+    if isinstance(P_clus, dict):
         for key in P_clus.keys():
             comp = np.allclose(P_clus[key], O_clus[key], rtol=1e-05, equal_nan=True)
     else:

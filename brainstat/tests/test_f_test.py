@@ -1,7 +1,8 @@
 import numpy as np
 import pickle
 from .testutil import datadir
-from brainstat.stats.models import f_test
+from brainstat.stats.SLM import SLM, f_test
+from brainstat.stats.terms import Term
 
 
 def dummy_test(infile, expfile):
@@ -11,46 +12,13 @@ def dummy_test(infile, expfile):
     idic = pickle.load(ifile)
     ifile.close()
 
-    slm1 = {}
-    slm1["X"] = idic["slm1X"]
-    slm1["df"] = idic["slm1df"]
-    slm1["SSE"] = idic["slm1SSE"]
-    slm1["coef"] = idic["slm1coef"]
-
-    slm2 = {}
-    slm2["X"] = idic["slm2X"]
-    slm2["df"] = idic["slm2df"]
-    slm2["SSE"] = idic["slm2SSE"]
-    slm2["coef"] = idic["slm2coef"]
-
-    # check other potential keys in input
-    if "slm1tri" in idic.keys():
-        slm1["tri"] = idic["slm1tri"]
-        slm2["tri"] = idic["slm2tri"]
-
-    if "slm1resl" in idic.keys():
-        slm1["resl"] = idic["slm1resl"]
-        slm2["resl"] = idic["slm2resl"]
-
-    if "slm1c" in idic.keys():
-        slm1["c"] = idic["slm1c"]
-        slm2["c"] = idic["slm2c"]
-
-    if "slm1k" in idic.keys():
-        slm1["k"] = idic["slm1k"]
-        slm2["k"] = idic["slm2k"]
-
-    if "slm1ef" in idic.keys():
-        slm1["ef"] = idic["slm1ef"]
-        slm2["ef"] = idic["slm2ef"]
-
-    if "slm1sd" in idic.keys():
-        slm1["sd"] = idic["slm1sd"]
-        slm2["sd"] = idic["slm2sd"]
-
-    if "slm1t" in idic.keys():
-        slm1["t"] = idic["slm1t"]
-        slm2["t"] = idic["slm2t"]
+    slm1 = SLM(Term(1), Term(1))
+    slm2 = SLM(Term(1), Term(2))
+    for key in idic.keys():
+        if "1" in key:
+            setattr(slm1, key[4:], idic[key])
+        elif "2" in key:
+            setattr(slm2, key[4:], idic[key])
 
     # run f test
     outdic = f_test(slm1, slm2)
@@ -62,8 +30,10 @@ def dummy_test(infile, expfile):
 
     testout = []
 
-    for key in outdic.keys():
-        comp = np.allclose(outdic[key], expdic[key], rtol=1e-05, equal_nan=True)
+    for key in expdic.keys():
+        comp = np.allclose(
+            getattr(outdic, key), expdic[key], rtol=1e-05, equal_nan=True
+        )
         testout.append(comp)
 
     assert all(flag == True for (flag) in testout)

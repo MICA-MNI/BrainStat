@@ -9,7 +9,7 @@ import sys
 from ..stats.utils import colon
 
 
-def mesh_edges(surf):
+def mesh_edges(surf, mask=None):
     """Converts the triangles or lattices of a mesh to edges.
 
     Args:
@@ -17,12 +17,27 @@ def mesh_edges(surf):
         surf['tri'] = (t x 3) numpy array of triangle indices, t:#triangles, or,
         surf['lat'] = 3D numpy array of 1's and 0's (1:in, 0:out).
         or
-        surf (BSPolyData) = a BrainSpace surface object.
+        surf (BSPolyData) = a BrainSpace surface object
+        or
+        surf (SLM) = a SLM object with an associated surface.
 
     Returns:
         edg (np.array): A e-by-2 numpy array containing the indices of the edges, where
         e is the number of edges.
     """
+
+    # This doesn't strictly test that its BrainStat SLM, but we can't import
+    # directly without causing a circular import.
+    class_name = surf.__class__.__name__
+    if class_name is "SLM":
+        if surf.tri is not None:
+            surf = {"tri": surf.tri}
+        elif surf.lat is not None:
+            surf = {"lat": surf.lat}
+        elif surf.surf is not None:
+            return mesh_edges(surf.surf)
+        else:
+            ValueError("SLM object does not have triangle/lattice data.")
 
     # For BSPolyData, simply use BrainSpace's functionality to grab edges.
     if isinstance(surf, BSPolyData):
@@ -170,7 +185,23 @@ def mesh_edges(surf):
     else:
         sys.exit('Input "surf" must have "lat" or "tri" key, or be a mesh object.')
 
+    if mask is not None:
+        edg, _ = _mask_edges(edg, mask)
+
     return edg
+
+
+def _mask_edges(edges, mask):
+    # TODO: this section is sloppily written.
+    missing_edges = np.where(~mask)
+    remove_edges = np.zeros(edges.shape, dtype=bool)
+    for i in range(edges.shape[0]):
+        for j in range(edges.shape[1]):
+            remove_edges[i, j] = (edges[i, j] == missing_edges).any()
+    idx = ~np.any(remove_edges, axis=1)
+    edges = edges[idx, :]
+    edges = _make_contiguous(edges)
+    return edges, idx
 
 
 def mesh_average(filenames, fun=np.add, output_surfstat=False):
@@ -228,3 +259,22 @@ def mesh_average(filenames, fun=np.add, output_surfstat=False):
         surface = build_polydata(coord_all, tri)
 
     return surface
+
+
+def _make_contiguous(Y):
+    """Makes values of Y contiguous integers
+
+    Parameters
+    ----------
+    Y : numpy.array
+        Array with uncontiguous numbers.
+
+    Returns
+    -------
+    numpy.array
+        Array Y converted to contiguous numbers in range(np.unique(Y).size).
+    """
+    val = np.unique(Y)
+    for i in range(val.size):
+        Y[Y == val[i]] = i
+    return Y

@@ -29,6 +29,7 @@ files = np.reshape(np.array(tutorial_data["image_files"]), (-1, 2))
 thickness = np.zeros((n, 10242))
 for i in range(n):
     thickness[i, :] = np.squeeze(nib.load(files[i, 0]).get_fdata())
+mask = np.all(thickness != 0, axis=0)
 
 pial_left = read_surface_gz(fetch_surf_fsaverage()["pial_left"])
 
@@ -53,42 +54,23 @@ model_interaction = term_intercept + term_age + term_iq + term_age * term_iq
 ###################################################################
 # Now, lets imagine we have some cortical marker (e.g. cortical thickness) for
 # each subject and we want to evaluate whether this marker changes with age
-# whilst correcting for effects of sex and age-sex interactions. Note that
-# BrainStat's univariate tests are one-tailed, so the sign of the contrast
-# matters!
+# whilst correcting for effects of sex and age-sex interactions.
 
-from brainstat.stats.models import linear_model, t_test
+from brainstat.stats.SLM import SLM
 
-Y = np.random.rand(n, 10242)  # Surface has 10242 vertices.
-slm = linear_model(Y, model_interaction, pial_left)
-slm = t_test(slm, -age)
-print(slm["t"])  # These are the t-values of the model.
+slm = SLM(model_interaction, -age, surf=pial_left, correction="rft", mask=mask)
+slm.fit(thickness)
+print(slm.t.shape)  # These are the t-values of the model.
+print(slm.P["pval"]["P"])  # These are the random field theory derived p-values.
 
 ###################################################################
-# Never forget: with great models come great multiple comparisons corrections.
-# BrainStat provides two methods for these corrections: FDR and random field theory.
-# In this example we'll show you how to use random field theory to find significant
-# results at alpha=0.05.
+# By default BrainStat uses a two-tailed test. If you want to get a one-tailed
+# test, simply specify it in the SLM model as follows:
 
-from brainstat.stats.multiple_comparisons import random_field_theory
-
-alpha = 0.05
-P, _, _, _ = random_field_theory(slm)
-print(P["P"] < alpha)
-
-###################################################################
-# As said before, univariate tests in BrainStat use a one-tailed test. If you
-# want to get a two-tailed text, simply run contrast as well as its negative and
-# adjust the alpha accordingly.
-
-slm_basic = linear_model(Y, model_interaction, pial_left)
-
-slm1 = t_test(slm_basic, -age)
-slm2 = t_test(slm_basic, age)
-
-P1, _, _, _ = random_field_theory(slm1)
-P2, _, _, _ = random_field_theory(slm2)
-print(np.logical_or(P1["P"] < alpha / 2, P2["P"] < alpha / 2))
+slm_two_tails = SLM(
+    model_interaction, -age, surf=pial_left, correction="rft", two_tailed=False
+)
+slm_two_tails.fit(thickness)
 
 ###################################################################
 # Now, imagine that instead of using a fixed effects model, you would prefer a
@@ -108,7 +90,8 @@ model_random = (
     + random_handedness
     + random_identity
 )
-slm_random = linear_model(Y, model_random, pial_left)
-slm_random = t_test(slm_random, -age)
-P3, _, _, _ = random_field_theory(slm_random)
-print(P3)
+slm_random = SLM(model_random, -age, surf=pial_left, correction="fdr", mask=mask)
+slm_random.fit(thickness)
+
+###############################################################################
+# That concludes the basic usage of the BrainStat for statistical models.
