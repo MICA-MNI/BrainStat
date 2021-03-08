@@ -1,51 +1,29 @@
-# Trigger on all branches, only for changes in the matlab directory.
-# Note: This doesn't seem to work - looks like it triggers on all pushes.
-trigger:
+# Trigger on all branches, trigger:
   batch: true
   branches:
     include:
       - '*'
-  paths: 
-    include: 
-      - brainstat_matlab
 
 # Set languages and operating system.
 pool:
   vmImage: 'ubuntu-latest'
 strategy:
   matrix:
-#    Python 3.6:
-#      implementation_language: 'python'
-#      implementation_version: '3.6'
-#    Python 3.7:
-#      implementation_language: 'python'
-#      implementation_version: '3.7'
     MATLAB 2020a:
-      implementation_language: 'matlab'
       implementation_version: 'latest'
 
 steps:
-  # Install Python/MATLAB
-  - task: UsePythonVersion@0
-    condition: eq(variables.implementation_language, 'python')
-    inputs:
-      versionSpec: $(implementation_version)
-    displayName: 'Use Python $(implementation_version)'
   - task: InstallMATLAB@0
-    condition: eq(variables.implementation_language, 'matlab')
     inputs:
       release: $(implementation_version)
     displayName: 'Use MATLAB $(implementation_version)'
 
-  # Lint Python
-  - script: |
-      python -m pip install flake8
-      flake8 --select E101,E117,E125,E302,W191,W291,W293 ./brainstat 
-    displayName: 'Run Python lint tests'
-    condition: eq(variables.implementation_language, 'python')
-  # Run MATLAB unit tests. 
+  - name: Download unit test data
+    run: |
+      git config remote.origin.fetch refs/heads/*:refs/remotes/origin/*
+      git fetch origin test-data
+
   - task: RunMATLABTests@0
-    condition: eq(variables.implementation_language, 'matlab')
     displayName: 'Run MATLAB unit tests.'
     inputs:
       sourceFolder: 'brainstat_matlab'
