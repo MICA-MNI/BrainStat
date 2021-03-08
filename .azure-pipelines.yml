@@ -19,10 +19,9 @@ steps:
       release: $(implementation_version)
     displayName: 'Use MATLAB $(implementation_version)'
 
-  - name: Download unit test data
-    run: |
-      git config remote.origin.fetch refs/heads/*:refs/remotes/origin/*
-      git fetch origin test-data
+  - task: CmdLine@2
+    inputs:
+      script: git config remote.origin.fetch refs/heads/*:refs/remotes/origin/* ; git fetch origin test-data
 
   - task: RunMATLABTests@0
     displayName: 'Run MATLAB unit tests.'
