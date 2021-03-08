@@ -3,13 +3,16 @@ import warnings
 import numpy as np
 from cmath import sqrt
 from .terms import Term
+from .utils import apply_mask, undo_mask
+from brainstat.mesh.utils import mesh_edges, _mask_edges
 
 
 class SLM:
     """Core Class for running BrainStat linear models"""
 
     # Import class methods
-    from ._models import linear_model, t_test
+    from ._t_test import t_test
+    from ._linear_model import linear_model
     from ._multiple_comparisons import fdr, random_field_theory
 
     def __init__(
@@ -106,8 +109,12 @@ class SLM:
                 )
 
         self._reset_fit_parameters()
+        if self.mask is not None:
+            Y = apply_mask(Y, self.mask, axis=1)
         self.linear_model(Y)
         self.t_test()
+        if self.mask is not None:
+            self._unmask()
         if self.correction is not None:
             self.multiple_comparison_corrections()
 
@@ -167,6 +174,20 @@ class SLM:
         self.P = None
         self.Q = None
         self.du = None
+
+    def _unmask(self):
+        """Changes all masked parameters to their input dimensions."""
+        simple_unmask_parameters = ["t", "coef", "SSE", "r", "ef", "sd", "dfs"]
+        for key in simple_unmask_parameters:
+            attr = getattr(self, key)
+            if attr is not None:
+                setattr(self, key, undo_mask(attr, self.mask, axis=1))
+
+        # slm.resl unmask
+        if self.resl is not None:
+            edges = mesh_edges(self.surf)
+            _, idx = _mask_edges(edges, self.mask)
+            self.resl = undo_mask(self.resl, idx, axis=0)
 
 
 def _merge_rft(P1, P2):

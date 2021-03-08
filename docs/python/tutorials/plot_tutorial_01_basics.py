@@ -90,10 +90,8 @@ model_random = (
     + random_handedness
     + random_identity
 )
-slm_random = SLM(model_random, -age, surf=pial_left, correction="rft", mask=mask)
-# Note: there's currently a bug in the code that occurs for mixed effects models and data that contains zero columns.
-# For purposes of this this tutorial we'll use random data here until the bug is resolved.
-slm_random.fit(np.random.rand(thickness.shape[0], thickness.shape[1]))
+slm_random = SLM(model_random, -age, surf=pial_left, correction="fdr", mask=mask)
+slm_random.fit(thickness)
 
 ###############################################################################
 # That concludes the basic usage of the BrainStat for statistical models.
