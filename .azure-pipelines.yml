@@ -1,5 +1,5 @@
 # Trigger on all branches, trigger:
-on:
+trigger:
   batch: true
   branches:
     include:
