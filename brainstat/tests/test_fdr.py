@@ -1,7 +1,9 @@
 import numpy as np
 import pickle
 from .testutil import datadir
-from brainstat.stats.multiple_comparisons import fdr
+from brainstat.stats._multiple_comparisons import fdr
+from brainstat.stats.SLM import SLM
+from brainstat.stats.terms import Term
 
 
 def dummy_test(infile, expfile):
@@ -11,60 +13,21 @@ def dummy_test(infile, expfile):
     idic = pickle.load(ifile)
     ifile.close()
 
-    slm = {}
-    slm["t"] = idic["t"]
-    slm["df"] = idic["df"]
-    slm["k"] = idic["k"]
+    slm = SLM(Term(1), Term(1))
+    for key in idic.keys():
+        setattr(slm, key, idic[key])
 
-    # check other potential keys in input
-    if "dfs" in idic.keys():
-        slm["dfs"] = idic["dfs"]
-
-    if "resl" in idic.keys():
-        slm["resl"] = idic["resl"]
-
-    if "tri" in idic.keys():
-        slm["tri"] = idic["tri"]
-
-    if "lat" in idic.keys():
-        slm["tri"] = idic["tri"]
-
-    if "mask" in idic.keys():
-        mask = idic["mask"]
-    else:
-        mask = None
-
-    # non-sense input for _fdr, but potentially produced by SurfStatLinMod
-    if "du" in idic.keys():
-        slm["du"] = idic["du"]
-
-    if "c" in idic.keys():
-        slm["c"] = idic["c"]
-
-    if "ef" in idic.keys():
-        slm["ef"] = idic["ef"]
-
-    if "sd" in idic.keys():
-        slm["sd"] = idic["sd"]
-
-    if "SSE" in idic.keys():
-        slm["SSE"] = idic["SSE"]
-
-    # run _fdr
-    outdic = fdr(slm, mask)
+    # run fdr
+    Q = fdr(slm)
 
     # load expected outout data
+    # Note: expected dicts contain a "mask" key. this has been removed in our
+    # current implementation.
     efile = open(expfile, "br")
     expdic = pickle.load(efile)
     efile.close()
 
-    testout = []
-
-    for key in outdic.keys():
-        comp = np.allclose(outdic[key], expdic[key], rtol=1e-05, equal_nan=True)
-        testout.append(comp)
-
-    assert all(flag == True for (flag) in testout)
+    assert np.allclose(Q, expdic["Q"])
 
 
 def test_01():

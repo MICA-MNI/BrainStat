@@ -4,6 +4,7 @@ test_python
 
 .pytest_cache
 .ipynb_checkpoints
+*.pyc
 
 *.egg-info
 build

@@ -7,68 +7,44 @@ from scipy.linalg import toeplitz
 from scipy.sparse import csr_matrix
 import math
 import copy
-from .utils import interp1, colon, ismember, row_ismember
-from ..mesh.utils import mesh_edges
+from brainstat.stats.utils import interp1, colon, ismember, row_ismember
+from brainstat.mesh.utils import mesh_edges
 
 
-def fdr(slm, mask=None):
+def fdr(self):
     """Q-values for False Discovey Rate of resels.
 
     Parameters
     ----------
-    slm : dict
-        Standard linear model returned by the t_test function; see Notes for
-        details.
-    mask : numpy.array, optional
-        Only t-values where the mask is true are considered. Defaults to a
-        vector of ones.
+    self : brainstat.stats.SLM.SLM
+        SLM object with computed t-values.
 
     Returns
     -------
-    qval : dict
-        Contains the Q-values in field 'Q' and a copy of the mask in 'mask'.
+    numpy.array
+        Q-values for false discovery rate of resels.
 
-    See Also
-    --------
-    brainstat.stats.models.t_test : Computes t-values for a linear model.
-
-    Notes
-    ------
-    The slm dictionary must contain at least the following fields:
-
-    - slm['t'] (numpy.array): a (1,v) array of t-values
-    - slm['df'] (numpy.array) of shape (1,1) containing the degrees of freedom
-    - slm['k'] (int) the number of variates.
-
-    Furthermore, slm may contain the following optional fields.
-
-    - slm['dfs'] (numpy.array) a (1,v) array containing the effective degrees of freedom.
-    - slm['resl'] (numpy.array) a (e,v) array containing the sum over observations of squares of differences of normalized residuals along each edge.
-    - slm['tri'] (numpy.array) a (v,3) array containing a mesh's triangle indices
-    - slm['lat'] (numpy.array) a 3D array of 1's and 0's where 1's are inside the lattice.
-
-    Note that slm['tri'] and slm['lat'] are mutually exclusive.
     """
-    l, v = np.shape(slm["t"])
+    l, v = np.shape(self.t)
 
-    if mask is None:
-        mask = np.ones((v), dtype="bool")
+    if self.mask is None:
+        self.mask = np.ones((v), dtype="bool")
 
     df = np.zeros((2, 2))
-    ndf = len(np.array([slm["df"]]))
-    df[0, 0:ndf] = slm["df"]
-    df[1, 0:2] = np.array([slm["df"]])[ndf - 1]
+    ndf = len(np.array([self.df]))
+    df[0, 0:ndf] = self.df
+    df[1, 0:2] = np.array([self.df])[ndf - 1]
 
-    if "dfs" in slm:
-        df[0, ndf - 1] = slm["dfs"][0, mask > 0].mean()
+    if self.dfs is not None:
+        df[0, ndf - 1] = self.dfs[0, self.mask > 0].mean()
 
-    if "du" in slm:
-        resels, reselspvert, edg = compute_resels(slm, mask.flatten())
+    if self.du is not None:
+        resels, reselspvert, edg = compute_resels(self)
     else:
         reselspvert = np.ones((v))
 
-    varA = np.append(10, slm["t"][0, mask.astype(bool)])
-    P_val = stat_threshold(df=df, p_val_peak=varA, nvar=float(slm["k"]), nprint=0)[0]
+    varA = np.append(10, self.t[0, self.mask.astype(bool)])
+    P_val = stat_threshold(df=df, p_val_peak=varA, nvar=float(self.k), nprint=0)[0]
     P_val = P_val[1 : len(P_val)]
     nx = len(P_val)
     index = P_val.argsort()
@@ -84,48 +60,21 @@ def fdr(slm, mask=None):
             m = P_sort[i - 1]
         Q_sort[0, i - 1] = m
 
-    Q = np.zeros((1, nx))
-    Q[0, index] = Q_sort
+    Q_tmp = np.zeros((1, nx))
+    Q_tmp[0, index] = Q_sort
 
-    qval = {}
-    qval["Q"] = np.ones((mask.shape[0]))
-    qval["Q"][mask] = np.squeeze(Q[0, :])
-    qval["mask"] = mask
+    Q = np.ones((self.mask.shape[0]))
+    Q[self.mask] = np.squeeze(Q_tmp[0, :])
 
-    return qval
+    return Q
 
 
-def random_field_theory(slm, mask=None, clusthresh=0.001):
+def random_field_theory(self):
     """Corrected P-values for vertices and clusters.
-
     Parameters
     ----------
-    slm : a dictionary with keys 't', 'df', 'k', 'resl', 'tri' (or 'lat'),
-        optional key 'dfs'.
-        slm['t'] : 2D numpy array of shape (l,v).
-            v is the number of vertices, slm['t'][0,:] is the test statistic,
-            rest of the rows are used to calculate cluster resels if
-            slm['k']>1. See F for the precise definition of extra rows.
-        surf['df'] : 2D numpy array of shape (1,1), dtype=int.
-            Degrees of freedom.
-        surf['k'] : an int.
-            Number of variates.
-        surf['resl'] : 2D numpy array of shape (e,k).
-            Sum over observations of squares of differences of normalized
-            residuals along each edge.
-        surf['tri'] : 2D numpy array of shape (3,t), dtype=int.
-            Triangle indices.
-        or,
-        surf['lat'] : 3D numpy array of shape (nx,ny,nz), 1's and 0's.
-            In fact, [nx,ny,nz] = size(volume).
-        surf['dfs'] : 2D numpy array of shape (1,v), dtype=int.
-            Optional effective degrees of freedom.
-    mask : 1D numpy array of shape (v), dtype=bool.
-        1=inside, 0=outside, v= number of vertices. By default: np.ones((v),
-        dtype=bool).
-    clusthresh: a float.
-        P-value threshold or statistic threshold for defining clusters.
-        By default: 0.001.
+    self : brainstat.stats.SLM.SLM
+        SLM object with computed t-values.
 
     Returns
     -------
@@ -134,7 +83,6 @@ def random_field_theory(slm, mask=None, clusthresh=0.001):
             Corrected P-values for vertices.
         pval['C'] : 2D numpy array of shape (1,v).
             Corrected P-values for clusters.
-        pval['mask'] : copy of input mask.
     peak : a dictionary with keys 't', 'vertid', 'clusid', 'P'.
         peak['t'] : 2D numpy array of shape (np,1).
             Peaks (local maxima).
@@ -155,29 +103,28 @@ def random_field_theory(slm, mask=None, clusthresh=0.001):
             Corrected P-values for the cluster.
     clusid : 2D numpy array of shape (1,v).
         Cluster id's for each vertex.
-
     Reference: Worsley, K.J., Andermann, M., Koulis, T., MacDonald, D.
     & Evans, A.C. (1999). Detecting changes in nonisotropic images.
     Human Brain Mapping, 8:98-101.
     """
-    l, v = np.shape(slm["t"])
+    l, v = np.shape(self.t)
 
-    if mask is None:
-        mask = np.ones((v), dtype=bool)
+    if self.mask is None:
+        self.mask = np.ones((v), dtype=bool)
 
     df = np.zeros((2, 2))
-    ndf = len(np.array([slm["df"]]))
-    df[0, 0:ndf] = slm["df"]
-    df[1, 0:2] = np.array([slm["df"]])[ndf - 1]
+    ndf = len(np.array([self.df]))
+    df[0, 0:ndf] = self.df
+    df[1, 0:2] = np.array([self.df])[ndf - 1]
 
-    if "dfs" in slm.keys():
-        df[0, ndf - 1] = slm["dfs"][0, mask > 0].mean()
+    if self.dfs is not None:
+        df[0, ndf - 1] = self.dfs[0, self.mask > 0].mean()
 
     if v == 1:
-        varA = varA = np.concatenate((np.array([10]), slm["t"][0]))
+        varA = varA = np.concatenate((np.array([10]), self.t[0]))
         pval = {}
         pval["P"] = stat_threshold(
-            df=df, p_val_peak=varA, nvar=float(slm["k"]), nprint=0
+            df=df, p_val_peak=varA, nvar=float(self.k), nprint=0
         )[0]
         pval["P"] = pval["P"][1]
         peak = []
@@ -186,37 +133,38 @@ def random_field_theory(slm, mask=None, clusthresh=0.001):
         # only a single p-value is returned, and function is stopped.
         return pval, peak, clus, clusid
 
-    if clusthresh < 1:
+    if self.cluster_threshold < 1:
         thresh = stat_threshold(
-            df=df, p_val_peak=clusthresh, nvar=float(slm["k"]), nprint=0
+            df=df, p_val_peak=self.cluster_threshold, nvar=float(self.k), nprint=0
         )[0]
         thresh = float(thresh[0])
     else:
-        thresh = clusthresh
+        thresh = self.cluster_threshold
 
-    resels, reselspvert, edg = compute_resels(slm, mask)
-    N = mask.sum()
+    resels, reselspvert, edg = compute_resels(self)
+    N = self.mask.sum()
 
-    if np.max(slm["t"][0, mask]) < thresh:
+    if np.max(self.t[0, self.mask]) < thresh:
         pval = {}
-        varA = np.concatenate((np.array([[10]]), slm["t"]), axis=1)
+        varA = np.concatenate((np.array([[10]]), self.t), axis=1)
         pval["P"] = stat_threshold(
             search_volume=resels,
             num_voxels=N,
             fwhm=1,
             df=df,
             p_val_peak=varA.flatten(),
-            nvar=float(slm["k"]),
+            nvar=float(self.k),
             nprint=0,
         )[0]
         pval["P"] = pval["P"][1 : v + 1]
-        peak = []
-        clus = []
-        clusid = []
+        pval["C"] = None
+        peak = {"t": None, "clusid": None, "vertid": None, "P": None}
+        clus = {"clusid": None, "nverts": None, "resels": None, "P": None}
+        clusid = None
     else:
-        peak, clus, clusid = peak_clus(slm, mask, thresh, reselspvert, edg)
-        slm["t"] = slm["t"].reshape(1, slm["t"].size)
-        varA = np.concatenate((np.array([[10]]), peak["t"].T, slm["t"]), axis=1)
+        peak, clus, clusid = peak_clus(self, thresh, reselspvert, edg)
+        self.t = self.t.reshape(1, self.t.size)
+        varA = np.concatenate((np.array([[10]]), peak["t"].T, self.t), axis=1)
         varB = np.concatenate((np.array([[10]]), clus["resels"]))
         pp, clpval, _, _, _, _, = stat_threshold(
             search_volume=resels,
@@ -226,7 +174,7 @@ def random_field_theory(slm, mask=None, clusthresh=0.001):
             p_val_peak=varA.flatten(),
             cluster_threshold=thresh,
             p_val_extent=varB,
-            nvar=float(slm["k"]),
+            nvar=float(self.k),
             nprint=0,
         )
         lenPP = len(pp[1 : len(peak["t"]) + 1])
@@ -234,17 +182,17 @@ def random_field_theory(slm, mask=None, clusthresh=0.001):
         pval = {}
         pval["P"] = pp[len(peak["t"]) + np.arange(1, v + 1)]
 
-        if slm["k"] > 1:
-            j = np.arange(slm["k"])[::-2]
-            sphere = np.zeros((1, int(slm["k"])))
+        if self.k > 1:
+            j = np.arange(self.k)[::-2]
+            sphere = np.zeros((1, int(self.k)))
             sphere[:, j] = np.exp(
                 (j + 1) * np.log(2)
                 + (j / 2) * np.log(math.pi)
-                + gammaln((slm["k"] + 1) / 2)
+                + gammaln((self.k + 1) / 2)
                 - gammaln(j + 1)
-                - gammaln((slm["k"] + 1 - j) / 2)
+                - gammaln((self.k + 1 - j) / 2)
             )
-            sphere = sphere * np.power(4 * np.log(2), -np.arange(0, slm["k"]) / 2) / ndf
+            sphere = sphere * np.power(4 * np.log(2), -np.arange(0, self.k) / 2) / ndf
             varA = np.convolve(resels.flatten(), sphere.flatten())
             varB = np.concatenate((np.array([[10]]), clus["resels"]))
             pp, clpval, _, _, _, _, = stat_threshold(
@@ -268,12 +216,11 @@ def random_field_theory(slm, mask=None, clusthresh=0.001):
         fwhm=1,
         df=df,
         p_val_peak=np.array([0.5, 1]),
-        nvar=float(slm["k"]),
+        nvar=float(self.k),
         nprint=0,
     )[0]
     tlim = tlim[1]
-    pval["P"] = pval["P"] * (slm["t"][0, :] > tlim) + (slm["t"][0, :] <= tlim)
-    pval["mask"] = mask
+    pval["P"] = pval["P"] * (self.t[0, :] > tlim) + (self.t[0, :] <= tlim)
 
     return pval, peak, clus, clusid
 
@@ -895,7 +842,7 @@ def stat_threshold(
     )
 
 
-def peak_clus(slm, mask, thresh, reselspvert=None, edg=None):
+def peak_clus(self, thresh, reselspvert=None, edg=None):
     """Finds peaks (local maxima) and clusters for surface data.
     Parameters
     ----------
@@ -946,11 +893,11 @@ def peak_clus(slm, mask, thresh, reselspvert=None, edg=None):
         array of cluster id's for each vertex.
     """
     if edg is None:
-        edg = mesh_edges(slm)
+        edg = mesh_edges(self)
 
-    l, v = np.shape(slm["t"])
-    slm_t = copy.deepcopy(slm["t"])
-    slm_t[0, ~mask.astype(bool)] = slm_t[0, :].min()
+    l, v = np.shape(self.t)
+    slm_t = copy.deepcopy(self.t)
+    slm_t[0, ~self.mask.astype(bool)] = slm_t[0, :].min()
     t1 = slm_t[0, edg[:, 0]]
     t2 = slm_t[0, edg[:, 1]]
     islm = np.ones((1, v))
@@ -1006,11 +953,11 @@ def peak_clus(slm, mask, thresh, reselspvert=None, edg=None):
     nf1 = interp1(np.append(0, ucid), np.arange(0, nclus + 1), nf, kind="nearest")
 
     # if k>1, find volume of cluster in added sphere
-    if "k" not in slm or slm["k"] == 1:
+    if self.k is None or self.k == 1:
         ucrsl = np.bincount(nf1.astype(int), reselsvox.flatten())
-    if "k" in slm and slm["k"] == 2:
+    if self.k == 2:
         if l == 1:
-            ndf = len(np.array([slm["df"]]))
+            ndf = len(np.array([self.df]))
             r = 2 * np.arccos((thresh / slm_t[0, vox - 1]) ** (float(1) / ndf))
         else:
             r = 2 * np.arccos(
@@ -1021,9 +968,9 @@ def peak_clus(slm, mask, thresh, reselspvert=None, edg=None):
                 )
             )
         ucrsl = np.bincount(nf1.astype(int), (r.T * reselsvox.T).flatten())
-    if "k" in slm and slm["k"] == 3:
+    if self.k == 3:
         if l == 1:
-            ndf = len(np.array([slm["df"]]))
+            ndf = len(np.array([self.df]))
             r = 2 * math.pi * (1 - (thresh / slm_t[0, vox - 1]) ** (float(1) / ndf))
         else:
             nt = 20
@@ -1091,7 +1038,7 @@ def peak_clus(slm, mask, thresh, reselspvert=None, edg=None):
     return peak, clus, clusid
 
 
-def compute_resels(slm, mask=None):
+def compute_resels(self):
     """SurfStatResels of surface or volume data inside a mask.
 
     Parameters
@@ -1122,56 +1069,56 @@ def compute_resels(slm, mask=None):
     def pacos(x):
         return np.arccos(np.minimum(np.abs(x), 1) * np.sign(x))
 
-    if "tri" in slm:
+    if self.tri is not None:
         # Get unique edges. Subtract 1 from edges to conform to Python's
         # counting from 0 - RV
-        tri = np.sort(slm["tri"]) - 1
+        tri = np.sort(self.tri) - 1
         edg = np.unique(
             np.vstack((tri[:, (0, 1)], tri[:, (0, 2)], tri[:, (1, 2)])), axis=0
         )
 
         # If no mask is provided, create one with all included vertices set to
         # 1. If mask is provided, simply grab the number of vertices from mask.
-        if mask is None:
+        if self.mask is None:
             v = np.amax(edg) + 1
-            mask = np.full(v, False)
-            mask[edg - 1] = True
+            self.mask = np.full(v, False)
+            self.mask[edg - 1] = True
         else:
             # if np.ndim(mask) > 1:
             #    mask = np.squeeze(mask)
             #    if mask.shape[0] > 1:
             #        mask = mask.T
-            v = mask.size
+            v = self.mask.size
 
         # Compute the Lipschitz–Killing curvatures (LKC)
-        m = np.sum(mask)
-        if "resl" in slm:
+        m = np.sum(self.mask)
+        if self.resl is not None:
             lkc = np.zeros((3, 3))
         else:
             lkc = np.zeros((1, 3))
         lkc[0, 0] = m
 
         # LKC of edges
-        maskedg = np.all(mask[edg], axis=1)
+        maskedg = np.all(self.mask[edg], axis=1)
         lkc[0, 1] = np.sum(maskedg)
 
-        if "resl" in slm:
-            r1 = np.mean(np.sqrt(slm["resl"][maskedg, :]), axis=1)
+        if self.resl is not None:
+            r1 = np.mean(np.sqrt(self.resl[maskedg, :]), axis=1)
             lkc[1, 1] = np.sum(r1)
         # LKC of triangles
         # Made an adjustment from the MATLAB implementation:
         # The reselspvert computation is included in the if-statement.
         # MATLAB errors when the if statement is false as variable r2 is not
         # defined during the computation of reselspvert. - RV
-        masktri = np.all(mask[tri], 1)
+        masktri = np.all(self.mask[tri], 1)
         lkc[0, 2] = np.sum(masktri)
-        if "resl" in slm:
+        if self.resl is not None:
             loc = row_ismember(tri[masktri, :][:, [0, 1]], edg)
-            l12 = slm["resl"][loc, :]
+            l12 = self.resl[loc, :]
             loc = row_ismember(tri[masktri, :][:, [0, 2]], edg)
-            l13 = slm["resl"][loc, :]
+            l13 = self.resl[loc, :]
             loc = row_ismember(tri[masktri, :][:, [1, 2]], edg)
-            l23 = slm["resl"][loc, :]
+            l23 = self.resl[loc, :]
             a = np.fmax(4 * l12 * l13 - (l12 + l13 - l23) ** 2, 0)
             r2 = np.mean(np.sqrt(a), axis=1) / 4
             lkc[1, 2] = (
@@ -1190,10 +1137,10 @@ def compute_resels(slm, mask=None):
         else:
             reselspvert = None
 
-    if "lat" in slm:
-        edg = mesh_edges(slm)
+    if self.lat is not None:
+        edg = mesh_edges(self)
         # The lattice is filled with 5 alternating tetrahedra per cube
-        I, J, K = np.shape(slm["lat"])
+        I, J, K = np.shape(self.lat)
         IJ = I * J
         i, j = np.meshgrid(range(1, I + 1), range(1, J + 1))
         i = np.squeeze(np.reshape(i, (-1, 1)))
@@ -1273,22 +1220,22 @@ def compute_resels(slm, mask=None):
             axis=0,
         )
 
-        v = np.int(np.round(np.sum(slm["lat"])))
-        if mask is None:
-            mask = np.ones(v, dtype=bool)
+        v = np.int(np.round(np.sum(self.lat)))
+        if self.mask is None:
+            self.mask = np.ones(v, dtype=bool)
 
         reselspvert = np.zeros(v)
-        vs = np.cumsum(np.squeeze(np.sum(np.sum(slm["lat"], axis=0), axis=0)))
+        vs = np.cumsum(np.squeeze(np.sum(np.sum(self.lat, axis=0), axis=0)))
         vs = cat((np.zeros(1), vs, np.expand_dims(vs[K - 1], axis=0)), axis=0)
         vs = vs.astype(int)
         es = 0
         lat = np.zeros((I, J, 2))
-        lat[:, :, 0] = slm["lat"][:, :, 0]
+        lat[:, :, 0] = self.lat[:, :, 0]
         lkc = np.zeros((4, 4))
         for k in range(0, K):
             f = (k + 1) % 2
             if k < (K - 1):
-                lat[:, :, f] = slm["lat"][:, :, k + 1]
+                lat[:, :, f] = self.lat[:, :, k + 1]
             else:
                 lat[:, :, f] = np.zeros((I, J))
             vid = (np.cumsum(lat.flatten("F")) * np.reshape(lat.T, -1)).astype(int)
@@ -1338,7 +1285,7 @@ def compute_resels(slm, mask=None):
                     )
                     - 1
                 )
-                mask1 = mask[np.arange(vs[k], vs[k + 2])]
+                mask1 = self.mask[np.arange(vs[k], vs[k + 2])]
             else:
                 edg1 = cat(
                     (
@@ -1410,8 +1357,8 @@ def compute_resels(slm, mask=None):
                 )
                 mask1 = cat(
                     (
-                        mask[np.arange(vs[k + 1], vs[k + 2])],
-                        mask[np.arange(vs[k], vs[k + 1])],
+                        self.mask[np.arange(vs[k + 1], vs[k + 2])],
+                        self.mask[np.arange(vs[k], vs[k + 1])],
                     )
                 )
             # Added a -1 -RV
@@ -1427,20 +1374,20 @@ def compute_resels(slm, mask=None):
                 sparsedg.eliminate_zeros()
             ##
             lkc1 = np.zeros((4, 4))
-            lkc1[0, 0] = np.sum(mask[np.arange(vs[k], vs[k + 1])])
+            lkc1[0, 0] = np.sum(self.mask[np.arange(vs[k], vs[k + 1])])
 
             # LKC of edges
             maskedg = np.all(mask1[edg1], axis=1)
 
             lkc1[0, 1] = np.sum(maskedg)
-            if "resl" in slm:
-                r1 = np.mean(np.sqrt(slm["resl"][np.argwhere(maskedg) + es, :]), axis=1)
+            if self.resl is not None:
+                r1 = np.mean(np.sqrt(self.resl[np.argwhere(maskedg) + es, :]), axis=1)
                 lkc1[1, 1] = np.sum(r1)
 
             # LKC of triangles
             masktri = np.all(mask1[tri], axis=1).flatten()
             lkc1[0, 2] = np.sum(masktri)
-            if "resl" in slm:
+            if self.resl is not None:
                 if all(masktri == False):
                     # Set these variables to empty arrays to match the MATLAB
                     # implementation.
@@ -1448,21 +1395,21 @@ def compute_resels(slm, mask=None):
                     lkc1[2, 2] = 0
                 else:
                     if e < 2 ** 31:
-                        l12 = slm["resl"][
+                        l12 = self.resl[
                             sparsedg[
                                 tri[masktri, 0] + m1 * (tri[masktri, 1] - 1), 0
                             ].toarray()
                             + es,
                             :,
                         ]
-                        l13 = slm["resl"][
+                        l13 = self.resl[
                             sparsedg[
                                 tri[masktri, 0] + m1 * (tri[masktri, 2] - 1), 0
                             ].toarray()
                             + es,
                             :,
                         ]
-                        l23 = slm["resl"][
+                        l23 = self.resl[
                             sparsedg[
                                 tri[masktri, 1] + m1 * (tri[masktri, 2] - 1), 0
                             ].toarray()
@@ -1470,7 +1417,7 @@ def compute_resels(slm, mask=None):
                             :,
                         ]
                     else:
-                        l12 = slm["resl"][
+                        l12 = self.resl[
                             interp1(
                                 ue,
                                 ae,
@@ -1480,7 +1427,7 @@ def compute_resels(slm, mask=None):
                             + es,
                             :,
                         ]
-                        l13 = slm["resl"][
+                        l13 = self.resl[
                             interp1(
                                 ue,
                                 ae,
@@ -1490,7 +1437,7 @@ def compute_resels(slm, mask=None):
                             + es,
                             :,
                         ]
-                        l23 = slm["resl"][
+                        l23 = self.resl[
                             interp1(
                                 ue,
                                 ae,
@@ -1524,9 +1471,9 @@ def compute_resels(slm, mask=None):
             # LKC of tetrahedra
             masktet = np.all(mask1[tet], axis=1).flatten()
             lkc1[0, 3] = np.sum(masktet)
-            if "resl" in slm and k < (K - 1):
+            if self.resl is not None and k < (K - 1):
                 if e < 2 ** 31:
-                    l12 = slm["resl"][
+                    l12 = self.resl[
                         (
                             sparsedg[
                                 tet[masktet, 0] + m1 * (tet[masktet, 1] - 1), 0
@@ -1535,7 +1482,7 @@ def compute_resels(slm, mask=None):
                         ).tolist(),
                         :,
                     ]
-                    l13 = slm["resl"][
+                    l13 = self.resl[
                         (
                             sparsedg[
                                 tet[masktet, 0] + m1 * (tet[masktet, 2] - 1), 0
@@ -1544,7 +1491,7 @@ def compute_resels(slm, mask=None):
                         ).tolist(),
                         :,
                     ]
-                    l23 = slm["resl"][
+                    l23 = self.resl[
                         (
                             sparsedg[
                                 tet[masktet, 1] + m1 * (tet[masktet, 2] - 1), 0
@@ -1553,7 +1500,7 @@ def compute_resels(slm, mask=None):
                         ).tolist(),
                         :,
                     ]
-                    l14 = slm["resl"][
+                    l14 = self.resl[
                         (
                             sparsedg[
                                 tet[masktet, 0] + m1 * (tet[masktet, 3] - 1), 0
@@ -1562,7 +1509,7 @@ def compute_resels(slm, mask=None):
                         ).tolist(),
                         :,
                     ]
-                    l24 = slm["resl"][
+                    l24 = self.resl[
                         (
                             sparsedg[
                                 tet[masktet, 1] + m1 * (tet[masktet, 3] - 1), 0
@@ -1571,7 +1518,7 @@ def compute_resels(slm, mask=None):
                         ).tolist(),
                         :,
                     ]
-                    l34 = slm["resl"][
+                    l34 = self.resl[
                         (
                             sparsedg[
                                 tet[masktet, 2] + m1 * (tet[masktet, 3] - 1), 0
@@ -1581,7 +1528,7 @@ def compute_resels(slm, mask=None):
                         :,
                     ]
                 else:
-                    l12 = slm["resl"][
+                    l12 = self.resl[
                         interp1(
                             ue,
                             ae,
@@ -1591,7 +1538,7 @@ def compute_resels(slm, mask=None):
                         + es,
                         :,
                     ]
-                    l13 = slm["resl"][
+                    l13 = self.resl[
                         interp1(
                             ue,
                             ae,
@@ -1601,7 +1548,7 @@ def compute_resels(slm, mask=None):
                         + es,
                         :,
                     ]
-                    l23 = slm["resl"][
+                    l23 = self.resl[
                         interp1(
                             ue,
                             ae,
@@ -1611,7 +1558,7 @@ def compute_resels(slm, mask=None):
                         + es,
                         :,
                     ]
-                    l14 = slm["resl"][
+                    l14 = self.resl[
                         interp1(
                             ue,
                             ae,
@@ -1621,7 +1568,7 @@ def compute_resels(slm, mask=None):
                         + es,
                         :,
                     ]
-                    l24 = slm["resl"][
+                    l24 = self.resl[
                         interp1(
                             ue,
                             ae,
@@ -1631,7 +1578,7 @@ def compute_resels(slm, mask=None):
                         + es,
                         :,
                     ]
-                    l34 = slm["resl"][
+                    l34 = self.resl[
                         interp1(
                             ue,
                             ae,

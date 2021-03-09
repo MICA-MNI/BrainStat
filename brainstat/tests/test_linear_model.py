@@ -1,20 +1,28 @@
 import numpy as np
 import pickle
 from .testutil import datadir
-from brainstat.stats.models import linear_model
 from brainstat.stats.terms import Term
+from brainstat.stats.SLM import SLM
 
 
-def dummy_test(slm, oslm):
+def dummy_test(idic, oslm):
 
     testout = []
 
-    for key in slm.keys():
-        comp = np.allclose(slm[key], oslm[key], rtol=1e-05, equal_nan=True)
+    slm = SLM(idic["M"], Term(1))
+    Y = idic["Y"]
+    if "tri" in idic.keys():
+        slm.surf = {"tri": idic["tri"]}
+
+    if "lat" in idic.keys():
+        slm.surf = {"lat": idic["lat"]}
+    if "coord" in idic.keys():
+        slm.surf["coord"] = idic["coord"]
+
+    slm.linear_model(Y)
+    for key in oslm.keys():
+        comp = np.allclose(getattr(slm, key), oslm[key], rtol=1e-05, equal_nan=True)
         testout.append(comp)
-
-    print(testout)
-
     assert all(flag == True for (flag) in testout)
 
 
@@ -27,14 +35,10 @@ def test_01():
     ifile = open(infile, "br")
     idic = pickle.load(ifile)
     ifile.close()
-    Y = idic["Y"]
-    M = idic["M"]
-    slm = linear_model(Y, M)
-    # oslm : expected output
     ofile = open(expfile, "br")
     oslm = pickle.load(ofile)
     ofile.close()
-    dummy_test(slm, oslm)
+    dummy_test(idic, oslm)
 
 
 def test_02():
@@ -46,14 +50,10 @@ def test_02():
     ifile = open(infile, "br")
     idic = pickle.load(ifile)
     ifile.close()
-    Y = idic["Y"]
-    M = idic["M"]
-    slm = linear_model(Y, M)
-    # oslm : expected output
     ofile = open(expfile, "br")
     oslm = pickle.load(ofile)
     ofile.close()
-    dummy_test(slm, oslm)
+    dummy_test(idic, oslm)
 
 
 def test_03():
@@ -65,14 +65,10 @@ def test_03():
     ifile = open(infile, "br")
     idic = pickle.load(ifile)
     ifile.close()
-    Y = idic["Y"]
-    M = idic["M"]
-    slm = linear_model(Y, M)
-    # oslm : expected output
     ofile = open(expfile, "br")
     oslm = pickle.load(ofile)
     ofile.close()
-    dummy_test(slm, oslm)
+    dummy_test(idic, oslm)
 
 
 def test_04():
@@ -84,14 +80,10 @@ def test_04():
     ifile = open(infile, "br")
     idic = pickle.load(ifile)
     ifile.close()
-    Y = idic["Y"]
-    M = idic["M"]
-    slm = linear_model(Y, M)
-    # oslm : expected output
     ofile = open(expfile, "br")
     oslm = pickle.load(ofile)
     ofile.close()
-    dummy_test(slm, oslm)
+    dummy_test(idic, oslm)
 
 
 def test_05():
@@ -103,14 +95,10 @@ def test_05():
     ifile = open(infile, "br")
     idic = pickle.load(ifile)
     ifile.close()
-    Y = idic["Y"]
-    M = idic["M"]
-    slm = linear_model(Y, M)
-    # oslm : expected output
     ofile = open(expfile, "br")
     oslm = pickle.load(ofile)
     ofile.close()
-    dummy_test(slm, oslm)
+    dummy_test(idic, oslm)
 
 
 def test_06():
@@ -122,15 +110,10 @@ def test_06():
     ifile = open(infile, "br")
     idic = pickle.load(ifile)
     ifile.close()
-    Y = idic["Y"]
-    M = idic["M"]
-    M = Term(M)
-    slm = linear_model(Y, M)
-    # oslm : expected output
     ofile = open(expfile, "br")
     oslm = pickle.load(ofile)
     ofile.close()
-    dummy_test(slm, oslm)
+    dummy_test(idic, oslm)
 
 
 def test_07():
@@ -142,15 +125,10 @@ def test_07():
     ifile = open(infile, "br")
     idic = pickle.load(ifile)
     ifile.close()
-    Y = idic["Y"]
-    M = idic["M"]
-    M = Term(M)
-    slm = linear_model(Y, M)
-    # oslm : expected output
     ofile = open(expfile, "br")
     oslm = pickle.load(ofile)
     ofile.close()
-    dummy_test(slm, oslm)
+    dummy_test(idic, oslm)
 
 
 def test_08():
@@ -163,16 +141,10 @@ def test_08():
     ifile = open(infile, "br")
     idic = pickle.load(ifile)
     ifile.close()
-    Y = idic["Y"]
-    M = idic["M"]
-    surf = {}
-    surf["tri"] = idic["tri"]
-    slm = linear_model(Y, M, surf)
-    # oslm : expected output
     ofile = open(expfile, "br")
     oslm = pickle.load(ofile)
     ofile.close()
-    dummy_test(slm, oslm)
+    dummy_test(idic, oslm)
 
 
 def test_09():
@@ -185,16 +157,10 @@ def test_09():
     ifile = open(infile, "br")
     idic = pickle.load(ifile)
     ifile.close()
-    Y = idic["Y"]
-    M = idic["M"]
-    M = Term(M)
-    surf = {}
-    surf["tri"] = idic["tri"]
-    slm = linear_model(Y, M, surf)
     ofile = open(expfile, "br")
     oslm = pickle.load(ofile)
     ofile.close()
-    dummy_test(slm, oslm)
+    dummy_test(idic, oslm)
 
 
 def test_10():
@@ -207,15 +173,10 @@ def test_10():
     ifile = open(infile, "br")
     idic = pickle.load(ifile)
     ifile.close()
-    Y = idic["Y"]
-    M = idic["M"]
-    surf = {}
-    surf["lat"] = idic["lat"]
-    slm = linear_model(Y, M, surf)
     ofile = open(expfile, "br")
     oslm = pickle.load(ofile)
     ofile.close()
-    dummy_test(slm, oslm)
+    dummy_test(idic, oslm)
 
 
 def test_11():
@@ -228,16 +189,10 @@ def test_11():
     ifile = open(infile, "br")
     idic = pickle.load(ifile)
     ifile.close()
-    Y = idic["Y"]
-    M = idic["M"]
-    M = Term(M)
-    surf = {}
-    surf["lat"] = idic["lat"]
-    slm = linear_model(Y, M, surf)
     ofile = open(expfile, "br")
     oslm = pickle.load(ofile)
     ofile.close()
-    dummy_test(slm, oslm)
+    dummy_test(idic, oslm)
 
 
 def test_12():
@@ -251,18 +206,13 @@ def test_12():
     ifile = open(infile, "br")
     idic = pickle.load(ifile)
     ifile.close()
-    Y = idic["Y"]
     age = idic["age"]
     AGE = Term(np.array(age), "AGE")
-    M = 1 + AGE
-    surf = {}
-    surf["tri"] = idic["tri"]
-    surf["coord"] = idic["coord"]
-    slm = linear_model(Y, M, surf)
+    idic["M"] = 1 + AGE
     ofile = open(expfile, "br")
     oslm = pickle.load(ofile)
     ofile.close()
-    dummy_test(slm, oslm)
+    dummy_test(idic, oslm)
 
 
 def test_13():
@@ -276,18 +226,13 @@ def test_13():
     ifile = open(infile, "br")
     idic = pickle.load(ifile)
     ifile.close()
-    Y = idic["Y"]
-    age = idic["age"]
-    AGE = Term(np.array(age), "AGE")
-    M = 1 + AGE
-    surf = {}
-    surf["tri"] = idic["tri"]
-    surf["coord"] = idic["coord"]
-    slm = linear_model(Y, M, surf)
     ofile = open(expfile, "br")
     oslm = pickle.load(ofile)
     ofile.close()
-    dummy_test(slm, oslm)
+    age = idic["age"]
+    AGE = Term(np.array(age), "AGE")
+    idic["M"] = 1 + AGE
+    dummy_test(idic, oslm)
 
 
 def test_14():
@@ -301,18 +246,13 @@ def test_14():
     ifile = open(infile, "br")
     idic = pickle.load(ifile)
     ifile.close()
-    Y = idic["Y"]
-    age = idic["age"]
-    AGE = Term(np.array(age), "AGE")
-    M = 1 + AGE
-    surf = {}
-    surf["tri"] = idic["tri"]
-    surf["coord"] = idic["coord"]
-    slm = linear_model(Y, M, surf)
     ofile = open(expfile, "br")
     oslm = pickle.load(ofile)
     ofile.close()
-    dummy_test(slm, oslm)
+    age = idic["age"]
+    AGE = Term(np.array(age), "AGE")
+    idic["M"] = 1 + AGE
+    dummy_test(idic, oslm)
 
 
 def test_15():
@@ -327,18 +267,13 @@ def test_15():
     ifile = open(infile, "br")
     idic = pickle.load(ifile)
     ifile.close()
-    Y = idic["Y"]
     params = idic["params"]
     colnames = list(idic["colnames"])
-    M = Term(params, colnames)
-    surf = {}
-    surf["tri"] = idic["tri"]
-    surf["coord"] = idic["coord"]
-    slm = linear_model(Y, M, surf)
+    idic["M"] = Term(params, colnames)
     ofile = open(expfile, "br")
     oslm = pickle.load(ofile)
     ofile.close()
-    dummy_test(slm, oslm)
+    dummy_test(idic, oslm)
 
 
 def test_16():
@@ -352,14 +287,9 @@ def test_16():
     ifile = open(infile, "br")
     idic = pickle.load(ifile)
     ifile.close()
-    Y = idic["Y"]
     params = idic["params"]
-    M = Term(params)
-    surf = {}
-    surf["tri"] = idic["tri"]
-    surf["coord"] = idic["coord"]
-    slm = linear_model(Y, M, surf)
+    idic["M"] = Term(params)
     ofile = open(expfile, "br")
     oslm = pickle.load(ofile)
     ofile.close()
-    dummy_test(slm, oslm)
+    dummy_test(idic, oslm)
