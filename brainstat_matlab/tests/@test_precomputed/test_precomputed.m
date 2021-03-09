@@ -1,6 +1,41 @@
 classdef test_precomputed < matlab.unittest.TestCase
     % For full details of each test, please see the tests in the 
-    % Python implementation. 
+    % Python implementation. The documentation in this version is rather
+    % "lightweight". ;-)
+    
+    methods
+        function recursive_equality(testCase, S1, S2, file)
+            % Recursive tests whether the contents of all cells/struct
+            % fields are equal across S1 and S2. 
+            
+            if ~strcmp(class(S1), class(S2))
+                if isempty(S1) && isempty(S2)
+                    % Getting the empties to sync across Python/MATLAB is a
+                    % pain. Deal with it the easy way.
+                    verifyEmpty(testCase, S1);
+                    verifyEmpty(testCase, S2);
+                    return;
+                else
+                    keyboard;
+                    error('Inputs are not of the same type.');
+                end
+            end
+            
+            if isstruct(S1)
+                fields = fieldnames(S1)';
+                for field = fields
+                    recursive_equality(testCase, S1.(field{1}), S2.(field{1}), file)
+                end
+            elseif iscell(S1)
+                for ii = 1:numel(S1)
+                    recursive_equality(testCase, S1{ii}, S2{ii}, file);
+                end
+            elseif isnumeric(S1)
+                verifyEqual(testCase, S1, S2, 'abstol', 1e-5, ...
+                    ['Testing failed on input file: ', file]);
+            end
+        end
+    end
     
     methods (Test)
         function test_linmod(testCase)
@@ -37,12 +72,7 @@ classdef test_precomputed < matlab.unittest.TestCase
                 slm = SurfStatLinMod(input.Y, input.M, input.surf, ...
                     input.niter, input.thetalim, input.drlim);
                 
-                out_vars = fieldnames(output)';
-                for field = out_vars
-                    verifyEqual(testCase, slm.(field{1}), output.(field{1}), ...
-                        'abstol', 1e-5, ...
-                        ['Testing failed on input file: ', pair{1}]);
-                end       
+                recursive_equality(testCase, slm, output, pair{1});
             end
         end
 
@@ -59,14 +89,8 @@ classdef test_precomputed < matlab.unittest.TestCase
                     mask = [];
                 end
                 Q = SurfStatQ(input, mask);
-                out_vars = fieldnames(output)';
-                for field = out_vars
-                    verifyEqual(testCase, ...
-                        double(Q.(field{1})), ...
-                        double(output.(field{1})), ...
-                        'abstol', 1e-5, ...
-                        ['Testing failed on input file: ', pair{1}]);
-                end  
+                Q.mask = double(Q.mask);
+                recursive_equality(testCase, Q, output, pair{1});
             end
         end
 
@@ -86,12 +110,7 @@ classdef test_precomputed < matlab.unittest.TestCase
                     end
                 end
                 slm = SurfStatF(slms.slm1, slms.slm2);
-                out_vars = fieldnames(output)';
-                for field = out_vars
-                    verifyEqual(testCase, slm.(field{1}), output.(field{1}), ...
-                        'abstol', 1e-5, ...
-                        ['Testing failed on input file: ', pair{1}]);
-                end       
+                recursive_equality(testCase, slm, output, pair{1});
             end
         end
         
@@ -177,7 +196,7 @@ classdef test_precomputed < matlab.unittest.TestCase
         function test_peakclus(testCase)
             % Test SurfStatSmooth
             peakc_files = get_test_files('statpeakc');
-            for pair = peakc_files(:,17)
+            for pair = peakc_files
                 input = load_pkl(pair{1});
                 output = load_pkl(pair{2});
                 
@@ -208,28 +227,93 @@ classdef test_precomputed < matlab.unittest.TestCase
                 [ peak, clus, clusid ] = SurfStatPeakClus(slm, mask, thresh, ...
                     reselspvert, edg);
                 
-                % Test equality of peak and clus.
-                for arg = {peak, clus; output.peak, output.clus}
-                    if isstruct(arg{1})
-                        f_peak = fieldnames(arg{1})';
-                        for field = f_peak
-                            verifyEqual(testCase, arg{1}.(f_peak{1}), arg{2}.(f_peak{1}), 'abstol', 1e-5, ...
-                                ['Testing failed on input file: ', pair{1}]);
-                        end
-                    else
-                        verifyEmpty(testCase, arg{1});
-                        verifyEmpty(testCase, arg{2});
+                % Test equality.
+                for arg = {peak, clus, clusid; output.peak, output.clus, output.clusid}
+                    recursive_equality(testCase, arg{1}, arg{2}, pair{1});            
+                end
+            end
+        end
+        
+        function test_p(testCase)
+            statp_files = get_test_files('statp');
+            for pair = statp_files
+                input = load_pkl(pair{1});
+                output = load_pkl(pair{2});
+                if ismember('mask', fieldnames(input))
+                    mask = logical(input.mask);
+                else
+                    mask = [];
+                end
+                if ismember('clusthresh', fieldnames(input))
+                    clusthresh = input.clusthresh;
+                else
+                    clusthresh = 0.001;
+                end
+                [P.pval, P.peak, P.clus, P.clusid]  = SurfStatP(input, mask, clusthresh);
+                if ismember('mask', fieldnames(P.pval))
+                    P.pval.mask = double(P.pval.mask);
+                end
+                recursive_equality(testCase, P, output, pair{1});
+            end
+        end
+        
+        function test_resels(testCase)
+            statp_files = get_test_files('statresl');
+            for pair = statp_files
+                input = load_pkl(pair{1});
+                output = load_pkl(pair{2});
+                if ismember('mask', fieldnames(input))
+                    input.mask = logical(input.mask);
+                end
+                if ismember('resl', fieldnames(input))
+                    [P.resels, P.reselspvert, P.edg] = SurfStatResels(input);
+                    P.edg = double(P.edg-1);
+                else
+                    P.resels = SurfStatResels(input);
+                end
+                recursive_equality(testCase, P, output, pair{1});
+            end
+        end
+        
+        function test_statthreshold(testCase)
+            thresh_files = get_test_files('thresh');
+            for pair = thresh_files
+                input = load_pkl(pair{1});
+                output = load_pkl(pair{2});
+                
+                for field = fieldnames(input)'
+                    if iscell(input.(field{1}))
+                        input.(field{1}) = cell2mat(input.(field{1}));
                     end
                 end
-                
-                % Test equality of clusid
-                if ~isempty(clusid)
-                    verifyEqual(testCase, clusid, output.clusid, 'abstol', 1e-5, ...
-                        ['Testing failed on input file: ', pair{1}]);
-                else
-                    verifyEmpty(testCase, arg{1});
-                    verifyEmpty(testCase, arg{2});
-                end
+    
+                [P.peak_threshold, P.extent_threshold, P.peak_threshold_1, ...
+                        P.extent_threshold_1, P.t, P.rho ] = stat_threshold(...
+                       input.search_volume, ...
+                       input.num_voxels, ...
+                       input.fwhm, ...
+                       input.df, ...
+                       input.p_val_peak, ...
+                       input.cluster_threshold, ...
+                       input.p_val_extent, ...
+                       input.nconj, ...
+                       input.nvar, ...
+                       [], ...
+                       [], ...
+                       input.nprint);
+                 P.t = P.t'; 
+                 recursive_equality(testCase, P, output, pair{1});
+            end
+        end 
+        
+        function test_ttest(testCase)
+            statt_files = get_test_files('statt');
+            for pair = statt_files
+                input = load_pkl(pair{1});
+                output = load_pkl(pair{2});
+                slm = SurfStatT(input, input.contrast);
+                slm = rmfield(slm,'contrast');
+                recursive_equality(testCase, slm, output, pair{1});           
             end
         end
     end
@@ -278,11 +362,13 @@ conversions = {
     'py.str', @(x) char(x);
     'py.int', @(x) double(x);
     'py.numpy.uint8', @(x) double(x);
+    'py.NoneType', @(x) [];
     'double', @(x)x;
 };
 
 selection = ismember(conversions(:,1), class(pkl_data));
 fun = conversions{selection,2};
+
 
 try
     mat_data = fun(pkl_data);
