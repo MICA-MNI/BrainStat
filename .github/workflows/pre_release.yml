@@ -3,7 +3,7 @@ name: "pre_release"
 on:
   push:
     branches:
-      - temporarily_disabled_prerelease_trigger
+      - master
 
 jobs:
   tagged-release:

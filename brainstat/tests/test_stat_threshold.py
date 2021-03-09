@@ -1,7 +1,7 @@
 import numpy as np
 import pickle
 from .testutil import datadir
-from brainstat.stats.multiple_comparisons import stat_threshold
+from brainstat.stats._multiple_comparisons import stat_threshold
 
 
 def dummy_test(infile, expfile):

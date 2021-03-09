@@ -1,7 +1,9 @@
 import numpy as np
 import pickle
 from .testutil import datadir
-from brainstat.stats.multiple_comparisons import compute_resels
+from brainstat.stats._multiple_comparisons import compute_resels
+from brainstat.stats.SLM import SLM
+from brainstat.stats.terms import Term
 
 
 def dummy_test(infile, expfile):
@@ -11,23 +13,11 @@ def dummy_test(infile, expfile):
     idic = pickle.load(ifile)
     ifile.close()
 
-    slm = {}
+    slm = SLM(Term(1), Term(1))
+    for key in idic.keys():
+        setattr(slm, key, idic[key])
 
-    if "tri" in idic.keys():
-        slm["tri"] = idic["tri"]
-
-    if "resl" in idic.keys():
-        slm["resl"] = idic["resl"]
-
-    if "lat" in idic.keys():
-        slm["lat"] = idic["lat"]
-
-    mask = None
-
-    if "mask" in idic.keys():
-        mask = idic["mask"]
-
-    resels_py, reselspvert_py, edg_py = compute_resels(slm, mask)
+    resels_py, reselspvert_py, edg_py = compute_resels(slm)
 
     out = {}
     out["resels"] = resels_py

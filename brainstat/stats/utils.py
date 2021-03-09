@@ -1,4 +1,4 @@
-"""Python implementation of MATLAB functions."""
+"""Utilities for the stats functions."""
 
 from scipy.interpolate import interp1d
 import numpy as np
@@ -47,7 +47,7 @@ def interp1(x, y, ix, kind="linear"):
         interpolated y coordinates.
     """
 
-    f = interp1d(x, y, kind)
+    f = interp1d(x, y, kind, bounds_error=False, fill_value=np.nan)
     iy = f(ix)
     return iy
 
@@ -129,3 +129,57 @@ def colon(start, stop, increment=1):
     elif start == stop or r[-1] + increment == stop:
         r = np.append(r, stop)
     return r
+
+
+def apply_mask(Y, mask, axis=0):
+    """Masks the data along a specified axis
+
+    Parameters
+    ----------
+    Y : array-like
+        Data to be masked.
+    mask : array-like
+        Boolean vector containing True for each element to keep.
+    axis : int, optional
+        Axis along which to operate, by default 0.
+
+    Returns
+    -------
+    numpy.array
+        Masked data.
+    """
+    Y = Y.swapaxes(0, axis)
+    Y = Y[mask, ...]
+    return Y.swapaxes(0, axis)
+
+
+def undo_mask(Y, mask, axis=0, missing_value=np.nan):
+    """Restores the original dimensions of masked data.
+
+    Parameters
+    ----------
+    Y : array-like
+        Masked data.
+    mask : array-like
+        Boolean vector used to mask the data.
+    axis : int, optional
+        Axis along which to operate, by default 0.
+    missing_value : scalar, optional
+        Number to insert for missing values, by default np.nan.
+
+    Returns
+    -------
+    numpy.array
+        Unmasked data.
+    """
+    new_dims = list(Y.shape)
+    new_dims[axis] = mask.size
+    Y2 = np.empty(new_dims)
+    Y2[:] = missing_value
+
+    Y = Y.swapaxes(0, axis)
+    Y2 = Y2.swapaxes(0, axis)
+    Y2[mask, ...] = Y
+    Y2 = Y2.swapaxes(0, axis)
+
+    return Y2
