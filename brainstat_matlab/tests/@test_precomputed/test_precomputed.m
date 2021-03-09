@@ -4,9 +4,15 @@ classdef test_precomputed < matlab.unittest.TestCase
     % "lightweight". ;-)
     
     methods
-        function recursive_equality(testCase, S1, S2, file)
+        function recursive_equality(testCase, S1, S2, file, abstol, reltol)
             % Recursive tests whether the contents of all cells/struct
             % fields are equal across S1 and S2. 
+            if ~exist('abstol','var')
+                abstol= 1e-5;
+            end
+            if ~exist('reltol','var')
+                reltol = 1e-10;
+            end   
             
             if ~strcmp(class(S1), class(S2))
                 if isempty(S1) && isempty(S2)
@@ -16,7 +22,6 @@ classdef test_precomputed < matlab.unittest.TestCase
                     verifyEmpty(testCase, S2);
                     return;
                 else
-                    keyboard;
                     error('Inputs are not of the same type.');
                 end
             end
@@ -31,7 +36,7 @@ classdef test_precomputed < matlab.unittest.TestCase
                     recursive_equality(testCase, S1{ii}, S2{ii}, file);
                 end
             elseif isnumeric(S1)
-                verifyEqual(testCase, S1, S2, 'abstol', 1e-5, ...
+                verifyEqual(testCase, S1, S2, 'abstol', abstol, 'reltol', reltol, ...
                     ['Testing failed on input file: ', file]);
             end
         end
@@ -235,8 +240,8 @@ classdef test_precomputed < matlab.unittest.TestCase
         end
         
         function test_p(testCase)
-            statp_files = get_test_files('statp');
-            for pair = statp_files
+            statp_files = get_test_files('statp_');
+            for pair = statp_files(:,18)
                 input = load_pkl(pair{1});
                 output = load_pkl(pair{2});
                 if ismember('mask', fieldnames(input))
@@ -263,13 +268,17 @@ classdef test_precomputed < matlab.unittest.TestCase
                 input = load_pkl(pair{1});
                 output = load_pkl(pair{2});
                 if ismember('mask', fieldnames(input))
-                    input.mask = logical(input.mask);
+                    mask = logical(input.mask);
+                    input_arg = {input, mask};
+                else
+                    input_arg = {input};
                 end
+                P = struct();
                 if ismember('resl', fieldnames(input))
-                    [P.resels, P.reselspvert, P.edg] = SurfStatResels(input);
+                    [P.resels, P.reselspvert, P.edg] = SurfStatResels(input_arg{:});
                     P.edg = double(P.edg-1);
                 else
-                    P.resels = SurfStatResels(input);
+                    P.resels = SurfStatResels(input_arg{:});
                 end
                 recursive_equality(testCase, P, output, pair{1});
             end
@@ -335,7 +344,6 @@ test_files = reshape(test_files, 2, []);
 test_files = data_dir + string(filesep) + test_files;
 end
 
-
 function test_data_dir = get_test_data_dir()
 % Returns the path to the test data directory.
 filepath = fileparts(mfilename('fullpath'));
@@ -343,7 +351,6 @@ brainstat_dir = fileparts(fileparts(fileparts(filepath)));
 
 test_data_dir = strjoin({brainstat_dir, 'extern', 'test-data'}, filesep);
 end    
-
 
 function contents = load_pkl(pkl_file)
     % Loads Python .pkl files into MATLAB.
