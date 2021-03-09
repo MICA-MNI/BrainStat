@@ -19,7 +19,18 @@ steps:
       release: $(implementation_version)
     displayName: 'Use MATLAB $(implementation_version)'
 
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: 3.8
+
   - task: CmdLine@2
+    name: Install Python Requirements
+    inputs:
+      script: |
+        pip install numpy
+
+  - task: CmdLine@2
+    name: Fetch test-data
     inputs:
       script: |
         git config remote.origin.fetch refs/heads/*:refs/remotes/origin/*
