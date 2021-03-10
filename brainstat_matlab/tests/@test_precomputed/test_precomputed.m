@@ -162,8 +162,8 @@ classdef test_precomputed < matlab.unittest.TestCase
         
         function test_smooth(testCase)
             % Test SurfStatSmooth
-            norm_files = get_test_files('statsmo');
-            for pair = norm_files
+            smo_files = get_test_files('statsmo');
+            for pair = smo_files
                 input = load_pkl(pair{1});
                 output = load_pkl(pair{2});
                 if ismember('tri', fieldnames(input))
@@ -244,17 +244,20 @@ classdef test_precomputed < matlab.unittest.TestCase
             for pair = statp_files(:,18)
                 input = load_pkl(pair{1});
                 output = load_pkl(pair{2});
-                if ismember('mask', fieldnames(input))
-                    mask = logical(input.mask);
-                else
-                    mask = [];
+                mask = [];
+                clusthresh = 0.001;
+                slm = struct();
+                for field = fieldnames(input)'
+                    if field{1} == "mask"
+                        mask = logical(input.mask);
+                    elseif field{1} == "clusthresh"
+                        clusthresh = input.clusthresh;
+                    else
+                        slm.(field{1}) = input.(field{1});
+                    end
                 end
-                if ismember('clusthresh', fieldnames(input))
-                    clusthresh = input.clusthresh;
-                else
-                    clusthresh = 0.001;
-                end
-                [P.pval, P.peak, P.clus, P.clusid]  = SurfStatP(input, mask, clusthresh);
+                 
+                [P.pval, P.peak, P.clus, P.clusid]  = SurfStatP(slm, mask, clusthresh);
                 if ismember('mask', fieldnames(P.pval))
                     P.pval.mask = double(P.pval.mask);
                 end
