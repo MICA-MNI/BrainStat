@@ -1,7 +1,6 @@
 import numpy as np
 import h5py
-import sys
-sys.path.append('/data/p_02323/BrainStat/')
+from .testutil import datadir
 from brainstat.stats.SLM import SLM
 from brainstat.stats.terms import Term
 
@@ -13,7 +12,7 @@ def generate_data_test_linear_model():
     M = np.random.rand(43,43)
     M[:,0] = 1
     
-    h = h5py.File('../../extern/test-data/linmod_01_IN.h5', 'w')
+    h = h5py.File(datadir('linmod_01_IN.h5'), 'w')
     h.create_dataset('Y', data=Y)
     h.create_dataset('M', data=M)
     h.close()
@@ -25,7 +24,7 @@ def generate_data_test_linear_model():
     makeys = ['cluster_threshold', 'coef', 'df', 'drlim', 'model', 'niter',
               'SSE', 'thetalim', 'X']
     
-    h = h5py.File('../../extern/test-data/linmod_01_OUT.h5', 'w')
+    h = h5py.File(datadir('linmod_01_OUT.h5'), 'w')
     for makey in makeys:
         h.create_dataset(makey, data=getattr(slm, makey))
     h.close()
@@ -39,7 +38,7 @@ def generate_data_test_linear_model():
     M = np.random.rand(62,92)
     M[:,0] = 1
     
-    h = h5py.File('../../extern/test-data/linmod_02_IN.h5', 'w')
+    h = h5py.File(datadir('linmod_02_IN.h5'), 'w')
     h.create_dataset('Y', data=Y)
     h.create_dataset('M', data=M)
     h.close()
@@ -50,7 +49,7 @@ def generate_data_test_linear_model():
     makeys = ['cluster_threshold', 'coef', 'df', 'drlim', 'model', 'niter',
               'SSE', 'thetalim', 'X']
     
-    h = h5py.File('../../extern/test-data/linmod_02_OUT.h5', 'w')
+    h = h5py.File(datadir('linmod_02_OUT.h5'), 'w')
     for makey in makeys:
         h.create_dataset(makey, data=getattr(slm, makey))
     h.close()
@@ -64,7 +63,7 @@ def generate_data_test_linear_model():
     M = np.random.rand(54,2)
     M[:,0] = 1
     
-    h = h5py.File('../../extern/test-data/linmod_03_IN.h5', 'w')
+    h = h5py.File(datadir('linmod_03_IN.h5'), 'w')
     h.create_dataset('Y', data=Y)
     h.create_dataset('M', data=M)
     h.close()
@@ -75,7 +74,7 @@ def generate_data_test_linear_model():
     makeys = ['cluster_threshold', 'coef', 'df', 'drlim', 'model', 'niter',
               'SSE', 'thetalim', 'X']
     
-    h = h5py.File('../../extern/test-data/linmod_03_OUT.h5', 'w')
+    h = h5py.File(datadir('linmod_03_OUT.h5'), 'w')
     for makey in makeys:
         h.create_dataset(makey, data=getattr(slm, makey))
     h.close()
@@ -87,7 +86,7 @@ def generate_data_test_linear_model():
     Y = np.random.rand(69,41,5)
     M = np.random.rand(69,30)
     M[:,0] = 1
-    h = h5py.File('../../extern/test-data/linmod_04_IN.h5', 'w')
+    h = h5py.File(datadir('linmod_04_IN.h5'), 'w')
     h.create_dataset('Y', data=Y)
     h.create_dataset('M', data=M)
     h.close()
@@ -98,7 +97,7 @@ def generate_data_test_linear_model():
     makeys = ['cluster_threshold', 'coef', 'df', 'drlim', 'model', 'niter',
               'SSE', 'thetalim', 'X']
     
-    h = h5py.File('../../extern/test-data/linmod_04_OUT.h5', 'w')
+    h = h5py.File(datadir('linmod_04_OUT.h5'), 'w')
     for makey in makeys:
         h.create_dataset(makey, data=getattr(slm, makey))
     h.close()
@@ -111,7 +110,7 @@ def generate_data_test_linear_model():
     M = np.random.rand(81,2)
     M[:,0] = 1
     
-    h = h5py.File('../../extern/test-data/linmod_05_IN.h5', 'w')
+    h = h5py.File(datadir('linmod_05_IN.h5'), 'w')
     h.create_dataset('Y', data=Y)
     h.create_dataset('M', data=M)
     h.close()
@@ -122,7 +121,7 @@ def generate_data_test_linear_model():
     makeys = ['cluster_threshold', 'coef', 'df', 'drlim', 'model', 'niter',
               'SSE', 'thetalim', 'X']
     
-    h = h5py.File('../../extern/test-data/linmod_05_OUT.h5', 'w')
+    h = h5py.File(datadir('linmod_05_OUT.h5'), 'w')
     for makey in makeys:
         h.create_dataset(makey, data=getattr(slm, makey))
     h.close()
@@ -135,7 +134,7 @@ def generate_data_test_linear_model():
     M = np.random.rand(93,67)
     M[:,0] = 1
     
-    h = h5py.File('../../extern/test-data/linmod_06_IN.h5', 'w')
+    h = h5py.File(datadir('linmod_06_IN.h5'), 'w')
     h.create_dataset('Y', data=Y)
     h.create_dataset('M', data=M)
     h.close()
@@ -146,7 +145,7 @@ def generate_data_test_linear_model():
     makeys = ['cluster_threshold', 'coef', 'df', 'drlim', 'model', 'niter',
               'SSE', 'thetalim', 'X']
     
-    h = h5py.File('../../extern/test-data/linmod_06_OUT.h5', 'w')
+    h = h5py.File(datadir('linmod_06_OUT.h5'), 'w')
     for makey in makeys:
         h.create_dataset(makey, data=getattr(slm, makey))
     h.close()
@@ -159,7 +158,7 @@ def generate_data_test_linear_model():
     M = np.random.rand(40,81)
     M[:,0] = 1
     
-    h = h5py.File('../../extern/test-data/linmod_07_IN.h5', 'w')
+    h = h5py.File(datadir('linmod_07_IN.h5'), 'w')
     h.create_dataset('Y', data=Y)
     h.create_dataset('M', data=M)
     h.close()
@@ -170,7 +169,7 @@ def generate_data_test_linear_model():
     makeys = ['cluster_threshold', 'coef', 'df', 'drlim', 'model', 'niter',
               'SSE', 'thetalim', 'X']
     
-    h = h5py.File('../../extern/test-data/linmod_07_OUT.h5', 'w')
+    h = h5py.File(datadir('linmod_07_OUT.h5'), 'w')
     for makey in makeys:
         h.create_dataset(makey, data=getattr(slm, makey))
     h.close()
@@ -184,7 +183,7 @@ def generate_data_test_linear_model():
     M[:,0] = 1
     tri = np.random.randint(1,42,size=(93,3))
     
-    h = h5py.File('../../extern/test-data/linmod_08_IN.h5', 'w')
+    h = h5py.File(datadir('linmod_08_IN.h5'), 'w')
     h.create_dataset('Y', data=Y)
     h.create_dataset('M', data=M)
     h.create_dataset('tri', data=tri)
@@ -197,7 +196,7 @@ def generate_data_test_linear_model():
     makeys = ['cluster_threshold', 'coef', 'df', 'drlim', 'model', 'niter',
               'resl', 'SSE', 'thetalim', 'X', 'tri']
     
-    h = h5py.File('../../extern/test-data/linmod_08_OUT.h5', 'w')
+    h = h5py.File(datadir('linmod_08_OUT.h5'), 'w')
     for makey in makeys:
         h.create_dataset(makey, data=getattr(slm, makey))
     h.close()
@@ -211,7 +210,7 @@ def generate_data_test_linear_model():
     M[:,0] = 1
     tri = np.random.randint(1,68,size=(60,3))
     
-    h = h5py.File('../../extern/test-data/linmod_09_IN.h5', 'w')
+    h = h5py.File(datadir('linmod_09_IN.h5'), 'w')
     h.create_dataset('Y', data=Y)
     h.create_dataset('M', data=M)
     h.create_dataset('tri', data=tri)
@@ -224,7 +223,7 @@ def generate_data_test_linear_model():
     makeys = ['cluster_threshold', 'coef', 'df', 'drlim', 'model', 'niter',
               'resl', 'SSE', 'thetalim', 'X', 'tri']
     
-    h = h5py.File('../../extern/test-data/linmod_09_OUT.h5', 'w')
+    h = h5py.File(datadir('linmod_09_OUT.h5'), 'w')
     for makey in makeys:
         h.create_dataset(makey, data=getattr(slm, makey))
     h.close()
@@ -238,7 +237,7 @@ def generate_data_test_linear_model():
     M[:,0] = 1
     lat = np.random.randint(0,2,size=(3,3,3))
     
-    h = h5py.File('../../extern/test-data/linmod_10_IN.h5', 'w')
+    h = h5py.File(datadir('linmod_10_IN.h5'), 'w')
     h.create_dataset('Y', data=Y)
     h.create_dataset('M', data=M)
     h.create_dataset('lat', data=lat)
@@ -251,7 +250,7 @@ def generate_data_test_linear_model():
     makeys = ['cluster_threshold', 'coef', 'df', 'drlim', 'model', 'niter',
               'resl', 'SSE', 'thetalim', 'X', 'lat']
     
-    h = h5py.File('../../extern/test-data/linmod_10_OUT.h5', 'w')
+    h = h5py.File(datadir('linmod_10_OUT.h5'), 'w')
     for makey in makeys:
         h.create_dataset(makey, data=getattr(slm, makey))
     h.close()
@@ -265,7 +264,7 @@ def generate_data_test_linear_model():
     M[:,0] = 1
     lat = np.random.randint(0,2,size=(3,3,3))
     
-    h = h5py.File('../../extern/test-data/linmod_11_IN.h5', 'w')
+    h = h5py.File(datadir('linmod_11_IN.h5'), 'w')
     h.create_dataset('Y', data=Y)
     h.create_dataset('M', data=M)
     h.create_dataset('lat', data=lat)
@@ -278,7 +277,7 @@ def generate_data_test_linear_model():
     makeys = ['cluster_threshold', 'coef', 'df', 'drlim', 'model', 'niter',
               'resl', 'SSE', 'thetalim', 'X', 'lat']
     
-    h = h5py.File('../../extern/test-data/linmod_11_OUT.h5', 'w')
+    h = h5py.File(datadir('linmod_11_OUT.h5'), 'w')
     for makey in makeys:
         h.create_dataset(makey, data=getattr(slm, makey))
     h.close()
@@ -286,7 +285,7 @@ def generate_data_test_linear_model():
     
     ### test_12 data: real in data
     print('test_linear_model: test_12 data is generated..')
-    realdata = h5py.File('../../extern/test-data/thickness_n10.h5','r')
+    realdata = h5py.File(datadir('thickness_n10.h5'),'r')
     Y = np.array(realdata['Y'])
     M = np.array(realdata['AGE'])
     tri = np.array(realdata['tri'])
@@ -301,7 +300,7 @@ def generate_data_test_linear_model():
     makeys = ['cluster_threshold', 'coef', 'df', 'drlim', 'niter',
               'resl', 'SSE', 'thetalim', 'X', 'tri']
     
-    h = h5py.File('../../extern/test-data/linmod_12_OUT.h5', 'w')
+    h = h5py.File(datadir('linmod_12_OUT.h5'), 'w')
     for makey in makeys:
         h.create_dataset(makey, data=getattr(slm, makey))
     h.close()
@@ -309,7 +308,7 @@ def generate_data_test_linear_model():
     
     ### test_13: real in data shuffled
     print('test_linear_model: test_13 data is generated..')
-    realdata = h5py.File('../../extern/test-data/thickness_n10.h5','r')
+    realdata = h5py.File(datadir('thickness_n10.h5'),'r')
     Y = np.array(realdata['Y'])
     np.random.seed(seed=452)
     np.random.shuffle(Y)
@@ -317,7 +316,7 @@ def generate_data_test_linear_model():
     tri = np.array(realdata['tri'])
     coord = np.array(realdata['coord'])
     
-    h = h5py.File('../../extern/test-data/linmod_13_IN.h5', 'w')
+    h = h5py.File(datadir('linmod_13_IN.h5'), 'w')
     h.create_dataset('Y', data=Y)
     h.create_dataset('AGE', data=M)
     h.create_dataset('tri', data=tri)
@@ -332,7 +331,7 @@ def generate_data_test_linear_model():
     makeys = ['cluster_threshold', 'coef', 'df', 'drlim', 'niter',
               'resl', 'SSE', 'thetalim', 'X', 'tri']
     
-    h = h5py.File('../../extern/test-data/linmod_13_OUT.h5', 'w')
+    h = h5py.File(datadir('linmod_13_OUT.h5'), 'w')
     for makey in makeys:
         h.create_dataset(makey, data=getattr(slm, makey))
     h.close()
@@ -340,7 +339,7 @@ def generate_data_test_linear_model():
     
     ### test_14: real in data shuffled
     print('test_linear_model: test_14 data is generated..')
-    realdata = h5py.File('../../extern/test-data/thickness_n10.h5','r')
+    realdata = h5py.File(datadir('thickness_n10.h5'),'r')
     Y = np.array(realdata['Y'])
     np.random.seed(seed=453)
     np.random.shuffle(Y)
@@ -350,7 +349,7 @@ def generate_data_test_linear_model():
     np.random.shuffle(tri)
     coord = np.array(realdata['coord'])
     
-    h = h5py.File('../../extern/test-data/linmod_14_IN.h5', 'w')
+    h = h5py.File(datadir('linmod_14_IN.h5'), 'w')
     h.create_dataset('Y', data=Y)
     h.create_dataset('AGE', data=M)
     h.create_dataset('tri', data=tri)
@@ -365,7 +364,7 @@ def generate_data_test_linear_model():
     makeys = ['cluster_threshold', 'coef', 'df', 'drlim', 'niter',
               'resl', 'SSE', 'thetalim', 'X', 'tri']
     
-    h = h5py.File('../../extern/test-data/linmod_14_OUT.h5', 'w')
+    h = h5py.File(datadir('linmod_14_OUT.h5'), 'w')
     for makey in makeys:
         h.create_dataset(makey, data=getattr(slm, makey))
     h.close()
@@ -373,7 +372,7 @@ def generate_data_test_linear_model():
     
     ### test_14: real in data shuffled
     print('test_linear_model: test_14 data is generated..')
-    realdata = h5py.File('../../extern/test-data/thickness_n10.h5','r')
+    realdata = h5py.File(datadir('thickness_n10.h5'),'r')
     Y = np.array(realdata['Y'])
     np.random.seed(seed=453)
     np.random.shuffle(Y)
@@ -383,7 +382,7 @@ def generate_data_test_linear_model():
     np.random.shuffle(tri)
     coord = np.array(realdata['coord'])
     
-    h = h5py.File('../../extern/test-data/linmod_14_IN.h5', 'w')
+    h = h5py.File(datadir('linmod_14_IN.h5'), 'w')
     h.create_dataset('Y', data=Y)
     h.create_dataset('AGE', data=M)
     h.create_dataset('tri', data=tri)
@@ -398,7 +397,7 @@ def generate_data_test_linear_model():
     makeys = ['cluster_threshold', 'coef', 'df', 'drlim', 'niter',
               'resl', 'SSE', 'thetalim', 'X', 'tri']
     
-    h = h5py.File('../../extern/test-data/linmod_14_OUT.h5', 'w')
+    h = h5py.File(datadir('linmod_14_OUT.h5'), 'w')
     for makey in makeys:
         h.create_dataset(makey, data=getattr(slm, makey))
     h.close()
@@ -406,7 +405,7 @@ def generate_data_test_linear_model():
     
     ### test_15: real in data shuffled
     print('test_linear_model: test_15 data is generated..')
-    realdata = h5py.File('../../extern/test-data/thickness_n10.h5','r')
+    realdata = h5py.File(datadir('thickness_n10.h5'),'r')
     Y = np.array(realdata['Y'])
     A = Y.copy()
     np.random.seed(seed=455)
@@ -428,7 +427,7 @@ def generate_data_test_linear_model():
     M = np.concatenate((a,b,c,d,e,f,g,h,i), axis=1) # (20, 9)
     tri = np.array(realdata['tri']) # (40960, 3)
     
-    h = h5py.File('../../extern/test-data/linmod_15_IN.h5', 'w')
+    h = h5py.File(datadir('linmod_15_IN.h5'), 'w')
     h.create_dataset('Y', data=Y)
     h.create_dataset('M', data=M)
     h.create_dataset('tri', data=tri)
@@ -441,7 +440,7 @@ def generate_data_test_linear_model():
     makeys = ['cluster_threshold', 'coef', 'df', 'drlim', 'niter',
               'resl', 'SSE', 'thetalim', 'X', 'tri']
     
-    h = h5py.File('../../extern/test-data/linmod_15_OUT.h5', 'w')
+    h = h5py.File(datadir('linmod_15_OUT.h5'), 'w')
     for makey in makeys:
         h.create_dataset(makey, data=getattr(slm, makey))
     h.close()
