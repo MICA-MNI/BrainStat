@@ -1,4 +1,6 @@
 import git
+from .datagen_linear_model import generate_data_test_linear_model
+
 
 
 # This hook will run by pytest one time before execution all the particular.
@@ -12,3 +14,6 @@ def pytest_configure(config):
     cli.checkout("origin/test-data", "--", "extern/test-data")
     # we have to reset the test-data, as checkout is staging it to the git index
     cli.reset("--", "extern/test-data")
+
+    # let's generate the test data sets
+    generate_data_test_linear_model()
