@@ -242,7 +242,7 @@ classdef test_precomputed < matlab.unittest.TestCase
         function test_p(testCase)
             statp_files = get_test_files('statp_');
             for pair = statp_files
-                if pair{1} == "statp_18_IN.pkl"
+                if contains(pair{1}, "statp_18_IN.pkl")
                     warning('SurfStatP test 18 skipped as the data file is bugged.')
                     continue
                 end
