@@ -276,6 +276,7 @@ def test_18():
     dummy_test(infile, expfile)
 """
 
+
 def test_19():
     # test_16 + dtype/shape change of non-sense slm keys  + optional ['mask'] input
     # ['X'] : np array, shape (20, 9), uint16
