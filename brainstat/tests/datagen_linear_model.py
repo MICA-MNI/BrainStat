@@ -6,8 +6,16 @@ from brainstat.stats.SLM import SLM
 from brainstat.stats.terms import Term
 
 
-def generate_random_test_data(Y_dim, M_dim, finname, seed=0, triD=None,
-                              latD=None, M_term=False, add_intercept=True):
+def generate_random_test_data(
+    Y_dim,
+    M_dim,
+    finname,
+    seed=0,
+    triD=None,
+    latD=None,
+    M_term=False,
+    add_intercept=True,
+):
     """ Generate random test datasets. """
     # Y_dim : tuple
     # M_dim : tuple
@@ -279,18 +287,18 @@ def generate_data_test_linear_model():
     h = np.zeros((20, 1))
     np.random.seed(seed=459)
     i = np.random.randint(10120, 22030, size=(20, 1))
-    M = np.concatenate((a, b, c, d, e, f, g, h, i), axis=1) # (20, 9)
+    M = np.concatenate((a, b, c, d, e, f, g, h, i), axis=1)  # (20, 9)
     # get tri from real data
-    tri = Din["tri"] # (40960, 3)
+    tri = Din["tri"]  # (40960, 3)
     # save
     D = {}
     D["Y"] = Y
     D["M"] = M
-    D["tri"]= tri
+    D["tri"] = tri
     finname = datadir("xlinmod_15_IN.pkl")
     with open(finname, "wb") as handle:
         pickle.dump(D, handle, protocol=pickle.HIGHEST_PROTOCOL)
     foutname = datadir("xlinmod_15_OUT.pkl")
     get_linmod_output(Y, M, foutname, tri=tri)
 
-    open(cache_file, 'a').close()
+    open(cache_file, "a").close()

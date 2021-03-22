@@ -180,4 +180,3 @@ def test_15():
     infile = datadir("xlinmod_15_IN.pkl")
     expfile = datadir("xlinmod_15_OUT.pkl")
     dummy_test(infile, expfile)
-
