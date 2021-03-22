@@ -9,10 +9,10 @@ def pytest_configure(config):
     repo = git.Repo(search_parent_directories=True)
     origin = repo.remote()
 
-    cli = origin.repo.git
-    cli.checkout("origin/test-data", "--", "extern/test-data")
+    #cli = origin.repo.git
+    #cli.checkout("origin/test-data", "--", "extern/test-data")
     # we have to reset the test-data, as checkout is staging it to the git index
-    cli.reset("--", "extern/test-data")
+    #cli.reset("--", "extern/test-data")
 
-    # let's generate the test data sets
+    ## let's generate the test data sets
     generate_data_test_linear_model()
