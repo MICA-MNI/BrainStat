@@ -32,8 +32,9 @@ def dummy_test(infile, expfile, simple=True):
     # compare...
     testout = []
     for makey_ in Dout.keys():
-        comp = np.allclose(getattr(slm, makey_), Dout[makey_],
-                           rtol=1e-05, equal_nan=True)
+        comp = np.allclose(
+            getattr(slm, makey_), Dout[makey_], rtol=1e-05, equal_nan=True
+        )
         testout.append(comp)
     assert all(flag == True for (flag) in testout)
 

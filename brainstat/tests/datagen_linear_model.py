@@ -6,16 +6,8 @@ from brainstat.stats.SLM import SLM
 from brainstat.stats.terms import Term
 
 
-def generate_random_test_data(
-        Y_dim,
-        M_dim,
-        finname,
-        seed=0,
-        triD = None,
-        latD = None,
-        M_term = False,
-        add_intercept=True,
-        ):
+def generate_random_test_data(Y_dim, M_dim, finname, seed=0, triD=None,
+                              latD=None, M_term=False, add_intercept=True):
     """ Generate random test datasets. """
     # Y_dim : tuple
     # M_dim : tuple
