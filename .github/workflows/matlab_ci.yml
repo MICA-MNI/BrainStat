@@ -25,4 +25,4 @@ jobs:
       uses: matlab-actions/setup-matlab@v0
     - name: Run tests 
       uses: matlab-actions/run-tests@v0
-      source-folder: brainstat_matlab
+      SourceFolder: brainstat_matlab
