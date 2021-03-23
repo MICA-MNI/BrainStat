@@ -1,4 +1,4 @@
-name: MATLAB CI
+name: MATLAB Unit Tests
 
 on: 
   push:
@@ -26,4 +26,4 @@ jobs:
     - name: Run tests 
       uses: matlab-actions/run-tests@v0
       with:
-        SourceFolder: brainstat_matlab
+        source-folder: brainstat_matlab
