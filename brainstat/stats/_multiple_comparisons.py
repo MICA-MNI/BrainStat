@@ -364,7 +364,9 @@ def stat_threshold(
     resels = search_volume * fwhm_inv ** np.arange(0, lsv)
     invol = resels * (4 * np.log(2)) ** (np.arange(0, lsv) / 2)
 
-    D = np.sum(invol != 0, axis=1) - 1
+    D = []
+    for k in range(2):
+        D.append(np.max(np.argwhere(invol[k, :])))
 
     # determines which method was used to estimate fwhm (see fmrilm or multistat):
     df_limit = 4
