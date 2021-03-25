@@ -3,10 +3,10 @@ BrainStat : A toolbox for statistical analysis of neuroimaging data
 
 .. image:: https://img.shields.io/badge/License-BSD%203--Clause-blue.svg
     :target: https://opensource.org/licenses/BSD-3-Clause
-.. image:: https://github.com/MICA-LAB/brainstat/workflows/Python%20unittests/badge.svg
-    :target: https://github.com/MICA-LAB/brainstat/actions
-.. image:: https://github.com/MICA-LAB/brainstat/workflows/MATLAB%20unittests/badge.svg
-    :target: https://github.com/MICA-LAB/brainstat/actions    
+.. image:: https://github.com/MICA-LAB/brainstat/workflows/python_unittests/badge.svg
+    :target: https://github.com/MICA-MNI/BrainStat/actions/workflows/python_unittests.yml
+.. image:: https://github.com/MICA-LAB/brainstat/workflows/MATLAB_unittests/badge.svg
+    :target: https://github.com/MICA-MNI/BrainStat/actions/workflows/MATLAB_unittests.yml 
 .. image:: https://codecov.io/gh/MICA-LAB/BrainStat/branch/master/graph/badge.svg?token=5O9PVCT9GA
     :target: https://codecov.io/gh/MICA-LAB/BrainStat
 .. image:: https://readthedocs.org/projects/brainstat/badge/?version=master&style=plastic
