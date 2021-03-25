@@ -1,5 +1,6 @@
 function undo_mask(Y, mask, varargin)
-% Restores the original dimensions of masked data.
+% Restores the original dimensions of masked data, adding the missing
+% value to all missing data.
 %
 % Comments to be added.
 
@@ -12,11 +13,8 @@ new_dims = size(Y);
 new_dims(p.Results.axis) = numel(mask);
 Y2 = ones(new_dims) * p.Results.missing_value;
 
-% Permute axes so we always run along the first.
-permutation = 1:ndims(Y);
-permutation([1, mask]) = permutation([mask, 1]);
-Y = permute(Y, permutation);
-Y2 = permute(Y2, permutation);
-Y2(mask, :) = Y;
-Y2 = permute(Y2, permutation); 
+S2.subs = repmat({':'},1,ndims(Y2));
+S2.subs{p.Results.axis} = mask; 
+S2.type = '()';
+Y2 = subsasgn(Y2,S,Y);
 end
