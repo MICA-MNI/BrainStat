@@ -165,14 +165,31 @@ classdef SLM
                 P = obj.random_field_theory();
             end
             if ismember('fdr', obj.correction)
-                Q = self.fdr()
+                Q = self.fdr();
             end
         end
 
-        %TODO: _unmask
+        function unmask(obj)
+            % Changes all masked parameters to their input dimensions.
+            simple_unmask_parameters = {'t', 'coef', 'SSE', 'r', 'ef', 'sd', 'dfs'};
+            for key = simple_unmask_parameters
+                property = obj.(key{1});
+                if ~isempty(property)
+                    obj.(key{1}) = brainstat_utils.undo_mask(property, obj.mask, 'axis', 2);
+                end
+            end
+
+            if ~isempty(obj.resl)
+                edges = SurfStatEdg(self.surf)
+                [~, idx] = mask_edges(edges, self.mask);
+                self.resl = brainstat_utils.undo_mask(self.resl, idx, 'axis', 0);
+            end
+        end
     end
 
     methods(Static)
+        %% Static methods
+        
         function P = merge_rft(P1, P2)
             % Merge two one-tailed outputs of the random_field_theory function
             % into a single structure. Both P1 and P2 are the output of the RFT function.
@@ -191,7 +208,7 @@ classdef SLM
                     for key2_loop = fieldnames(P1.(key1))'
                         key2 = key2_loop{1};
                         if key2 == "P" and key1 == "pval"
-                            P.(key1).(key2) = one_tailed_to_two_tailed(P1.(key1).(key2));
+                            P.(key1).(key2) = brainstat_utils.one_tailed_to_two_tailed(P1.(key1).(key2));
                         else
                             P.(key1).(key2) = [P1.(key1).(key2), P2.(key1).(key2)];
                         end
@@ -205,13 +222,8 @@ classdef SLM
             if isempty(Q1) && isempty(Q2)
                 Q = [];
             else
-                one_tailed_to_two_tailed(Q1, Q2)
+                Q = brainstat_utils.one_tailed_to_two_tailed(Q1, Q2)
             end
         end
     end
-end
-
-function p = one_tailed_to_two_tailed(p1, p2)
-    % Converts two one-tailed tests to a two-tailed test.
-    p = min(min(p1, p2) * 2, 1)
 end
