@@ -46,7 +46,7 @@ classdef SLM
             is_correction = @(x) all(ismember(x,{'rft','fdr'}));
             p = inputParser();
             p.addParameter('surf', []); %TODO: Add surface validator.
-            p.addParameter('mask', []), @isvector);
+            p.addParameter('mask', [], @isvector);
             p.addParameter('correction', [], is_correction);
             p.addParameter('niter', 1, @isscalar);
             p.addParameter('thetalim', 0.01, @isscalar);
@@ -74,7 +74,7 @@ classdef SLM
 
             obj.reset_fit_parameters();
             if ~isempty(obj.mask)
-                Y = apply_mask(Y, obj.mask, 'axis', 2);
+                Y = brainstat_utils.apply_mask(Y, obj.mask, 2);
             end
             obj.linear_model(Y);
             obj.t_test();

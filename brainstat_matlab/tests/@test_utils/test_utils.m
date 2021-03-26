@@ -1,4 +1,4 @@
-classdef test_term_random_overloads < matlab.unittest.TestCase
+classdef test_utils < matlab.unittest.TestCase
     methods (Test)
         function test_apply_mask(testCase)
             % Test whether the correct data is removed by apply_mask.
