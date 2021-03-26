@@ -1,4 +1,4 @@
-function undo_mask(Y, mask, varargin)
+function Y2 = undo_mask(Y, mask, varargin)
 % Restores the original dimensions of masked data, adding the missing
 % value to all missing data.
 %
