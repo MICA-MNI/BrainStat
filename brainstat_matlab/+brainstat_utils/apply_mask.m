@@ -7,6 +7,6 @@ end
 S.subs = repmat({':'},1,ndims(Y));
 S.subs{axis} = mask;
 S.type = '()';
-Y2 = subsasgn(A,S,[]);
+Y2 = subsasgn(Y,S,[]);
 
 end

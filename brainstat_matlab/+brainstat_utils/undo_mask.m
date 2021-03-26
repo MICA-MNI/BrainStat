@@ -13,8 +13,8 @@ new_dims = size(Y);
 new_dims(p.Results.axis) = numel(mask);
 Y2 = ones(new_dims) * p.Results.missing_value;
 
-S2.subs = repmat({':'},1,ndims(Y2));
-S2.subs{p.Results.axis} = mask; 
-S2.type = '()';
+S.subs = repmat({':'},1,ndims(Y2));
+S.subs{p.Results.axis} = mask; 
+S.type = '()';
 Y2 = subsasgn(Y2,S,Y);
 end
