@@ -1,4 +1,3 @@
-import os
 import numpy as np
 import pickle
 from .testutil import datadir
@@ -87,10 +86,6 @@ def get_linmod_output(Y, M, foutname, tri=None, lat=None):
 
 
 def generate_data_test_linear_model():
-
-    cache_file = datadir("xlinmode_generated")
-    if os.path.isfile(cache_file):
-        return
 
     ### test_01 data in-out generation
     print("test_linear_model: test_01 data is generated..")
@@ -300,5 +295,3 @@ def generate_data_test_linear_model():
         pickle.dump(D, handle, protocol=pickle.HIGHEST_PROTOCOL)
     foutname = datadir("xlinmod_15_OUT.pkl")
     get_linmod_output(Y, M, foutname, tri=tri)
-
-    open(cache_file, "a").close()
