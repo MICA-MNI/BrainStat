@@ -150,7 +150,7 @@ classdef SLM < handle
             else
                 lat = [];
             end
-        end            
+        end
     end
 
     methods(Hidden = true, Access = protected)
@@ -216,9 +216,20 @@ classdef SLM < handle
             end
 
             if ~isempty(obj.resl)
-                edges = SurfStatEdg(self.surf)
+                edges = SurfStatEdg(self.surf);
                 [~, idx] = mask_edges(edges, self.mask);
                 self.resl = brainstat_utils.undo_mask(self.resl, idx, 'axis', 0);
+            end
+        end
+    end
+    
+    methods(Hidden = true)
+        %% Debugging Tools
+        function debug_set(obj, varargin)
+            % Set function to circumvent protected properties. 
+            warning('This function is for testing purposes only. Do not use this unless you really, really know what you''re doing.');
+            for ii = 1:2:numel(varargin)
+                obj.(varargin{ii}) = varargin{ii+1}; 
             end
         end
     end

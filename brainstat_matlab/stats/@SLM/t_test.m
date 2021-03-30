@@ -22,9 +22,9 @@ obj.c=c';
 obj.df=obj.df(length(obj.df));
 if ndims(obj.coef)==2
     obj.k=1;
-    if isempty(slm.r)
+    if isempty(obj.r)
 %% fixed effect
-        if ~isempty(slm.V)
+        if ~isempty(obj.V)
             Vmh=inv(chol(obj.V)');
             pinvX=pinv(Vmh*obj.X);
         end

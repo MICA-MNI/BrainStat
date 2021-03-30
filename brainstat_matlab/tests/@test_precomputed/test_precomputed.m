@@ -347,9 +347,19 @@ classdef test_precomputed < matlab.unittest.TestCase
             for pair = statt_files
                 input = load_pkl(pair{1});
                 output = load_pkl(pair{2});
-                slm = SurfStatT(input, input.contrast);
-                slm = rmfield(slm,'contrast');
-                recursive_equality(testCase, slm, output, pair{1});           
+                slm = SLM(1,1);
+                if any("tri" == fieldnames(input))
+                    input.surf = struct('tri', input.tri, 'coord', []);
+                    input = rmfield(input, 'tri');
+                elseif any("lat" == fieldnames(input))
+                    input.surf = struct('lat', input.lat);
+                    input = rmfield(input, 'lat');
+                end
+                parameters = [fieldnames(input), struct2cell(input)]';
+                slm.debug_set(parameters{:});
+                slm.t_test();
+                slm_output = slm2struct(slm, fieldnames(output));
+                recursive_equality(testCase, slm_output, output, pair{1});           
             end
         end
     end
