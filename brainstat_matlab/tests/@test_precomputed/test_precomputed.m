@@ -29,11 +29,11 @@ classdef test_precomputed < matlab.unittest.TestCase
             if isstruct(S1)
                 fields = fieldnames(S1)';
                 for field = fields
-                    recursive_equality(testCase, S1.(field{1}), S2.(field{1}), file)
+                    recursive_equality(testCase, S1.(field{1}), S2.(field{1}), file, abstol, reltol)
                 end
             elseif iscell(S1)
                 for ii = 1:numel(S1)
-                    recursive_equality(testCase, S1{ii}, S2{ii}, file);
+                    recursive_equality(testCase, S1{ii}, S2{ii}, file, abstol, reltol);
                 end
             elseif isnumeric(S1)
                 verifyEqual(testCase, S1, S2, 'abstol', abstol, 'reltol', reltol, ...
@@ -199,7 +199,7 @@ classdef test_precomputed < matlab.unittest.TestCase
         end
         
         function test_peakclus(testCase)
-            % Test SurfStatSmooth
+            % Test SurfStatPeakClus
             peakc_files = get_test_files('statpeakc');
             for pair = peakc_files
                 input = load_pkl(pair{1});
@@ -240,6 +240,7 @@ classdef test_precomputed < matlab.unittest.TestCase
         end
         
         function test_p(testCase)
+            % Test SurfStatP.
             statp_files = get_test_files('statp_');
             for pair = statp_files
                 if contains(pair{1}, "statp_18_IN.pkl")
@@ -270,6 +271,7 @@ classdef test_precomputed < matlab.unittest.TestCase
         end
         
         function test_resels(testCase)
+            % Test SurfStatResels.
             statp_files = get_test_files('statresl');
             for pair = statp_files
                 input = load_pkl(pair{1});
@@ -292,6 +294,7 @@ classdef test_precomputed < matlab.unittest.TestCase
         end
         
         function test_statthreshold(testCase)
+            % Test stat_threshold.
             thresh_files = get_test_files('thresh');
             for pair = thresh_files
                 input = load_pkl(pair{1});
@@ -323,6 +326,7 @@ classdef test_precomputed < matlab.unittest.TestCase
         end 
         
         function test_ttest(testCase)
+            % Test SurfStatT
             statt_files = get_test_files('statt');
             for pair = statt_files
                 input = load_pkl(pair{1});
