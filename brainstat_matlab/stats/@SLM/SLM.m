@@ -1,4 +1,4 @@
-classdef SLM
+classdef SLM < handle
 
     properties
         model
@@ -13,7 +13,7 @@ classdef SLM
         cluster_threshold
     end
 
-    properties(SetAccess=false)
+    properties(SetAccess=protected)
         X
         t
         df
@@ -24,8 +24,6 @@ classdef SLM
         r
         dr
         resl
-        tri
-        lat
         c
         ef
         sd
@@ -34,6 +32,11 @@ classdef SLM
         Q
         du
     end
+    
+    properties(SetAccess=protected, Dependent=true)
+        tri
+        lat 
+    end
 
     methods
         %% Methods that are intended for user interaction. 
@@ -41,7 +44,10 @@ classdef SLM
         function obj = SLM(model, contrast, varargin)
             % Constructor for the SLM class. 
 
-
+            % Deal with default inputs.
+            obj.model = model;
+            obj.contrast = contrast;
+            
             % Parse optional arguments.
             is_correction = @(x) all(ismember(x,{'rft','fdr'}));
             p = inputParser();
@@ -53,7 +59,7 @@ classdef SLM
             p.addParameter('drlim', 0.1, @isscalar);
             p.addParameter('two_tailed', true, @islogical);
             p.addParameter('cluster_threshold', 0.001, @isscalar)
-            p.parse(varargin);
+            p.parse(varargin{:});
             for field = fieldnames(p.Results)'
                 obj.(field{1}) = p.Results.(field{1});
             end
@@ -86,33 +92,65 @@ classdef SLM
             end
         end
 
-        %% Special set functions.
+        %% Special set/get functions.
         function set.surf(obj, value)
             % Converts input surface to SurfStat format
 
             if ischar(value)
                 % Assume surface is a single file.
-                surf = read_surface(value);
+                surf = read_surface(value);  %#ok<*PROPLC>
                 obj.surf = convert_surface(surf, 'format', 'SurfStat');
             elseif isstring(value) || iscell(value)
                 % Assume surface is a set of files. 
-                surfaces = cellfun(@read_surface, value)
+                surfaces = cellfun(@read_surface, value);
                 all_surfaces = surfaces{1};
                 for ii = 2:numel(surfs)
                     all_surfaces = combine_surfaces(all_surfaces, surfaces{ii}, 'SurfStat');
                 end
                 obj.surf = all_surfaces;
-            else
+            elseif isempty(value)
+                % Empty input.
+                obj.surf = []; 
+            elseif isstruct(value)
                 % Assume input is already a loaded surface.
-                obj.surf = convert_surface(surf, 'format', 'SurfStat');
-            end
-                
+                if contains('lat', fieldnames(value))
+                    obj.surf = value; % Lattice format. 
+                else
+                    obj.surf = convert_surface(value, 'format', 'SurfStat');
+                end
+            else
+                error('Unknown surface format.');
+            end       
         end
 
         function set.mask(obj, value)
             % Converts input mask to logical.
             obj.mask = logical(value);
         end
+        
+        function set.tri(obj, value)
+            obj.surf.tri = value;
+        end
+        
+        function tri = get.tri(obj)
+            if contains('tri', fieldnames(obj.surf))
+                tri = obj.surf.tri;
+            else 
+                tri = [];
+            end
+        end
+        
+        function set.lat(obj, value)
+            obj.surf.lat = value;
+        end
+        
+        function lat = get.lat(obj)
+            if contains('lat', fieldnames(obj.surf))
+                lat = obj.surf.lat;
+            else
+                lat = [];
+            end
+        end            
     end
 
     methods(Hidden = true, Access = protected)
@@ -130,8 +168,6 @@ classdef SLM
             obj.r = []; 
             obj.dr = []; 
             obj.resl = [];
-            obj.tri = [];
-            obj.lat = [];
             obj.c = []; 
             obj.ef = [];
             obj.sd = []; 

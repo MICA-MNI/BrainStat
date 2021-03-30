@@ -1,4 +1,4 @@
-function t_test(obj);
+function t_test(obj)
 
 
 [n,p]=size(obj.X);

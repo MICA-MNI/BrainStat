@@ -69,15 +69,31 @@ classdef test_precomputed < matlab.unittest.TestCase
                     input.drlim = 0.1;
                 end
                 if ismember('tri', f)
-                    input.surf = struct('tri', input.tri);
+                    if ~isempty(input.tri)
+                        input.surf = struct('tri', input.tri, 'coord', []);
+                    else
+                        input.surf = [];
+                    end
                 elseif ismember('lat', f)
-                    input.surf = struct('lat', input.lat);
+                    if ~isempty(input.lat)
+                        input.surf = struct('lat', input.lat, 'coord', []);
+                    else
+                        input.surf = [];
+                    end
                 end
                 
-                slm = SurfStatLinMod(input.Y, input.M, input.surf, ...
-                    input.niter, input.thetalim, input.drlim);
+                slm = SLM(input.M, 1, ...
+                    'surf', input.surf, ...
+                    'niter', input.niter, ...
+                    'thetalim', input.thetalim, ...
+                    'drlim', input.drlim);
                 
-                recursive_equality(testCase, slm, output, pair{1});
+                slm.linear_model(input.Y);
+                slm_output = slm2struct(slm, fieldnames(output)); 
+                %slm = SurfStatLinMod(input.Y, input.M, input.surf, ...
+                %    input.niter, input.thetalim, input.drlim);
+                
+                recursive_equality(testCase, slm_output, output, pair{1});
             end
         end
 
@@ -409,5 +425,13 @@ elseif iscell(mat_data)
     for ii = 1:numel(mat_data)
         mat_data{ii} = recursive_pkl_conversion(mat_data{ii});
     end
+end
+end
+
+function s = slm2struct(slm, names)
+% Converts the requested SLM fields to a struct.
+s = struct();
+for ii = 1:numel(names)
+    s.(names{ii}) = slm.(names{ii});
 end
 end
