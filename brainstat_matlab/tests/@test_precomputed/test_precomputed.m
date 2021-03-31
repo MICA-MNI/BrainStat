@@ -53,9 +53,7 @@ classdef test_precomputed < matlab.unittest.TestCase
                 
                 slm.linear_model(input.Y);
                 slm_output = slm2struct(slm, fieldnames(output)); 
-                %slm = SurfStatLinMod(input.Y, input.M, input.surf, ...
-                %    input.niter, input.thetalim, input.drlim);
-                
+
                 recursive_equality(testCase, slm_output, output, pair{1});
             end
         end
@@ -81,16 +79,22 @@ classdef test_precomputed < matlab.unittest.TestCase
                 input = load_pkl(pair{1});
                 output = load_pkl(pair{2});
                 f = fieldnames(input);
-                slms = struct('slm1',struct(),'slm2',struct());
-                for ii = ['1','2']
-                    for field = {'X','df','SSE','coef','tri','resl','c','k','ef','sd','t'}
-                        if ismember(['slm1' field{1}],f)
-                            slms.(['slm', ii]).(field{1}) = input.(['slm', ii, field{1}]);
-                        end
+                slms = struct();
+                for ii = 1:2
+                    ii_reverse = ii*-1+3; % ii=1; ii_reverse=2 and vice versa.
+                    f_idx = f(contains(f, ['slm', num2str(ii_reverse)]));
+                    input_idx = rmfield(input, f_idx);
+                    field_idx = fieldnames(input_idx);
+                    for jj = 1:numel(field_idx)
+                        input_idx = renameStructField(input_idx, field_idx{jj}, ...
+                            replace(field_idx{jj}, ['slm', num2str(ii)], '')); 
                     end
+                    slms.(['slm', num2str(ii)]) = input2slm(input_idx); 
                 end
-                slm = SurfStatF(slms.slm1, slms.slm2);
-                recursive_equality(testCase, slm, output, pair{1});
+
+                slms.slm_f = slms.slm1.f_test(slms.slm2);
+                slm_output = slm2struct(slms.slm_f, fieldnames(output));
+                recursive_equality(testCase, slm_output, output, pair{1});
             end
         end
         

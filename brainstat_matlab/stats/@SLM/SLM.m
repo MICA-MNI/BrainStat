@@ -1,4 +1,4 @@
-classdef SLM < handle
+classdef SLM < matlab.mixin.Copyable
 
     properties
         model
