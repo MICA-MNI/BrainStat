@@ -30,11 +30,13 @@ jobs:
       run: |
         python -m build --sdist --wheel --outdir dist/
 
-    - name: Modify MATLAB version
+    - name: Modify MATLAB version and path
       run: |
         current_release=$(cat setup.py | grep "version=" | grep -Eo "[0-9]\.[0-9]\.[0-9]")
+        brainstat_dir=$(pwd)
         sed -i "s:<param\.version>.*</param\.version>:<param\.version>${current_release}</param\.version>:" .github/matlab_toolbox/BrainStat.prj
-    
+        sed -i "s:BRAINSTAT_DIR/:${brainstat_dir}/:g" .github/matlab_toolbox/BrainStat.prj
+        
     - name: Create MATLAB Toolbox
       uses: matlab-actions/run-command@v0
         with:

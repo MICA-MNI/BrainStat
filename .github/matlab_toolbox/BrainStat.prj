@@ -1,12 +1,12 @@
 <deployment-project plugin="plugin.toolbox" plugin-version="1.0">
-  <configuration file="/Users/reinder/GitHub/BrainStat/.github/matlab_toolbox/BrainStat.prj" location="/Users/reinder/GitHub/BrainStat/.github/matlab_toolbox" name="BrainStat" target="target.toolbox" target-name="Package Toolbox">
+  <configuration file="BRAINSTAT_DIR/.github/matlab_toolbox/BrainStat.prj" location="BRAINSTAT_DIR/.github/matlab_toolbox" name="BrainStat" target="target.toolbox" target-name="Package Toolbox">
     <param.appname>BrainStat</param.appname>
     <param.authnamewatermark>MICA Lab, CNG Lab</param.authnamewatermark>
     <param.email>reinder.vosdewael@gmail.com,</param.email>
     <param.company>McGill University, Max Planck Institute</param.company>
     <param.summary>A statistics toolbox for neuroimaging.</param.summary>
-    <param.description>To-be-written.</param.description>
-    <param.screenshot />
+    <param.description>BrainStat is a toolbox for the statistical analysis and context decoding of neuroimaging data. It implements both univariate and multivariate linear models and interfaces with the Allen Human Brain Atlas and Nimare databases. BrainStat flexibly handles common surface, volume, and parcel level data formats, and provides a series of interactive visualization functions. The toolbox has been implemented in both python and matlab, the two most widely adopted programming languages in the neuroimaging and neuroinformatics communities.</param.description>
+    <param.screenshot>BRAINSTAT_DIR/docs/figures/brainstat_logo_sv.png</param.screenshot>
     <param.version>0.0.1</param.version>
     <param.output>${PROJECT_ROOT}/BrainStat.mltbx</param.output>
     <param.products.name />
@@ -42,7 +42,6 @@
     <param.additional.sw.mac.url />
     <param.additional.sw.linux.url />
     <unset>
-      <param.screenshot />
       <param.output />
       <param.products.name />
       <param.products.id />
@@ -75,21 +74,20 @@
       <param.additional.sw.linux.url />
     </unset>
     <fileset.rootdir>
-      <file>/Users/reinder/GitHub/BrainStat/brainstat_matlab</file>
+      <file>BRAINSTAT_DIR/brainstat_matlab</file>
     </fileset.rootdir>
     <fileset.rootfiles>
-      <file>/Users/reinder/GitHub/BrainStat/brainstat_matlab/+brainstat_utils</file>
-      <file>/Users/reinder/GitHub/BrainStat/brainstat_matlab/context</file>
-      <file>/Users/reinder/GitHub/BrainStat/brainstat_matlab/io</file>
-      <file>/Users/reinder/GitHub/BrainStat/brainstat_matlab/plotting</file>
-      <file>/Users/reinder/GitHub/BrainStat/brainstat_matlab/stats</file>
-      <file>/Users/reinder/GitHub/BrainStat/brainstat_matlab/tests</file>
+      <file>BRAINSTAT_DIR/brainstat_matlab/context</file>
+      <file>BRAINSTAT_DIR/brainstat_matlab/io</file>
+      <file>BRAINSTAT_DIR/brainstat_matlab/plotting</file>
+      <file>BRAINSTAT_DIR/brainstat_matlab/stats</file>
+      <file>BRAINSTAT_DIR/brainstat_matlab/tests</file>
     </fileset.rootfiles>
     <fileset.depfun.included />
     <fileset.depfun.excluded />
     <fileset.package />
     <build-deliverables>
-      <file location="${PROJECT_ROOT}" name="BrainStat.mltbx" optional="false">/Users/reinder/GitHub/BrainStat/.github/matlab_toolbox/BrainStat.mltbx</file>
+      <file location="${PROJECT_ROOT}" name="BrainStat.mltbx" optional="false">BRAINSTAT_DIR/.github/matlab_toolbox/BrainStat.mltbx</file>
     </build-deliverables>
     <workflow />
     <matlab>
