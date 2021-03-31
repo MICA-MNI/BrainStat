@@ -289,7 +289,7 @@ if ~isnum
 end
 
 %% resels
-if isempty(obj.surf)
+if isempty(fieldnames(obj.surf))
     return
 end
 

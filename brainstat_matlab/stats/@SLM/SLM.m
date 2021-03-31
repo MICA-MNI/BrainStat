@@ -51,7 +51,7 @@ classdef SLM < matlab.mixin.Copyable
             % Parse optional arguments.
             is_correction = @(x) all(ismember(x,{'rft','fdr'}));
             p = inputParser();
-            p.addParameter('surf', []); %TODO: Add surface validator.
+            p.addParameter('surf', struct()); %TODO: Add surface validator.
             p.addParameter('mask', [], @isvector);
             p.addParameter('correction', [], is_correction);
             p.addParameter('niter', 1, @isscalar);
@@ -88,7 +88,7 @@ classdef SLM < matlab.mixin.Copyable
                 obj.unmask();
             end
             if ~isempty(obj.correction)
-                self.multiple_comparisons_corrections();
+                obj.multiple_comparisons_corrections();
             end
         end
 
@@ -112,8 +112,8 @@ classdef SLM < matlab.mixin.Copyable
                 % Empty input.
                 obj.surf = []; 
             elseif isstruct(value)
-                % Assume input is already a loaded surface.
-                if contains('lat', fieldnames(value))
+                % Assume input is empty or already a loaded surface.
+                if isempty(fieldnames(value)) || contains('lat', fieldnames(value))
                     obj.surf = value; % Lattice format. 
                 else
                     obj.surf = convert_surface(value, 'format', 'SurfStat');
@@ -198,10 +198,13 @@ classdef SLM < matlab.mixin.Copyable
             P = [];
             Q = [];
             if ismember('rft', obj.correction)
+                if isempty(fieldnames(obj.surf))
+                    error('Random field theory requires a surface.');
+                end
                 P = obj.random_field_theory();
             end
             if ismember('fdr', obj.correction)
-                Q = self.fdr();
+                Q = obj.fdr();
             end
         end
 

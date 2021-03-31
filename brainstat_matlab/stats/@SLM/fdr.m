@@ -1,4 +1,4 @@
-function fdr(obj)
+function Q_out = fdr(obj)
 
 %Q-values for False Discovey Rate of resels.
 %
@@ -57,8 +57,8 @@ end
 Q=zeros(1,np);
 Q(index)=Q_sort;
 
-obj.Q=ones(1,size(obj.mask,2));
-obj.Q(obj.mask)=Q;
+Q_out=ones(1,size(obj.mask,2));
+Q_out(obj.mask)=Q;
 
 end
 

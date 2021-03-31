@@ -67,8 +67,8 @@ classdef test_precomputed < matlab.unittest.TestCase
                 output = output.Q;
                 
                 slm = input2slm(input);
-                slm.fdr();
-                recursive_equality(testCase, slm.Q, output, pair{1});
+                Q = slm.fdr();
+                recursive_equality(testCase, Q, output, pair{1});
             end
         end
 
