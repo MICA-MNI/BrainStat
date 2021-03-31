@@ -13,6 +13,7 @@ dist
 *~
 *_deprecated.m
 *.swp
+*.mltbx
 
 .vscode
 
