@@ -179,11 +179,8 @@ classdef test_precomputed < matlab.unittest.TestCase
             for pair = peakc_files
                 input = load_pkl(pair{1});
                 output = load_pkl(pair{2});
-                
                 clearvars slm mask thresh reselspvert edg 
-                slm.t = input.t;
-                slm.tri = input.tri;
-                mask = logical(input.mask);
+                slm = input2slm(input); 
                 thresh = input.thresh;
                 
                 f = fieldnames(input);
@@ -195,16 +192,10 @@ classdef test_precomputed < matlab.unittest.TestCase
                 if ismember('edg', f)
                     edg = input.edg+1;
                 else
-                    edg = SurfStatEdg(slm);
-                end
-                if ismember('k', f)
-                    slm.k = input.k;
-                end
-                if ismember('df', f)
-                    slm.df = input.df;
+                    edg = SurfStatEdg(slm.surf);
                 end
                 
-                [ peak, clus, clusid ] = SurfStatPeakClus(slm, mask, thresh, ...
+                [ peak, clus, clusid ] = slm.peak_clus(thresh, ...
                     reselspvert, edg);
                 
                 % Test equality.
@@ -420,10 +411,6 @@ else
     contrast = 1;
 end
 
-if any(f == "Y")
-    input = rmfield(input, "Y");
-end
-
 if any(f == "age")
     model= 1 + term(input.age');
     input = rmfield(input, 'age');
@@ -434,13 +421,21 @@ if any(f == "params")
     input = rmfield(input, 'params');
 end
 
-if any(f == "colnames")
-    input = rmfield(input, 'colnames');
-end
-
-if any(f == "clusthresh");
+if any(f == "clusthresh")
     input.cluster_threshold = input.clusthresh;
     input = rmfield(input, 'clusthresh');
+end
+
+for field = ["Y", "colnames", "reselspvert", "edg", "thresh"]
+    try 
+        input = rmfield(input, field{1});
+    catch err
+        if err.identifier == "MATLAB:rmfield:InvalidFieldname"
+            continue
+        else
+            rethrow(err)
+        end
+    end       
 end
     
 slm = SLM(model, contrast);

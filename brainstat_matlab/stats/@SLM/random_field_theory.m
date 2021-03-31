@@ -78,9 +78,7 @@ if max(obj.t(1,obj.mask))<thresh
     clus=[];
     clusid=[];
 else
-    % To-do: Remove clone for SurfStatPeakClus
-    slm = struct('t', obj.t, 'df', obj.df, 'k', obj.k, 'resl', obj.resl, 'tri', obj.tri);
-    [peak,clus,clusid]=SurfStatPeakClus(slm, obj.mask,thresh,reselspvert,edg);
+    [peak,clus,clusid]=obj.peak_clus(thresh,reselspvert,edg);
     [pp,clpval]=stat_threshold(resels,N,1,df,...
         [10 peak.t' obj.t(1,:)],thresh,[10; clus.resels],[],obj.k,[],[],0);
     peak.P=pp((1:length(peak.t))+1)';
