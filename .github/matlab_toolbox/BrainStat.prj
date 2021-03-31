@@ -1,4 +1,3 @@
-
 <deployment-project plugin="plugin.toolbox" plugin-version="1.0">
   <configuration file="/Users/reinder/GitHub/BrainStat/.github/matlab_toolbox/BrainStat.prj" location="/Users/reinder/GitHub/BrainStat/.github/matlab_toolbox" name="BrainStat" target="target.toolbox" target-name="Package Toolbox">
     <param.appname>BrainStat</param.appname>
