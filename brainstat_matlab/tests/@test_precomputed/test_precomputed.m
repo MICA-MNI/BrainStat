@@ -224,20 +224,10 @@ classdef test_precomputed < matlab.unittest.TestCase
                 end
                 input = load_pkl(pair{1});
                 output = load_pkl(pair{2});
-                mask = [];
-                clusthresh = 0.001;
-                slm = struct();
-                for field = fieldnames(input)'
-                    if field{1} == "mask"
-                        mask = logical(input.mask);
-                    elseif field{1} == "clusthresh"
-                        clusthresh = input.clusthresh;
-                    else
-                        slm.(field{1}) = input.(field{1});
-                    end
-                end
-                 
-                [P.pval, P.peak, P.clus, P.clusid]  = SurfStatP(slm, mask, clusthresh);
+                slm = input2slm(input);
+                
+                P = struct();
+                [P.pval, P.peak, P.clus, P.clusid]  = slm.random_field_theory();
                 if ismember('mask', fieldnames(P.pval))
                     P.pval.mask = double(P.pval.mask);
                 end
@@ -446,6 +436,11 @@ end
 
 if any(f == "colnames")
     input = rmfield(input, 'colnames');
+end
+
+if any(f == "clusthresh");
+    input.cluster_threshold = input.clusthresh;
+    input = rmfield(input, 'clusthresh');
 end
     
 slm = SLM(model, contrast);
