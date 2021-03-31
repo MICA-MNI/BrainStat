@@ -13,7 +13,7 @@ classdef test_slm < matlab.unittest.TestCase
             
             slm = SLM(model, contrast, 'correction', {'fdr'});
             slm.fit(Y);
-            verifyNotEmpty(testCase, slm.P);
+            verifyNotEmpty(testCase, slm.Q);
         end   
     end
 end
