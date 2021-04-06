@@ -10,6 +10,6 @@ jobs:
       - uses: actions/setup-python@v2
         with:
           python-version: 3.8
-      - uses: psf/black@stable
+      - uses: psf/black@20.8b1
         with:
           black_args: ". --check"
