@@ -12,12 +12,16 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    
     - name: Set up Python 3.8.
       uses: actions/setup-python@v2
       with:
         python-version: 3.8
+
+    - name: Install MATLAB
+      uses: matlab-actions/setup-matlab@v0
     
-    - name: Install brainstat.
+    - name: Install Python BrainStat.
       run: |
         python -m pip install --upgrade pip
         python -m pip install build --user
@@ -25,7 +29,29 @@ jobs:
     - name: Build binary wheel and tarball.
       run: |
         python -m build --sdist --wheel --outdir dist/
-    
+
+    - name: Modify MATLAB version and path
+      run: |
+        current_release=$(cat setup.py | grep "version=" | grep -Eo "[0-9]\.[0-9]\.[0-9]")
+        brainstat_dir=$(pwd)
+        sed -i "s:<param\.version>.*</param\.version>:<param\.version>${current_release}</param\.version>:" .github/matlab_toolbox/BrainStat.prj
+        sed -i "s:BRAINSTAT_DIR/:${brainstat_dir}/:g" .github/matlab_toolbox/BrainStat.prj
+        
+    - name: Create MATLAB Toolbox
+      uses: matlab-actions/run-command@v0
+      with:
+        command: addpath('.github/matlab_toolbox'); package_brainstat;
+
+    - name: Create Github release. 
+      uses: "marvinpinto/action-automatic-releases@latest"
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        prerelease: false
+        files: |
+          LICENSE
+          .github/matlab_toolbox/BrainStat.mltbx
+          dist/*
+
     - name: Publish to PyPi test.
       uses: pypa/gh-action-pypi-publish@master
       with:

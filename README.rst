@@ -13,6 +13,8 @@ BrainStat : A toolbox for statistical analysis of neuroimaging data
     :target: https://brainstat.readthedocs.io/en/latest/
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
+.. image:: https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg
+    :target: https://www.mathworks.com/matlabcentral/fileexchange/89827-brainstat-alpha-version
 
 Welcome to BrainStat's documentation!
 
