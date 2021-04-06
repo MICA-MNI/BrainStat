@@ -44,13 +44,13 @@ jobs:
 
     - name: Create Github release. 
       uses: "marvinpinto/action-automatic-releases@latest"
-        with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          prerelease: false
-          files: |
-            LICENSE.txt
-            .github/matlab_toolbox/BrainStat.mltbx
-            dist/*
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        prerelease: false
+        files: |
+          LICENSE.txt
+          .github/matlab_toolbox/BrainStat.mltbx
+          dist/*
 
     - name: Publish to PyPi test.
       uses: pypa/gh-action-pypi-publish@master
