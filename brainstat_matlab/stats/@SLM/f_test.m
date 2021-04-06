@@ -1,4 +1,4 @@
-function slm = SurfStatF( slm1, slm2 );
+function slm = f_test(slm1, slm2)
 
 %F statistics for comparing two uni- or multi-variate fixed effects models.  
 %
@@ -18,9 +18,8 @@ function slm = SurfStatF( slm1, slm2 );
 %          slm.t(1,:) = Roy's maximum root = maximum F over all linear 
 %          combinations of the k variates. k>3 is not programmed yet. 
 
-if isfield(slm1,'r') | isfield(slm2,'r')
-    warning('Mixed effects models not programmed yet.');
-    return
+if ~isempty(slm1.r) | ~isempty(slm2.r)
+    error('Mixed effects models not programmed yet.');
 end
 
 if slm1.df>slm2.df
@@ -35,7 +34,6 @@ r=X1-X2*pinv(X2)*X1;
 d=sum(r(:).^2)/sum(X1(:).^2);
 if d>eps
     error('Models are not nested')
-    return
 end
 
 if slm1.df>slm2.df
@@ -43,18 +41,18 @@ if slm1.df>slm2.df
     df2=slm2.df(length(slm2.df));
     SSE1=slm1.SSE;
     SSE2=slm2.SSE;
-    slm=slm2;
+    slm=copy(slm2);
 else
     df1=slm2.df(length(slm2.df));
     df2=slm1.df(length(slm1.df));
     SSE1=slm2.SSE;
     SSE2=slm1.SSE;
-    slm=slm1;
+    slm=copy(slm1);
 end
 
 slm.df=[df1-df2, df2];
 h=SSE1-SSE2;
-if ndims(slm.coef)==2
+if ndims(slm.coef)==2 %#ok<*ISMAT>
     slm.k=1;
     slm.t=h./(SSE2+(SSE2<=0)).*(SSE2>0)*(df2/(df1-df2));
 else
@@ -122,7 +120,6 @@ else
         end
     end
 end
-
-return
 end
+
 

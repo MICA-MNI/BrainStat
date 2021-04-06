@@ -1,26 +1,26 @@
-function [ peak, clus, clusid ] = SurfStatPeakClus( slm, mask, thresh, ...
-    reselspvert, edg );
+function [ peak, clus, clusid ] = peak_clus(obj, thresh, ...
+    reselspvert, edg)
 
 %Finds peaks (local maxima) and clusters for surface data.
 % 
-% Usage: [ peak, clus, clusid ] = SurfStatPeakClus( slm, mask, thresh ...
+% Usage: [ peak, clus, clusid ] = SurfStatPeakClus( obj, mask, thresh ...
 %                                    [, reselspvert [, edg ] ] );
 %
-% slm.t       = l x v matrix of data, v=#vertices; the first row
-%               slm.t(1,:) is used for the clusters, and the other 
+% obj.t       = l x v matrix of data, v=#vertices; the first row
+%               obj.t(1,:) is used for the clusters, and the other 
 %               rows are used to calculate cluster resels if k>1. See
 %               SurfStatF for the precise definition of the extra rows.
-% slm.tri     = t x 3 matrix of triangle indices, 1-based, t=#triangles.
+% obj.tri     = t x 3 matrix of triangle indices, 1-based, t=#triangles.
 % or
-% slm.lat     = nx x ny x nz matrix, 1=in, 0=out, [nx,ny,nz]=size(volume). 
+% obj.lat     = nx x ny x nz matrix, 1=in, 0=out, [nx,ny,nz]=size(volume). 
 % mask        = 1 x v vector, 1=inside, 0=outside, v=#vertices.
-% thresh      = clusters are vertices where slm.t(1,mask)>=thresh.
+% thresh      = clusters are vertices where obj.t(1,mask)>=thresh.
 % reselspvert = 1 x v vector of resels per vertex, default ones(1,v).
 % edg         = e x 2 matrix of edge indices, 1-based, e=#edges.
 % The following are optional:
-% slm.df      = degrees of freedom - only the length (1 or 2) is used
-%               to determine if slm.t is Hotelling's T or T^2 when k>1.
-% slm.k       = k=#variates, 1 by default.
+% obj.df      = degrees of freedom - only the length (1 or 2) is used
+%               to determine if obj.t is Hotelling's T or T^2 when k>1.
+% obj.k       = k=#variates, 1 by default.
 %
 % peak.t      = np x 1 vector of peaks (local maxima).
 % peak.vertid = np x 1 vector of vertex id's (1-based).
@@ -30,22 +30,23 @@ function [ peak, clus, clusid ] = SurfStatPeakClus( slm, mask, thresh, ...
 % clus.resels = nc x 1 vector of resels in the cluster.
 % clusid      =  1 x v vector of cluster id's for each vertex.
 
-if nargin<5
-    edg=SurfStatEdg(slm);
+if ~exist('edg','var')
+    edg=SurfStatEdg(obj.surf);
 end
 
-[l,v]=size(slm.t);
+[l,v]=size(obj.t);
 
-slm.t(1,~mask)=min(slm.t(1,:));
-t1=slm.t(1,edg(:,1));
-t2=slm.t(1,edg(:,2));
-islm=ones(1,v);
-islm(edg(t1<t2,1))=0;
-islm(edg(t2<t1,2))=0;
-lmvox=find(islm);
-lmt=slm.t(1,lmvox);
+local_t = obj.t;
+local_t(1,~obj.mask)=min(obj.t(1,:));
+t1=local_t(1,edg(:,1));
+t2=local_t(1,edg(:,2));
+iobj=ones(1,v);
+iobj(edg(t1<t2,1))=0;
+iobj(edg(t2<t1,2))=0;
+lmvox=find(iobj);
+lmt=local_t(1,lmvox);
 
-excurset=(slm.t(1,:)>=thresh);
+excurset=(local_t(1,:)>=thresh);
 n=sum(excurset);
 
 if n<1
@@ -83,7 +84,7 @@ nclus=length(ucid);
 ucvol=histc(nf,ucid); 
 
 % find their resels:
-if nargin<4
+if ~exist('reselspvert', 'var')
     reselsvox=ones(size(vox));
 else
     reselsvox=reselspvert(vox);
@@ -91,32 +92,32 @@ end
 nf1=interp1([0 ucid],0:nclus,nf,'nearest');
 
 % if k>1, find volume of cluster in added sphere:
-if ~isfield(slm,'k') | slm.k==1
+if isempty(obj.k) | obj.k==1
     ucrsl=accumarray(nf1',reselsvox)';
 end
-if isfield(slm,'k') & slm.k==2
+if ~isempty(obj.k) & obj.k==2
     if l==1
-        ndf=length(slm.df);
-        r=2*acos((thresh./slm.t(1,vox)).^(1/ndf));
+        ndf=length(obj.df);
+        r=2*acos((thresh./local_t(1,vox)).^(1/ndf));
     else
-        r=2*acos(sqrt((thresh-slm.t(2,vox)).*(thresh>=slm.t(2,vox))./ ...
-            (slm.t(1,vox)-slm.t(2,vox))));
+        r=2*acos(sqrt((thresh-local_t(2,vox)).*(thresh>=local_t(2,vox))./ ...
+            (local_t(1,vox)-local_t(2,vox))));
     end
     ucrsl=accumarray(nf1',r'.*reselsvox')';
 end
-if isfield(slm,'k') & slm.k==3
+if ~isempty(obj.k) & obj.k==3
     if l==1
-        ndf=length(slm.df);
-        r=2*pi*(1-(thresh./slm.t(1,vox)).^(1/ndf));
+        ndf=length(obj.df);
+        r=2*pi*(1-(thresh./local_t(1,vox)).^(1/ndf));
     else
         nt=20;
         theta=((1:nt)'-1/2)/nt*pi/2;
-        s=(cos(theta).^2)*slm.t(2,vox);
+        s=(cos(theta).^2)*local_t(2,vox);
         if l==3
-            s=s+(sin(theta).^2)*slm.t(3,vox);
+            s=s+(sin(theta).^2)*local_t(3,vox);
         end
         r=2*pi*mean(1-sqrt((thresh-s).*(thresh>=s)./ ...
-            (ones(nt,1)*slm.t(1,vox)-s)));
+            (ones(nt,1)*local_t(1,vox)-s)));
     end
     ucrsl=accumarray(nf1',r'.*reselsvox')';
 end
@@ -128,7 +129,7 @@ rankrsl(iucrsl)=nclus:-1:1;
 
 % add these to lm as extra columns:
 lmid=lmvox(ismember(lmvox,vox));
-lm=flipud(sortrows([slm.t(1,lmid)' lmid' rankrsl(jclmid)'],1));
+lm=flipud(sortrows([local_t(1,lmid)' lmid' rankrsl(jclmid)'],1));
 cl=sortrows([rankrsl' ucvol' ucrsl'],1);
 
 clusid=zeros(1,v);
