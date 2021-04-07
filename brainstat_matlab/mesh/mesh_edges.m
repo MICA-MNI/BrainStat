@@ -1,8 +1,8 @@
-function edg = SurfStatEdge( surf )
+function edg = mesh_edges(surf)
 
 %Finds edges of a triangular mesh or a lattice.
 %
-% Usage: edg = SurfStatEdge( surf );
+% Usage: edg = mesh_edges( surf );
 %
 % surf.tri = t x 3 matrix of triangle indices, 1-based, t=#triangles.
 % or
@@ -13,8 +13,7 @@ function edg = SurfStatEdge( surf )
 if isfield(surf,'tri')
     tri=sort(surf.tri,2);
     edg=unique([tri(:,[1 2]); tri(:,[1 3]); tri(:,[2 3])],'rows');
-end
-if isfield(surf,'lat')
+elseif isfield(surf,'lat')
     % See the comments of SurfStatResels for a full explanation:
     [I,J,K]=size(surf.lat);
     IJ=I*J;
@@ -72,7 +71,7 @@ if isfield(surf,'lat')
     vid=int32(cumsum(surf.lat(:)).*surf.lat(:));
     % only inside the lat
     edg=vid(edg(all(surf.lat(edg),2),:));
+else
+    error('Unknown surface format.')
 end
-
-return
 end
