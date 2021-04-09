@@ -92,6 +92,19 @@ html_static_path = ["_static"]
 
 # -- Binder support and integration -------------------------------------------
 
+sphinx_gallery_conf = {
+    "examples_dirs": "python/tutorials",
+    "gallery_dirs": "python/generated_tutorials",
+    'binder': {
+        'org': 'PeerHerholz',
+        'repo': 'BrainStat',
+        'binderhub_url': 'https://mybinder.org',
+        'branch': 'binder_support',
+        'dependencies': '../binder/requirements.txt',
+        'notebooks_dir': '"python/tutorials'
+    }
+}
+
 # Patch sphinx_gallery.binder.gen_binder_rst so as to point to .py file in repository
 import sphinx_gallery.binder
 
@@ -134,18 +147,3 @@ def patched_gen_binder_rst(fpath, binder_conf, gallery_conf):
 
 
 sphinx_gallery.binder.gen_binder_rst = patched_gen_binder_rst
-
-
-
-sphinx_gallery_conf = {
-    "examples_dirs": "python/tutorials",
-    "gallery_dirs": "python/generated_tutorials",
-    'binder': {
-        'org': 'PeerHerholz',
-        'repo': 'BrainStat',
-        'binderhub_url': 'https://mybinder.org',
-        'branch': 'binder_support',
-        'dependencies': 'requirements.txt',
-        'notebooks_dir': 'generated_tutorials'
-    }
-}
