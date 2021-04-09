@@ -235,8 +235,7 @@ end
 end
 
 function resl = compute_resls(obj, residuals)
-
-edg=mesh_edges(obj.surf);
+edg=mesh_edges(obj.surf, obj.mask);
 
 e1=edg(:,1);
 e2=edg(:,2);
