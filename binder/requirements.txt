@@ -1,0 +1,3 @@
+-r docs/requirements.txt
+jupytext
+.
