@@ -100,8 +100,7 @@ sphinx_gallery_conf = {
         'repo': 'BrainStat',
         'binderhub_url': 'https://mybinder.org',
         'branch': 'binder_support',
-        'dependencies': '../binder/requirements.txt',
-        'notebooks_dir': '"python/tutorials'
+        'dependencies': '../binder/requirements.txt'
     }
 }
 
