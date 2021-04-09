@@ -1,14 +1,12 @@
 function edg = mesh_edges(surf, mask)
+% MESH_EDGES    Finds edges of a triangular mesh or lattice. edg =
+%   edg = MESH_EDGES=(surf) extracts the edges from a surface structure. surf must be
+%   a structure array containing either a field 'tri' or 'lat'. 
+%  
+%   edg = MESH_EDGES(surf, mask) removes edges that contain at least one vertex
+%   outside the mask. mask must be a logical vector containing true for vertices
+%   to be kept.
 
-%Finds edges of a triangular mesh or a lattice.
-%
-% Usage: edg = mesh_edges( surf );
-%
-% surf.tri = t x 3 matrix of triangle indices, 1-based, t=#triangles.
-% or
-% surf.lat = 3D logical array, 1=in, 0=out.
-%
-% edg = e x 2 matrix of edge indices, 1-based, e=#edges.
 
 if ~exist('mask', 'var')
     mask = [];

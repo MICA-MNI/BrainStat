@@ -1,4 +1,38 @@
 classdef SLM < matlab.mixin.Copyable
+% SLM    The core object of the BrainStat statistics module 
+%   obj = SLM(model, contrast, varargin) constructs an SLM objects with the a
+%   linear model specified by term/random object model, a numeric contrast, and
+%   other name-value pairs (see below).
+%
+%   Once constructed, the model can be fitted to a dataset using obj.fit(Y), where 
+%   Y is a sample-by-feature-by-variate matrix. 
+%   
+%   Valid name-value pairs:
+%   surf: 
+%       A char array containing a path to a surface, a cell/string array of the
+%       aforementioned, or a loaded surface in SurfStat format. Defaults to 
+%       struct(). 
+%   mask:  
+%       A logical vector containing true for vertices that should be kept 
+%       during the analysis. Defaults to [].
+%   correction:
+%       A cell array containing 'rft', 'fdr', or both. If 'rft' is included, then
+%       a random field theory correction will be run. If 'fdr' is included, then a 
+%       false discovery rate correction will be run. Defaults to [].
+%   niter:
+%       Number of iterations of the fisher scoring algorithm. Defaults to 1.
+%   thetalim:
+%       Lower limit on variance coefficients, in sd's. Defaults 0.01
+%   drlim:
+%       Step of ratio of variance coefficients, in sd's. Defaults 0.1. 
+%   two_tailed:
+%       Whether to run one-tailed or two-tailed significance tests. Defaults to
+%       true. Note that multivariate models only support two-tailed tests.
+%   cluster_threshold:
+%       P-value threshold or statistic threshold for defining clusters, Defaults
+%       to 0.001.
+%
+%   TODO: Decide which properties to show/hide and describe the visible properties.  
 
     properties
         model
@@ -49,7 +83,7 @@ classdef SLM < matlab.mixin.Copyable
             obj.contrast = contrast;
             
             % Parse optional arguments.
-            is_correction = @(x) all(ismember(x,{'rft','fdr'}));
+            is_correction = @(x) all(ismember(x, {'rft', 'fdr'}));
             p = inputParser();
             p.addParameter('surf', struct()); %TODO: Add surface validator.
             p.addParameter('mask', [], @isvector);
@@ -68,9 +102,9 @@ classdef SLM < matlab.mixin.Copyable
         end
 
         function fit(obj, Y)
-            % Runs the statistics pipeline using the model parameters set in the constructor. 
-            %
-            % Y is a (observation, region, variate) matrix. 
+            % FIT    Runs the statistics pipeline. 
+            % fit(obj, Y) runs the model defined in the object. Y is a
+            % (observation, region, variate) data matrix. 
 
             if ndims(Y) > 2
                 if ~obj.two_tailed && size(Y,3) > 1

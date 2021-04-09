@@ -27,7 +27,7 @@ def linear_model(self, Y):
     n_samples = Y.shape[0]
 
     self.X, self.V = _get_design_matrix(self, n_samples)
-    _check_error_term(self.X)
+    _check_constant_term(self.X)
 
     self.df = n_samples - la.matrix_rank(self.X)
     residuals, self.V, self.coef, self.SSE, self.r, self.dr = _run_linear_model(self, Y)
@@ -310,14 +310,14 @@ def _get_design_matrix(self, n_samples):
 
     """
     if isinstance(self.model, Random):
-        X, V = _set_mixed_design(self)
+        X, V = _get_mixed_design(self)
     else:
-        X = _set_fixed_design(self, n_samples)
+        X = _get_fixed_design(self, n_samples)
         V = None
     return X, V
 
 
-def _set_mixed_design(self):
+def _get_mixed_design(self):
     """Fetches the design matrix from a mixed effects model.
 
     Parameters
@@ -356,7 +356,7 @@ def _set_mixed_design(self):
     return X, V
 
 
-def _set_fixed_design(self, n_samples):
+def _get_fixed_design(self, n_samples):
     """Fetches the design matrix from a fixed effects model.
 
     Parameters
@@ -426,7 +426,7 @@ def _compute_resls(self, Y):
     return resl, mesh_connections
 
 
-def _check_error_term(X):
+def _check_constant_term(X):
     """Checks whether an error term was provided.
 
     Parameters

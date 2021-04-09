@@ -1,19 +1,14 @@
-function [ Y, Yav ] = mesh_normalize( Y, mask, subdiv );
-
-%Normalizes by subtracting the global mean, or dividing by it.
+function [Y, Yav] = mesh_normalize(Y, mask, subdiv)
+% MESH_NORMALIZE    Normalizes by subtracting the global mean, or dividing by it.
+%   Y = MESH_NORMALIZE=(Y) subtracts the global mean from Y.
 %
-% Usage: [ Y, Yav ] = mesh_normalize( Y [,mask [,subdiv ] ] );
+%   Y = MESH_NORMALIZE(Y, mask) removes vertices outside the logical mask before
+%   computing the global mean.
+%  
+%   Y = MESH_NORMALIZE(Y, mask, subdiv) if subdiv=='s', subtract the global
+%   mean. If it's 'd', divide by the global mean.
 %
-% Y      = n x v matrix or n x v x k array of data, v=#vertices,
-%          or memory map of same. 
-% mask   = 1 x v logical vector, 1=inside, 0=outside,
-%        = logical(ones(1,v)) by default.
-% subdiv = 's' for Y=Y-Yav (default) or 'd' for Y=Y/Yav.
-%
-% Y   = n x v matrix or n x v x k array of normalized data, or memory map
-%       of same. Note that if Y is a memory map, then Y is always
-%       overwritten with the normalized data.
-% Yav = n x 1 vector or n x k matrix of mean(Y in mask).
+%   [Y, Yav] = MESH_NORMALIZE(Y, ...) also returns the global mean.
 
 if isnumeric(Y)
     [n,v,k]=size(Y);
