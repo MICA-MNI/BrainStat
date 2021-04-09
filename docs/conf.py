@@ -146,6 +146,6 @@ sphinx_gallery_conf = {
         'binderhub_url': 'https://mybinder.org',
         'branch': 'binder_support',
         'dependencies': 'requirements.txt',
-        'notebooks_dir': 'python/generated_tutorials'
+        'notebooks_dir': 'generated_tutorials'
     }
 }
