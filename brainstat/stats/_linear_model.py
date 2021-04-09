@@ -3,7 +3,6 @@ import numpy as np
 import numpy.linalg as la
 from brainstat.mesh.utils import mesh_edges
 from brainstat.stats.terms import Term, Random
-from brainstat.stats.utils import ismember
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 from brainspace.mesh.mesh_elements import get_cells
 
