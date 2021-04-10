@@ -16,8 +16,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install numpy
-        git config remote.origin.fetch refs/heads/*:refs/origin/upstream/*
-        git config remote.upstream.fetch refs/heads/*:refs/remotes/upstream/* # for forks
+        [[ -z $(git remote show origin | grep "Fetch URL:" | grep git@github.com:MICA-MNI/BrainStat.git) ]] && git config remote.upstream.fetch refs/heads/*:refs/remotes/upstream/* || git config remote.origin.fetch refs/heads/*:refs/origin/upstream/*
         git fetch origin test-data
         git checkout origin/test-data -- extern/test-data
         git reset extern/test-data
