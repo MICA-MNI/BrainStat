@@ -16,7 +16,7 @@ BrainStat : A toolbox for statistical analysis of neuroimaging data
 .. image:: https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg
     :target: https://www.mathworks.com/matlabcentral/fileexchange/89827-brainstat-alpha-version
 
-Welcome to BrainStat's documentation! 
+Welcome to BrainStat's documentation!
 
 BrainStat is a toolbox for the statistical analysis and context decoding of
 neuroimaging data. It implements both univariate and multivariate linear models
