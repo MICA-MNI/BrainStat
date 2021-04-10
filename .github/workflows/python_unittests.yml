@@ -23,6 +23,8 @@ jobs:
         python -m pip install --upgrade pip
         pip install pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        git remote add MICA-MNI git@github.com:MICA-MNI/BrainStat.git
+        git fetch MICA-MNI
         git config remote.origin.fetch refs/heads/*:refs/remotes/origin/*
         git fetch origin test-data
     - name: Test with pytest
