@@ -1,0 +1,113 @@
+<deployment-project plugin="plugin.toolbox" plugin-version="1.0">
+  <configuration file="BRAINSTAT_DIR/.github/matlab_toolbox/BrainStat.prj" location="BRAINSTAT_DIR/.github/matlab_toolbox" name="BrainStat" target="target.toolbox" target-name="Package Toolbox">
+    <param.appname>BrainStat</param.appname>
+    <param.authnamewatermark>MICA Lab, CNG Lab</param.authnamewatermark>
+    <param.email>reinder.vosdewael@gmail.com,</param.email>
+    <param.company>McGill University, Max Planck Institute</param.company>
+    <param.summary>A statistics toolbox for neuroimaging.</param.summary>
+    <param.description>BrainStat is a toolbox for the statistical analysis and context decoding of neuroimaging data. It implements both univariate and multivariate linear models and interfaces with the Allen Human Brain Atlas and Nimare databases. BrainStat flexibly handles common surface, volume, and parcel level data formats, and provides a series of interactive visualization functions. The toolbox has been implemented in both python and matlab, the two most widely adopted programming languages in the neuroimaging and neuroinformatics communities.</param.description>
+    <param.screenshot>BRAINSTAT_DIR/docs/figures/brainstat_logo_sv.png</param.screenshot>
+    <param.version>0.0.1</param.version>
+    <param.output>${PROJECT_ROOT}/BrainStat.mltbx</param.output>
+    <param.products.name />
+    <param.products.id />
+    <param.products.version />
+    <param.platforms />
+    <param.guid>057738b5-931d-4a9c-ae35-ab48af458edd</param.guid>
+    <param.exclude.filters />
+    <param.exclude.pcodedmfiles>true</param.exclude.pcodedmfiles>
+    <param.examples />
+    <param.demosxml />
+    <param.apps />
+    <param.registered.apps />
+    <param.docs />
+    <param.getting.started.guide />
+    <param.matlabpath.excludes />
+    <param.javaclasspath.excludes />
+    <param.exported.on.package>false</param.exported.on.package>
+    <param.required.addons />
+    <param.matlab.project.id />
+    <param.matlab.project.name />
+    <param.release.start>R2019b</param.release.start>
+    <param.release.end>latest</param.release.end>
+    <param.release.current.only>false</param.release.current.only>
+    <param.compatiblity.windows>true</param.compatiblity.windows>
+    <param.compatiblity.macos>true</param.compatiblity.macos>
+    <param.compatiblity.linux>true</param.compatiblity.linux>
+    <param.compatiblity.matlabonline>true</param.compatiblity.matlabonline>
+    <param.installation.map />
+    <param.additional.sw.names />
+    <param.additional.sw.licenses />
+    <param.additional.sw.win.url />
+    <param.additional.sw.mac.url />
+    <param.additional.sw.linux.url />
+    <unset>
+      <param.output />
+      <param.products.name />
+      <param.products.id />
+      <param.products.version />
+      <param.platforms />
+      <param.exclude.filters />
+      <param.exclude.pcodedmfiles />
+      <param.examples />
+      <param.demosxml />
+      <param.apps />
+      <param.registered.apps />
+      <param.docs />
+      <param.getting.started.guide />
+      <param.matlabpath.excludes />
+      <param.javaclasspath.excludes />
+      <param.exported.on.package />
+      <param.required.addons />
+      <param.matlab.project.id />
+      <param.matlab.project.name />
+      <param.release.current.only />
+      <param.compatiblity.windows />
+      <param.compatiblity.macos />
+      <param.compatiblity.linux />
+      <param.compatiblity.matlabonline />
+      <param.installation.map />
+      <param.additional.sw.names />
+      <param.additional.sw.licenses />
+      <param.additional.sw.win.url />
+      <param.additional.sw.mac.url />
+      <param.additional.sw.linux.url />
+    </unset>
+    <fileset.rootdir>
+      <file>BRAINSTAT_DIR/brainstat_matlab</file>
+    </fileset.rootdir>
+    <fileset.rootfiles>
+      <file>BRAINSTAT_DIR/brainstat_matlab/context</file>
+      <file>BRAINSTAT_DIR/brainstat_matlab/io</file>
+      <file>BRAINSTAT_DIR/brainstat_matlab/plotting</file>
+      <file>BRAINSTAT_DIR/brainstat_matlab/stats</file>
+      <file>BRAINSTAT_DIR/brainstat_matlab/tests</file>
+    </fileset.rootfiles>
+    <fileset.depfun.included />
+    <fileset.depfun.excluded />
+    <fileset.package />
+    <build-deliverables>
+      <file location="${PROJECT_ROOT}" name="BrainStat.mltbx" optional="false">BRAINSTAT_DIR/.github/matlab_toolbox/BrainStat.mltbx</file>
+    </build-deliverables>
+    <workflow />
+    <matlab>
+      <root>/Applications/MATLAB_R2020b.app</root>
+      <toolboxes />
+    </matlab>
+    <platform>
+      <unix>true</unix>
+      <mac>true</mac>
+      <windows>false</windows>
+      <win2k>false</win2k>
+      <winxp>false</winxp>
+      <vista>false</vista>
+      <linux>false</linux>
+      <solaris>false</solaris>
+      <osver>10.14.6</osver>
+      <os32>false</os32>
+      <os64>true</os64>
+      <arch>maci64</arch>
+      <matlab>true</matlab>
+    </platform>
+  </configuration>
+</deployment-project>

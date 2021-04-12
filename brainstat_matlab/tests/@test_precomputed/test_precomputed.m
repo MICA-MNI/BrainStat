@@ -49,52 +49,25 @@ classdef test_precomputed < matlab.unittest.TestCase
             for pair = linmod_files
                 input = load_pkl(pair{1});
                 output = load_pkl(pair{2});
-                f = fieldnames(input);
+                slm = input2slm(input);
                 
-                if ismember('age', f)
-                    input.M = 1 + term(input.age');
-                elseif ismember('params', f)
-                    input.M = term(input.params);
-                end
-                if ~ismember('surf',f)
-                    input.surf = [];
-                end
-                if ~ismember('niter',f)
-                    input.niter = 1;
-                end
-                if ~ismember('thetalim',f)
-                    input.thetalim = 0.01;
-                end
-                if ~ismember('drlim', f)
-                    input.drlim = 0.1;
-                end
-                if ismember('tri', f)
-                    input.surf = struct('tri', input.tri);
-                elseif ismember('lat', f)
-                    input.surf = struct('lat', input.lat);
-                end
-                
-                slm = SurfStatLinMod(input.Y, input.M, input.surf, ...
-                    input.niter, input.thetalim, input.drlim);
-                
-                recursive_equality(testCase, slm, output, pair{1});
+                slm.linear_model(input.Y);
+                slm_output = slm2struct(slm, fieldnames(output)); 
+
+                recursive_equality(testCase, slm_output, output, pair{1});
             end
         end
 
         function test_q(testCase)
             % Precomputed tests for SurfStatQ
             q_files = get_test_files('statq');
-            for pair = q_files
+            for pair = q_files(:,9)
                 input = load_pkl(pair{1});
                 output = load_pkl(pair{2});
-                f = fieldnames(input);
-                if ismember('mask', f)
-                    mask = logical(input.mask);
-                else
-                    mask = [];
-                end
-                Q = SurfStatQ(input, mask);
-                Q.mask = double(Q.mask);
+                output = output.Q;
+                
+                slm = input2slm(input);
+                Q = slm.fdr();
                 recursive_equality(testCase, Q, output, pair{1});
             end
         end
@@ -106,16 +79,22 @@ classdef test_precomputed < matlab.unittest.TestCase
                 input = load_pkl(pair{1});
                 output = load_pkl(pair{2});
                 f = fieldnames(input);
-                slms = struct('slm1',struct(),'slm2',struct());
-                for ii = ['1','2']
-                    for field = {'X','df','SSE','coef','tri','resl','c','k','ef','sd','t'}
-                        if ismember(['slm1' field{1}],f)
-                            slms.(['slm', ii]).(field{1}) = input.(['slm', ii, field{1}]);
-                        end
+                slms = struct();
+                for ii = 1:2
+                    ii_reverse = ii*-1+3; % ii=1; ii_reverse=2 and vice versa.
+                    f_idx = f(contains(f, ['slm', num2str(ii_reverse)]));
+                    input_idx = rmfield(input, f_idx);
+                    field_idx = fieldnames(input_idx);
+                    for jj = 1:numel(field_idx)
+                        input_idx = renameStructField(input_idx, field_idx{jj}, ...
+                            replace(field_idx{jj}, ['slm', num2str(ii)], '')); 
                     end
+                    slms.(['slm', num2str(ii)]) = input2slm(input_idx); 
                 end
-                slm = SurfStatF(slms.slm1, slms.slm2);
-                recursive_equality(testCase, slm, output, pair{1});
+
+                slms.slm_f = slms.slm1.f_test(slms.slm2);
+                slm_output = slm2struct(slms.slm_f, fieldnames(output));
+                recursive_equality(testCase, slm_output, output, pair{1});
             end
         end
         
@@ -204,11 +183,8 @@ classdef test_precomputed < matlab.unittest.TestCase
             for pair = peakc_files
                 input = load_pkl(pair{1});
                 output = load_pkl(pair{2});
-                
                 clearvars slm mask thresh reselspvert edg 
-                slm.t = input.t;
-                slm.tri = input.tri;
-                mask = logical(input.mask);
+                slm = input2slm(input); 
                 thresh = input.thresh;
                 
                 f = fieldnames(input);
@@ -220,16 +196,10 @@ classdef test_precomputed < matlab.unittest.TestCase
                 if ismember('edg', f)
                     edg = input.edg+1;
                 else
-                    edg = SurfStatEdg(slm);
-                end
-                if ismember('k', f)
-                    slm.k = input.k;
-                end
-                if ismember('df', f)
-                    slm.df = input.df;
+                    edg = SurfStatEdg(slm.surf);
                 end
                 
-                [ peak, clus, clusid ] = SurfStatPeakClus(slm, mask, thresh, ...
+                [ peak, clus, clusid ] = slm.peak_clus(thresh, ...
                     reselspvert, edg);
                 
                 % Test equality.
@@ -249,20 +219,10 @@ classdef test_precomputed < matlab.unittest.TestCase
                 end
                 input = load_pkl(pair{1});
                 output = load_pkl(pair{2});
-                mask = [];
-                clusthresh = 0.001;
-                slm = struct();
-                for field = fieldnames(input)'
-                    if field{1} == "mask"
-                        mask = logical(input.mask);
-                    elseif field{1} == "clusthresh"
-                        clusthresh = input.clusthresh;
-                    else
-                        slm.(field{1}) = input.(field{1});
-                    end
-                end
-                 
-                [P.pval, P.peak, P.clus, P.clusid]  = SurfStatP(slm, mask, clusthresh);
+                slm = input2slm(input);
+                
+                P = struct();
+                [P.pval, P.peak, P.clus, P.clusid]  = slm.random_field_theory();
                 if ismember('mask', fieldnames(P.pval))
                     P.pval.mask = double(P.pval.mask);
                 end
@@ -276,18 +236,13 @@ classdef test_precomputed < matlab.unittest.TestCase
             for pair = statp_files
                 input = load_pkl(pair{1});
                 output = load_pkl(pair{2});
-                if ismember('mask', fieldnames(input))
-                    mask = logical(input.mask);
-                    input_arg = {input, mask};
-                else
-                    input_arg = {input};
-                end
+                slm = input2slm(input);
                 P = struct();
                 if ismember('resl', fieldnames(input))
-                    [P.resels, P.reselspvert, P.edg] = SurfStatResels(input_arg{:});
+                    [P.resels, P.reselspvert, P.edg] = slm.compute_resels();
                     P.edg = double(P.edg-1);
                 else
-                    P.resels = SurfStatResels(input_arg{:});
+                    P.resels = slm.compute_resels();
                 end
                 recursive_equality(testCase, P, output, pair{1});
             end
@@ -331,9 +286,10 @@ classdef test_precomputed < matlab.unittest.TestCase
             for pair = statt_files
                 input = load_pkl(pair{1});
                 output = load_pkl(pair{2});
-                slm = SurfStatT(input, input.contrast);
-                slm = rmfield(slm,'contrast');
-                recursive_equality(testCase, slm, output, pair{1});           
+                slm = input2slm(input);
+                slm.t_test();
+                slm_output = slm2struct(slm, fieldnames(output));
+                recursive_equality(testCase, slm_output, output, pair{1});           
             end
         end
     end
@@ -410,4 +366,83 @@ elseif iscell(mat_data)
         mat_data{ii} = recursive_pkl_conversion(mat_data{ii});
     end
 end
+end
+
+function s = slm2struct(slm, names)
+% Converts the requested SLM fields to a struct.
+s = struct();
+for ii = 1:numel(names)
+    s.(names{ii}) = slm.(names{ii});
+end
+end
+
+function slm = input2slm(input)
+% Converts the .pkl input to an SLM object. 
+f = fieldnames(input);
+if any(f == "mask")
+    input.mask = logical(input.mask);
+else
+    input.mask = [];
+end
+
+if any(any(f == ["tri", "lat"]))
+    if any(f == "coord")
+        coord = input.coord;
+        input = rmfield(input, "coord");
+    else
+        coord = [];
+    end
+    if any(f == "tri")
+        name = 'tri';
+    else
+        name = 'lat';
+    end
+    input.surf = struct(name, input.(name), 'coord', coord);
+    input = rmfield(input, name);
+end
+
+if any(f == "M")
+    model = input.M;
+    input = rmfield(input, "M");
+else
+    model = 1;
+end
+
+if any(f == "contrast")
+    contrast = input.contrast;
+    input = rmfield(input, "contrast");
+else
+    contrast = 1;
+end
+
+if any(f == "age")
+    model= 1 + term(input.age');
+    input = rmfield(input, 'age');
+end
+
+if any(f == "params")
+    model = term(input.params);
+    input = rmfield(input, 'params');
+end
+
+if any(f == "clusthresh")
+    input.cluster_threshold = input.clusthresh;
+    input = rmfield(input, 'clusthresh');
+end
+
+for field = ["Y", "colnames", "reselspvert", "edg", "thresh"]
+    try 
+        input = rmfield(input, field{1});
+    catch err
+        if err.identifier == "MATLAB:rmfield:InvalidFieldname"
+            continue
+        else
+            rethrow(err)
+        end
+    end       
+end
+    
+slm = SLM(model, contrast);
+parameters = [fieldnames(input), struct2cell(input)]';
+slm.debug_set(parameters{:});
 end
