@@ -11,9 +11,9 @@ def mesh_normalize(Y, mask=None, subdiv="s"):
 
     Parameters
     ----------
-    Y : numpy.array
+    Y : numpy.ndarray
         Data to be normalized, shape of (n,v) or (n,v,k).
-    mask : numpy.array, bool
+    mask : numpy.ndarray, bool
         Optional mask.
     subdiv : str
         If 's', it demeans 'Y', if 'd', it standardizes to mean 0,
@@ -21,9 +21,9 @@ def mesh_normalize(Y, mask=None, subdiv="s"):
 
     Returns
     -------
-    numpy.array
+    numpy.ndarray
         Normalized data of shape (n,v) or (n,v,k).
-    numpy.array
+    numpy.ndarray
         Mean of the input Y along the maks, shape of (n,1) or (n,k)
     """
 
@@ -60,20 +60,20 @@ def mesh_smooth(Y, surf, FWHM):
 
     Parameters
     ----------
-    Y : numpy.array
+    Y : numpy.ndarray
         Surface data of shape (n,v) or (n,v,k). v is the number of vertices,
         n is the number of observations, k is the number of variates.
     surf : dict, BSPolyData
         A dictionary with key 'tri' or 'lat', or a BSPolyData object of the
-        surface. surf['tri'] is a numpy.array  of shape (t,3), t is the
-        triangle indices, or surf['lat'] is a numpy.array of shape (nx,ny,nz),
+        surface. surf['tri'] is a numpy.ndarray  of shape (t,3), t is the
+        triangle indices, or surf['lat'] is a numpy.ndarray of shape (nx,ny,nz),
         where (nx,ny,nz) is the volume size, values are 1=in, 0=out.
     FWHM : float
        Gaussian smoothing filter in mesh units.
 
     Returns
     -------
-    numpy.array
+    numpy.ndarray
         Smoothed surface data of shape (n,v) or (n,v,k).
     """
 
@@ -135,9 +135,9 @@ def mesh_standardize(Y, mask=None, subdiv="s"):
 
     Parameters
     ----------
-    Y : numpy.array
+    Y : numpy.ndarray
         Data to be standardized, shape of (n,v).
-    mask : numpy.array, bool
+    mask : numpy.ndarray, bool
         Optional mask of shape (1,v).
     subdiv : str
         If 's', it demeans Y; if 'd', it standardizes Y to the mean 0,
@@ -145,9 +145,9 @@ def mesh_standardize(Y, mask=None, subdiv="s"):
 
     Returns
     -------
-    numpy.array
+    numpy.ndarray
         Standardized data of shape (n,v).
-    numpy.array
+    numpy.ndarray
         Mean of the input Y along the mask.
     """
 
