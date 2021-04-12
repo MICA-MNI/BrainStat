@@ -11,21 +11,20 @@ def mesh_normalize(Y, mask=None, subdiv="s"):
 
     Parameters
     ----------
-    Y : numpy array of shape (n x v) or (n x v x k)
-        Data to be normalized.
-    mask : numpy boolean array of shape (1 x v), optional
-        True is included, False is excluded. If None, no mask is applied, by
-        default 'None'.
-    subdiv : str, optional
-        If 's', demeans Y; if 'd' standardizes to mean 0, standard deviation
-        100.
+    Y : numpy.ndarray
+        Data to be normalized, shape of (n,v) or (n,v,k).
+    mask : numpy.ndarray, bool
+        Optional mask.
+    subdiv : str
+        If 's', it demeans 'Y', if 'd', it standardizes to mean 0,
+        standard deviation 100.
 
     Returns
     -------
-    Y: numpy array of shape (n x v) or (n x v x k)
-        Normalized data.
-    Yav: numpy array of shape (n x 1) or (n x k)
-        Mean of the input Y along the mask.
+    numpy.ndarray
+        Normalized data of shape (n,v) or (n,v,k).
+    numpy.ndarray
+        Mean of the input Y along the maks, shape of (n,1) or (n,k)
     """
 
     Y = np.array(Y, dtype="float64")
@@ -61,19 +60,23 @@ def mesh_smooth(Y, surf, FWHM):
 
     Parameters
     ----------
-    Y : numpy array of shape (n,v) or (n,v,k)
-        surface data, v=#vertices, n=#observations, k=#variates.
-    surf : a dictionary with key 'tri' or 'lat', or a BSPolyData object.
-        surf['tri'] = numpy array of shape (t,3), triangle indices, or
-        surf['lat'] = numpy array of shape (nx,ny,nz), 1=in, 0=out,
-        (nx,ny,nz) = size(volume).
-    FWHM : approximate FWHM of Gaussian smoothing filter, in mesh units.
+    Y : numpy.ndarray
+        Surface data of shape (n,v) or (n,v,k). v is the number of vertices,
+        n is the number of observations, k is the number of variates.
+    surf : dict, BSPolyData
+        A dictionary with key 'tri' or 'lat', or a BSPolyData object of the
+        surface. surf['tri'] is a numpy.ndarray  of shape (t,3), t is the
+        triangle indices, or surf['lat'] is a numpy.ndarray of shape (nx,ny,nz),
+        where (nx,ny,nz) is the volume size, values are 1=in, 0=out.
+    FWHM : float
+       Gaussian smoothing filter in mesh units.
 
     Returns
     -------
-    Y : numpy array of shape (n,v) or (n,v,k),
-        smoothed data.
+    numpy.ndarray
+        Smoothed surface data of shape (n,v) or (n,v,k).
     """
+
     niter = int(np.ceil(pow(FWHM, 2) / (2 * np.log(2))))
 
     if isinstance(Y, np.ndarray):
@@ -132,20 +135,19 @@ def mesh_standardize(Y, mask=None, subdiv="s"):
 
     Parameters
     ----------
-    Y : numpy array of shape (n x v)
-        Data to be standardized.
-    mask : numpy boolean array of shape (1 x v), optional
-        True is included, False is excluded. If None, no mask is applied, by
-        default 'None'.
-    subdiv : str, optional
-        If 's', demeans Y; if 'd' standardizes to mean 0, standard deviation
-        100.
+    Y : numpy.ndarray
+        Data to be standardized, shape of (n,v).
+    mask : numpy.ndarray, bool
+        Optional mask of shape (1,v).
+    subdiv : str
+        If 's', it demeans Y; if 'd', it standardizes Y to the mean 0,
+        standard deviation 100.
 
     Returns
     -------
-    Y: numpy array of shape (n x v)
-        Standardized data.
-    Ym: numpy array of shape (n x 1)
+    numpy.ndarray
+        Standardized data of shape (n,v).
+    numpy.ndarray
         Mean of the input Y along the mask.
     """
 
