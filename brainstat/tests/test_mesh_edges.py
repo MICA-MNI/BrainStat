@@ -74,6 +74,7 @@ def test_05():
     expfile = datadir("xstatedg_05_OUT.pkl")
     dummy_test(infile, expfile)
 
+
 def test_06():
     # test 05 thickiness_n10 data is shuffled
     infile = datadir("xstatedg_06_IN.pkl")
