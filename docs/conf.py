@@ -95,13 +95,13 @@ html_static_path = ["_static"]
 sphinx_gallery_conf = {
     "examples_dirs": "python/tutorials",
     "gallery_dirs": "python/generated_tutorials",
-    'binder': {
-        'org': 'PeerHerholz',
-        'repo': 'BrainStat',
-        'binderhub_url': 'https://mybinder.org',
-        'branch': 'binder_support',
-        'dependencies': '../binder/requirements.txt'
-    }
+    "binder": {
+        "org": "MICA-MNI",
+        "repo": "BrainStat",
+        "binderhub_url": "https://mybinder.org",
+        "branch": "binder_support",
+        "dependencies": "../binder/requirements.txt",
+    },
 }
 
 # Patch sphinx_gallery.binder.gen_binder_rst so as to point to .py file in repository
@@ -134,14 +134,16 @@ def patched_gen_binder_rst(fpath, binder_conf, gallery_conf):
     binder_conf = sphinx_gallery.binder.check_binder_conf(binder_conf)
     binder_url = sphinx_gallery.binder.gen_binder_url(fpath, binder_conf, gallery_conf)
     binder_url = binder_url.replace(
-        gallery_conf['gallery_dirs'] + os.path.sep, "").replace("ipynb", "py")
+        gallery_conf["gallery_dirs"] + os.path.sep, ""
+    ).replace("ipynb", "py")
 
     rst = (
         "\n"
         "  .. container:: binder-badge\n\n"
         "    .. image:: https://mybinder.org/badge_logo.svg\n"
         "      :target: {}\n"
-        "      :width: 150 px\n").format(binder_url)
+        "      :width: 150 px\n"
+    ).format(binder_url)
     return rst
 
 
