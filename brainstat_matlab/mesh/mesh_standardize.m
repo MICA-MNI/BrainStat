@@ -1,8 +1,8 @@
-function [ Y, Ym ] = SurfStatStand( Y, mask, subtractordivide);
+function [ Y, Ym ] = mesh_standardize( Y, mask, subtractordivide);
 
 %Standardizes by subtracting the global mean, or dividing by it.
 %
-% Usage: [ Y, Ym ] = SurfStatStand( Y [,mask [,subtractordivide] ] );
+% Usage: [ Y, Ym ] = mesh_standardize( Y [,mask [,subtractordivide] ] );
 %
 % Y                = n x v matrix of data, v=#vertices.
 % mask             = 1 x v, 1=inside, 0=outside, v=#vertices.

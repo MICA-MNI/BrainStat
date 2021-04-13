@@ -1,8 +1,8 @@
-function [ Y, Yav ] = SurfStatNorm( Y, mask, subdiv );
+function [ Y, Yav ] = mesh_normalize( Y, mask, subdiv );
 
 %Normalizes by subtracting the global mean, or dividing by it.
 %
-% Usage: [ Y, Yav ] = SurfStatNorm( Y [,mask [,subdiv ] ] );
+% Usage: [ Y, Yav ] = mesh_normalize( Y [,mask [,subdiv ] ] );
 %
 % Y      = n x v matrix or n x v x k array of data, v=#vertices,
 %          or memory map of same. 
