@@ -30,7 +30,7 @@ function [resels, reselspvert, edg] = compute_resels(obj)
 % then copied into one slice, then the other, in an alternating fashion.
 % Since the tetrahedral filling is also alternating, there is no need to
 % recompute the edg, tri and tet matrices. However the ordering of the edg
-% matrix is crucial - it must match the SurfStatEdg function so that 
+% matrix is crucial - it must match the mesh_edges function so that 
 % obj.resl is synchronised. The ordering of the tri and tet matrices is not
 % important. 
 % To avoid the "unique" function in 2), the edg and tri matrices were
@@ -202,8 +202,7 @@ if ~isempty(obj.tri)
 end
 %%
 if ~isempty(obj.lat)
-    %edg=SurfStatEdg(obj);
-    edg = SurfStatEdg(obj.surf);
+    edg = mesh_edges(obj.surf);
     % The lattice is filled with 5 alternating tetrahedra per cube
     [I,J,K]=size(obj.lat);
     IJ=I*J;

@@ -99,12 +99,12 @@ classdef test_precomputed < matlab.unittest.TestCase
         end
         
         function test_edg(testCase)
-            % Test SurfStatEdg
+            % Test mesh_edges
             edg_files = get_test_files('statedg');
             for pair = edg_files
                 input = load_pkl(pair{1});
                 output = load_pkl(pair{2});
-                edges = SurfStatEdg(input);
+                edges = mesh_edges(input);
                 verifyEqual(testCase, ...
                     double(edges), ...
                     double(output.edg+1), ... % +1 due to the Python/MATLAB count from 0/1 difference.
@@ -114,7 +114,7 @@ classdef test_precomputed < matlab.unittest.TestCase
         end
         
         function test_norm(testCase)
-            % Test SurfStatNorm
+            % Test mesh_normalize
             norm_files = get_test_files('statnor');
             for pair = norm_files
                 input = load_pkl(pair{1});
@@ -131,7 +131,7 @@ classdef test_precomputed < matlab.unittest.TestCase
                     output.Python_Yav = output.Python_Yav';
                 end
                 
-                [Yout, Yav] = SurfStatNorm(Y, mask, subdiv);
+                [Yout, Yav] = mesh_normalize(Y, mask, subdiv);
                 verifyEqual(testCase, Yout, output.Python_Y, 'abstol', 1e-5, ...
                     ['Testing failed on input file: ', pair{1}]);
                 verifyEqual(testCase, Yav, output.Python_Yav, 'abstol', 1e-5, ...
@@ -140,7 +140,7 @@ classdef test_precomputed < matlab.unittest.TestCase
         end
         
         function test_smooth(testCase)
-            % Test SurfStatSmooth
+            % Test mesh_smooth
             smo_files = get_test_files('statsmo');
             for pair = smo_files
                 input = load_pkl(pair{1});
@@ -150,14 +150,14 @@ classdef test_precomputed < matlab.unittest.TestCase
                 else
                     surf = struct('lat', input.lat);
                 end
-                smoothed = SurfStatSmooth(input.Y, surf, input.FWHM);
+                smoothed = mesh_smooth(input.Y, surf, input.FWHM);
                 verifyEqual(testCase, smoothed, output.Python_Y, 'abstol', 1e-5, ...
                     ['Testing failed on input file: ', pair{1}])
             end
         end
         
         function test_stand(testCase)
-            % Test SurfStatStand
+            % Test mesh_standardize
             stand_files = get_test_files('statsta');
             for pair = stand_files
                 input = load_pkl(pair{1});
@@ -168,7 +168,7 @@ classdef test_precomputed < matlab.unittest.TestCase
                 else
                     mask = [];
                 end
-                [Y, Ym] = SurfStatStand(input.Y, mask, subdiv);
+                [Y, Ym] = mesh_standardize(input.Y, mask, subdiv);
 
                 verifyEqual(testCase, Y, output.Python_Y, 'abstol', 1e-5, ...
                     ['Testing failed on input file: ', pair{1}]);
@@ -196,7 +196,7 @@ classdef test_precomputed < matlab.unittest.TestCase
                 if ismember('edg', f)
                     edg = input.edg+1;
                 else
-                    edg = SurfStatEdg(slm.surf);
+                    edg = mesh_edges(slm.surf);
                 end
                 
                 [ peak, clus, clusid ] = slm.peak_clus(thresh, ...

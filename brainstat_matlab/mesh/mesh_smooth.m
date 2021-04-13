@@ -1,8 +1,8 @@
-function Y = SurfStatSmooth( Y, surf, FWHM );
+function Y = mesh_smooth( Y, surf, FWHM );
 
 %Smooths surface data by repeatedly averaging over edges.
 %
-% Usage: Y = SurfStatSmooth( Y, sv, FWHM );
+% Usage: Y = mesh_smooth( Y, sv, FWHM );
 % 
 % Y        = n x v or n x v x k matrix of surface data, v=#vertices;
 %            n=#observations; k=#variates, or memory map of same.
@@ -34,7 +34,7 @@ else
     isnum=false;
 end
 
-edg=SurfStatEdg(surf);
+edg=mesh_edges(surf);
 
 Y1=accumarray(edg(:,1),2,[v 1])'+accumarray(edg(:,2),2,[v 1])';
 
