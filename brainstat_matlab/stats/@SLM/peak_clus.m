@@ -31,7 +31,7 @@ function [ peak, clus, clusid ] = peak_clus(obj, thresh, ...
 % clusid      =  1 x v vector of cluster id's for each vertex.
 
 if ~exist('edg','var')
-    edg=SurfStatEdg(obj.surf);
+    edg=mesh_edges(obj.surf);
 end
 
 [l,v]=size(obj.t);

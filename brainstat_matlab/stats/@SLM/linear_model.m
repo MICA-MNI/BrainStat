@@ -293,7 +293,7 @@ if isempty(fieldnames(obj.surf))
     return
 end
 
-edg=SurfStatEdg(obj.surf);
+edg=mesh_edges(obj.surf);
 
 e=size(edg,1);
 e1=edg(:,1);
