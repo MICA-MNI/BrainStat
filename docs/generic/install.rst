@@ -16,7 +16,7 @@ works.
 Whilst development is still ongoing, the latest version of BrainStat can be
 installed using ``pip``: ::
 
-    pip install -i https://test.pypi.org/simple/ brainstat
+    pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple brainstat
 
 Python Dependencies
 +++++++++++++++++++++++
