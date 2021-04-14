@@ -64,7 +64,7 @@ by running the following (replace "3.7" with a compatible Python version): ::
 
     conda create -c conda-forge -n MY_ENVIRONMENT_NAME python=3.7 pyembree
     conda activate MY_ENVIRONMENT_NAME
-    pip install -i https://test.pypi.org/simple/ brainstat
+    pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple brainstat
 
 Now that you have your Python environment set up, find the Python executable by
 starting this new environment's Python with `python3`, then run: ::
@@ -81,7 +81,7 @@ Python environment. ::
 To test whether you've installed BrainStat Python correctly, try running the
 following in MATLAB: ::
 
-    ~isa(py.importlib.util.find_spec("brainstat"),'py.NoneType')
+    ~isa(py.importlib.util.find_spec('brainstat'),'py.NoneType')
 
 This will return true if Python BrainStat was found.
 
