@@ -115,6 +115,10 @@ def get_fdr_output(D, foutname):
 def generate_data_test_fdr():
     ### test_01 data in-out generation
     print("test_fdr: test_01 data is generated..")
+    # random data shape matching a real-data set
+    # ['t'] : np array, shape (1, 64984), float64
+    # ['df'] : int
+    # ['k'] : int
     t_dim = (1, 64984)
     df_max = 64984
     finname = datadir("xstatq_01_IN.pkl")
@@ -124,6 +128,10 @@ def generate_data_test_fdr():
 
     ### test_02 data in-out generation
     print("test_fdr: test_02 data is generated..")
+    # random data
+    # ['t'] : np array, shape (1, 9850), float64
+    # ['df'] : int
+    # ['k'] : int
     t_dim = (1, 9850)
     df_max = 1000
     finname = datadir("xstatq_02_IN.pkl")
@@ -133,6 +141,10 @@ def generate_data_test_fdr():
 
     ### test_03 data in-out generation
     print("test_fdr: test_03 data is generated..")
+    # similar to test_02, shapes/values of slm['t'] and slm['df'] manipulated
+    # ['t'] :  np array, shape (1, 2139), float64
+    # ['df'] : int
+    # ['k'] :  int
     t_dim = (1, 2139)
     df_max = 2000
     k = 3
@@ -143,6 +155,11 @@ def generate_data_test_fdr():
 
     ### test_04 data in-out generation
     print("test_fdr: test_04 data is generated..")
+    # similar to test_02 + optional input ['mask']
+    # ['t'] : np array, shape (1, 2475), float64
+    # ['df'] : int
+    # ['k'] : int
+    # ['mask'] : np array, shape (2475,), bool
     t_dim = (1, 2475)
     df_max = 1500
     finname = datadir("xstatq_04_IN.pkl")
@@ -153,6 +170,11 @@ def generate_data_test_fdr():
 
     ### test_05 data in-out generation
     print("test_fdr: test_05 data is generated..")
+    # similar to test_02 + optional input slm['dfs']
+    # ['t'] : np array, shape (1, 1998), float64
+    # ['df'] : int
+    # ['k'] : int
+    # ['dfs'] : np array, shape (1, 1998), int64
     t_dim = (1, 1998)
     df_max = 4000
     dfs_max = 1997
@@ -163,6 +185,12 @@ def generate_data_test_fdr():
 
     ### test_06 data in-out generation
     print("test_fdr: test_06 data is generated..")
+    # similar to test_02 + optional inputs slm['dfs'] and ['mask']
+    # ['t'] : np array, shape (1, 3328), float64
+    # ['df'] : np array, shape (1, 1), int64
+    # ['k'] : int
+    # ['dfs'] : np array, shape (1, 3328), int64
+    # ['mask'] : np array, shape (3328,), bool
     t_dim = (1, 3328)
     df_max = 10000
     k = 2
@@ -177,6 +205,13 @@ def generate_data_test_fdr():
 
     ### test_07 data in-out generation
     print("test_fdr: test_07 data is generated..")
+    # similar to test_02 + optional inputs slm['dfs'], ['mask'] and ['tri']
+    # ['t'] : np array, shape (1, 9512), float64
+    # ['df'] : int
+    # ['k'] : int
+    # ['dfs'] : np array, shape (1, 9512), int64
+    # ['mask'] : np array, shape (9512,), bool
+    # ['tri'] : np array, shape (1724, 3), int64
     t_dim = (1, 9512)
     df_max = 5000
     dfs_max = 9511
@@ -197,6 +232,13 @@ def generate_data_test_fdr():
 
     ### test_08 data in-out generation
     print("test_fdr: test_08 data is generated..")
+    # similar to test_02 + optional inputs slm['dfs'], slm['tri'] and slm['resl']
+    # ['t'] : np array, shape (1, 1520), float64
+    # ['df'] : int
+    # ['k'] : int
+    # ['dfs'] : np array, shape (1, 1520), int64
+    # ['tri'] : np array, shape (4948, 3), int64
+    # ['resl'] : np array, shape (1520, 1), float64
     t_dim = (1, 1520)
     df_max = 5000
     k = 5
@@ -219,6 +261,15 @@ def generate_data_test_fdr():
 
     ### test_09 data in-out generation
     print("test_fdr: test_09 data is generated..")
+    # similar to test_08 + values/shapes of input params changed +
+    # additional input slm['du'] (non-sense for _fdr)
+    # ['t'] : np array, shape (1, 4397), float64
+    # ['df'] : int
+    # ['k'] : int
+    # ['tri'] : np array, shape (2734, 3), int64
+    # ['resl'] : np array, shape (8199, 1), float64
+    # ['dfs'] : np array, shape (1, 4397), float64
+    # ['du'] : int
     t_dim = (1, 14397)
     df_max = 1
     dfs_max = 2
@@ -240,6 +291,16 @@ def generate_data_test_fdr():
 
     ### test_10 data in-out generation
     print("test_fdr: test_10 data is generated..")
+    # similar to test_08 + + values/shapes of input params changed + additional
+    # input slm['du'], slm['c'], slm['ef'], and slm['sd'] (non-sense for _fdr)
+    # ['t'] : np array, shape (1, 20484), float64
+    # ['df'] : int
+    # ['k'] : int
+    # ['tri'] : np array, shape (40960, 3), int32
+    # ['resl'] : np array, shape (61440, 1), float64
+    # ['c'] : np array, shape (1, 2), float64
+    # ['ef'] : np array, shape (1, 20484), float64
+    # ['sd'] : np array, shape (1, 20484), float64
     t_dim = (1, 20484)
     df_max = 10
     tri_dim = (40960, 3)
@@ -264,6 +325,19 @@ def generate_data_test_fdr():
 
     ### test_11 data in-out generation
     print("test_fdr: test_11 data is generated..")
+    # similar to test_08 + additional input ['c'], ['ef'], ['sd'], ['X'],
+    # and ['coef'], ['SSE'] (non-sense for _fdr)
+    # ['t'] : np array, shape (1, 20484), float64
+    # ['df'] : int
+    # ['k'] : int
+    # ['tri'] : np array, shape (40960, 3), int32
+    # ['resl'] : np array, shape (61440, 1), float64
+    # ['c'] : np array, shape (1, 2), float64
+    # ['ef'] : np array, shape (1, 20484), float64
+    # ['sd'] : np array, shape (1, 20484), float64
+    # ['X'] : np array, shape (10, 2), float64
+    # ['coef'] : np array, shape (2, 20484), float64
+    # ['SSE'] : np array, shape (1, 20484), float64
     t_dim = (1, 20484)
     df_max = 10
     tri_dim = (40960, 3)
@@ -294,6 +368,19 @@ def generate_data_test_fdr():
 
     ### test_12 data in-out generation
     print("test_fdr: test_12 data is generated..")
+    # similar to test_11 + optional input ['mask'] + ['df'] dtype changed
+    # ['t'] : np array, shape (1, 20484), float64
+    # ['df'] : uint8
+    # ['k'] : int
+    # ['tri'] : np array, shape (40960, 3), int32
+    # ['resl'] : np array, shape (61440, 1), float64
+    # ['c'] : np array, shape (1, 2), float64
+    # ['ef'] : np array, shape (1, 20484), float64
+    # ['sd'] : np array, shape (1, 20484), float64
+    # ['X'] : np array, shape (10, 2), uint8
+    # ['coef'] : np array, shape (2, 20484), float64
+    # ['SSE'] : np array, shape (1, 20484), float64
+    # ['mask'] : np array, shape (20484,), bool
     t_dim = (1, 20484)
     df_max = 10
     tri_dim = (40960, 3)
@@ -326,6 +413,18 @@ def generate_data_test_fdr():
 
     ### test_13 data in-out generation
     print("test_fdr: test_13 data is generated..")
+    # similar to test_10 + mask added
+    # ['t'] : np array, shape (1, 20484), float64
+    # ['df'] : int64
+    # ['k'] : int
+    # ['tri'] : np array, shape (40960, 3), int32
+    # ['resl'] : np array, shape (61440, 1), float64
+    # ['c'] : np array, shape (1, 9), float64
+    # ['ef'] : np array, shape (1, 20484), float64
+    # ['sd'] : np array, shape (1, 20484), float64
+    # ['X'] : np array, shape (20, 9), uint16
+    # ['coef'] : np array, shape (9, 20484), float64
+    # ['SSE'] : np array, shape (1, 20484), float64
     t_dim = (1, 20484)
     df_max = 10
     tri_dim = (40960, 3)
@@ -351,6 +450,8 @@ def generate_data_test_fdr():
     get_fdr_output(D, foutname)
 
     #### test 14, real data
+    print("test_fdr: test_14 data is generated..")
+    # thickness_n10 data, slm and t_test run prior to fdr
     realdataf = datadir("thickness_n10.pkl")
     ifile = open(realdataf, "br")
     DD = pickle.load(ifile)
