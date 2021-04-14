@@ -41,42 +41,36 @@ def dummy_test(infile, expfile):
 
 
 def test_01():
-    # ['tri'] is a 2D numpy array of shape (78, 3), dtype('float64')
     infile = datadir("xstatedg_01_IN.pkl")
     expfile = datadir("xstatedg_01_OUT.pkl")
     dummy_test(infile, expfile)
 
 
 def test_02():
-    # ['lat'] is a 2D numpy array of shape (10, 10), dtype('float64')
     infile = datadir("xstatedg_02_IN.pkl")
     expfile = datadir("xstatedg_02_OUT.pkl")
     dummy_test(infile, expfile)
 
 
 def test_03():
-    # ['lat'] is a 3D numpy array of shape (10, 10, 10), dtype('int64')
     infile = datadir("xstatedg_03_IN.pkl")
     expfile = datadir("xstatedg_03_OUT.pkl")
     dummy_test(infile, expfile)
 
 
 def test_04():
-    # ['tri'] is a 2D numpy array of shape (2044, 3), dtype('uint16')
     infile = datadir("xstatedg_04_IN.pkl")
     expfile = datadir("xstatedg_04_OUT.pkl")
     dummy_test(infile, expfile)
 
 
 def test_05():
-    # ['tri'] is a 2D numpy array of shape (40960, 3), from "thickness_n10.pkl"
     infile = datadir("thickness_n10.pkl")
     expfile = datadir("xstatedg_05_OUT.pkl")
     dummy_test(infile, expfile)
 
 
 def test_06():
-    # test 05 thickiness_n10 data is shuffled
     infile = datadir("xstatedg_06_IN.pkl")
     expfile = datadir("xstatedg_06_OUT.pkl")
     dummy_test(infile, expfile)

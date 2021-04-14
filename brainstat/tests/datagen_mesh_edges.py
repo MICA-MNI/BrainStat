@@ -55,6 +55,7 @@ def generate_data_test_mesh_edges():
 
     ### test_01 data in-out generation
     print("test_mesh_edges.py : test_01 data is generated..")
+    # ['tri'] is a 2D numpy array of shape (78, 3), dtype('float64')
     key_dim = (78, 3)
     finname = datadir("xstatedg_01_IN.pkl")
     key_name = "tri"
@@ -66,6 +67,7 @@ def generate_data_test_mesh_edges():
 
     ### test_02 data in-out generation
     print("test_mesh_edges.py : test_02 data is generated..")
+    # ['lat'] is a 2D numpy array of shape (10, 10), dtype('float64')
     key_dim = (10, 10)
     finname = datadir("xstatedg_02_IN.pkl")
     key_name = "lat"
@@ -77,6 +79,7 @@ def generate_data_test_mesh_edges():
 
     ### test_03 data in-out generation
     print("test_mesh_edges.py : test_03 data is generated..")
+    # ['lat'] is a 3D numpy array of shape (10, 10, 10), dtype('int64')
     key_dim = (10, 10, 10)
     finname = datadir("xstatedg_03_IN.pkl")
     key_name = "lat"
@@ -88,6 +91,7 @@ def generate_data_test_mesh_edges():
 
     ### test_04 data in-out generation
     print("test_mesh_edges.py : test_04 data is generated..")
+    # ['tri'] is a 2D numpy array of shape (2044, 3), dtype('uint16')
     key_dim = (2044, 3)
     finname = datadir("xstatedg_04_IN.pkl")
     key_name = "tri"
@@ -99,6 +103,7 @@ def generate_data_test_mesh_edges():
 
     ### test_05 data in-out generation
     print("test_mesh_edges.py : test_05 data loaded from thicknes_n10.pkl..")
+    # ['tri'] is a 2D numpy array of shape (40960, 3), from "thickness_n10.pkl"
     realdataf = datadir("thickness_n10.pkl")
     ifile = open(realdataf, "br")
     D = pickle.load(ifile)
@@ -110,6 +115,7 @@ def generate_data_test_mesh_edges():
 
     ### test_06 data in-out generation (real data shuffled)
     print("test_mesh_edges.py : test_06 data is generated")
+    # test 05 thickiness_n10 data is shuffled
     realdataf = datadir("thickness_n10.pkl")
     ifile = open(realdataf, "br")
     D = pickle.load(ifile)
