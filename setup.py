@@ -17,7 +17,7 @@ with open("README.rst", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="brainstat",
-    version="0.0.2",
+    version="0.0.3",
     author="MNI-MICA Lab and MPI-CNG Lab",
     author_email="reinder.vosdewael@gmail.com, sheymaba@gmail.com",
     description="A toolbox for statistical analysis of neuroimaging data",
@@ -49,6 +49,7 @@ setuptools.setup(
         "pandas",
         "scikit_learn",
         "scipy>=1.3.3",
+        "trimesh",
     ],
     project_urls={  # Optional
         "Documentation": "https://brainstat.readthedocs.io",
