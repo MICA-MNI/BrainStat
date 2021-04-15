@@ -1,4 +1,4 @@
-function [ Y, Ym ] = mesh_standardize(Y, mask, subtractordivide);
+function [Y, Ym] = mesh_standardize(Y, mask, subtractordivide)
 % MESH_STANDARDIZE    Standardizes by subtracting the global mean, or dividing by it.
 %   Y = MESH_STANDARDIZE=(Y) subtracts the global mean from Y.
 %
@@ -27,7 +27,3 @@ end
 
 return
 end
-    
-    
-    
-
