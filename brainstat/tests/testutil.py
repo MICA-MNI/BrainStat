@@ -14,11 +14,9 @@ def datadir(file):
 
 def generate_slm(**kwargs):
     """Generates a SLM with the given attributes
-
     Parameters
     ----------
     All attributes of SLM can be provided as keyword arguments.
-
     Returns
     -------
     brainstat.stats.SLM.SLM
@@ -32,12 +30,10 @@ def generate_slm(**kwargs):
 
 def copy_slm(slm):
     """Copies an SLM object.
-
     Parameters
     ----------
     slm : brainstat.stats.SLM.SLM
         SLM object.
-
     Returns
     -------
     brainstat.stats.SLM.SLM
@@ -51,7 +47,6 @@ def copy_slm(slm):
 
 def save_slm(slm, basename, testnum, input=True):
     """Saves an SLM object containing test data.
-
     Parameters
     ----------
     slm : brainstat.stats.SLM.SLM
@@ -62,7 +57,6 @@ def save_slm(slm, basename, testnum, input=True):
         Test number.
     input: boolean, optional
         If True, appends _IN to filename. If false appends _OUT.
-
     Returns
     -------
     brainstat.stats.SLM.SLM
@@ -83,12 +77,10 @@ def save_slm(slm, basename, testnum, input=True):
 
 def slm2dict(slm):
     """Converts an SLM to a dictionary.
-
     Parameters
     ----------
     slm : brainstat.stats.SLM.SLM
         SLM object.
-
     Returns
     -------
     dict
