@@ -336,8 +336,10 @@ conversions = {
     'py.str', @(x) char(x);
     'py.int', @(x) double(x);
     'py.numpy.uint8', @(x) double(x);
+    'py.numpy.uint16', @(x) double(x);
     'py.NoneType', @(x) [];
     'double', @(x)x;
+    'logical', @(x)x;
 };
 
 selection = ismember(conversions(:,1), class(pkl_data));
