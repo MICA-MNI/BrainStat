@@ -10,7 +10,7 @@ from sklearn.model_selection import ParameterGrid
 
 
 def generate_random_slm(surf, n_var=1, dfs=None, mask=None, cluster_threshold=0.001):
-    """Generates a valid SLM from a surface.
+    """Generates a valid SLM for a surface.
 
     Parameters
     ----------

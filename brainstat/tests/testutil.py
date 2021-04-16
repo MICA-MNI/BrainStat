@@ -1,4 +1,4 @@
-"""Utilities for tests and test data generation."""
+"""Utilities for running tests and test data generation."""
 import os
 from brainstat.stats.SLM import SLM
 from brainstat.stats.terms import Term
