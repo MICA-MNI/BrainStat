@@ -1,4 +1,10 @@
-"""Generates test data for random_field_theory"""
+"""Generates test data for random_field_theory.
+
+Tests 1-4 test for variance in the input data types.
+Tests 5-20 test input of the optional variables. 
+Test 21 tests for nonsense variables in the SLM.
+
+"""
 
 import numpy as np
 import pickle
