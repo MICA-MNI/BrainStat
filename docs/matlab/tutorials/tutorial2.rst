@@ -7,7 +7,7 @@ In this tutorial you'll learn how to use the context module. The context module
 allows for the contextualization of your statistics maps with genetics, meta-analytic
 and histological datasets. (Note: Currently only the genetics dataset is supported).
 Before starting this tutorial, please make sure that you have installed all dependencies
-for BrainStat MATLAB and linked them to MATLAB (see :ref:`install_page`). 
+for BrainStat MATLAB (see :ref:`install_page`). 
 
 
 Genetics
@@ -17,7 +17,7 @@ For genetics contextualization we use `abagen
 Human Brain Atlas <https://human.brain-map.org/>`_. First, make sure that your 
 Python BrainStat is installed and correctly linked to your MATLAB. If it's not
 then please consult the installation page before continuing with this tuturial.
-To check your Python environemnt run the following in MATLAB:
+To check your Python environment run the following in MATLAB:
 
 .. code-block:: MATLAB
 
@@ -28,10 +28,10 @@ To check your Python environemnt run the following in MATLAB:
 For our example data, we'll simply load data that came with the Python package
 "nilearn" that was installed together with brainstat. If the following code
 looks a tad complicated, don't worry about it. What's important is that you
-know that variables `pial_left` and `white_left` are paths to pial and white
-surfaces (e.g. derived from Freesurfer), `desitreux` contains parcellation
+know that variables :code:`pial_left` and :code:`white_left` are paths to pial and white
+surfaces (e.g. derived from Freesurfer), :code:`desitreux` contains parcellation
 labels for each vertex in a double array or a path to parcellation gifti/csv
-file, and `mni152_file` is the path to a volume in MNI152 space. We grab this
+file, and :code:`mni152_file` is the path to a volume in MNI152 space. We grab this
 data as follows:
 
 .. code-block:: MATLAB
@@ -55,23 +55,22 @@ With your example data loaded, we can now get the genetic expression of all
 desitreux regions. Please be aware that to compute this we'll have to download
 the Allen Human Brain Atlas dataset (approximately 4GB), and that the entire
 process may take up to half an hour. By default the dataset will be downloaded
-to your BrainStat directory, but you can modify this by altering the `data_dir`
+to your BrainStat directory, but you can modify this by altering the :code:`data_dir`
 name-value pair.
 
 .. code-block:: MATLAB
 
-    % Set the directory for downloading
     data_dir = '/path/to/data/directory';
     [expression, gene_names] = surface_genetic_expression(pial_left, ...
         white_left, desitreux, mni152_file, 'data_dir', data_dir);
 
-The variable `expression` now contains the expression values in a region-by-gene
-matrix variable `gene_names` contains the name of each gene. Note that if no data
+The variable :code:`expression` now contains the expression values in a region-by-gene
+matrix variable :code:`gene_names` contains the name of each gene. Note that if no data
 was available for a region, then this results in a NaN row. 
 
 In many cases, you may want to get the genetic expression for both hemispheres
 simultaneously. In that case simply provide both hemispheres in a cell array in
-variables `pial_left`, `white_left`, and `desitreux`. Make sure you provide them
+variables :code:`pial_left`, :code:`white_left`, and :code:`desitreux`. Make sure you provide them
 in the same order in all variables!
 
 This tutorial showcases the basic usage of the genetics module. For a more
