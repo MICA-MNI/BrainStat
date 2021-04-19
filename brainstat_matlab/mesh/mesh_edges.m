@@ -1,4 +1,4 @@
-function edg = mesh_edges(surf)
+function edg = mesh_edges(surf, mask)
 
 %Finds edges of a triangular mesh or a lattice.
 %
@@ -9,6 +9,10 @@ function edg = mesh_edges(surf)
 % surf.lat = 3D logical array, 1=in, 0=out.
 %
 % edg = e x 2 matrix of edge indices, 1-based, e=#edges.
+
+if ~exist('mask', 'var')
+    mask = [];
+end
 
 if isfield(surf,'tri')
     tri=sort(surf.tri,2);
@@ -73,5 +77,9 @@ elseif isfield(surf,'lat')
     edg=vid(edg(all(surf.lat(edg),2),:));
 else
     error('Unknown surface format.')
+end
+
+if ~isempty(mask)
+    edg = brainstat_utils.mask_edges(edg, mask);
 end
 end

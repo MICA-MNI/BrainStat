@@ -219,9 +219,9 @@ classdef SLM < matlab.mixin.Copyable
             end
 
             if ~isempty(obj.resl)
-                edges = mesh_edges(self.surf);
-                [~, idx] = mask_edges(edges, self.mask);
-                self.resl = brainstat_utils.undo_mask(self.resl, idx, 'axis', 0);
+                edges = mesh_edges(obj.surf);
+                [~, idx] = brainstat_utils.mask_edges(edges, obj.mask);
+                obj.resl = brainstat_utils.undo_mask(obj.resl, idx, 'axis', 1);
             end
         end
     end
