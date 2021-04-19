@@ -238,10 +238,10 @@ def _model_univariate_mixed_effects(self, Y):
         VmhX = Vmh @ self.X
         G = (la.pinv(VmhX.T @ VmhX) @ VmhX.T) @ Vmh
 
-        coef[:, iv] = G @ Y[:, iv]
+        coef[:, iv] = G @ residuals[:, iv]
         R = Vmh - VmhX @ G
         residuals[:, iv] = R @ residuals[:, iv]
-        SSE[iv] = (Y[:, iv] ** 2).sum(0)
+        SSE[iv] = (residuals[:, iv] ** 2).sum(0)
     SSE = SSE[None]
     return residuals, V, coef, SSE, r, dr[:, None]
 
@@ -392,7 +392,7 @@ def _compute_resls(self, Y):
     Parameters
     ----------
     Y : numpy.array
-        Response variable matrix.
+        Response variable residual matrix.
 
     Returns
     -------
