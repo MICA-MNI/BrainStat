@@ -33,8 +33,7 @@ def generate_random_mesh_edge_data(
         surf["lat"] = np.array(surf["lat"], dtype=key_dtype)
 
     with open(finname, "wb") as handle:
-        pickle.dump(surf, handle, protocol=pickle.HIGHEST_PROTOCOL)
-
+        pickle.dump(surf, handle, protocol=4)
     return surf
 
 
@@ -46,7 +45,7 @@ def get_meshedge_output(surf, foutname):
     surf_out["edg"] = mesh_edges(surf)
 
     with open(foutname, "wb") as handle:
-        pickle.dump(surf_out, handle, protocol=pickle.HIGHEST_PROTOCOL)  #
+        pickle.dump(surf_out, handle, protocol=4)  #
 
     return
 
@@ -126,6 +125,6 @@ def generate_data_test_mesh_edges():
     np.random.shuffle(surf["tri"])
     finname = datadir("xstatedg_06_IN.pkl")
     with open(finname, "wb") as handle:
-        pickle.dump(D, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        pickle.dump(D, handle, protocol=4)
     foutname = datadir("xstatedg_06_OUT.pkl")
     get_meshedge_output(surf, foutname)
