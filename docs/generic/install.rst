@@ -81,7 +81,7 @@ Python environment. ::
 To test whether you've installed BrainStat Python correctly, try running the
 following in MATLAB: ::
 
-    ~isa(py.importlib.util.find_spec('brainstat'),'py.NoneType')
+    context_utils.py_test_environment('brainstat', 'pyembree')
 
 This will return true if Python BrainStat was found.
 

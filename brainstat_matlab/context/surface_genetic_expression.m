@@ -1,14 +1,16 @@
-function expression = surface_genetic_expression(pial, white, labels, volume_template, varargin)
+function [val, names] = surface_genetic_expression(pial, white, labels, volume_template, varargin)
 % SURFACE_GENETIC_EXPRESSION   genetic expression of surface parcels
 %
-%   expression = surface_genetic_expression(pial, white, labels,
+%   [val, names] = surface_genetic_expression(pial, white, labels,
 %   volume_template, varargin) computes the genetic expression for parcels
 %   on the cortical surface. Pial and white are paths to pial/white surface
 %   files or cell arrays containing multiple of the aforementioned. Labels
-%   is the path to a parcellation file (gifti or csv) or a cell array
-%   containing multipe of the aforementioned. volume_tmeplate is the path
-%   to a NIFTI image to use as a template for the surface to volume
-%   interpolation. Returns a region-by-gene table of expression values.
+%   is the path to a parcellation file (gifti or csv), a cell array
+%   containing multipe of the aforementioned or  a double array containing
+%   the parcellation vector. volume_template is the path to a NIFTI image
+%   to use as a template for the surface to volume interpolation. Returns a
+%   region-by-gene array of expression values and the names of the genes
+%   associated with each column.
 %
 %   For the name-value pairs, please consult the abagen documentation
 %   corresponding to your installed version of abagen. 
@@ -33,13 +35,21 @@ if ~context_utils.py_test_environment('pyembree')
 end
 
 %% Deal with input
+if nargin < 4
+    error(['This function requires at least a pial surface, white surface, ', ...
+           'parcellation file, and volume template.']);
+end
+
 pial = context_utils.matstr2list(pial);
 white = context_utils.matstr2list(white);
 if ~isa(labels, 'py.numpy.ndarray')
-    labels = context_utils.matstr2list(labels);
+    if isa(labels, 'double')
+        labels = py.numpy.squeeze(py.numpy.array(int64(labels)));
+    else
+        labels = context_utils.matstr2list(labels, true);
+    end
 end
 
-p = inputParser();
 p.addParameter('atlas_info', py.None, @ischar)
 p.addParameter('ibf_threshold', 0.5, @isscalar)
 p.addParameter('probe_selection', 'diff_stability', @ischar);
@@ -75,4 +85,8 @@ py_expression = py.brainstat.context.genetics.surface_genetic_expression( ...
 
 % Convert Python output to MATLAB
 expression = context_utils.pandas2table(py_expression);
+
+% Convert table to double/cell because MATLAB tables are horrendously slow.
+val = expression.Variables;
+names = expression.Properties.VariableNames;
 end

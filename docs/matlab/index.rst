@@ -8,3 +8,4 @@ MATLAB Index
     :caption: Table of Contents:
 
     volume_viewer
+    tutorials/tutorial2
