@@ -88,7 +88,7 @@ def generate_random_fdr_data(
         D["SSE"] = SSE
 
     with open(finname, "wb") as handle:
-        pickle.dump(D, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        pickle.dump(D, handle, protocol=4)
 
     return D
 
@@ -107,7 +107,7 @@ def get_fdr_output(D, foutname):
     Q_out["Q"] = Q
 
     with open(foutname, "wb") as handle:
-        pickle.dump(Q_out, handle, protocol=pickle.HIGHEST_PROTOCOL)  #
+        pickle.dump(Q_out, handle, protocol=4)  #
 
     return
 
@@ -468,6 +468,5 @@ def generate_data_test_fdr():
     D["k"] = 1
     finname = datadir("xstatq_14_IN.pkl")
     with open(finname, "wb") as handle:
-        pickle.dump(D, handle, protocol=pickle.HIGHEST_PROTOCOL)
-    foutname = datadir("xstatq_14_OUT.pkl")
+        foutname = datadir("xstatq_14_OUT.pkl")
     get_fdr_output(D, foutname)
