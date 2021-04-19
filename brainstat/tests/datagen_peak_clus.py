@@ -1,3 +1,12 @@
+"""Generates test data for peak_clus.
+Tests 1-4 test input variance of slm (a dict)
+Tests 5-8 test input of slm (a dict), reselspvert and edg. 
+Tests 8-12 test input of slm (a dict), reselspvert and edg.
+Tests 13-16 test input variance of slm (BSPolydata).
+Tests 17-20 test input variance of slm (BSPolydata), reselspvert.
+Tests 21-24 test input variance of slm (BSPolydata), reslspvert and nonsense. 
+"""
+
 import numpy as np
 import pickle
 from sklearn.model_selection import ParameterGrid
@@ -145,8 +154,9 @@ for params in type_parameter_grid:
 
 for params in type_parameter_grid:
     slm, thresh, reselspvert, edg = generate_random_peak_clus(
-        rand_surf, reselspvert=True, edg=True
+        rand_surf, reselspvert=True
     )
+
     for key in list(params.keys()):
         attr = getattr(slm, key)
         setattr(slm, key, params[key](attr))
@@ -195,12 +205,11 @@ var_optional = {
     "k": [1, 3],
 }
 
-
 # Additional variable tests.
 additional_parameter_grid = ParameterGrid(var_optional)
 for params in additional_parameter_grid:
     slm, thresh, reselspvert, edg = generate_random_peak_clus(
-        pial_surf, reselspvert=True, edg=False
+        pial_surf, reselspvert=True
     )
     for key in list(params.keys()):
         setattr(slm, key, params[key])
