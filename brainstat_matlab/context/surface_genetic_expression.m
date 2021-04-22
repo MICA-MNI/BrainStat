@@ -50,6 +50,7 @@ if ~isa(labels, 'py.numpy.ndarray')
     end
 end
 
+p = inputParser();
 p.addParameter('atlas_info', py.None, @ischar)
 p.addParameter('ibf_threshold', 0.5, @isscalar)
 p.addParameter('probe_selection', 'diff_stability', @ischar);
