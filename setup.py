@@ -45,7 +45,6 @@ setuptools.setup(
         "nilearn>=0.7.0",
         "nimare",
         "numpy>=1.16.5",
-        "numpy_groupies",
         "pandas",
         "scikit_learn",
         "scipy>=1.3.3",
