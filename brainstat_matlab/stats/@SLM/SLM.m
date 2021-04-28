@@ -31,8 +31,7 @@ classdef SLM < matlab.mixin.Copyable
 %   cluster_threshold:
 %       P-value threshold or statistic threshold for defining clusters, Defaults
 %       to 0.001.
-%
-%   TODO: Decide which properties to show/hide and describe the visible properties.  
+
 
     properties
         model
@@ -53,6 +52,11 @@ classdef SLM < matlab.mixin.Copyable
         df
         SSE
         coef
+        P
+        Q
+    end
+    
+    properties(SetAccess=protected, Hidden=true)
         V
         k
         r
@@ -62,8 +66,6 @@ classdef SLM < matlab.mixin.Copyable
         ef
         sd
         dfs
-        P
-        Q
         du
     end
     
@@ -75,29 +77,27 @@ classdef SLM < matlab.mixin.Copyable
     methods
         %% Methods that are intended for user interaction. 
 
-        function obj = SLM(model, contrast, varargin)
+        function obj = SLM(model, contrast, options)
             % Constructor for the SLM class. 
-
-            % Deal with default inputs.
-            obj.model = model;
-            obj.contrast = contrast;
-            
-            % Parse optional arguments.
-            is_correction = @(x) all(ismember(x, {'rft', 'fdr'}));
-            p = inputParser();
-            p.addParameter('surf', struct()); %TODO: Add surface validator.
-            p.addParameter('mask', [], @isvector);
-            p.addParameter('correction', [], is_correction);
-            p.addParameter('niter', 1, @isscalar);
-            p.addParameter('thetalim', 0.01, @isscalar);
-            p.addParameter('drlim', 0.1, @isscalar);
-            p.addParameter('two_tailed', true, @islogical);
-            p.addParameter('cluster_threshold', 0.001, @isscalar)
-            p.parse(varargin{:});
-            for field = fieldnames(p.Results)'
-                obj.(field{1}) = p.Results.(field{1});
+            arguments
+                model
+                contrast
+                options.surf {brainstat_utils.validators.mustBeSurfStatSurface} = struct()
+                options.mask logical {mustBeVector} = []
+                options.correction string {mustBeValidCorrection} = []
+                options.niter double {mustBeInteger, mustBePositive, mustBeScalar} = 1
+                options.thetalim double {mustBePositive, mustBeScalar} = 0.01
+                options.drlim double {mustBePositive, mustBeScalar} = 0.1
+                options.two_tailed logical {mustBeScalar} = true
+                options.cluster_threshold double {mustBePositive, mustBeScalar} = 0.001
             end
-
+            
+            obj.model = model;
+            obj.contrast = contrast;    
+            for field = fieldnames(options)'
+                obj.(field{1}) = options.(field{1});
+            end
+           
             obj.reset_fit_parameters();
         end
 
@@ -157,11 +157,6 @@ classdef SLM < matlab.mixin.Copyable
             end       
         end
 
-        function set.mask(obj, value)
-            % Converts input mask to logical.
-            obj.mask = logical(value);
-        end
-        
         function set.tri(obj, value)
             obj.surf.tri = value;
         end
@@ -291,7 +286,7 @@ classdef SLM < matlab.mixin.Copyable
                     P.(key1) = struct();
                     for key2_loop = fieldnames(P1.(key1))'
                         key2 = key2_loop{1};
-                        if key2 == "P" and key1 == "pval"
+                        if key2 == "P" && key1 == "pval"
                             P.(key1).(key2) = brainstat_utils.one_tailed_to_two_tailed(P1.(key1).(key2));
                         else
                             P.(key1).(key2) = [P1.(key1).(key2), P2.(key1).(key2)];
@@ -306,8 +301,28 @@ classdef SLM < matlab.mixin.Copyable
             if isempty(Q1) && isempty(Q2)
                 Q = [];
             else
-                Q = brainstat_utils.one_tailed_to_two_tailed(Q1, Q2)
+                Q = brainstat_utils.one_tailed_to_two_tailed(Q1, Q2);
             end
         end
     end
+end
+
+%% Validator functions
+function mustBeValidCorrection(x)
+% Validator function for multiple comparisons corrections. 
+valid_corrections = {'rft', 'fdr'};
+if ~all(ismember(x, valid_corrections))
+    eid = 'BrainStat:notACorrection';
+    msg = ['Valid corrections are: ' strjoin(valid_corrections, ', ') '.'];
+    throwAsCaller(MException(eid, msg));
+end
+end
+
+function mustBeScalar(x)
+% Validator function for scalars.
+if numel(x) ~= 1
+    eid = 'BrainStat:notScalar';
+    msg = 'Value must be a scalar.';
+    throwAsCaller(MException(eid, msg));
+end
 end
