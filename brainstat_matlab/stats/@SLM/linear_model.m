@@ -70,8 +70,13 @@ function check_constant_term(X)
 %   CHECK_CONSTANT_TERM(X) tests whether a constant term exists in X.
 
 r = 1 - X * sum(pinv(X),2);
+
 if mean(r.^2)>eps
-    warning('Did you forget a constant term? :-)');
+    warning('Did you forget an error term, I? :-)');
+end
+if q>1 | ((q==1) & sum(abs(II-V))>0)
+    V=reshape(V,[n n q]);
+end
 end
 end
 
@@ -278,6 +283,7 @@ function resl = compute_resls(obj, residuals)
 % COMPUTE_RESLS    Computes the resls of the edges. resl = compute_resls(obj,
 % residuals) returns the resls derived from the SLM object, obj, and the
 % residuals.
+
 edg=mesh_edges(obj.surf, obj.mask);
 
 e1=edg(:,1);
