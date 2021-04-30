@@ -15,7 +15,7 @@ def generate_random_test_data(
     M_term=False,
     add_intercept=True,
 ):
-    """ Generate random test datasets. """
+    """Generate random test datasets."""
     # Y_dim : tuple
     # M_dim : tuple
     # finname : filename ending with *pkl
@@ -51,7 +51,7 @@ def generate_random_test_data(
 
 
 def get_linmod_output(Y, M, foutname, tri=None, lat=None):
-    """ Runs linmod and returns all relevant output. """
+    """Runs linmod and returns all relevant output."""
     slm = SLM(M, Term(1))
 
     if tri is not None:
