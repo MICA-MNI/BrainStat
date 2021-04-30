@@ -1,7 +1,10 @@
 name: Python Unit Tests
 
-on: 
+on:
   push:
+    branches:
+      - master
+  pull_request:
 
 jobs:
   build:
