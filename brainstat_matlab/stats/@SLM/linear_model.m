@@ -74,9 +74,6 @@ r = 1 - X * sum(pinv(X),2);
 if mean(r.^2)>eps
     warning('Did you forget an error term, I? :-)');
 end
-if q>1 | ((q==1) & sum(abs(II-V))>0)
-    V=reshape(V,[n n q]);
-end
 end
 
 function [residuals, coef, SSE, r, dr] = run_linear_model(obj, Y)
