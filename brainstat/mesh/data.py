@@ -116,7 +116,7 @@ def mesh_smooth(Y, surf, FWHM):
                     Yedg = Ys[edg[:, 0] - 1] + Ys[edg[:, 1] - 1]
                     agg_tmp1 = np.bincount(edg[:, 0], Yedg, (v + 1))[1:]
                     agg_tmp2 = np.bincount(edg[:, 1], Yedg, (v + 1))[1:]
-                    with np.errstate(invalid='ignore'):
+                    with np.errstate(invalid="ignore"):
                         Ys = (agg_tmp1 + agg_tmp2) / Y1
 
                 if np.ndim(Y) == 2:
