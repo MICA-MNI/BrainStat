@@ -41,35 +41,36 @@ def dummy_test(infile, expfile):
 
 
 def test_01():
-    # ['tri'] is a 2D numpy array of shape (78, 3), dtype('float64')
-    infile = datadir("statedg_01_IN.pkl")
-    expfile = datadir("statedg_01_OUT.pkl")
+    infile = datadir("xstatedg_01_IN.pkl")
+    expfile = datadir("xstatedg_01_OUT.pkl")
     dummy_test(infile, expfile)
 
 
 def test_02():
-    # ['lat'] is a 2D numpy array of shape (10, 10), dtype('float64')
-    infile = datadir("statedg_02_IN.pkl")
-    expfile = datadir("statedg_02_OUT.pkl")
+    infile = datadir("xstatedg_02_IN.pkl")
+    expfile = datadir("xstatedg_02_OUT.pkl")
     dummy_test(infile, expfile)
 
 
 def test_03():
-    # ['lat'] is a 3D numpy array of shape (10, 10, 10), dtype('int64')
-    infile = datadir("statedg_03_IN.pkl")
-    expfile = datadir("statedg_03_OUT.pkl")
+    infile = datadir("xstatedg_03_IN.pkl")
+    expfile = datadir("xstatedg_03_OUT.pkl")
     dummy_test(infile, expfile)
 
 
 def test_04():
-    # ['tri'] is a 2D numpy array of shape (40960, 3), dtype('int32')
-    infile = datadir("statedg_04_IN.pkl")
-    expfile = datadir("statedg_04_OUT.pkl")
+    infile = datadir("xstatedg_04_IN.pkl")
+    expfile = datadir("xstatedg_04_OUT.pkl")
+    dummy_test(infile, expfile)
+
+
+def test_05():
+    infile = datadir("thickness_n10.pkl")
+    expfile = datadir("xstatedg_05_OUT.pkl")
     dummy_test(infile, expfile)
 
 
 def test_06():
-    # ['tri'] is a 2D numpy array of shape (2044, 3), dtype('uint16')
-    infile = datadir("statedg_06_IN.pkl")
-    expfile = datadir("statedg_06_OUT.pkl")
+    infile = datadir("xstatedg_06_IN.pkl")
+    expfile = datadir("xstatedg_06_OUT.pkl")
     dummy_test(infile, expfile)

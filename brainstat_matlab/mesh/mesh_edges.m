@@ -12,6 +12,10 @@ if ~exist('mask', 'var')
     mask = [];
 end
 
+if ~exist('mask', 'var')
+    mask = [];
+end
+
 if isfield(surf,'tri')
     tri=sort(surf.tri,2);
     edg=unique([tri(:,[1 2]); tri(:,[1 3]); tri(:,[2 3])],'rows');
