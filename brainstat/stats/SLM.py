@@ -243,7 +243,7 @@ def _merge_fdr(Q1, Q2):
 
 
 def _onetailed_to_twotailed(p1, p2):
-    """ Converts two one-tailed tests to a two-tailed test """
+    """Converts two one-tailed tests to a two-tailed test"""
     return np.minimum(np.minimum(p1, p2) * 2, 1)
 
 
