@@ -78,7 +78,6 @@ if q>1 | ((q==1) & sum(abs(II-V))>0)
     V=reshape(V,[n n q]);
 end
 end
-end
 
 function [residuals, coef, SSE, r, dr] = run_linear_model(obj, Y)
 % RUN_LINEAR_MODEL   Wrapper for running fixed/mixed linear models. [residuals,
