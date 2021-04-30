@@ -82,8 +82,8 @@ classdef SLM < matlab.mixin.Copyable
             arguments
                 model
                 contrast
-                options.surf {brainstat_utils.validators.mustBeSurfStatSurface} = struct()
-                options.mask logical {mustBeVector} = []
+                options.surf {brainstat_utils.validators.mustBeBrainStatSurface} = struct()
+                options.mask logical {mustBeVector} = ones(size(contrast,1),1);
                 options.correction string {mustBeValidCorrection} = []
                 options.niter double {mustBeInteger, mustBePositive, mustBeScalar} = 1
                 options.thetalim double {mustBePositive, mustBeScalar} = 0.01
@@ -127,36 +127,6 @@ classdef SLM < matlab.mixin.Copyable
         end
 
         %% Special set/get functions.
-        function set.surf(obj, value)
-            % Converts input surface to SurfStat format
-
-            if ischar(value)
-                % Assume surface is a single file.
-                surf = read_surface(value);  %#ok<*PROPLC>
-                obj.surf = convert_surface(surf, 'format', 'SurfStat');
-            elseif isstring(value) || iscell(value)
-                % Assume surface is a set of files. 
-                surfaces = cellfun(@read_surface, value);
-                all_surfaces = surfaces{1};
-                for ii = 2:numel(surfs)
-                    all_surfaces = combine_surfaces(all_surfaces, surfaces{ii}, 'SurfStat');
-                end
-                obj.surf = all_surfaces;
-            elseif isempty(value)
-                % Empty input.
-                obj.surf = []; 
-            elseif isstruct(value)
-                % Assume input is empty or already a loaded surface.
-                if isempty(fieldnames(value)) || contains('lat', fieldnames(value))
-                    obj.surf = value; % Lattice format. 
-                else
-                    obj.surf = convert_surface(value, 'format', 'SurfStat');
-                end
-            else
-                error('Unknown surface format.');
-            end       
-        end
-
         function set.tri(obj, value)
             obj.surf.tri = value;
         end
