@@ -81,15 +81,15 @@ classdef SLM < matlab.mixin.Copyable
             % Constructor for the SLM class. 
             arguments
                 model
-                contrast
-                options.surf {brainstat_utils.validators.mustBeBrainStatSurface} = struct()
+                contrast {mustBeVector}
+                options.surf (1,1) {brainstat_utils.validators.mustBeBrainStatSurface} = struct()
                 options.mask logical {mustBeVector} = ones(size(contrast,1),1);
                 options.correction string {mustBeValidCorrection} = []
-                options.niter double {mustBeInteger, mustBePositive, mustBeScalar} = 1
-                options.thetalim double {mustBePositive, mustBeScalar} = 0.01
-                options.drlim double {mustBePositive, mustBeScalar} = 0.1
-                options.two_tailed logical {mustBeScalar} = true
-                options.cluster_threshold double {mustBePositive, mustBeScalar} = 0.001
+                options.niter (1,1) double {mustBeInteger, mustBePositive} = 1
+                options.thetalim (1,1) double {mustBePositive} = 0.01
+                options.drlim (1,1) double {mustBePositive} = 0.1
+                options.two_tailed (1,1) logical = true
+                options.cluster_threshold (1,1) double {mustBePositive} = 0.001
             end
             
             obj.model = model;
@@ -284,15 +284,6 @@ valid_corrections = {'rft', 'fdr'};
 if ~all(ismember(x, valid_corrections))
     eid = 'BrainStat:notACorrection';
     msg = ['Valid corrections are: ' strjoin(valid_corrections, ', ') '.'];
-    throwAsCaller(MException(eid, msg));
-end
-end
-
-function mustBeScalar(x)
-% Validator function for scalars.
-if numel(x) ~= 1
-    eid = 'BrainStat:notScalar';
-    msg = 'Value must be a scalar.';
     throwAsCaller(MException(eid, msg));
 end
 end
