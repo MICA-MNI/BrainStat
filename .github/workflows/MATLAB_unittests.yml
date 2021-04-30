@@ -1,7 +1,10 @@
 name: MATLAB Unit Tests
 
-on: 
+on:
   push:
+    branches:
+      - master
+  pull_request:
 
 jobs:
   matlab_unit_test:

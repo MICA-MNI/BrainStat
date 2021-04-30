@@ -11,7 +11,7 @@ def generate_random_mesh_edge_data(
     key_dtype="float",
     seed=0,
 ):
-    """ Generate random test datasets. """
+    """Generate random test datasets."""
     # key_dim : tuple, dimensions of array
     # finname : string, filename ending with *pkl
     # key_name : string, "tri" or "lat"
@@ -38,7 +38,7 @@ def generate_random_mesh_edge_data(
 
 
 def get_meshedge_output(surf, foutname):
-    """ Runs mesh_edges and returns all relevant output. """
+    """Runs mesh_edges and returns all relevant output."""
 
     # run mesh_edges
     surf_out = {}
