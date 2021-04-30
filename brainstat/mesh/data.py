@@ -1,7 +1,6 @@
 """Operations on data on a mesh."""
 
 import numpy as np
-from numpy_groupies import aggregate
 from .utils import mesh_edges
 import sys
 
@@ -91,8 +90,8 @@ def mesh_smooth(Y, surf, FWHM):
             isnum = True
 
     edg = mesh_edges(surf) + 1
-    agg_1 = aggregate(edg[:, 0], 2, size=(v + 1))
-    agg_2 = aggregate(edg[:, 1], 2, size=(v + 1))
+    agg_1 = np.bincount(edg[:, 0], minlength=(v + 1)) * 2
+    agg_2 = np.bincount(edg[:, 1], minlength=(v + 1)) * 2
     Y1 = (agg_1 + agg_2)[1:]
 
     if n > 1:
@@ -115,9 +114,10 @@ def mesh_smooth(Y, surf, FWHM):
 
                 for itera in range(1, niter + 1):
                     Yedg = Ys[edg[:, 0] - 1] + Ys[edg[:, 1] - 1]
-                    agg_tmp1 = aggregate(edg[:, 0], Yedg, size=(v + 1))[1:]
-                    agg_tmp2 = aggregate(edg[:, 1], Yedg, size=(v + 1))[1:]
-                    Ys = (agg_tmp1 + agg_tmp2) / Y1
+                    agg_tmp1 = np.bincount(edg[:, 0], Yedg, (v + 1))[1:]
+                    agg_tmp2 = np.bincount(edg[:, 1], Yedg, (v + 1))[1:]
+                    with np.errstate(invalid='ignore'):
+                        Ys = (agg_tmp1 + agg_tmp2) / Y1
 
                 if np.ndim(Y) == 2:
                     Y[i, :] = Ys
