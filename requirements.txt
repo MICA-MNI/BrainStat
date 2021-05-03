@@ -1,4 +1,4 @@
-abagen
+abagen>=0.1
 brainspace>=0.1.1
 neurosynth
 nibabel

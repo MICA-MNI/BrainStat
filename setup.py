@@ -38,7 +38,7 @@ setuptools.setup(
     python_requires=">=3.6",
     test_require=["pytest", "gitpython"],
     install_requires=[
-        "abagen",
+        "abagen>=0.1",
         "brainspace>=0.1.1",
         "neurosynth",
         "nibabel",
