@@ -17,14 +17,14 @@ function [image_data, demographic_data] = fetch_tutorial_data(options)
 %           false. 
 
 arguments 
-    options.n_subjects (1,1) {mustBeInteger, mustBeNonNegative} = 0
+    options.n_subjects (1,1) {mustBeInteger, mustBeNonnegative} = 0
     options.data_dir (1,1) string {mustBeFolder} = get_home_dir()
     options.overwrite (1,1) logical = false
 end
 options.data_dir = options.data_dir + filesep + 'brainstat_tutorial';
 
 demographic_file = download_demographic_data(options); 
-demographic_data = load_demographic_data(demographic_file, n_subjects);
+demographic_data = load_demographic_data(demographic_file, options.n_subjects);
 
 image_files = download_image_data(demographic_data, options);
 image_data = load_image_data(image_files); 
@@ -64,10 +64,14 @@ end
 
 function filenames = download_image_data(demographic_data, options)
 % Downloads image data. 
-[all_files_exist, filenames] = find_image_files(demographic_data);
-if ~all_files_exist
+[all_files_exist, filenames] = find_image_files(demographic_data, options);
+if ~all_files_exist || options.overwrite
     url = 'https://box.bic.mni.mcgill.ca/s/wMPF2vj7EoYWELV/download?path=%2F&files=brainstat_tutorial.zip';
-    filenames = unzip(url, options.data_dir);
+    filenames_all = unzip(url, options.data_dir);
+    
+    subjects = string(demographic_data.ID2(1:options.n_subjects));
+    filenames = sort(filenames_all(contains(filenames_all, subjects))); 
+    filenames = reshape(filenames, 2, []);
 end
 end
 
@@ -86,7 +90,11 @@ filenames = reshape(filenames, 2, []);
 expected_files = base_dir + ...
     sort(subject_ids' + ["_lh"; "_rh"] + "2fsaverage5_20.mgh");
 
-files_exist = all(filenames(:) == expected_files(:));
+if numel(filenames) == numel(expected_files)
+    files_exist = all(filenames(:) == expected_files(:));
+else
+    files_exist = false;
+end
 end
 
 function image_data = load_image_data(filenames)
