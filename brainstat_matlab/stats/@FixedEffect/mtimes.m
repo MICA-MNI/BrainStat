@@ -1,11 +1,11 @@
 function s=mtimes(t1,t2)
-if (~isa(t1,'term') && numel(t1)>1) | (~isa(t2,'term') && numel(t2)>1)
+if (~isa(t1,'FixedEffect') && numel(t1)>1) | (~isa(t2,'FixedEffect') && numel(t2)>1)
     warning('If you don''t convert vectors to terms you can get unexpected results :-(') 
 end
-t1=term(t1,inputname(1));
-t2=term(t2,inputname(2));
+t1=FixedEffect(t1,inputname(1));
+t2=FixedEffect(t2,inputname(2));
 if isempty(t1) | isempty(t2)
-    s=term;
+    s=FixedEffect();
     return
 end
 n1=size(t1.matrix,1);
@@ -41,8 +41,8 @@ m=x./repmat(sum(abs(x)),n,1);
 j=sort(k1*k2-j+1);
 jj=j(any(x(:,j)));
 
-s = term(x(:,jj),nms(jj));
+s = FixedEffect(x(:,jj),nms(jj));
 
 %s.names=nms(jj);
 %s.matrix=x(:,jj);
-%s=term(s);
+%s=FixedEffect(s);

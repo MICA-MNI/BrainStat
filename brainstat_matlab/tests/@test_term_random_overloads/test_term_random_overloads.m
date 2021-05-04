@@ -2,8 +2,8 @@ classdef test_term_random_overloads < matlab.unittest.TestCase
     methods (Test)
         function test_subsref(testCase)
             v1 = rand(100,2);
-            t1 = term(v1);
-            r1 = random(v1);
+            t1 = FixedEffect(v1);
+            r1 = RandomEffect(v1);
             
             testCase.verifyEqual(t1.matrix, v1);
             testCase.verifyEqual(t1.names, ["v11","v12"]);
@@ -17,8 +17,8 @@ classdef test_term_random_overloads < matlab.unittest.TestCase
         
         function test_size(testCase)
             v1 = rand(100,2);
-            t1 = term(v1);
-            r1 = random(v1);
+            t1 = FixedEffect(v1);
+            r1 = RandomEffect(v1);
             
             % Test size.
             testCase.verifyEqual(size(t1),size(v1));
@@ -28,11 +28,11 @@ classdef test_term_random_overloads < matlab.unittest.TestCase
         function test_math(testCase)
             v1 = rand(100,2);
             v2 = rand(100,2);
-            t1 = term(v1);
-            t2 = term([v1,v2]);
-            t3 = term(v2);
-            r1 = random(v1);
-            r3 = random(v2);
+            t1 = FixedEffect(v1);
+            t2 = FixedEffect([v1,v2]);
+            t3 = FixedEffect(v2);
+            r1 = RandomEffect(v1);
+            r3 = RandomEffect(v2);
             as_variance = @(x)reshape(x*x',[],1);
             
             % Test plus.

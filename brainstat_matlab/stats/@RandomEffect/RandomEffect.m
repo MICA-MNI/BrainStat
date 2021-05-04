@@ -1,7 +1,7 @@
-classdef (InferiorClasses = {?term}) random
+classdef (InferiorClasses = {?term}) RandomEffect
 %Makes a fixed and random effects term into a mixed effects model.
 %
-% Usage: model = random( ran [,fix [,strran [,strfix [,ranisvar]]] );
+% Usage: model = RandomEffect( ran [,fix [,strran [,strfix [,ranisvar]]] );
 %
 % Internally a random consists of two terms that describe linear models for
 % the mean and the variance. The variables for the variance term are
@@ -19,7 +19,7 @@ classdef (InferiorClasses = {?term}) random
 % strran = string for name of ran. If empty or absent, 'ran' is used. If
 %          ran is a scalar, then 'I' is used.
 % strfix = cell array of strings for names for the variables in fix. If
-%          empty or absent, chosen by term(fix).
+%          empty or absent, chosen by FixedEffect(fix).
 % ranisvar = 1 if ran is already a term for the variance.
 % If ran is a random, model=ran. With no arguments, model is empty.
 %
@@ -34,10 +34,10 @@ classdef (InferiorClasses = {?term}) random
 %
 % m = m1 * m2: m.mean = m1.mean * m2.mean,  and
 %              m.variance = m1.variance * m2.variance +
-%              m1.variance * sum_{i<=j} random( (m2.mean_i+m2.mean_j)/2 ) +
-%              m1.variance * sum_{i<j}  random( (m2.mean_i-m2.mean_j)/2 ) +
-%              sum_{i<=j} random( (m1.mean_i+m1.mean_j)/2 ) * m2.variance +
-%              sum_{i<j}  random( (m1.mean_i-m1.mean_j)/2 ) * m2.variance,
+%              m1.variance * sum_{i<=j} RandomEffect( (m2.mean_i+m2.mean_j)/2 ) +
+%              m1.variance * sum_{i<j}  RandomEffect( (m2.mean_i-m2.mean_j)/2 ) +
+%              sum_{i<=j} RandomEffect( (m1.mean_i+m1.mean_j)/2 ) * m2.variance +
+%              sum_{i<j}  RandomEffect( (m1.mean_i-m1.mean_j)/2 ) * m2.variance,
 %
 %              where _i indicates variable i. m_.mean_i is divided by its
 %              maximum absolute value so the variables have comparable
@@ -78,8 +78,8 @@ classdef (InferiorClasses = {?term}) random
 % However note that
 %    a + b - c =/= a + (b - c) =/= a - c + b
 % If t1,t2 are terms:
-%    random(t1 * t2)  =  random(t1) * random(t2), but
-%    random(t1 + t2) =/= random(t1) + random(t2), since the LHS is one term
+%    RandomEffect(t1 * t2)  =  RandomEffect(t1) * RandomEffect(t2), but
+%    RandomEffect(t1 + t2) =/= RandomEffect(t1) + RandomEffect(t2), since the LHS is one term
 %
 % The following functions are overloaded for random model:
 % char(model)    = [char(model.mean), char(model.variance)].
@@ -95,7 +95,7 @@ classdef (InferiorClasses = {?term}) random
     
     methods
         % Constructor. 
-        function obj = random(ran, fix, varargin)
+        function obj = RandomEffect(ran, fix, varargin)
             
             % Parse input
             p = inputParser;
@@ -111,7 +111,7 @@ classdef (InferiorClasses = {?term}) random
             % Deal with odd inputs.
             if nargin == 0
                 return
-            elseif isa(ran,'random')
+            elseif isa(ran,'RandomEffect')
                 obj = ran;
                 warning('First input argument is already a random term; returning first input argument.');
                 return
@@ -126,13 +126,13 @@ classdef (InferiorClasses = {?term}) random
             end
             
             % Set the mean and variance.
-            obj.mean = term(); % Initialize in case it isn't set. 
-            obj.variance = term(); % Initialize in case it isn't set.
+            obj.mean = FixedEffect(); % Initialize in case it isn't set. 
+            obj.variance = FixedEffect(); % Initialize in case it isn't set.
             if ~isempty(ran)
                 if R.ranisvar
                     % If the random term is already a variance term, simply set
                     % the variance. 
-                    obj.variance = term(ran,R.name_ran);
+                    obj.variance = FixedEffect(ran,R.name_ran);
                 else
                     if numel(ran) == 1
                         % If the random term is a scalar, set the name to
@@ -146,13 +146,13 @@ classdef (InferiorClasses = {?term}) random
                     
                     % Compute the variance and set it. 
                     v = double(ran)*double(ran)';
-                    obj.variance = term(v(:), R.name_ran);
+                    obj.variance = FixedEffect(v(:), R.name_ran);
                 end
             end
                 
             if ~isempty(fix)
                 % Set the fixed effect. 
-                obj.mean = term(fix,R.name_fix);
+                obj.mean = FixedEffect(fix,R.name_fix);
             end
         end
     end

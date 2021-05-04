@@ -14,7 +14,7 @@ end
 
 function [X, V] = get_design_matrix(obj, n_samples)
 
-if isa(obj.model, 'random')
+if isa(obj.model, 'RandomEffect')
     [X, V] = set_mixed_design(obj);
 else
     X = set_fixed_design(obj, n_samples);
@@ -38,7 +38,7 @@ end
 end
 
 function X = set_fixed_design(obj, n_samples)
-if isa(obj.model, 'term')
+if isa(obj.model, 'FixedEffect')
     X=double(obj.model);
 else
     if prod(size(obj.model))>1
@@ -227,7 +227,7 @@ end
 function n_random_effects = get_n_random_effects(obj)
 %Gets the number of random effects.
 
-if isa(obj.model, 'random')
+if isa(obj.model, 'RandomEffect')
     n_random_effects = size(obj.model.variance.matrix, 2);
 else
     n_random_effects = 1;

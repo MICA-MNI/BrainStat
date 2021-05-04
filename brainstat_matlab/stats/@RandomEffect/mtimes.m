@@ -1,23 +1,23 @@
 function s=mtimes(m1,m2)
 
-if (~isa(m1,'term') && ~isa(m1,'random') && numel(m1)>1) || ...
-   (~isa(m2,'term') && ~isa(m2,'random') && numel(m2)>1)
+if (~isa(m1,'FixedEffect') && ~isa(m1,'RandomEffect') && numel(m1)>1) || ...
+   (~isa(m2,'FixedEffect') && ~isa(m2,'RandomEffect') && numel(m2)>1)
     warning('If you don''t convert vectors to terms you can get unexpected results :-(') 
 end
-if ~isa(m1,'random')
-    m1=random([],m1,[],inputname(1));
+if ~isa(m1,'RandomEffect')
+    m1=RandomEffect([],m1,[],inputname(1));
 end
-if ~isa(m2,'random')
-    m2=random([],m2,[],inputname(2));
+if ~isa(m2,'RandomEffect')
+    m2=RandomEffect([],m2,[],inputname(2));
 end
 
 if size(m1,3)==1
     v=eye(max(size(m2,1),sqrt(size(m2,3))));   
-    m1.variance=term(v(:),'I');
+    m1.variance=FixedEffect(v(:),'I');
 end
 if size(m2,3)==1
     v=eye(max(size(m1,1),sqrt(size(m1,3))));
-    m2.variance=term(v(:),'I');
+    m2.variance=FixedEffect(v(:),'I');
 end
 
 mean=m1.mean*m2.mean;
@@ -33,12 +33,12 @@ if ~isempty(N)
         for j=1:i
             if i==j
                 v=X(:,i)*X(:,i)';
-                t=t+term(v(:),N{i});
+                t=t+FixedEffect(v(:),N{i});
             else
                 v=(X(:,i)+X(:,j))*(X(:,i)+X(:,j))'/4;
-                t=t+term(v(:),['(' N{j} '+' N{i} ')']);
+                t=t+FixedEffect(v(:),['(' N{j} '+' N{i} ')']);
                 v=(X(:,i)-X(:,j))*(X(:,i)-X(:,j))'/4;
-                t=t+term(v(:),['(' N{j} '-' N{i} ')']);
+                t=t+FixedEffect(v(:),['(' N{j} '-' N{i} ')']);
             end
         end
     end
@@ -55,19 +55,19 @@ if ~isempty(N)
         for j=1:i;
             if i==j
                 v=X(:,i)*X(:,i)';
-                t=t+term(v(:),N{i});
+                t=t+FixedEffect(v(:),N{i});
             else
                 v=(X(:,i)+X(:,j))*(X(:,i)+X(:,j))'/4;
-                t=t+term(v(:),['(' N{j} '+' N{i} ')']);
+                t=t+FixedEffect(v(:),['(' N{j} '+' N{i} ')']);
                 v=(X(:,i)-X(:,j))*(X(:,i)-X(:,j))'/4;
-                t=t+term(v(:),['(' N{j} '-' N{i} ')']);
+                t=t+FixedEffect(v(:),['(' N{j} '-' N{i} ')']);
             end
         end
     end
     variance = variance + m1.variance*t;
 end
 
-s = random(variance,mean,[],[],true);
+s = RandomEffect(variance,mean,[],[],true);
 
 return
 end
