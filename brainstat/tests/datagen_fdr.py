@@ -26,7 +26,7 @@ def generate_random_fdr_data(
     SSE_dim=None,
     seed=0,
 ):
-    """ Generate random test datasets. """
+    """Generate random test datasets."""
     # t_dim : tuple
     # df : int
     # k : int
@@ -94,7 +94,7 @@ def generate_random_fdr_data(
 
 
 def get_fdr_output(D, foutname):
-    """ Runs fdr and returns all relevant output. """
+    """Runs fdr and returns all relevant output."""
 
     slm = SLM(Term(1), Term(1))
     for key in D.keys():
