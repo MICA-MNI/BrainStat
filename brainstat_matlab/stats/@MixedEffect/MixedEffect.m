@@ -1,7 +1,7 @@
-classdef (InferiorClasses = {?term}) RandomEffect
+classdef (InferiorClasses = {?FixedEffect}) MixedEffect
 %Makes a fixed and random effects term into a mixed effects model.
 %
-% Usage: model = RandomEffect( ran [,fix [,strran [,strfix [,ranisvar]]] );
+% Usage: model = MixedEffect( ran [,fix [,strran [,strfix [,ranisvar]]] );
 %
 % Internally a random consists of two terms that describe linear models for
 % the mean and the variance. The variables for the variance term are
@@ -34,10 +34,10 @@ classdef (InferiorClasses = {?term}) RandomEffect
 %
 % m = m1 * m2: m.mean = m1.mean * m2.mean,  and
 %              m.variance = m1.variance * m2.variance +
-%              m1.variance * sum_{i<=j} RandomEffect( (m2.mean_i+m2.mean_j)/2 ) +
-%              m1.variance * sum_{i<j}  RandomEffect( (m2.mean_i-m2.mean_j)/2 ) +
-%              sum_{i<=j} RandomEffect( (m1.mean_i+m1.mean_j)/2 ) * m2.variance +
-%              sum_{i<j}  RandomEffect( (m1.mean_i-m1.mean_j)/2 ) * m2.variance,
+%              m1.variance * sum_{i<=j} MixedEffect( (m2.mean_i+m2.mean_j)/2 ) +
+%              m1.variance * sum_{i<j}  MixedEffect( (m2.mean_i-m2.mean_j)/2 ) +
+%              sum_{i<=j} MixedEffect( (m1.mean_i+m1.mean_j)/2 ) * m2.variance +
+%              sum_{i<j}  MixedEffect( (m1.mean_i-m1.mean_j)/2 ) * m2.variance,
 %
 %              where _i indicates variable i. m_.mean_i is divided by its
 %              maximum absolute value so the variables have comparable
@@ -78,8 +78,8 @@ classdef (InferiorClasses = {?term}) RandomEffect
 % However note that
 %    a + b - c =/= a + (b - c) =/= a - c + b
 % If t1,t2 are terms:
-%    RandomEffect(t1 * t2)  =  RandomEffect(t1) * RandomEffect(t2), but
-%    RandomEffect(t1 + t2) =/= RandomEffect(t1) + RandomEffect(t2), since the LHS is one term
+%    MixedEffect(t1 * t2)  =  MixedEffect(t1) * MixedEffect(t2), but
+%    MixedEffect(t1 + t2) =/= MixedEffect(t1) + MixedEffect(t2), since the LHS is one term
 %
 % The following functions are overloaded for random model:
 % char(model)    = [char(model.mean), char(model.variance)].
@@ -95,7 +95,7 @@ classdef (InferiorClasses = {?term}) RandomEffect
     
     methods
         % Constructor. 
-        function obj = RandomEffect(ran, fix, varargin)
+        function obj = MixedEffect(ran, fix, varargin)
             
             % Parse input
             p = inputParser;
@@ -111,7 +111,7 @@ classdef (InferiorClasses = {?term}) RandomEffect
             % Deal with odd inputs.
             if nargin == 0
                 return
-            elseif isa(ran,'RandomEffect')
+            elseif isa(ran,'MixedEffect')
                 obj = ran;
                 warning('First input argument is already a random term; returning first input argument.');
                 return

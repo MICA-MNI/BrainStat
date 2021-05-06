@@ -1,14 +1,14 @@
 function s=mtimes(m1,m2)
 
-if (~isa(m1,'FixedEffect') && ~isa(m1,'RandomEffect') && numel(m1)>1) || ...
-   (~isa(m2,'FixedEffect') && ~isa(m2,'RandomEffect') && numel(m2)>1)
+if (~isa(m1,'FixedEffect') && ~isa(m1,'MixedEffect') && numel(m1)>1) || ...
+   (~isa(m2,'FixedEffect') && ~isa(m2,'MixedEffect') && numel(m2)>1)
     warning('If you don''t convert vectors to terms you can get unexpected results :-(') 
 end
-if ~isa(m1,'RandomEffect')
-    m1=RandomEffect([],m1,[],inputname(1));
+if ~isa(m1,'MixedEffect')
+    m1=MixedEffect([],m1,[],inputname(1));
 end
-if ~isa(m2,'RandomEffect')
-    m2=RandomEffect([],m2,[],inputname(2));
+if ~isa(m2,'MixedEffect')
+    m2=MixedEffect([],m2,[],inputname(2));
 end
 
 if size(m1,3)==1
@@ -67,7 +67,7 @@ if ~isempty(N)
     variance = variance + m1.variance*t;
 end
 
-s = RandomEffect(variance,mean,[],[],true);
+s = MixedEffect(variance,mean,[],[],true);
 
 return
 end
