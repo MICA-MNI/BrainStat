@@ -1,16 +1,14 @@
-function [ Y, Ym ] = mesh_standardize( Y, mask, subtractordivide);
-
-%Standardizes by subtracting the global mean, or dividing by it.
+function [Y, Ym] = mesh_standardize(Y, mask, subtractordivide)
+% MESH_STANDARDIZE    Standardizes by subtracting the global mean, or dividing by it.
+%   Y = MESH_STANDARDIZE=(Y) subtracts the global mean from Y.
 %
-% Usage: [ Y, Ym ] = mesh_standardize( Y [,mask [,subtractordivide] ] );
+%   Y = MESH_STANDARDIZE(Y, mask) removes vertices outside the logical mask before
+%   computing the global mean.
+%  
+%   Y = MESH_STANDARDIZE(Y, mask, subdiv) if subdiv=='s', subtract the global
+%   mean. If it's 'd', divide by the global mean.
 %
-% Y                = n x v matrix of data, v=#vertices.
-% mask             = 1 x v, 1=inside, 0=outside, v=#vertices.
-%                  = ones(1,v) by default.
-% subtractordivide = 's' for Y=Y-Ym (default) or 'd' for Y=(Y/Ym-1)*100.
-%
-% Y  = n x v matrix of standardized data.
-% Ym = n x 1 vector of mean(Y in mask).
+%   [Y, Yav] = MESH_STANDARDIZE(Y, ...) also returns the global mean.
 
 if nargin<2 | isempty(mask)
     mask=logical(ones(1,size(Y,2)));
@@ -29,7 +27,3 @@ end
 
 return
 end
-    
-    
-    
-

@@ -1,8 +1,12 @@
 function linear_model(obj, Y)
+% LINEAR_MODEL    Fits linear models to surface data and estimates resels.
+%   LINEAR_MODEL(obj, Y) fits the linear model defined in the SLM object, obj,
+%   to the data matrix Y. Y is a sample-by-vertex-by-feature matrix. There are
+%   no outputs; object properties X, V, df, coef, SSE, r, dr, and resl are modified.
 
 n_samples = size(Y,1);
 [obj.X, obj.V] = get_design_matrix(obj, n_samples);
-check_error_term(obj.X);
+check_constant_term(obj.X);
 
 obj.df = n_samples - rank(obj.X);
 [residuals, obj.coef, obj.SSE, obj.r, obj.dr] = run_linear_model(obj, Y);
@@ -13,16 +17,23 @@ end
 end
 
 function [X, V] = get_design_matrix(obj, n_samples)
+% GET_DESIGN_MATRIX    Extracts a design matrix from an SLM object. 
+%   [X, V] = GET_DESIGN_MATRIX(obj, n_samples) extracts the design matrix X, and
+%   variance matrix V from an object. The number of samples in the data must be
+%   provided. 
 
 if isa(obj.model, 'random')
-    [X, V] = set_mixed_design(obj);
+    [X, V] = get_mixed_design(obj);
 else
-    X = set_fixed_design(obj, n_samples);
+    X = get_fixed_design(obj, n_samples);
     V = [];
 end
 end
 
-function [X, V] = set_mixed_design(obj)
+function [X, V] = get_mixed_design(obj)
+% GET_MIXED_DESIGN    Fetches the mixed design matrix from an SLM object. 
+%   [X, V] = GET_MIXED_DESIGN(obj) extracts the design matrix X, and variance
+%   matrix V from an object. 
 [X, V] = double(obj.model);
 [~, q] = size(V);
 n = size(X,1);
@@ -37,7 +48,10 @@ if q>1 | ((q==1) & sum(abs(II-V))>0)
 end
 end
 
-function X = set_fixed_design(obj, n_samples)
+function X = get_fixed_design(obj, n_samples)
+% GET_FIXED_DESIGN   Extracts a fixed design matrix from an SLM object. 
+%   X = GET_FIXED_DESIGN(obj, n_samples) extracts the design matrix X from an
+%   object. The number of samples in the data must be provided. 
 if isa(obj.model, 'term')
     X=double(obj.model);
 else
@@ -51,14 +65,23 @@ if size(X,1)==1
 end
 end
 
-function check_error_term(X)
+function check_constant_term(X)
+% CHECK_CONSTANT_TERM    Checks whether the design matrix includes a constant term. 
+%   CHECK_CONSTANT_TERM(X) tests whether a constant term exists in X.
+
 r = 1 - X * sum(pinv(X),2);
+
 if mean(r.^2)>eps
-    warning('Did you forget a constant term? :-)');
+    warning('Did you forget an error term, I? :-)');
 end
 end
 
 function [residuals, coef, SSE, r, dr] = run_linear_model(obj, Y)
+% RUN_LINEAR_MODEL   Wrapper for running fixed/mixed linear models. [residuals,
+%   coef, SSE, r, dr] = run_linear_model(obj, Y) runs the linear model specified
+%   in the SLM object, obj, on data matrix Y. Returns the residuals,
+%   coefficients, sum of squared errors, r, and dr.
+
 n_random_effects = get_n_random_effects(obj);
 r = [];
 dr = [];
@@ -77,6 +100,11 @@ end
 end
 
 function [residuals, coef, SSE] = model_univariate_fixed_effects(obj, Y)
+% MODEL_UNIVARIATE_FIXED_EFFECTS    Runs a univariate fixed effects model.
+%   [residuals, coef, SSE] = model_univariate_fixed_effects(obj, Y) runs a 
+%   linear fixed effects model specified in SLM object, obj, on data matrix Y. 
+%   Returns the residuals, coefficients, and sum of squared errors. 
+
 if isempty(obj.V)
     coef=pinv(obj.X)*Y;
     residuals=Y-obj.X*coef;
@@ -91,6 +119,11 @@ SSE=sum(residuals.^2);
 end
 
 function [residuals, coef, SSE, r, dr] = model_univariate_mixed_effects(obj, Y)
+% MODEL_UNIVARIATE_MIXED_EFFECTS    Runs a univariate mixed effects model.
+%   [residuals, coef, SSE, r, dr] = model_univariate_mixed_effects(obj, Y) runs a 
+%   linear mixed effects model specified in SLM object, obj, on data matrix Y. 
+%   Returns the residuals, coefficients, and sum of squared errors, r, and dr.
+
 n_samples = size(Y,1);
 n_vertices = size(Y,2);
 n_predictors = size(obj.X,2);
@@ -191,6 +224,12 @@ end
 end
 
 function [residuals, coef, SSE] = model_multivariate_fixed_effects(obj, Y)
+% MODEL_MULTIVARIATE_FIXED_EFFECTS    Runs a multivariate fixed effects model.
+%   [residuals, coef, SSE] = model_multivariate_fixed_effects(obj, Y) runs a
+%   linear multivariate fixed effects model specified in SLM object, obj, on
+%   data matrix Y. Returns the residuals, coefficients, and sum of squared
+%   errors. 
+
 if get_n_random_effects(obj)>1
     error('Multivariate mixed effects models not yet implemented :-(');
 end
@@ -225,7 +264,9 @@ end
 end
 
 function n_random_effects = get_n_random_effects(obj)
-%Gets the number of random effects.
+% GET_N_RANDOM_EFFECTS    Get the #columns of the variance matrix. 
+%   n_random_effects = get_n_random_effects(obj) fetches the number of columns
+%   of the variance matrix.
 
 if isa(obj.model, 'random')
     n_random_effects = size(obj.model.variance.matrix, 2);
@@ -235,6 +276,10 @@ end
 end
 
 function resl = compute_resls(obj, residuals)
+% COMPUTE_RESLS    Computes the resls of the edges. resl = compute_resls(obj,
+% residuals) returns the resls derived from the SLM object, obj, and the
+% residuals.
+
 edg=mesh_edges(obj.surf, obj.mask);
 
 e1=edg(:,1);

@@ -1,8 +1,13 @@
 function Y2 = undo_mask(Y, mask, varargin)
-% Restores the original dimensions of masked data, adding the missing
-% value to all missing data.
+% UNDO_MASK     Restores masked data to its original dimensions. Y2 =
+%   UNDO_MASK(Y, mask) restores masked data Y to its original dimension by
+%   adding rows. Data that was masked out is filled with nans.
+%   
+%   Y2 = UNDO_MASK(Y, mask, 'axis', dim) acts along the specified dimension.
+%   Defaults to 1. 
 %
-% Comments to be added.
+%   Y2 = UNDO_MASK(Y, mask, 'missing_value', val) fills missing values with 
+%   the specified values. Defaults to nan.
 
 p = inputParser;
 p.addParameter('axis', 1, @isscalar);

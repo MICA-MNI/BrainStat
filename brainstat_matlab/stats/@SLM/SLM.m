@@ -1,4 +1,37 @@
 classdef SLM < matlab.mixin.Copyable
+% SLM    The core object of the BrainStat statistics module 
+%   obj = SLM(model, contrast, varargin) constructs an SLM objects with the a
+%   linear model specified by term/random object model, a numeric contrast, and
+%   other name-value pairs (see below).
+%
+%   Once constructed, the model can be fitted to a dataset using obj.fit(Y), where 
+%   Y is a sample-by-feature-by-variate matrix. 
+%   
+%   Valid name-value pairs:
+%   surf: 
+%       A char array containing a path to a surface, a cell/string array of the
+%       aforementioned, or a loaded surface in SurfStat format. Defaults to 
+%       struct(). 
+%   mask:  
+%       A logical vector containing true for vertices that should be kept 
+%       during the analysis. Defaults to [].
+%   correction:
+%       A cell array containing 'rft', 'fdr', or both. If 'rft' is included, then
+%       a random field theory correction will be run. If 'fdr' is included, then a 
+%       false discovery rate correction will be run. Defaults to [].
+%   niter:
+%       Number of iterations of the fisher scoring algorithm. Defaults to 1.
+%   thetalim:
+%       Lower limit on variance coefficients, in sd's. Defaults 0.01
+%   drlim:
+%       Step of ratio of variance coefficients, in sd's. Defaults 0.1. 
+%   two_tailed:
+%       Whether to run one-tailed or two-tailed significance tests. Defaults to
+%       true. Note that multivariate models only support two-tailed tests.
+%   cluster_threshold:
+%       P-value threshold or statistic threshold for defining clusters, Defaults
+%       to 0.001.
+
 
     properties
         model
@@ -19,6 +52,11 @@ classdef SLM < matlab.mixin.Copyable
         df
         SSE
         coef
+        P
+        Q
+    end
+    
+    properties(SetAccess=protected, Hidden=true)
         V
         k
         r
@@ -28,8 +66,6 @@ classdef SLM < matlab.mixin.Copyable
         ef
         sd
         dfs
-        P
-        Q
         du
     end
     
@@ -41,36 +77,34 @@ classdef SLM < matlab.mixin.Copyable
     methods
         %% Methods that are intended for user interaction. 
 
-        function obj = SLM(model, contrast, varargin)
+        function obj = SLM(model, contrast, options)
             % Constructor for the SLM class. 
-
-            % Deal with default inputs.
-            obj.model = model;
-            obj.contrast = contrast;
-            
-            % Parse optional arguments.
-            is_correction = @(x) all(ismember(x,{'rft','fdr'}));
-            p = inputParser();
-            p.addParameter('surf', struct()); %TODO: Add surface validator.
-            p.addParameter('mask', [], @isvector);
-            p.addParameter('correction', [], is_correction);
-            p.addParameter('niter', 1, @isscalar);
-            p.addParameter('thetalim', 0.01, @isscalar);
-            p.addParameter('drlim', 0.1, @isscalar);
-            p.addParameter('two_tailed', true, @islogical);
-            p.addParameter('cluster_threshold', 0.001, @isscalar)
-            p.parse(varargin{:});
-            for field = fieldnames(p.Results)'
-                obj.(field{1}) = p.Results.(field{1});
+            arguments
+                model
+                contrast {mustBeVector}
+                options.surf (1,1) {brainstat_utils.validators.mustBeBrainStatSurface} = struct()
+                options.mask logical {mustBeVector} = ones(size(contrast,1),1);
+                options.correction string {mustBeValidCorrection} = []
+                options.niter (1,1) double {mustBeInteger, mustBePositive} = 1
+                options.thetalim (1,1) double {mustBePositive} = 0.01
+                options.drlim (1,1) double {mustBePositive} = 0.1
+                options.two_tailed (1,1) logical = true
+                options.cluster_threshold (1,1) double {mustBePositive} = 0.001
             end
-
+            
+            obj.model = model;
+            obj.contrast = contrast;    
+            for field = fieldnames(options)'
+                obj.(field{1}) = options.(field{1});
+            end
+           
             obj.reset_fit_parameters();
         end
 
         function fit(obj, Y)
-            % Runs the statistics pipeline using the model parameters set in the constructor. 
-            %
-            % Y is a (observation, region, variate) matrix. 
+            % FIT    Runs the statistics pipeline. 
+            % fit(obj, Y) runs the model defined in the object. Y is a
+            % (observation, region, variate) data matrix. 
 
             if ndims(Y) > 2 %#ok<ISMAT>
                 if ~obj.two_tailed && size(Y,3) > 1
@@ -93,41 +127,6 @@ classdef SLM < matlab.mixin.Copyable
         end
 
         %% Special set/get functions.
-        function set.surf(obj, value)
-            % Converts input surface to SurfStat format
-
-            if ischar(value)
-                % Assume surface is a single file.
-                surf = read_surface(value);  %#ok<*PROPLC>
-                obj.surf = convert_surface(surf, 'format', 'SurfStat');
-            elseif isstring(value) || iscell(value)
-                % Assume surface is a set of files. 
-                surfaces = cellfun(@read_surface, value);
-                all_surfaces = surfaces{1};
-                for ii = 2:numel(surfs)
-                    all_surfaces = combine_surfaces(all_surfaces, surfaces{ii}, 'SurfStat');
-                end
-                obj.surf = all_surfaces;
-            elseif isempty(value)
-                % Empty input.
-                obj.surf = []; 
-            elseif isstruct(value)
-                % Assume input is empty or already a loaded surface.
-                if isempty(fieldnames(value)) || contains('lat', fieldnames(value))
-                    obj.surf = value; % Lattice format. 
-                else
-                    obj.surf = convert_surface(value, 'format', 'SurfStat');
-                end
-            else
-                error('Unknown surface format.');
-            end       
-        end
-
-        function set.mask(obj, value)
-            % Converts input mask to logical.
-            obj.mask = logical(value);
-        end
-        
         function set.tri(obj, value)
             obj.surf.tri = value;
         end
@@ -277,4 +276,15 @@ classdef SLM < matlab.mixin.Copyable
             end
         end
     end
+end
+
+%% Validator functions
+function mustBeValidCorrection(x)
+% Validator function for multiple comparisons corrections. 
+valid_corrections = {'rft', 'fdr'};
+if ~all(ismember(x, valid_corrections))
+    eid = 'BrainStat:notACorrection';
+    msg = ['Valid corrections are: ' strjoin(valid_corrections, ', ') '.'];
+    throwAsCaller(MException(eid, msg));
+end
 end
