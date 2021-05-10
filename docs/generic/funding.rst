@@ -14,8 +14,9 @@ Our research is kindly supported by:
 * SickKids Foundation 
 * Helmholtz Foundation
 
-We also like to thank these funders for training/salary support
+We would also like to thank these funders for training/salary support
 
-* Savoy Foundation for Epilepsy (to RvdW) 
+* Savoy Foundation for Epilepsy (to RV) 
+* Richard and Ann Sievers Award (to RV)
 * Healthy Brain and Healthy Lives (to OB) 
 * Fonds de la Recherche du Quebec - Sante (to BB) 
