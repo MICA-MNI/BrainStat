@@ -39,11 +39,11 @@ pial_left = read_surface_gz(fetch_surf_fsaverage()["pial_left"])
 # variable name for each column. Lastly, we can create the model by simply
 # adding the terms together.
 
-from brainstat.stats.terms import Term
+from brainstat.stats.terms import FixedEffect
 
-term_intercept = Term(1, names="intercept")
-term_age = Term(age, "age")
-term_iq = Term(iq, "iq")
+term_intercept = FixedEffect(1, names="intercept")
+term_age = FixedEffect(age, "age")
+term_iq = FixedEffect(iq, "iq")
 model = term_intercept + term_age + term_iq
 
 ###################################################################
@@ -75,13 +75,13 @@ slm_two_tails.fit(thickness)
 ###################################################################
 # Now, imagine that instead of using a fixed effects model, you would prefer a
 # mixed effects model wherein handedness is a random variable. This is simple to
-# set up. All you need to do is initialize the handedness term with the Random
+# set up. All you need to do is initialize the handedness term with the MixedEffect
 # class instead, all other code remains identical.
 
-from brainstat.stats.terms import Random
+from brainstat.stats.terms import MixedEffect
 
-random_handedness = Random(tutorial_data["demographics"]["HAND"], name_ran="Handedness")
-random_identity = Random(1, name_ran="identity")
+random_handedness = MixedEffect(tutorial_data["demographics"]["HAND"], name_ran="Handedness")
+random_identity = MixedEffect(1, name_ran="identity")
 model_random = (
     term_intercept
     + term_age
