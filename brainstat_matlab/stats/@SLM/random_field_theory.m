@@ -39,6 +39,13 @@ function [ pval, peak, clus, clusid ] = random_field_theory(obj)
 % & Evans, A.C. (1999). Detecting changes in nonisotropic images.
 % Human Brain Mapping, 8:98-101.
 
+% RV - initialize output.
+pval = struct('P', [], 'C', [], 'mask', []);
+peak = struct('t', [], 'vertid', [], 'clusid', [], 'P', []);
+clus = struct('clusid', [], 'nverts', [], 'resels', [], 'P', []);
+clusid = [];
+
+
 [l,v]=size(obj.t);
 if isempty(obj.mask)
     obj.mask=logical(ones(1,v));
@@ -55,9 +62,9 @@ end
 if v==1
     pval.P=stat_threshold(0,1,0,df,[10 obj.t(1)],[],[],[],obj.k,[],[],0);
     pval.P=pval.P(2);
-    peak=[];
-    clus=[];
-    clusid=[];
+%     peak=[];
+%     clus=[];
+%     clusid=[];
     return
 end
 
@@ -74,9 +81,9 @@ if max(obj.t(1,obj.mask))<thresh
 
     pval.P=stat_threshold(resels,N,1,df,[10 obj.t],[],[],[],obj.k,[],[],0);
     pval.P=pval.P((1:v)+1);
-    peak=[];
-    clus=[];
-    clusid=[];
+%     peak=[];
+%     clus=[];
+%     clusid=[];
 else
     [peak,clus,clusid]=obj.peak_clus(thresh,reselspvert,edg);
     [pp,clpval]=stat_threshold(resels,N,1,df,...
