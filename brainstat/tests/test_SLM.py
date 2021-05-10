@@ -60,7 +60,8 @@ def create_parameter_grid(samples, predictors):
         All pairings of parameters to be run through the SLM class.
     """
     model = [
-        FixedEffect(1) + FixedEffect(np.random.rand(samples, predictors), names=["y1", "y2", "y3"])
+        FixedEffect(1)
+        + FixedEffect(np.random.rand(samples, predictors), names=["y1", "y2", "y3"])
     ]
 
     Y_idx = [1, 2, 3]

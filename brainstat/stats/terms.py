@@ -1,9 +1,8 @@
 """Classes for fixed, mixed, and random effects."""
-
 import re
-
 import numpy as np
 import pandas as pd
+import warnings
 
 
 def check_names(x):
@@ -497,7 +496,9 @@ class MixedEffect:
         for i in range(x.shape[0]):
             for j in range(i + 1):
                 if i == j:
-                    t = t + FixedEffect(np.outer(x[i], x[j]).ravel(), names=r.mean.names[i])
+                    t = t + FixedEffect(
+                        np.outer(x[i], x[j]).ravel(), names=r.mean.names[i]
+                    )
                 else:
                     xs = x[i] + x[j]
                     xs_name = "({}+{})".format(*[r.mean.names[k] for k in [i, j]])
@@ -537,3 +538,19 @@ class MixedEffect:
             + "\n\nVariance:\n"
             + self.variance._repr_html_()
         )
+
+
+def Term(x=None, names=None):
+    warnings.warn(
+        "The Term class is deprecated and will be removed in a future version. Please use FixedEffect instead.", DeprecationWarning
+    )
+    return FixedEffect(x=x, names=names)
+
+
+def Random(ran=None, fix=None, name_ran=None, name_fix=None, ranisvar=False):
+    warnings.warn(
+        "The Random class is deprecated and will be removed in a future version. Please use MixedEffect instead.", DeprecationWarning
+    )
+    return MixedEffect(
+        ran=ran, fix=fix, name_ran=name_ran, name_fix=name_fix, ranisvar=ranisvar
+    )
