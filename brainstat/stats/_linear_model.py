@@ -2,7 +2,7 @@ import warnings
 import numpy as np
 import numpy.linalg as la
 from brainstat.mesh.utils import mesh_edges
-from brainstat.stats.terms import Term, Random
+from brainstat.stats.terms import FixedEffect, MixedEffect
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 from brainspace.mesh.mesh_elements import get_cells
 
@@ -14,12 +14,12 @@ def linear_model(self, Y):
     ----------
     self : brainstat.stats.SLM.SLM
         Initialized SLM object.
-    Y : numpy array, brainstat.stats.terms.Term
+    Y : numpy array, brainstat.stats.terms.FixedEffect
         Input data of shape (samples, vertices, features).
 
     """
 
-    if isinstance(Y, Term):
+    if isinstance(Y, FixedEffect):
         Y = Y.m.to_numpy()
     Y = np.atleast_3d(Y)
 
@@ -308,7 +308,7 @@ def _get_design_matrix(self, n_samples):
         Variance matrix bases. Returns None for fixed effects models.
 
     """
-    if isinstance(self.model, Random):
+    if isinstance(self.model, MixedEffect):
         X, V = _get_mixed_design(self)
     else:
         X = _get_fixed_design(self, n_samples)
@@ -368,7 +368,7 @@ def _get_fixed_design(self, n_samples):
     numpy.array
         Design matrix
     """
-    if isinstance(self.model, Term):
+    if isinstance(self.model, FixedEffect):
         X = self.model.matrix.values
     else:
         if self.model.size > 1:
@@ -446,7 +446,7 @@ def _get_n_random_effects(self):
     int
         Number of random effects.
     """
-    if isinstance(self.model, Random):
+    if isinstance(self.model, MixedEffect):
         n_random_effects = self.model.variance.matrix.values.shape[1]
     else:
         n_random_effects = 1

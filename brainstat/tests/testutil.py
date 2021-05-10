@@ -1,7 +1,7 @@
 """Utilities for running tests and test data generation."""
 import os
 from brainstat.stats.SLM import SLM
-from brainstat.stats.terms import Term
+from brainstat.stats.terms import FixedEffect
 import pickle
 
 
@@ -22,7 +22,7 @@ def generate_slm(**kwargs):
     brainstat.stats.SLM.SLM
         SLM object.
     """
-    slm = SLM(Term(1), 1)
+    slm = SLM(FixedEffect(1), 1)
     for key, value in kwargs.items():
         setattr(slm, key, value)
     return slm
@@ -39,7 +39,7 @@ def copy_slm(slm):
     brainstat.stats.SLM.SLM
         SLM object.
     """
-    slm_out = SLM(Term(1), 1)
+    slm_out = SLM(FixedEffect(1), 1)
     for key in slm.__dict__:
         setattr(slm_out, key, getattr(slm, key))
     return slm_out

@@ -2,7 +2,7 @@ import numpy as np
 import pickle
 from .testutil import datadir
 from brainstat.stats.SLM import SLM
-from brainstat.stats.terms import Term
+from brainstat.stats.terms import FixedEffect
 
 
 def generate_random_test_data(
@@ -25,7 +25,7 @@ def generate_random_test_data(
     if add_intercept:
         M = np.concatenate((np.ones((M_dim[0], 1)), M), axis=1)
     if M_term:
-        M = Term(M)
+        M = FixedEffect(M)
 
     D = {}
     D["Y"] = Y
@@ -52,7 +52,7 @@ def generate_random_test_data(
 
 def get_linmod_output(Y, M, foutname, tri=None, lat=None):
     """Runs linmod and returns all relevant output."""
-    slm = SLM(M, Term(1))
+    slm = SLM(M, FixedEffect(1))
 
     if tri is not None:
         slm.surf = {"tri": tri}

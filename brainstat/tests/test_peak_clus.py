@@ -3,7 +3,7 @@ import pickle
 from .testutil import datadir
 from brainstat.stats._multiple_comparisons import peak_clus
 from brainstat.stats.SLM import SLM
-from brainstat.stats.terms import Term
+from brainstat.stats.terms import FixedEffect
 
 
 def dummy_test(infile, expfile):
@@ -13,7 +13,7 @@ def dummy_test(infile, expfile):
     idic = pickle.load(ifile)
     ifile.close()
 
-    slm = SLM(Term(1), Term(1))
+    slm = SLM(FixedEffect(1), FixedEffect(1))
     slm.t = idic["t"]
     slm.tri = idic["tri"]
     slm.mask = idic["mask"]

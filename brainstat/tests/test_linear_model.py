@@ -1,6 +1,6 @@
 import numpy as np
 from .testutil import datadir
-from brainstat.stats.terms import Term
+from brainstat.stats.terms import FixedEffect
 from brainstat.stats.SLM import SLM
 import pickle
 
@@ -15,7 +15,7 @@ def dummy_test(infile, expfile, simple=True):
     M = Din["M"]
 
     # assign slm params
-    slm = SLM(M, Term(1))
+    slm = SLM(M, FixedEffect(1))
 
     if "tri" in Din:
         slm.surf = {"tri": Din["tri"]}
