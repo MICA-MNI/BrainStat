@@ -19,9 +19,9 @@ Next, we can create the model by simply adding the terms together.
 
 .. code-block:: matlab
 
-   intercept = term(1); 
-   term_age = term(demographic_data.AGE); 
-   term_iq = term(demographic_data.IQ); 
+   intercept = FixedEffect(1); 
+   term_age = FixedEffect(demographic_data.AGE); 
+   term_iq = FixedEffect(demographic_data.IQ); 
    model = intercept + term_age + term_iq;
 
    % Note that + 1 can be used as a shorthand for the intercept.
@@ -68,8 +68,8 @@ class instead, all other code remains identical.
 
 .. code-block:: matlab
 
-   random_handedness = random(demographic_data.HAND == "L");
-   random_identity = random(1); % Note: "I" can be used as a shorthand. 
+   random_handedness = MixedEffect(demographic_data.HAND == "L");
+   random_identity = MixedEffect(1); % Note: "I" can be used as a shorthand. 
    model_random = 1 + term_age + term_iq + term_age * term_iq ...
       + random_handedness + random_identity;
    
