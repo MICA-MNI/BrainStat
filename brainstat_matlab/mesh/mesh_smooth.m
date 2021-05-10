@@ -1,18 +1,10 @@
 function Y = mesh_smooth( Y, surf, FWHM );
-
-%Smooths surface data by repeatedly averaging over edges.
-%
-% Usage: Y = mesh_smooth( Y, sv, FWHM );
-% 
-% Y        = n x v or n x v x k matrix of surface data, v=#vertices;
-%            n=#observations; k=#variates, or memory map of same.
-% surf.tri = t x 3 matrix of triangle indices, 1-based, t=#triangles.
-% or
-% surf.lat = nx x ny x nz matrix, 1=in, 0=out, [nx,ny,nz]=size(volume). 
-% FWHM     = approximate FWHM of Gaussian smoothing filter, in mesh units.
-%
-% Note that if the data is memory mapped, then the data is overwriten by
-% the smoothed data.
+% MESH_SMOOTH    Smooths surface data by repeatedly averaging over edges. Y =
+%   Y = MESH_SMOOTH=(Y, surf, FWHM) smooths data Y on surface surf using the
+%   approximate FWHM of Gaussian smoothing filter. Y is a
+%   sample-by-vertex-by-variate matrix; surf is a surface in SurfStat format
+%   i.e. a struct containing a 'tri' field for triangle indices or a 'lat' field
+%   for lattices; FWHM is a scalar expressed in mesh units. 
 
 niter=ceil(FWHM^2/(2*log(2)));
 
