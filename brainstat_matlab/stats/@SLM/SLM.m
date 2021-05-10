@@ -106,21 +106,21 @@ classdef SLM < matlab.mixin.Copyable
             % fit(obj, Y) runs the model defined in the object. Y is a
             % (observation, region, variate) data matrix. 
 
-            if ndims(Y) > 2
+            if ndims(Y) > 2 %#ok<ISMAT>
                 if ~obj.two_tailed && size(Y,3) > 1
                     error('One-tailed tests are not implemented for multivariate data.');
                 end
             end
 
             obj.reset_fit_parameters();
-            if ~isempty(obj.mask)
-                Y = brainstat_utils.apply_mask(Y, obj.mask, 2);
+            if isempty(obj.mask)
+                obj.mask = ~all(Y==0);
             end
+            Y = brainstat_utils.apply_mask(Y, obj.mask, 2);
+            
             obj.linear_model(Y);
             obj.t_test();
-            if ~isempty(obj.mask)
-                obj.unmask();
-            end
+            obj.unmask();
             if ~isempty(obj.correction)
                 obj.multiple_comparisons_corrections();
             end
@@ -200,7 +200,7 @@ classdef SLM < matlab.mixin.Copyable
                 if isempty(fieldnames(obj.surf))
                     error('Random field theory requires a surface.');
                 end
-                P = obj.random_field_theory();
+                [P.pval, P.peak, P.clus, P.clusid] = obj.random_field_theory();
             end
             if ismember('fdr', obj.correction)
                 Q = obj.fdr();
@@ -257,9 +257,10 @@ classdef SLM < matlab.mixin.Copyable
                     for key2_loop = fieldnames(P1.(key1))'
                         key2 = key2_loop{1};
                         if key2 == "P" && key1 == "pval"
-                            P.(key1).(key2) = brainstat_utils.one_tailed_to_two_tailed(P1.(key1).(key2));
+                            P.(key1).(key2) = brainstat_utils.one_tailed_to_two_tailed(...
+                                P1.(key1).(key2), P2.(key1).(key2));
                         else
-                            P.(key1).(key2) = [P1.(key1).(key2), P2.(key1).(key2)];
+                            P.(key1).(key2) = {P1.(key1).(key2), P2.(key1).(key2)};
                         end
                     end
                 end

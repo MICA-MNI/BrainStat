@@ -18,7 +18,7 @@ function [image_data, demographic_data] = fetch_tutorial_data(options)
 
 arguments 
     options.n_subjects (1,1) {mustBeInteger, mustBeNonnegative} = 0
-    options.data_dir (1,1) string {mustBeFolder} = get_home_dir()
+    options.data_dir (1,1) string {mustBeFolder} = brainstat_utils.get_home_dir()
     options.overwrite (1,1) logical = false
 end
 options.data_dir = options.data_dir + filesep + 'brainstat_tutorial';
@@ -27,13 +27,7 @@ demographic_file = download_demographic_data(options);
 demographic_data = load_demographic_data(demographic_file, options.n_subjects);
 
 image_files = download_image_data(demographic_data, options);
-image_data = load_image_data(image_files); 
-end
-
-
-function home_dir = get_home_dir()
-% GET_HOME_DIR    gets the user's home directory.
-home_dir = char(java.lang.System.getProperty('user.home'));
+image_data = load_image_data(image_files)'; 
 end
 
 

@@ -226,6 +226,25 @@ classdef test_precomputed < matlab.unittest.TestCase
                 if ismember('mask', fieldnames(P.pval))
                     P.pval.mask = double(P.pval.mask);
                 end
+                
+                % Deal with difference of empty struct in P / empty cell in
+                % output. 
+                if isempty(P.pval.C)
+                    P.pval = rmfield(P.pval, 'C');
+                end
+                if isempty(P.pval.mask)
+                    P.pval = rmfield(P.pval, 'mask');
+                end
+                if all(structfun(@isempty, P.peak))
+                    P.peak = {};
+                end
+                if all(structfun(@isempty, P.clus))
+                    P.clus = {};
+                end
+                if isempty(P.clusid)
+                    P.clusid = {};
+                end
+                
                 recursive_equality(testCase, P, output, pair{1});
             end
         end
