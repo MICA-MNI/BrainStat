@@ -542,14 +542,16 @@ class MixedEffect:
 
 def Term(x=None, names=None):
     warnings.warn(
-        "The Term class is deprecated and will be removed in a future version. Please use FixedEffect instead.", DeprecationWarning
+        "The Term class is deprecated and will be removed in a future version. Please use FixedEffect instead.",
+        DeprecationWarning,
     )
     return FixedEffect(x=x, names=names)
 
 
 def Random(ran=None, fix=None, name_ran=None, name_fix=None, ranisvar=False):
     warnings.warn(
-        "The Random class is deprecated and will be removed in a future version. Please use MixedEffect instead.", DeprecationWarning
+        "The Random class is deprecated and will be removed in a future version. Please use MixedEffect instead.",
+        DeprecationWarning,
     )
     return MixedEffect(
         ran=ran, fix=fix, name_ran=name_ran, name_fix=name_fix, ranisvar=ranisvar

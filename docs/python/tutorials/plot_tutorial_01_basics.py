@@ -80,7 +80,9 @@ slm_two_tails.fit(thickness)
 
 from brainstat.stats.terms import MixedEffect
 
-random_handedness = MixedEffect(tutorial_data["demographics"]["HAND"], name_ran="Handedness")
+random_handedness = MixedEffect(
+    tutorial_data["demographics"]["HAND"], name_ran="Handedness"
+)
 random_identity = MixedEffect(1, name_ran="identity")
 model_random = (
     term_intercept
