@@ -2,7 +2,7 @@
 import re
 import numpy as np
 import pandas as pd
-import warnings
+from .utils import deprecated
 
 
 def check_names(x):
@@ -540,19 +540,14 @@ class MixedEffect:
         )
 
 
+## Deprecated functions
+@deprecated("Please use FixedEffect instead.")
 def Term(x=None, names=None):
-    warnings.warn(
-        "The Term class is deprecated and will be removed in a future version. Please use FixedEffect instead.",
-        DeprecationWarning,
-    )
     return FixedEffect(x=x, names=names)
 
 
+@deprecated("Please use MixedEffect instead.")
 def Random(ran=None, fix=None, name_ran=None, name_fix=None, ranisvar=False):
-    warnings.warn(
-        "The Random class is deprecated and will be removed in a future version. Please use MixedEffect instead.",
-        DeprecationWarning,
-    )
     return MixedEffect(
         ran=ran, fix=fix, name_ran=name_ran, name_fix=name_fix, ranisvar=ranisvar
     )
