@@ -2,6 +2,7 @@
 
 from scipy.interpolate import interp1d
 import numpy as np
+import warnings
 
 
 def row_ismember(a, b):
@@ -183,3 +184,29 @@ def undo_mask(Y, mask, axis=0, missing_value=np.nan):
     Y2 = Y2.swapaxes(0, axis)
 
     return Y2
+
+
+def deprecated(message):
+    """Decorator for deprecated functions.
+
+    Parameters
+    ----------
+    message : str
+        Message to return to the user.
+    """
+
+    def deprecated_decorator(func):
+        def deprecated_func(*args, **kwargs):
+            warnings.warn(
+                "{} is a deprecated function and will be removed in a future version. {}".format(
+                    func.__name__, message
+                ),
+                category=DeprecationWarning,
+                stacklevel=2,
+            )
+            warnings.simplefilter("default", DeprecationWarning)
+            return func(*args, **kwargs)
+
+        return deprecated_func
+
+    return deprecated_decorator

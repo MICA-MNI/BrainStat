@@ -1,7 +1,7 @@
-classdef term
+classdef FixedEffect
 %Makes a vector, matrix or structure into a term in a linear model.
 %
-% Usage: t = term( x [, str] );
+% Usage: t = FixedEffect( x [, str] );
 %
 % Internally a term consists of a cell array of strings for the names of
 % the variables in the term, and a matrix with one column for each name,
@@ -57,14 +57,14 @@ classdef term
     end
 
     methods
-        function obj = term(x, names)
+        function obj = FixedEffect(x, names)
             % If no input.
             if nargin == 0
                 obj.names = [];
                 obj.matrix = []; 
             
             % If input is already a term.
-            elseif isa(x,'term')
+            elseif isa(x,'FixedEffect')
                 obj = x;
             
             % If input is a cell array of char arrays, or a string array. 
@@ -75,7 +75,7 @@ classdef term
             % If input is a character array of two dimensions. Could
             % perhaps be merged with the previous if-statement if the
             % definition of obj.names can be homogenized.
-            elseif ischar(x) && ismatrix(x) == 2
+            elseif ischar(x) && ismatrix(x)
                 obj.names = string(unique(x,'rows'));
                 obj.matrix = obj.names' == string(x); 
             

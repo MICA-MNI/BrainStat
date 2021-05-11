@@ -2,7 +2,7 @@
 import warnings
 import numpy as np
 from cmath import sqrt
-from .terms import Term
+from .terms import FixedEffect
 from .utils import apply_mask, undo_mask
 from brainstat.mesh.utils import mesh_edges, _mask_edges
 
@@ -33,9 +33,9 @@ class SLM:
 
         Parameters
         ----------
-        model : brainstat.stats.terms.Term
+        model : brainstat.stats.terms.FixedEffect, brainstat.stats.terms.MixedEffect
             The linear model to be fitted of dimensions (observations, predictors).
-        contrast : array-like, brainstat.stats.terms.Term
+        contrast : array-like, brainstat.stats.terms.FixedEffect
             Vector of contrasts in the observations.
         surf : dict, BSPolyData, optional
             A surface provided as either a dictionary with keys 'tri' for its
@@ -269,7 +269,7 @@ def f_test(slm1, slm2):
     if slm1.r is not None or slm2.r is not None:
         warnings.warn("Mixed effects models not programmed yet.")
 
-    slm = SLM(Term(1), Term(1))
+    slm = SLM(FixedEffect(1), FixedEffect(1))
     if slm1.df > slm2.df:
         X1 = slm1.X
         X2 = slm2.X

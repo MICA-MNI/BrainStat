@@ -1,16 +1,15 @@
 """Classes for fixed, mixed, and random effects."""
-
 import re
-
 import numpy as np
 import pandas as pd
+from .utils import deprecated
 
 
 def check_names(x):
-    """Return True if `x` is Term, Series or DataFrame."""
+    """Return True if `x` is FixedEffect, Series or DataFrame."""
     if isinstance(x, (pd.DataFrame, pd.Series)):
         return x.columns.tolist()
-    if isinstance(x, Term):
+    if isinstance(x, FixedEffect):
         return x.names
     return None
 
@@ -20,7 +19,7 @@ def to_df(x, n=1, names=None, idx=None):
 
     Parameters
     ----------
-    x : array-like or Term
+    x : array-like or FixedEffect
         Input data.
     n : int, optional
         If input is a scalar, broadcast to column of `n` entries.
@@ -41,7 +40,7 @@ def to_df(x, n=1, names=None, idx=None):
         return pd.DataFrame()
 
     has_names = True
-    if isinstance(x, Term):
+    if isinstance(x, FixedEffect):
         x = x.m
     elif isinstance(x, pd.Series):
         x = pd.DataFrame(x)
@@ -148,7 +147,7 @@ def remove_duplicate_columns(df, tol=1e-8):
     return keep
 
 
-class Term:
+class FixedEffect:
     """Build a term object for a linear model.
 
     Parameters
@@ -168,16 +167,16 @@ class Term:
 
     See Also
     --------
-    Random: Random term
+    MixedEffect: MixedEffect term
 
     Examples
     --------
-    >>> t = Term()
+    >>> t = FixedEffect()
     >>> t.is_empty
     True
 
-    >>> t1 = Term(np.arange(5), names='t1')
-    >>> t2 = Term(np.random.randn(5, 1), names=['t2'])
+    >>> t1 = FixedEffect(np.arange(5), names='t1')
+    >>> t2 = FixedEffect(np.random.randn(5, 1), names=['t2'])
     >>> t3 = t1 + t2 + 1
     >>> t3.shape
     (5, 3)
@@ -192,7 +191,7 @@ class Term:
             self.m = pd.DataFrame()
             return
 
-        if isinstance(x, Term):
+        if isinstance(x, FixedEffect):
             self.m = x.m
             return
 
@@ -218,11 +217,11 @@ class Term:
         return df
 
     def _add(self, t, side="right"):
-        if isinstance(t, Random):
+        if isinstance(t, MixedEffect):
             return NotImplemented
 
         if self.empty:
-            return Term(t)
+            return FixedEffect(t)
 
         idx = None
         if check_names(t) is None:
@@ -241,7 +240,7 @@ class Term:
         df = pd.concat(terms, axis=1)
         df.columns = names[0] + names[1]
         cols = remove_duplicate_columns(df, tol=self.tolerance)
-        return Term(df[cols])
+        return FixedEffect(df[cols])
 
     def __add__(self, t):
         return self._add(t)
@@ -261,10 +260,10 @@ class Term:
         m = self.m / self.m.abs().sum(0)
         merged = m.T.merge(df.T, how="outer", indicator=True)
         mask = (merged._merge.values == "left_only")[: self.m.shape[1]]
-        return Term(self.m[self.m.columns[mask]])
+        return FixedEffect(self.m[self.m.columns[mask]])
 
     def _mul(self, t, side="left"):
-        if isinstance(t, Random):
+        if isinstance(t, MixedEffect):
             return NotImplemented
 
         if self.is_empty:
@@ -277,11 +276,11 @@ class Term:
                 names = ["{}*{}".format(t, k) for k in self.names]
             else:
                 names = ["{}*{}".format(k, t) for k in self.names]
-            return Term(m, names=names)
+            return FixedEffect(m, names=names)
 
         df = self._broadcast(t)
         if df.empty:
-            return Term()
+            return FixedEffect()
         prod = []
         names = []
         for c in df.columns:
@@ -294,7 +293,7 @@ class Term:
         df = pd.concat(prod, axis=1)
         df.columns = names
         cols = remove_duplicate_columns(df, tol=self.tolerance)
-        return Term(df[cols])
+        return FixedEffect(df[cols])
 
     def __mul__(self, t):
         return self._mul(t)
@@ -337,7 +336,7 @@ class Term:
         return super().__getattribute__(name)
 
 
-class Random:
+class MixedEffect:
     """Build a random term object for a linear model.
 
     Parameters
@@ -358,23 +357,23 @@ class Random:
 
     Attributes
     ----------
-    mean : Term
-        Term for the mean.
+    mean : FixedEffect
+        FixedEffect for the mean.
 
-    variance : Term
-        Term for the variance.
+    variance : FixedEffect
+        FixedEffect for the variance.
 
     See Also
     --------
-    Term: Term object
+    FixedEffect: FixedEffect object
 
     Examples
     --------
-    >>> r = Random()
+    >>> r = MixedEffect()
     >>> r.is_empty
     True
 
-    >>> r2 = Random(np.arange(5), name_ran='r1')
+    >>> r2 = MixedEffect(np.arange(5), name_ran='r1')
     >>> r2.mean.is_empty
     True
     >>> r2.variance.shape
@@ -386,13 +385,13 @@ class Random:
         self, ran=None, fix=None, name_ran=None, name_fix=None, ranisvar=False
     ):
 
-        if isinstance(ran, Random):
+        if isinstance(ran, MixedEffect):
             self.mean = ran.mean
             self.variance = ran.variance
             return
 
         if ran is None:
-            self.variance = Term()
+            self.variance = FixedEffect()
         else:
             ran = to_df(ran)
             if not ranisvar:
@@ -408,18 +407,18 @@ class Random:
                 ran = ran @ ran.T
                 ran = ran.values.ravel()
 
-            self.variance = Term(ran, names=name_ran)
-        self.mean = Term(fix, names=name_fix)
+            self.variance = FixedEffect(ran, names=name_ran)
+        self.mean = FixedEffect(fix, names=name_fix)
 
     def broadcast_to(self, r1, r2):
         if r1.variance.shape[0] == 1:
             v = np.eye(max(r2.shape[0], int(np.sqrt(r2.shape[2]))))
-            return Term(v.ravel(), names="I")
+            return FixedEffect(v.ravel(), names="I")
         return r1.variance
 
     def _add(self, r, side="right"):
-        if not isinstance(r, Random):
-            r = Random(fix=r)
+        if not isinstance(r, MixedEffect):
+            r = MixedEffect(fix=r)
 
         r.variance = self.broadcast_to(r, self)
         self.variance = self.broadcast_to(self, r)
@@ -430,7 +429,7 @@ class Random:
             ran = r.variance + self.variance
             fix = r.mean + self.mean
 
-        return Random(ran=ran, fix=fix, ranisvar=True)
+        return MixedEffect(ran=ran, fix=fix, ranisvar=True)
 
     def __add__(self, r):
         return self._add(r)
@@ -439,8 +438,8 @@ class Random:
         return self._add(r, side="right")
 
     def _sub(self, r, side="left"):
-        if not isinstance(r, Random):
-            r = Random(fix=r)
+        if not isinstance(r, MixedEffect):
+            r = MixedEffect(fix=r)
         r.variance = self.broadcast_to(r, self)
         self.variance = self.broadcast_to(self, r)
         if side == "left":
@@ -449,7 +448,7 @@ class Random:
         else:
             ran = r.variance - self.variance
             fix = r.mean - self.mean
-        return Random(ran=ran, fix=fix, ranisvar=True)
+        return MixedEffect(ran=ran, fix=fix, ranisvar=True)
 
     def __sub__(self, r):
         return self._sub(r)
@@ -458,8 +457,8 @@ class Random:
         return self._sub(r, side="right")
 
     def _mul(self, r, side="left"):
-        if not isinstance(r, Random):
-            r = Random(fix=r)
+        if not isinstance(r, MixedEffect):
+            r = MixedEffect(fix=r)
         r.variance = self.broadcast_to(r, self)
         self.variance = self.broadcast_to(self, r)
 
@@ -469,14 +468,14 @@ class Random:
         else:
             ran = r.variance * self.variance
             fix = r.mean * self.mean
-        s = Random(ran=ran, fix=fix, ranisvar=True)
+        s = MixedEffect(ran=ran, fix=fix, ranisvar=True)
 
         x = self.mean.matrix.values.T / self.mean.matrix.abs().values.max()
-        t = Term()
+        t = FixedEffect()
         for i in range(x.shape[0]):
             for j in range(i + 1):
                 if i == j:
-                    t = t + Term(
+                    t = t + FixedEffect(
                         np.outer(x[i], x[j]).T.ravel(), names=self.mean.names[i]
                     )
                 else:
@@ -486,18 +485,20 @@ class Random:
                     xd_name = "({}-{})".format(*[self.mean.names[k] for k in [i, j]])
 
                     v = np.outer(xs, xs) / 4
-                    t = t + Term(v.ravel(), names=xs_name)
+                    t = t + FixedEffect(v.ravel(), names=xs_name)
                     v = np.outer(xd, xd) / 4
-                    t = t + Term(v.ravel(), names=xd_name)
+                    t = t + FixedEffect(v.ravel(), names=xd_name)
 
         s.variance = s.variance + t * r.variance
 
         x = r.mean.matrix.values.T / r.mean.matrix.abs().values.max()
-        t = Term()
+        t = FixedEffect()
         for i in range(x.shape[0]):
             for j in range(i + 1):
                 if i == j:
-                    t = t + Term(np.outer(x[i], x[j]).ravel(), names=r.mean.names[i])
+                    t = t + FixedEffect(
+                        np.outer(x[i], x[j]).ravel(), names=r.mean.names[i]
+                    )
                 else:
                     xs = x[i] + x[j]
                     xs_name = "({}+{})".format(*[r.mean.names[k] for k in [i, j]])
@@ -505,9 +506,9 @@ class Random:
                     xd_name = "({}-{})".format(*[r.mean.names[k] for k in [i, j]])
 
                     v = np.outer(xs, xs) / 4
-                    t = t + Term(v.ravel(), names=xs_name)
+                    t = t + FixedEffect(v.ravel(), names=xs_name)
                     v = np.outer(xd, xd) / 4
-                    t = t + Term(v.ravel(), names=xd_name)
+                    t = t + FixedEffect(v.ravel(), names=xd_name)
         s.variance = s.variance + self.variance * t
         return s
 
@@ -537,3 +538,16 @@ class Random:
             + "\n\nVariance:\n"
             + self.variance._repr_html_()
         )
+
+
+## Deprecated functions
+@deprecated("Please use FixedEffect instead.")
+def Term(x=None, names=None):
+    return FixedEffect(x=x, names=names)
+
+
+@deprecated("Please use MixedEffect instead.")
+def Random(ran=None, fix=None, name_ran=None, name_fix=None, ranisvar=False):
+    return MixedEffect(
+        ran=ran, fix=fix, name_ran=name_ran, name_fix=name_fix, ranisvar=ranisvar
+    )

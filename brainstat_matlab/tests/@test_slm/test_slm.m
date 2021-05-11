@@ -7,7 +7,7 @@ classdef test_slm < matlab.unittest.TestCase
             samples = 10;
             predictors = 1; 
             
-            model = term(1) + term(rand(samples, predictors));
+            model = FixedEffect(1) + FixedEffect(rand(samples, predictors));
             contrast = rand(samples,predictors);
             Y = rand(samples, 10, predictors);
             

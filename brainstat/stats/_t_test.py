@@ -5,7 +5,7 @@ import scipy
 import sys
 from scipy.linalg import null_space
 from scipy.linalg import cholesky
-from .terms import Term
+from .terms import FixedEffect
 
 
 def t_test(self):
@@ -19,7 +19,7 @@ def t_test(self):
 
     """
 
-    if isinstance(self.contrast, Term):
+    if isinstance(self.contrast, FixedEffect):
         self.contrast = self.contrast.m.to_numpy()
 
     def null(A, eps=1e-15):

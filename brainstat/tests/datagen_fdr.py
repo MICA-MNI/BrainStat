@@ -2,7 +2,7 @@ import numpy as np
 import pickle
 from .testutil import datadir
 from brainstat.stats.SLM import SLM
-from brainstat.stats.terms import Term
+from brainstat.stats.terms import FixedEffect
 from brainstat.stats._t_test import t_test
 from brainstat.stats._multiple_comparisons import fdr
 
@@ -96,7 +96,7 @@ def generate_random_fdr_data(
 def get_fdr_output(D, foutname):
     """Runs fdr and returns all relevant output."""
 
-    slm = SLM(Term(1), Term(1))
+    slm = SLM(FixedEffect(1), FixedEffect(1))
     for key in D.keys():
         setattr(slm, key, D[key])
 
@@ -457,8 +457,8 @@ def generate_data_test_fdr():
     DD = pickle.load(ifile)
     ifile.close()
     # run slm
-    M = Term(DD["M"])
-    slm = SLM(M, Term(1))
+    M = FixedEffect(DD["M"])
+    slm = SLM(M, FixedEffect(1))
     slm.linear_model(DD["Y"])
     D = {}
     # run t-test

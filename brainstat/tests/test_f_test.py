@@ -2,7 +2,7 @@ import numpy as np
 import pickle
 from .testutil import datadir
 from brainstat.stats.SLM import SLM, f_test
-from brainstat.stats.terms import Term
+from brainstat.stats.terms import FixedEffect
 
 
 def dummy_test(infile, expfile):
@@ -12,8 +12,8 @@ def dummy_test(infile, expfile):
     idic = pickle.load(ifile)
     ifile.close()
 
-    slm1 = SLM(Term(1), Term(1))
-    slm2 = SLM(Term(1), Term(2))
+    slm1 = SLM(FixedEffect(1), FixedEffect(1))
+    slm2 = SLM(FixedEffect(1), FixedEffect(2))
     for key in idic.keys():
         if "1" in key:
             setattr(slm1, key[4:], idic[key])

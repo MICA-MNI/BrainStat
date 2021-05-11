@@ -1,6 +1,6 @@
 from sklearn.model_selection import ParameterGrid
 import numpy as np
-from brainstat.stats.terms import Term, Random
+from brainstat.stats.terms import FixedEffect, MixedEffect
 from brainstat.stats.SLM import SLM
 from brainstat.context.utils import read_surface_gz
 from nilearn.datasets import fetch_surf_fsaverage
@@ -60,11 +60,12 @@ def create_parameter_grid(samples, predictors):
         All pairings of parameters to be run through the SLM class.
     """
     model = [
-        Term(1) + Term(np.random.rand(samples, predictors), names=["y1", "y2", "y3"])
+        FixedEffect(1)
+        + FixedEffect(np.random.rand(samples, predictors), names=["y1", "y2", "y3"])
     ]
 
     Y_idx = [1, 2, 3]
-    contrast = [np.random.rand(samples), Term(np.random.rand(samples))]
+    contrast = [np.random.rand(samples), FixedEffect(np.random.rand(samples))]
     surf = [None, read_surface_gz(fetch_surf_fsaverage()["pial_left"])]
     mask = [None, np.random.rand(10242) > 0.1]
     correction = [None, ["rft", "fdr"]]

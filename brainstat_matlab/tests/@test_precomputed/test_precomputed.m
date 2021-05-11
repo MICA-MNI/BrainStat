@@ -437,12 +437,12 @@ else
 end
 
 if any(f == "age")
-    model= 1 + term(input.age');
+    model= 1 + FixedEffect(input.age');
     input = rmfield(input, 'age');
 end
 
 if any(f == "params")
-    model = term(input.params);
+    model = FixedEffect(input.params);
     input = rmfield(input, 'params');
 end
 
