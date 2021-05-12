@@ -55,11 +55,16 @@ def mutli_surface_to_volume(
     if type(pial) is not type(white):
         ValueError("Pial and white must be of the same type.")
 
-    if not isinstance(pial, list):
+    if isinstance(pial, tuple):
+        pial = list(pial)
+        white = list(white)
+    elif not isinstance(pial, list):
         pial = [pial]
         white = [white]
 
-    if not isinstance(labels, list):
+    if isinstance(labels, tuple):
+        labels = list(labels)
+    elif not isinstance(labels, list):
         labels = [labels]
 
     if len(pial) is not len(white):
