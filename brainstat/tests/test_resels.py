@@ -124,4 +124,3 @@ def test_12():
     infile = datadir("xstatresl_12_IN.pkl")
     expfile = datadir("xstatresl_12_OUT.pkl")
     dummy_test(infile, expfile)
-
