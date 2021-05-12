@@ -72,14 +72,12 @@ def test_05():
 def test_06():
     # ['lat'] :np array, shape (10, 10, 10), bool
     # ['mask'] :np array, shape (457,), bool
-    infile = datadir("statresl_06_IN.pkl")
-    expfile = datadir("statresl_06_OUT.pkl")
+    infile = datadir("xstatresl_06_IN.pkl")
+    expfile = datadir("xstatresl_06_OUT.pkl")
     dummy_test(infile, expfile)
 
 
 def test_07():
-    # ['lat'] :np array, shape (10, 10, 10), bool
-    # ['resl'] :np array, shape (1359, 1), float64
     infile = datadir("xstatresl_07_IN.pkl")
     expfile = datadir("xstatresl_07_OUT.pkl")
     dummy_test(infile, expfile)
@@ -89,8 +87,8 @@ def test_08():
     # ['lat'] :np array, shape (10, 10, 10), bool
     # ['resl'] :np array, shape (1251, 1), float64
     # ['mask'] :np array, shape (499,), bool
-    infile = datadir("statresl_08_IN.pkl")
-    expfile = datadir("statresl_08_OUT.pkl")
+    infile = datadir("xstatresl_08_IN.pkl")
+    expfile = datadir("xstatresl_08_OUT.pkl")
     dummy_test(infile, expfile)
 
 
@@ -98,40 +96,32 @@ def test_09():
     # ['lat'] :np array, shape (10, 10, 10), bool
     # ['resl'] :np array, shape (1198, 1), float64
     # ['mask'] :np array, shape (478,), bool
-    infile = datadir("statresl_09_IN.pkl")
-    expfile = datadir("statresl_09_OUT.pkl")
+    infile = datadir("xstatresl_09_IN.pkl")
+    expfile = datadir("xstatresl_09_OUT.pkl")
     dummy_test(infile, expfile)
 
-#
-#def test_10():
-#    # ['tri'] :np array, shape (129960, 3), int32
-#    # ['resl'] :np array, shape (194940, 1), float64
-#    infile = datadir("statresl_10_IN.pkl")
-#    expfile = datadir("statresl_10_OUT.pkl")
-#    dummy_test(infile, expfile)
-#
-#
-#def test_11():
-#    # ['tri'] :np array, shape (129960, 3), int32
-#    # ['resl'] :np array, shape (194940, 1), float64
-#    # ['mask'] :np array, shape (64984,), bool
-#    infile = datadir("statresl_11_IN.pkl")
-#    expfile = datadir("statresl_11_OUT.pkl")
-#    dummy_test(infile, expfile)
-#
-#
-#def test_12():
-#    # ['tri'] :np array, shape (129960, 3), int32
-#    # ['resl'] :np array, shape (194940, 1), float64
-#    infile = datadir("statresl_12_IN.pkl")
-#    expfile = datadir("statresl_12_OUT.pkl")
-#    dummy_test(infile, expfile)
-#
-#
-#def test_13():
-#    # ['tri'] :np array, shape (129960, 3), int32
-#    # ['resl'] :np array, shape (194940, 1), float64
-#    # ['mask'] :np array, shape (64984,), bool
-#    infile = datadir("statresl_13_IN.pkl")
-#    expfile = datadir("statresl_13_OUT.pkl")
-#    dummy_test(infile, expfile)
+
+def test_10():
+    # ['tri'] :np array, shape (129960, 3), int32
+    # ['resl'] :np array, shape (194940, 1), float64
+    infile = datadir("xstatresl_10_IN.pkl")
+    expfile = datadir("xstatresl_10_OUT.pkl")
+    dummy_test(infile, expfile)
+
+
+def test_11():
+    # ['tri'] :np array, shape (129960, 3), int32
+    # ['resl'] :np array, shape (194940, 1), float64
+    # ['mask'] :np array, shape (64984,), bool
+    infile = datadir("xstatresl_11_IN.pkl")
+    expfile = datadir("xstatresl_11_OUT.pkl")
+    dummy_test(infile, expfile)
+
+
+def test_12():
+    # ['tri'] :np array, shape (129960, 3), int32
+    # ['resl'] :np array, shape (194940, 1), float64
+    infile = datadir("xstatresl_12_IN.pkl")
+    expfile = datadir("xstatresl_12_OUT.pkl")
+    dummy_test(infile, expfile)
+
