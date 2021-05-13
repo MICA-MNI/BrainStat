@@ -82,7 +82,7 @@ def mutli_surface_to_volume(
 
     for i in range(len(labels)):
         if isinstance(labels[i], np.bool_):
-            labels[i] = np.ndarray(labels[i])
+            labels[i] = np.array(labels[i])
         elif not isinstance(labels[i], np.ndarray):
             labels[i] = load_mesh_labels(labels[i])
 
