@@ -86,37 +86,26 @@ def test_08():
     dummy_test(infile, expfile)
 
 
-#def test_07():
-#    # ['Y'] : np array, shape (1, 20484), float64
-#    # ['tri'] : np array, shape (40960, 3), int32
-#    # ['FWHM'] : int
-#    infile = datadir("statsmo_07_IN.pkl")
-#    expfile = datadir("statsmo_07_OUT.pkl")
-#    dummy_test(infile, expfile)
-#
-#
-#def test_08():
-#    # ['Y'] : np array, shape (26, 20484), float64
-#    # ['tri'] : np array, shape (40960, 3), int32
-#    # ['FWHM'] : int
-#    infile = datadir("statsmo_08_IN.pkl")
-#    expfile = datadir("statsmo_08_OUT.pkl")
-#    dummy_test(infile, expfile)
-#
-#
-#def test_09():
-#    # ['Y'] : np array, shape (1, 20484), float64
-#    # ['tri'] : np array, shape (40960, 3), int32
-#    # ['FWHM'] : int
-#    infile = datadir("statsmo_09_IN.pkl")
-#    expfile = datadir("statsmo_09_OUT.pkl")
-#    dummy_test(infile, expfile)
-#
-#
-#def test_10():
-#    # ['Y'] : np array, shape (60, 20484), float64
-#    # ['tri'] : np array, shape (40960, 3), int32
-#    # ['FWHM'] : float
-#    infile = datadir("statsmo_10_IN.pkl")
-#    expfile = datadir("statsmo_10_OUT.pkl")
-#    dummy_test(infile, expfile)
+def test_09():
+    infile = datadir("xstatsmo_09_IN.pkl")
+    expfile = datadir("xstatsmo_09_OUT.pkl")
+    dummy_test(infile, expfile)
+
+
+def test_10():
+    infile = datadir("xstatsmo_10_IN.pkl")
+    expfile = datadir("xstatsmo_10_OUT.pkl")
+    dummy_test(infile, expfile)
+
+
+def test_11():
+    infile = datadir("xstatsmo_11_IN.pkl")
+    expfile = datadir("xstatsmo_11_OUT.pkl")
+    dummy_test(infile, expfile)
+
+
+def test_12():
+    infile = datadir("xstatsmo_12_IN.pkl")
+    expfile = datadir("xstatsmo_12_OUT.pkl")
+    dummy_test(infile, expfile)
+
