@@ -56,8 +56,9 @@ if run_analysis:
 from brainstat.context.meta_analysis import surface_decode_nimare
 
 surfaces_white = (fsaverage["white_left"], fsaverage["white_right"])
-roi = [x == 1 for x in labels]
-all_cortex = [x > 0 for x in labels]
+roi = [labels[0:10242] == 1, labels[10242:] == 1]
+all_cortex = [labels[0:10242] > 0, labels[10242:]]
 
 if run_analysis:
-    expression = surface_decode_nimare(surfaces_pial, surfaces_white, roi, all_cortex)
+    meta_analysis = surface_decode_nimare(surfaces_pial, surfaces_white, roi, all_cortex)
+
