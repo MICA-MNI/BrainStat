@@ -108,4 +108,3 @@ def test_12():
     infile = datadir("xstatsmo_12_IN.pkl")
     expfile = datadir("xstatsmo_12_OUT.pkl")
     dummy_test(infile, expfile)
-
