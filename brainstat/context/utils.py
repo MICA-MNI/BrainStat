@@ -81,7 +81,7 @@ def mutli_surface_to_volume(
         volume_template = nib.load(volume_template)
 
     for i in range(len(labels)):
-        if not isinstance(labels[i], np.ndarray):
+        if not isinstance(labels[i], np.ndarray) and not isinstance(labels[i], np.bool_):
             labels[i] = load_mesh_labels(labels[i])
 
     # Surface data to volume.

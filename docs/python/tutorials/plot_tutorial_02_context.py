@@ -15,7 +15,7 @@ For genetic decoding we use the Allen Human Brain Atlas through the abagen
 toolbox. Note that abagen only accepts parcellated data. Here is a minimal
 example of how we use abagen to get the genetic expression of the regions of the
 Destrieux atlas. Please note that downloading the dataset and running this
-analysis can take several minutes. As such, we will not run it in this tutorial.
+analysis can take several minutes. As such, we will not run the analysis here.
 """
 
 from brainstat.context.genetics import surface_genetic_expression
