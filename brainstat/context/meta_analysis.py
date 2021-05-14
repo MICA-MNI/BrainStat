@@ -1,15 +1,13 @@
 """ Meta-analytic decoding based on NiMARE """
-
 import os
 import tempfile
 from pathlib import Path
-
+import nibabel as nib
 from neurosynth.base.dataset import download, Dataset
-
+from neurosynth import decode
+from nilearn.datasets import load_mni152_brain_mask
 import nimare
-from nimare.decode import discrete
-from nimare.meta.cbma.mkda import MKDAChi2
-from .utils import mutli_surface_to_volume
+from .utils import multi_surface_to_volume
 
 
 def surface_decode_nimare(
@@ -66,22 +64,23 @@ def surface_decode_nimare(
         data_dir = os.path.join(str(Path.home()), "nimare_data")
 
     dataset = fetch_nimare_dataset(data_dir)
+    mni152 = load_mni152_brain_mask()
 
     with tempfile.NamedTemporaryFile(suffix=".nii.gz") as stat_image:
         with tempfile.NamedTemporaryFile(suffix=".nii.gz") as mask_image:
-            mutli_surface_to_volume(
+            multi_surface_to_volume(
                 pial,
                 white,
-                dataset.masker.mask_img,
+                mni152,
                 stat_labels,
                 stat_image.name,
                 verbose=verbose,
                 interpolation=interpolation,
             )
-            mutli_surface_to_volume(
+            multi_surface_to_volume(
                 pial,
                 white,
-                dataset.masker.mask_img,
+                mni152,
                 mask_labels,
                 mask_image.name,
                 verbose=verbose,
@@ -95,11 +94,99 @@ def surface_decode_nimare(
             roi_ids = dataset.get_studies_by_mask(stat_image.name)
             gm_ids = dataset.get_studies_by_mask(mask_image.name)
             unselected_ids = list(set(roi_ids) - set(gm_ids))
-            decoder = discrete.NeurosynthDecoder(
+            decoder = nimare.decode.discrete.NeurosynthDecoder(
                 feature_group=feature_group, features=features, correction=correction
             )
             decoder.fit(dataset)
             return decoder.transform(ids=roi_ids, ids2=unselected_ids)
+
+
+def surface_decode_neurosynth(
+    pial,
+    white,
+    stat_labels,
+    mask_labels,
+    interpolation="linear",
+    data_dir=None,
+    verbose=True,
+    features=None,
+    image_type="association-test_z",
+    method="pearson",
+    threshold=0.001,
+):
+    """Meta-analytic decoding of surface maps using NeuroSynth.
+
+    Parameters
+    ----------
+    pial : str, BSPolyData, list
+        Path of a pial surface file, BSPolyData of a pial surface or a list
+        containing multiple of the aforementioned.
+    white : str, BSPolyData, list
+        Path of a white matter surface file, BSPolyData of a pial surface or a
+        list containing multiple of the aforementioned.
+    stat_labels : str, numpy.ndarray, list
+        Path to a label file for the surfaces, numpy array containing the
+        labels, or a list containing multiple of the aforementioned.
+    mask_labels : str, numpy.ndarray, list
+        Path to a mask file for the surfaces, numpy array containing the
+        mask, or a list containing multiple of the aforementioned. If None
+        all vertices are included in the mask. Defaults to None.
+    interpolation : str, optional
+        Either 'nearest' for nearest neighbor interpolation, or 'linear'
+        for trilinear interpolation, by default 'linear'.
+    data_dir : str, optional
+        The directory of the nimare dataset. If none exists, a new dataset will
+        be downloaded and saved to this path. If None, the directory defaults to
+        your home directory, by default None.
+    verbose : bool, optional
+        If true prints additional output to the console, by default True.
+
+    Returns
+    -------
+    pandas.DataFrame
+        Table with each label and the following values associated with each
+        label: ‘pForward’, ‘zForward’, ‘likelihoodForward’,‘pReverse’,
+        ‘zReverse’, and ‘probReverse’.
+    """
+
+    if data_dir is None:
+        data_dir = os.path.join(str(Path.home()), "neurosynth_data")
+
+    dataset_file = fetch_neurosynth_dataset(data_dir, return_pkl=True, verbose=verbose)
+    dataset = Dataset.load(dataset_file)
+    mni152 = load_mni152_brain_mask()
+
+    stat_image = tempfile.NamedTemporaryFile(suffix=".nii.gz")
+    mask_image = tempfile.NamedTemporaryFile(suffix=".nii.gz")
+
+    multi_surface_to_volume(
+        pial,
+        white,
+        mni152,
+        stat_labels,
+        stat_image.name,
+        verbose=verbose,
+        interpolation=interpolation,
+    )
+    multi_surface_to_volume(
+        pial,
+        white,
+        mni152,
+        mask_labels,
+        mask_image.name,
+        verbose=verbose,
+        interpolation=interpolation,
+    )
+
+    decoder = decode.Decoder(
+        dataset,
+        features=features,
+        mask=nib.load(mask_image.name),
+        image_type=image_type,
+        method=method,
+        threshold=threshold,
+    )
+    return decoder.decode(stat_image.name)
 
 
 def fetch_nimare_dataset(data_dir, keep_neurosynth=False):

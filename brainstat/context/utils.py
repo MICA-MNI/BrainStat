@@ -11,7 +11,7 @@ from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 from brainstat.mesh.interpolate import surface_to_volume
 
 
-def mutli_surface_to_volume(
+def multi_surface_to_volume(
     pial,
     white,
     volume_template,
