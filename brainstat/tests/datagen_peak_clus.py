@@ -19,199 +19,91 @@ from brainstat.context.utils import read_surface_gz
 from testutil import generate_slm, save_slm, datadir, slm2dict
 
 
-def generate_random_peak_clus(
-    surf,
-    n_var=1,
-    dfs=None,
-    cluster_threshold=0.001,
-    reselspvert=False,
-    edg=False,
-):
-    """Generates a valid SLM for a surface.
-    Parameters
-    ----------
-    surf : BSPolyData or a dictionary with key 'tri'
-        Brain surface.
-    n_var : int, optional
-        slm.k, by default 1.
-    dfs : np.array, None, optional
-        Effective degrees of freedom, by default None.
-    cluster_threshold : float, optional
-        Cluster threshold, by default 0.001.
-    reselspvert : bool, optional
-        Resels per vertex.
-    edg: bool, optional
+def generate_random_slm(I):
+    slm = generate_slm(t = I["t"], 
+                       df = I["df"], 
+                       k = I["k"], 
+                       resl = I["resl"], 
+                       tri = I["tri"],
+                       surf = I, 
+                       dfs = I["dfs"], 
+                       mask = I["mask"],
+                       cluster_threshold = I["thresh"])
+    return slm
 
-    Returns
-    -------
-    brainstat.stats.SLM
-        SLM object.
-    reselspvert
-    edg
-    """
-
-    if isinstance(surf, BSPolyData):
-        triangles = np.array(get_cells(surf))
-        edges = get_edges(surf)
-        vertices = get_points(surf)
-        n_vertices = vertices.shape[0]
-        n_edges = edges.shape[0]
-    else:
-        triangles = surf["tri"]
-        edges = mesh_edges(surf)
-        n_edges = edges.shape[0]
-        n_vertices = int(surf["tri"].shape[0] / 2)
-
-    if dfs is not None:
-        dfs = np.random.randint(1, 100, (1, n_vertices))
-
-    slm = generate_slm(
-        t=np.random.random_sample((1, n_vertices)),
-        df=np.random.randint(2, 100),
-        k=n_var,
-        resl=np.random.random_sample((n_edges, 1)),
-        tri=triangles + 1,
-        surf=surf,
-        dfs=dfs,
-        mask=np.random.choice(a=[False, True], size=(n_vertices)),
-        cluster_threshold=cluster_threshold,
-    )
-
-    thresh = np.random.rand()
-
-    if reselspvert:
-        reselspvert = np.random.rand(
-            n_vertices,
-        )
-    else:
-        reselspvert = None
-
-    if edg:
-        edg = edges
-    else:
-        edg = None
-
-    return slm, thresh, reselspvert, edg
-
-
-def params2files(slm, thresh, reselspvert, edg, basename, test_num):
-    """Converts an params input/output files"""
-    I = {}
-    I["t"] = slm.t
-    I["tri"] = slm.tri
-    I["mask"] = slm.mask
-    I["thresh"] = thresh
-    I["reselspvert"] = reselspvert
-    I["edg"] = edg
-    I["k"] = slm.k
-    I["df"] = slm.df
-    I["dfs"] = slm.dfs
-
+def generate_peak_clus_out(slm, I):
     D = {}
-    D["peak"], D["clus"], D["clusid"] = peak_clus(
-        slm, thresh, reselspvert=reselspvert, edg=edg
-    )
+    D["peak"], D["clus"], D["clusid"] = peak_clus(slm, I["thresh"],
+               reselspvert= I["reselspvert"], edg = I["edg"])
+    return D
+
+def params2files(I, D, test_num):
+    
+    if test_num == 1:
+        print(I)
+    
+    
+    """Converts params to input/output files"""
+    # filenames for the input and outpur dict's
+    basename = "xstatpeakc"
     fin_name = datadir(basename + "_" + f"{test_num:02d}" + "_IN.pkl")
     fout_name = datadir(basename + "_" + f"{test_num:02d}" + "_OUT.pkl")
-    print("test data %s for peak_clus generated... " % (str(test_num)))
 
+    # save input and output data in pickle format with filenames above
     with open(fin_name, "wb") as f:
         pickle.dump(I, f, protocol=4)
     with open(fout_name, "wb") as g:
         pickle.dump(D, g, protocol=4)
-
     return
 
 
-basename = "xstatpeakc"
-test_num = 0
 np.random.seed(0)
 
-# test with surf['tri']
-rand_surf = {}
-rand_surf["tri"] = np.random.randint(0, int(100 / 2), size=(100, 3))
+mygrid = [
+    {
+        "tri" : [np.random.randint(0, int(50), size=(100, 3))],
+        "k" : [int(1), int(2)],
+        "df" : [None, 1],
+        "dfs": [None, 1],
+        "cluster_threshold" : [np.random.rand()],
+        "mask" : [True],
+        "reselspvert" : [None, True],
+    }
+]
 
-# iterate the variables
-var_types = {
-    "t": [np.float64],
-    "df": [int, np.uint16],
-    "k": [int, np.uint8],
-    "resl": [np.float64],
-    "tri": [np.int64],
-    "mask": [np.int64],
-}
+myparamgrid = ParameterGrid(mygrid)
 
-type_parameter_grid = ParameterGrid(var_types)
+test_num = 0
+for params in myparamgrid:
+    I = {}
 
-for params in type_parameter_grid:
-    slm, thresh, reselspvert, edg = generate_random_peak_clus(rand_surf)
-    for key in list(params.keys()):
-        attr = getattr(slm, key)
-        setattr(slm, key, params[key](attr))
+    # following parameters depend on rand_surf["tri"]
+    I["tri"] = params["tri"]
+    I["edg"] = mesh_edges(params)
+    n_edges = I["edg"].shape[0]
+    n_vertices = int(I["tri"].shape[0] / 2)
+    I["t"] = np.random.random_sample((1, n_vertices))    
+    I["resl"] = np.random.random_sample((n_edges, 1))
+     
+    if params["mask"] is True:
+        I["mask"] = np.random.choice(a=[False, True], size=(n_vertices))
+    else:
+        I["mask"] = None
+
+    if params["reselspvert"] is True:
+        I["reselspvert"] = np.random.rand(n_vertices)
+    else:
+        I["reselspvert"] = None
+            
+    I["k"] = params["k"]   
+    I["df"] = params["df"]
+    I["dfs"] = params["dfs"]
+    I["thresh"] = params["cluster_threshold"]
+
+    # generate slm & run peak_clus & save in-out
+    slm = generate_random_slm(I)
+    D = generate_peak_clus_out(slm, I)    
     test_num += 1
-    params2files(slm, thresh, reselspvert, edg, basename, test_num)
+    params2files(I, D, test_num)
+    print('AAAA ', test_num)
 
-
-for params in type_parameter_grid:
-    slm, thresh, reselspvert, edg = generate_random_peak_clus(
-        rand_surf, reselspvert=True
-    )
-
-    for key in list(params.keys()):
-        attr = getattr(slm, key)
-        setattr(slm, key, params[key](attr))
-    test_num += 1
-    params2files(slm, thresh, reselspvert, edg, basename, test_num)
-
-
-for params in type_parameter_grid:
-    slm, thresh, reselspvert, edg = generate_random_peak_clus(
-        rand_surf, reselspvert=True, edg=True
-    )
-    for key in list(params.keys()):
-        attr = getattr(slm, key)
-        setattr(slm, key, params[key](attr))
-    test_num += 1
-    params2files(slm, thresh, reselspvert, edg, basename, test_num)
-
-
-# test with surf BSPolydata
-pial_fs5 = datasets.fetch_surf_fsaverage()["pial_left"]
-pial_surf = read_surface_gz(pial_fs5)
-n_vertices = get_points(pial_surf).shape[0]
-
-# Variable type tests
-for params in type_parameter_grid:
-    slm, thresh, reselspvert, edg = generate_random_peak_clus(pial_surf)
-    for key in list(params.keys()):
-        attr = getattr(slm, key)
-        setattr(slm, key, params[key](attr))
-    test_num += 1
-    params2files(slm, thresh, reselspvert, edg, basename, test_num)
-
-for params in type_parameter_grid:
-    slm, thresh, reselspvert, edg = generate_random_peak_clus(
-        pial_surf, reselspvert=True
-    )
-    for key in list(params.keys()):
-        attr = getattr(slm, key)
-        setattr(slm, key, params[key](attr))
-    test_num += 1
-    params2files(slm, thresh, reselspvert, edg, basename, test_num)
-
-# Optional variable test.
-var_optional = {
-    "dfs": [None, np.int],
-    "k": [1, 3],
-}
-
-# Additional variable tests.
-additional_parameter_grid = ParameterGrid(var_optional)
-for params in additional_parameter_grid:
-    slm, thresh, reselspvert, edg = generate_random_peak_clus(
-        pial_surf, reselspvert=True
-    )
-    for key in list(params.keys()):
-        setattr(slm, key, params[key])
-    test_num += 1
-    params2files(slm, thresh, reselspvert, edg, basename, test_num)
