@@ -20,6 +20,7 @@ def dummy_test(infile, expfile):
     slm.df = idic["df"]
     slm.k = idic["k"]
     slm.dfs = idic["dfs"]
+    slm.resl = idic["resl"]
 
     thresh = idic["thresh"]
     reselspvert = idic["reselspvert"]
