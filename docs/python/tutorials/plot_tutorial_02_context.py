@@ -4,7 +4,7 @@ Tutorial 02: Context Decoding
 
 In this tutorial you will learn about the context decoding tools included with
 BrainStat. The context decoding module consists of three parts: genetic
-deocding, meta-analytic decoding and histological comparisons. First, we'll
+decoding, meta-analytic decoding and histological comparisons. First, we'll
 consider how to run the genetic decoding analysis. 
 
 
@@ -53,13 +53,13 @@ if run_analysis:
 # be aware that this analysis currently uses a lot of memory (~80GB). A simple example
 # analysis can be run as follows:
 
-from brainstat.context.meta_analysis import surface_decode_neurosynth
+from brainstat.context.meta_analysis import surface_decode_nimare
 
 surfaces_white = [fsaverage["white_left"], fsaverage["white_right"]]
 roi = [labels[0:10242] == 1, labels[10242:] == 1]
-all_cortex = [labels[0:10242] > 0, labels[10242:]]
+all_cortex = [labels[0:10242] > 0, labels[10242:] > 0]
 
 if run_analysis:
-    meta_analysis = surface_decode_neurosynth(
+    meta_analysis = surface_decode_nimare(
         surfaces_pial, surfaces_white, roi, all_cortex
     )
