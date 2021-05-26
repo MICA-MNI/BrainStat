@@ -1,6 +1,6 @@
 import numpy as np
 import pickle
-from testutil import datadir
+from .testutil import datadir
 from brainstat.stats._t_test import t_test
 from brainstat.stats.SLM import SLM
 from brainstat.stats.terms import FixedEffect
