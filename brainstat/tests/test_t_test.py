@@ -39,8 +39,8 @@ def test_01():
     # ['coef'] : np array, shape (1, 3), float64
     # ['SSE'] : np array, shape (1, 3), float64
     # ['contrast'] : np array, shape (1, 1), float64
-    infile = datadir("statt_01_IN.pkl")
-    expfile = datadir("statt_01_OUT.pkl")
+    infile = datadir("xstatt_01_IN.pkl")
+    expfile = datadir("xstatt_01_OUT.pkl")
     dummy_test(infile, expfile)
 
 
@@ -50,8 +50,8 @@ def test_02():
     # ['coef'] : np array, shape (6, 6), float64
     # ['SSE'] : np array, shape (1, 6), float64
     # ['contrast']: np array, shape (1, 6), float64
-    infile = datadir("statt_02_IN.pkl")
-    expfile = datadir("statt_02_OUT.pkl")
+    infile = datadir("xstatt_02_IN.pkl")
+    expfile = datadir("xstatt_02_OUT.pkl")
     dummy_test(infile, expfile)
 
 
@@ -70,8 +70,8 @@ def test_03():
     # ['ef']: np array, shape (1, 1), float64
     # ['sd']: np array, shape (1, 1), float64
     # ['t']: np array, shape (1, 1), float64
-    infile = datadir("statt_03_IN.pkl")
-    expfile = datadir("statt_03_OUT.pkl")
+    infile = datadir("xstatt_03_IN.pkl")
+    expfile = datadir("xstatt_03_OUT.pkl")
     dummy_test(infile, expfile)
 
 
@@ -83,8 +83,8 @@ def test_04():
     # ['SSE'] : np array, shape (1,), int64
     # ['dr'] : np array, shape (1,), int64
     # ['contrast']: np array, shape (1, 1), int64
-    infile = datadir("statt_04_IN.pkl")
-    expfile = datadir("statt_04_OUT.pkl")
+    infile = datadir("xstatt_04_IN.pkl")
+    expfile = datadir("xstatt_04_OUT.pkl")
     dummy_test(infile, expfile)
 
 
@@ -96,8 +96,8 @@ def test_05():
     # ['tri'] : np array, shape (40960, 3), int32
     # ['resl'] : np array, shape (61440, 1), float64
     # ['contrast']: np array, shape (10, 1), uint8
-    infile = datadir("statt_05_IN.pkl")
-    expfile = datadir("statt_05_OUT.pkl")
+    infile = datadir("xstatt_05_IN.pkl")
+    expfile = datadir("xstatt_05_OUT.pkl")
     dummy_test(infile, expfile)
 
 
@@ -109,8 +109,8 @@ def test_06():
     # ['tri'] : np array, shape (40960, 3), int32
     # ['resl'] : np array, shape (61440, 1), float64
     # ['contrast']: np array, shape (10, 1), int16
-    infile = datadir("statt_06_IN.pkl")
-    expfile = datadir("statt_06_OUT.pkl")
+    infile = datadir("xstatt_06_IN.pkl")
+    expfile = datadir("xstatt_06_OUT.pkl")
     dummy_test(infile, expfile)
 
 
@@ -122,8 +122,8 @@ def test_07():
     # ['tri'] : np array, shape (40960, 3), int32
     # ['resl'] : np array, shape (61440, 1), float64
     # ['contrast']: np array, shape (10, 1), float64
-    infile = datadir("statt_07_IN.pkl")
-    expfile = datadir("statt_07_OUT.pkl")
+    infile = datadir("xstatt_07_IN.pkl")
+    expfile = datadir("xstatt_07_OUT.pkl")
     dummy_test(infile, expfile)
 
 
@@ -135,8 +135,8 @@ def test_08():
     # ['tri'] : np array, shape (40960, 3), int32
     # ['resl'] : np array, shape (61440, 1), float64
     # ['contrast'] : np array, shape (20, 1), int64
-    infile = datadir("statt_08_IN.pkl")
-    expfile = datadir("statt_08_OUT.pkl")
+    infile = datadir("xstatt_08_IN.pkl")
+    expfile = datadir("xstatt_08_OUT.pkl")
     dummy_test(infile, expfile)
 
 
@@ -148,6 +148,45 @@ def test_09():
     # ['tri'] : np array, shape (40960, 3), int32
     # ['resl'] : np array, shape (61440, 1), float64
     # ['contrast'] : np array, shape (20, 1), int64
-    infile = datadir("statt_09_IN.pkl")
-    expfile = datadir("statt_09_OUT.pkl")
+    infile = datadir("xstatt_09_IN.pkl")
+    expfile = datadir("xstatt_09_OUT.pkl")
+    dummy_test(infile, expfile)
+
+
+def test_10():
+    # ['df'] : int64
+    # ['X'] : np array, shape (20, 9), uint16
+    # ['coef'] : np array, shape (9, 20484), float64
+    # ['SSE'] : np array, shape (1, 20484), float64
+    # ['tri'] : np array, shape (40960, 3), int32
+    # ['resl'] : np array, shape (61440, 1), float64
+    # ['contrast'] : np array, shape (20, 1), int64
+    infile = datadir("xstatt_10_IN.pkl")
+    expfile = datadir("xstatt_10_OUT.pkl")
+    dummy_test(infile, expfile)
+
+
+def test_11():
+    # ['df'] : int64
+    # ['X'] : np array, shape (20, 9), uint16
+    # ['coef'] : np array, shape (9, 20484), float64
+    # ['SSE'] : np array, shape (1, 20484), float64
+    # ['tri'] : np array, shape (40960, 3), int32
+    # ['resl'] : np array, shape (61440, 1), float64
+    # ['contrast'] : np array, shape (20, 1), int64
+    infile = datadir("xstatt_11_IN.pkl")
+    expfile = datadir("xstatt_11_OUT.pkl")
+    dummy_test(infile, expfile)
+
+
+def test_12():
+    # ['df'] : int64
+    # ['X'] : np array, shape (20, 9), uint16
+    # ['coef'] : np array, shape (9, 20484), float64
+    # ['SSE'] : np array, shape (1, 20484), float64
+    # ['tri'] : np array, shape (40960, 3), int32
+    # ['resl'] : np array, shape (61440, 1), float64
+    # ['contrast'] : np array, shape (20, 1), int64
+    infile = datadir("xstatt_12_IN.pkl")
+    expfile = datadir("xstatt_12_OUT.pkl")
     dummy_test(infile, expfile)
