@@ -54,13 +54,15 @@ if run_analysis:
 # analysis can be run as follows:
 
 from brainstat.context.meta_analysis import surface_decode_nimare
+surfaces_white = (fsaverage["white_left"], fsaverage["white_right"])
+roi = [labels[0:10242] == 1, labels[10242:] == 1]
+all_cortex = [labels[0:10242] > 0, labels[10242:]]
 
 if run_analysis:
     meta_analysis = surface_decode_nimare(
-        surfaces_pial, 
-        surfaces_white, 
-        roi, 
-        all_cortex, 
-        features=['Neurosynth_TFIDF__visuospatial', 'Neurosynth_TFIDF__motor'],
+        surfaces_pial,
+        surfaces_white,
+        roi,
+        all_cortex,
+        features=["Neurosynth_TFIDF__visuospatial", "Neurosynth_TFIDF__motor"],
     )
-
