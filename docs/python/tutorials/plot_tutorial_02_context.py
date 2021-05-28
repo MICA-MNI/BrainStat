@@ -49,7 +49,7 @@ if run_analysis:
 # -------------
 # To perform meta-analytic decoding, BrainStat interfaces with NiMare. Here we
 # test which terms are most associated with a map of cortical thickness. A simple example
-# analysis can be run as follows. First, we will load some cortical thickness data and 
+# analysis can be run as follows. First, we will load some cortical thickness data and
 # the white matter surface (recall that we've already loaded the pial surface).
 
 import os
@@ -83,7 +83,7 @@ mask = np.all(subject_thickness != 0, axis=0)
 
 ########################################################################
 # Next we can run the analysis. Note that the data and mask has to be
-# provided seperately for each hemisphere. 
+# provided seperately for each hemisphere.
 
 if run_analysis:
     meta_analysis = surface_decode_nimare(
@@ -95,5 +95,5 @@ if run_analysis:
     )
 
 ########################################################################
-# meta_analysis now contains a pandas.dataFrame with the correlation values 
-# for each requested feature. 
+# meta_analysis now contains a pandas.dataFrame with the correlation values
+# for each requested feature.
