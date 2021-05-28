@@ -48,21 +48,40 @@ if run_analysis:
 # Meta-Analytic
 # -------------
 # To perform meta-analytic decoding, BrainStat interfaces with NiMare. Here we
-# test which terms occur more often in manuscripts that report activation with the
-# target region, as opposed to regions reported in any part of the cortex. Please
-# be aware that this analysis currently uses a lot of memory (~80GB). A simple example
+# test which terms are most associated with a map of cortical thickness. A simple example
 # analysis can be run as follows:
 
+import os
+import brainstat
+import nibabel as nib
 from brainstat.context.meta_analysis import surface_decode_nimare
+from brainstat.tutorial.utils import fetch_tutorial_data
+
+brainstat_dir = os.path.dirname(brainstat.__file__)
+data_dir = os.path.join(brainstat_dir, "tutorial")
+
+n = 20
+tutorial_data = fetch_tutorial_data(n_subjects=n, data_dir=data_dir)
+
+# Reshape the thickness files such that left and right hemispheres are in the same row.
+files = np.reshape(np.array(tutorial_data["image_files"]), (-1, 2))
+
+# We'll use only the left hemisphere in this tutorial.
+subject_thickness = np.zeros((n, 20484))
+for i in range(n):
+    left_thickness = nib.load(files[i, 0]).get_fdata()
+    right_thickness = nib.load(files[i, 1]).get_fdata()
+    subject_thickness[i, :] = np.concatenate((left_thickness, right_thickness))
+thickness = np.mean(subject_thickness, axis=0)
+mask = np.all(subject_thickness != 0, axis=0)
+
 surfaces_white = (fsaverage["white_left"], fsaverage["white_right"])
-roi = [labels[0:10242] == 1, labels[10242:] == 1]
-all_cortex = [labels[0:10242] > 0, labels[10242:]]
 
 if run_analysis:
     meta_analysis = surface_decode_nimare(
         surfaces_pial,
         surfaces_white,
-        roi,
-        all_cortex,
+        thickness,
+        mask,
         features=["Neurosynth_TFIDF__visuospatial", "Neurosynth_TFIDF__motor"],
     )
