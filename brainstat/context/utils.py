@@ -11,14 +11,13 @@ from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 from brainstat.mesh.interpolate import surface_to_volume
 
 
-def mutli_surface_to_volume(
+def multi_surface_to_volume(
     pial,
     white,
     volume_template,
     labels,
     output_file,
     interpolation="nearest",
-    verbose=True,
 ):
     """Interpolates multiple surfaces to the volume.
 
@@ -41,8 +40,6 @@ def mutli_surface_to_volume(
     interpolation : str
         Either 'nearest' for nearest neighbor interpolation, or 'linear'
         for trilinear interpolation, defaults to 'nearest'.
-    verbose : boolean
-        If true, returns verbose output to console, defaults to true.
 
     Notes
     -----
@@ -97,7 +94,6 @@ def mutli_surface_to_volume(
             volume_template,
             T[i].name,
             interpolation=interpolation,
-            verbose=verbose > 0,
         )
 
     if len(T) > 1:

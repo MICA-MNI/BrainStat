@@ -4,7 +4,7 @@ Tutorial 02: Context Decoding
 
 In this tutorial you will learn about the context decoding tools included with
 BrainStat. The context decoding module consists of three parts: genetic
-deocding, meta-analytic decoding and histological comparisons. First, we'll
+decoding, meta-analytic decoding and histological comparisons. First, we'll
 consider how to run the genetic decoding analysis. 
 
 
@@ -27,7 +27,7 @@ run_analysis = False  # Too resource intensive to run on ReadTheDocs
 destrieux = datasets.fetch_atlas_surf_destrieux()
 labels = np.hstack((destrieux["map_left"], destrieux["map_right"]))
 fsaverage = datasets.fetch_surf_fsaverage()
-surfaces_pial = (fsaverage["pial_left"], fsaverage["pial_right"])
+surfaces_pial = [fsaverage["pial_left"], fsaverage["pial_right"]]
 
 if run_analysis:
     expression = surface_genetic_expression(labels, surfaces_pial, space="fsaverage")
@@ -55,10 +55,12 @@ if run_analysis:
 
 from brainstat.context.meta_analysis import surface_decode_nimare
 
-surfaces_white = (fsaverage["white_left"], fsaverage["white_right"])
-roi = [labels[0:10242] == 1, labels[10242:] == 1]
-all_cortex = [labels[0:10242] > 0, labels[10242:]]
-
 if run_analysis:
-    meta_analysis = surface_decode_nimare(surfaces_pial, surfaces_white, roi, all_cortex)
+    meta_analysis = surface_decode_nimare(
+        surfaces_pial, 
+        surfaces_white, 
+        roi, 
+        all_cortex, 
+        features=['Neurosynth_TFIDF__visuospatial', 'Neurosynth_TFIDF__motor'],
+    )
 
