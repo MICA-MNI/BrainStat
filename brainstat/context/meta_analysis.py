@@ -77,7 +77,7 @@ def surface_decode_nimare(
         mni152,
         mask_labels,
         mask_image.name,
-        interpolation=interpolation,
+        interpolation='nearest',
     )
 
     dataset = fetch_nimare_dataset(data_dir, mask=mask_image.name, keep_neurosynth=True)

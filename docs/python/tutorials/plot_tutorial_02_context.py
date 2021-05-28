@@ -61,5 +61,10 @@ all_cortex = [labels[0:10242] > 0, labels[10242:] > 0]
 
 if run_analysis:
     meta_analysis = surface_decode_nimare(
-        surfaces_pial, surfaces_white, roi, all_cortex
+        surfaces_pial, 
+        surfaces_white, 
+        roi, 
+        all_cortex, 
+        data_dir='/host/fladgate/local_raid/reinder',
+        features=['Neurosynth_TFIDF__visuospatial', 'Neurosynth_TFIDF__motor'],
     )
