@@ -52,11 +52,16 @@ def multi_surface_to_volume(
     if type(pial) is not type(white):
         ValueError("Pial and white must be of the same type.")
 
-    if not isinstance(pial, list):
+    if isinstance(pial, tuple):
+        pial = list(pial)
+        white = list(white)
+    elif not isinstance(pial, list):
         pial = [pial]
         white = [white]
 
-    if not isinstance(labels, list):
+    if isinstance(labels, tuple):
+        labels = list(labels)
+    elif not isinstance(labels, list):
         labels = [labels]
 
     if len(pial) is not len(white):
@@ -73,7 +78,9 @@ def multi_surface_to_volume(
         volume_template = nib.load(volume_template)
 
     for i in range(len(labels)):
-        if not isinstance(labels[i], np.ndarray):
+        if isinstance(labels[i], np.bool_):
+            labels[i] = np.array(labels[i])
+        elif not isinstance(labels[i], np.ndarray):
             labels[i] = load_mesh_labels(labels[i])
 
     # Surface data to volume.
