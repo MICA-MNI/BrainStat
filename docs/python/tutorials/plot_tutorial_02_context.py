@@ -49,7 +49,8 @@ if run_analysis:
 # -------------
 # To perform meta-analytic decoding, BrainStat interfaces with NiMare. Here we
 # test which terms are most associated with a map of cortical thickness. A simple example
-# analysis can be run as follows:
+# analysis can be run as follows. First, we will load some cortical thickness data and 
+# the white matter surface (recall that we've already loaded the pial surface).
 
 import os
 import brainstat
@@ -57,6 +58,10 @@ import nibabel as nib
 from brainstat.context.meta_analysis import surface_decode_nimare
 from brainstat.tutorial.utils import fetch_tutorial_data
 
+## Load white matter surfaces.
+surfaces_white = [fsaverage["white_left"], fsaverage["white_right"]]
+
+## Load cortical thickness data
 brainstat_dir = os.path.dirname(brainstat.__file__)
 data_dir = os.path.join(brainstat_dir, "tutorial")
 
@@ -69,19 +74,26 @@ files = np.reshape(np.array(tutorial_data["image_files"]), (-1, 2))
 # We'll use only the left hemisphere in this tutorial.
 subject_thickness = np.zeros((n, 20484))
 for i in range(n):
-    left_thickness = nib.load(files[i, 0]).get_fdata()
-    right_thickness = nib.load(files[i, 1]).get_fdata()
+    left_thickness = np.squeeze(nib.load(files[i, 0]).get_fdata())
+    right_thickness = np.squeeze(nib.load(files[i, 1]).get_fdata())
     subject_thickness[i, :] = np.concatenate((left_thickness, right_thickness))
+
 thickness = np.mean(subject_thickness, axis=0)
 mask = np.all(subject_thickness != 0, axis=0)
 
-surfaces_white = (fsaverage["white_left"], fsaverage["white_right"])
+########################################################################
+# Next we can run the analysis. Note that the data and mask has to be
+# provided seperately for each hemisphere. 
 
 if run_analysis:
     meta_analysis = surface_decode_nimare(
         surfaces_pial,
         surfaces_white,
-        thickness,
-        mask,
+        [thickness[:10242], thickness[10242:]],
+        [mask[:10242], mask[10242:]],
         features=["Neurosynth_TFIDF__visuospatial", "Neurosynth_TFIDF__motor"],
     )
+
+########################################################################
+# meta_analysis now contains a pandas.dataFrame with the correlation values 
+# for each requested feature. 
