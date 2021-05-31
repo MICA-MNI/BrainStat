@@ -6,6 +6,7 @@ from brainspace.mesh.mesh_io import read_surface
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 from brainspace.mesh.mesh_elements import get_points, get_cells
 import trimesh
+import logging
 
 
 def surface_to_volume(
@@ -15,7 +16,6 @@ def surface_to_volume(
     volume_template,
     volume_save,
     interpolation="nearest",
-    verbose=False,
 ):
     """Projects surface labels to the cortical ribbon.
 
@@ -36,8 +36,6 @@ def surface_to_volume(
     interpolation : str
         Either 'nearest' for nearest neighbor interpolation, or 'linear'
         for trilinear interpolation, defaults to 'nearest'.
-    verbose : bool
-        If True, returns printed output, defaults to False.
     """
 
     if not isinstance(pial_mesh, BSPolyData):
@@ -47,14 +45,10 @@ def surface_to_volume(
     if not isinstance(volume_template, nib.nifti1.Nifti1Image):
         volume_template = nib.load(volume_template)
 
-    if verbose:
-        print("Computing voxels inside the cortical ribbon.")
-    ribbon_points = cortical_ribbon(
-        pial_mesh, wm_mesh, volume_template, verbose=verbose
-    )
+    logging.debug("Computing voxels inside the cortical ribbon.")
+    ribbon_points = cortical_ribbon(pial_mesh, wm_mesh, volume_template)
 
-    if verbose:
-        print("Computing labels for cortical ribbon voxels.")
+    logging.debug("Computing labels for cortical ribbon voxels.")
     ribbon_labels = ribbon_interpolation(
         pial_mesh,
         wm_mesh,
@@ -64,8 +58,7 @@ def surface_to_volume(
         interpolation=interpolation,
     )
 
-    if verbose:
-        print("Constructing new nifti image.")
+    logging.debug("Constructing new nifti image.")
     new_data = np.zeros(volume_template.shape)
     ribbon_points = np.rint(
         ribbon_points, np.ones(ribbon_points.shape, dtype=int), casting="unsafe"
@@ -79,7 +72,7 @@ def surface_to_volume(
     nib.save(new_nii, volume_save)
 
 
-def cortical_ribbon(pial_mesh, wm_mesh, nii, mesh_distance=6, verbose=False):
+def cortical_ribbon(pial_mesh, wm_mesh, nii, mesh_distance=6):
     """Finds voxels inside of the cortical ribbon.
 
     Parameters
@@ -93,8 +86,6 @@ def cortical_ribbon(pial_mesh, wm_mesh, nii, mesh_distance=6, verbose=False):
     mesh_distance : int, optional
         Maximum distance from the cortical mesh at which the ribbon may occur.
         Used to reduce the search space, by default 6.
-    verbose : bool
-        If True, returns printed output, defaults to False.
 
     Returns
     -------
@@ -119,8 +110,7 @@ def cortical_ribbon(pial_mesh, wm_mesh, nii, mesh_distance=6, verbose=False):
     points = np.reshape(np.concatenate((x, y, z), axis=3), (-1, 3), order="F")
     world_coord = nib.affines.apply_affine(nii.affine, points)
 
-    if verbose:
-        print("Discarding points that exceed the minima/maxima of the pial mesh.")
+    logging.debug("Discarding points that exceed the minima/maxima of the pial mesh.")
     # Discard points that exceed any of the maxima/minima
     pial_points = np.array(get_points(pial_mesh))
     discard = np.any(
@@ -133,8 +123,7 @@ def cortical_ribbon(pial_mesh, wm_mesh, nii, mesh_distance=6, verbose=False):
     world_coord = world_coord[np.logical_not(discard), :]
 
     # Discard points that are more than mesh_distance from the pial and wm mesh.
-    if verbose:
-        print("Discarding points that are too far from the meshes.")
+    logging.debug("Discarding points that are too far from the meshes.")
     tree = cKDTree(pial_points)
     mindist_pial, _ = tree.query(world_coord)
 
@@ -147,8 +136,7 @@ def cortical_ribbon(pial_mesh, wm_mesh, nii, mesh_distance=6, verbose=False):
     ]
 
     # Check which points are inside pial but not inside WM (i.e. ribbon)
-    if verbose:
-        print("Retaining only points that are inside the pial but not the WM mesh.")
+    logging.debug("Retaining only points that are inside the pial but not the WM mesh.")
     pial_trimesh = trimesh.ray.ray_pyembree.RayMeshIntersector(
         trimesh.Trimesh(
             vertices=np.array(get_points(pial_mesh)),
