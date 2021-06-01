@@ -145,7 +145,7 @@ def y_correction(profile, template):
     coordinates = [np.array(get_points(x)) for x in surfaces]
     coordinates = np.concatenate(coordinates)
 
-    model = LinearRegression(coordinates[:, 1], profile, fit_intercept=True)
+    model = LinearRegression().fit(coordinates[:, 1][:, None], profile)
     residuals = profile - model.predict(coordinates[:, 1])
     return residuals
 
@@ -213,6 +213,9 @@ def read_histology_profile(data_dir=None, template="fsaverage", overwrite=False)
             data_dir=data_dir, template=template, overwrite=overwrite
         )
 
+    import pdb
+
+    pdb.set_trace()
     with h5py.File(histology_file, "r") as h5_file:
         return h5_file.get(template)[...]
 
@@ -291,8 +294,10 @@ def __generate_histology_files(BigBrainWarpPath, output_dir):
 
     Notes
     -----
-    Function is for internal usage only. It is recommended to
-    use other functions in this module for downloading the output files.
+    Function is for internal usage only. It is included here merely for
+    users who wish to inspect how the files were created. It is recommended
+    to use other functions in this module for downloading the output files.
+    Other templates were created from these using Workbench Tools.
     """
 
     base_dir = Path(BigBrainWarpPath) / "spaces"
@@ -308,3 +313,86 @@ def __generate_histology_files(BigBrainWarpPath, output_dir):
                 compression="gzip",
                 compression_opts=9,
             )
+
+
+def __warp_histology_files(
+    profiles,
+    source_sphere,
+    target_sphere,
+    output_file,
+    method="BARYCENTRIC",
+    source_area=None,
+    target_area=None,
+):
+    """Warps histology profiles to a different template.
+
+    Parameters
+    ----------
+    profiles : numpy.ndarray
+        Histological profiles of a single hemisphere.
+    source_sphere : str
+        Path to the source sphere.
+    target_sphere : str
+        Path to the target sphere.
+    output_file : str
+        Path to the output file.
+    method : str, optional
+        Interpolation method. Must be either 'ADAP_BARY_AREA' or 'BARYCENTRIC',
+        by default 'BARYCENTRIC'.
+    current_area : str, optional
+        Path to a metric file with vertex areas for the source sphere. Only used
+        and obligatory if method=='ADAP_BARY_AREA'.
+    target_area : str, optional
+        Path to a metric file with vertex areas for the target sphere. Only used
+        and obligatory if method=='ADAP_BARY_AREA'.
+
+    Notes
+    -----
+    Function is for internal usage only. It is included here merely for
+    users who wish to inspect how the files were created. It is recommended
+    to use other functions in this module for downloading the output files.
+    """
+    import subprocess
+    import tempfile
+    from nibabel.gifti.gifti import GiftiImage, GiftiDataArray
+    from nibabel import save
+
+    data = [GiftiImage(), GiftiImage()]
+    data[0].add_gifti_data_array(
+        GiftiDataArray(data=profiles[:, : profiles.shape[1] // 2])
+    )
+    data[1].add_gifti_data_array(
+        GiftiDataArray(data=profiles[:, profiles.shape[1] // 2 :])
+    )
+
+    for i in range(len(data)):
+        with tempfile.NamedTemporaryFile(suffix=".func.gii") as metric_file:
+            with tempfile.NamedTemporaryFile(suffix=".func.gii") as target_file:
+                save(data[i], metric_file.name)
+                if method == "BARYCENTRIC":
+                    subprocess.run(
+                        [
+                            "wb_command",
+                            "-metric-resample",
+                            metric_file.name,
+                            source_sphere,
+                            target_sphere,
+                            method,
+                            target_file,
+                        ]
+                    )
+                else:
+                    subprocess.run(
+                        [
+                            "wb_command",
+                            "-metric-resample",
+                            metric_file.name,
+                            source_sphere,
+                            target_sphere,
+                            method,
+                            target_file,
+                            "-area-metrics",
+                            source_area,
+                            target_area,
+                        ]
+                    )
