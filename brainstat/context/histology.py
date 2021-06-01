@@ -316,10 +316,10 @@ def __generate_histology_files(BigBrainWarpPath, output_dir):
 
 
 def __warp_histology_files(
-    profiles,
-    source_sphere,
-    target_sphere,
+    source_spheres,
+    target_spheres,
     output_file,
+    template_name='fsaverage',
     method="BARYCENTRIC",
     source_area=None,
     target_area=None,
@@ -328,14 +328,14 @@ def __warp_histology_files(
 
     Parameters
     ----------
-    profiles : numpy.ndarray
-        Histological profiles of a single hemisphere.
-    source_sphere : str
-        Path to the source sphere.
-    target_sphere : str
-        Path to the target sphere.
+    source_spheres : list
+        Path to the source sphere. Left must be provided first.
+    target_spheres : list
+        Path to the target sphere. Left must be provided first.
     output_file : str
         Path to the output file.
+    template_name : str
+        Name of the input template, by default 'fsaverage'.
     method : str, optional
         Interpolation method. Must be either 'ADAP_BARY_AREA' or 'BARYCENTRIC',
         by default 'BARYCENTRIC'.
@@ -348,14 +348,17 @@ def __warp_histology_files(
 
     Notes
     -----
-    Function is for internal usage only. It is included here merely for
+    This function is for internal usage only. It is included here merely for
     users who wish to inspect how the files were created. It is recommended
     to use other functions in this module for downloading the output files.
     """
+
     import subprocess
     import tempfile
     from nibabel.gifti.gifti import GiftiImage, GiftiDataArray
-    from nibabel import save
+    from nibabel import save, load
+
+    profiles = read_histology_profile('fsaverage')
 
     data = [GiftiImage(), GiftiImage()]
     data[0].add_gifti_data_array(
@@ -375,8 +378,8 @@ def __warp_histology_files(
                             "wb_command",
                             "-metric-resample",
                             metric_file.name,
-                            source_sphere,
-                            target_sphere,
+                            source_spheres[i],
+                            target_spheres[i],
                             method,
                             target_file,
                         ]
@@ -387,8 +390,8 @@ def __warp_histology_files(
                             "wb_command",
                             "-metric-resample",
                             metric_file.name,
-                            source_sphere,
-                            target_sphere,
+                            source_spheres[i],
+                            target_spheres[i],
                             method,
                             target_file,
                             "-area-metrics",
@@ -396,3 +399,6 @@ def __warp_histology_files(
                             target_area,
                         ]
                     )
+                gifti = load(target_file)
+                import pdb
+                pdb.set_trace()
