@@ -30,24 +30,24 @@ def compute_histology_gradients(
     reference=None,
     n_iter=10,
 ):
-    """Computes microstructural profile covariance gradients. 
+    """Computes microstructural profile covariance gradients.
 
     Parameters
     ----------
     mpc : numpy.ndarray
         Microstructural profile covariance matrix.
     kernel : str, optional
-         Kernel function to build the affinity matrix. Possible options: {‘pearson’, 
-         ‘spearman’, ‘cosine’, ‘normalized_angle’, ‘gaussian’}. If callable, must 
+         Kernel function to build the affinity matrix. Possible options: {‘pearson’,
+         ‘spearman’, ‘cosine’, ‘normalized_angle’, ‘gaussian’}. If callable, must
          receive a 2D array and return a 2D square array. If None, use input matrix.
          By default "cosine".
     approach : str, optional
-        Embedding approach. Can be 'pca' for Principal Component Analysis, 'le' for 
+        Embedding approach. Can be 'pca' for Principal Component Analysis, 'le' for
         laplacian eigenmaps, or 'dm' for diffusion mapping, by default "dm".
     n_components : int, optional
         Number of components to return, by default 10.
     alignment : str, None, optional
-        Alignment approach. Only used when two or more datasets are provided. 
+        Alignment approach. Only used when two or more datasets are provided.
         Valid options are 'pa' for procrustes analysis and "joint" for joint embedding.
         If None, no alignment is peformed, by default None.
     random_state : int, None, optional
@@ -58,7 +58,7 @@ def compute_histology_gradients(
     sparsity : float, optional
         Proportion of smallest elements to zero-out for each row, by default 0.9.
     reference : numpy.ndarray, optional
-        Initial reference for procrustes alignments. Only used when 
+        Initial reference for procrustes alignments. Only used when
         alignment == 'procrustes', by default None.
     n_iter : int, optional
         Number of iterations for Procrustes alignment, by default 10.
@@ -66,7 +66,7 @@ def compute_histology_gradients(
     Returns
     -------
     brainspace.gradient.gradient.GradientMaps
-        BrainSpace gradient maps object. 
+        BrainSpace gradient maps object.
     """
     gm = GradientMaps(
         kernel=kernel,
