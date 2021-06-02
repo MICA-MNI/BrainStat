@@ -319,7 +319,7 @@ def __warp_histology_files(
     source_spheres,
     target_spheres,
     output_file,
-    template_name='fsaverage',
+    template='fsaverage',
     method="BARYCENTRIC",
     source_area=None,
     target_area=None,
@@ -334,7 +334,7 @@ def __warp_histology_files(
         Path to the target sphere. Left must be provided first.
     output_file : str
         Path to the output file.
-    template_name : str
+    template : str
         Name of the input template, by default 'fsaverage'.
     method : str, optional
         Interpolation method. Must be either 'ADAP_BARY_AREA' or 'BARYCENTRIC',
@@ -358,7 +358,7 @@ def __warp_histology_files(
     from nibabel.gifti.gifti import GiftiImage, GiftiDataArray
     from nibabel import save, load
 
-    profiles = read_histology_profile('fsaverage')
+    profiles = read_histology_profile(template)
 
     data = [GiftiImage(), GiftiImage()]
     data[0].add_gifti_data_array(
