@@ -8,7 +8,6 @@ import numpy as np
 import h5py
 import hcp_utils as hcp
 
-from sklearn.linear_model import LinearRegression
 from nilearn import datasets
 from brainspace.gradient.gradient import GradientMaps
 from brainspace.mesh.mesh_creation import build_polydata
@@ -85,13 +84,13 @@ def compute_mpc(profile, labels, template=None):
     Parameters
     ----------
     profile : numpy.ndarray
-        Histological profiles.
+        Histological profiles of size surface-by-vertex.
     labels : numpy.ndarray
-        Labels of regions of interest.
+        Labels of regions of interest. Use 0 to denote regions that will not be included.
     template : str, None, optional
         Surface template, either 'fsaverage', 'fsaverage5' or 'fs_LR_64k' or a list
-        of two strings ontaining paths to the left/right (in that order) hemispheres. 
-        If provided, a regression based on y-coordinate is performed. By default None. 
+        of two strings ontaining paths to the left/right (in that order) hemispheres.
+        If provided, a regression based on y-coordinate is performed. By default None.
 
     Returns
     -------
@@ -103,6 +102,10 @@ def compute_mpc(profile, labels, template=None):
         profile = _y_correction(profile, template)
 
     roi_profile = reduce_by_labels(profile, labels)
+    if np.any(labels==0):
+        # Remove 0's in the labels. 
+        roi_profile = roi_profile[:, 1:]
+    
     partial_correlation = pcorr(pd.DataFrame(roi_profile)).to_numpy()
 
     mpc = 0.5 * np.log((1 + partial_correlation) / (1 - partial_correlation))
@@ -141,8 +144,14 @@ def _y_correction(profile, template):
     coordinates = [np.array(get_points(x)) for x in surfaces]
     coordinates = np.concatenate(coordinates)
 
-    model = LinearRegression().fit(coordinates[:, 1][:, None], profile)
-    residuals = profile - model.predict(coordinates[:, 1])
+    # Transposes on Y in the regression because Y should be vertex-by-surface for
+    # matrix-style linear regression. 
+    linear_regression = lambda Y, X: (Y.T - X @ (np.linalg.inv(X.T @ X) @ X.T @ Y.T)).T
+    intercept = np.ones((coordinates.shape[0], 1))
+    residuals = linear_regression(
+        profile,
+        np.concatenate((intercept, coordinates[:, 1][:, None]), axis=1),
+    )
     return residuals
 
 
@@ -161,18 +170,11 @@ def template_to_surfaces(template):
     """
 
     if isinstance(template, str):
-        # Assume template name.
-        if template == "fsaverage":
-            fsaverage = datasets.fetch_surf_fsaverage()
+        if template == "fsaverage" or template == "fsaverage5":
+            fsaverage = datasets.fetch_surf_fsaverage(mesh=template)
             surfaces = [
                 read_surface_gz(fsaverage["pial_left"]),
                 read_surface_gz(fsaverage["pial_right"]),
-            ]
-        elif template == "fsaverage5":
-            fsaverage5 = datasets.fetch_surf_fsaverage_5()
-            surfaces = [
-                read_surface_gz(fsaverage5["pial_left"]),
-                read_surface_gz(fsaverage5["pial_right"]),
             ]
         elif template == "fs_LR_64k":
             surfaces_hcp = [hcp.mesh["pial_left"], hcp.mesh["pial_right"]]
@@ -216,7 +218,9 @@ def read_histology_profile(data_dir=None, template="fsaverage", overwrite=False)
         )
 
     with h5py.File(histology_file, "r") as h5_file:
-        return h5_file.get(template)[...]
+        return h5_file.get(template)[
+            ...
+        ]
 
 
 def download_histology_profiles(data_dir=None, template="fsaverage", overwrite=False):
@@ -249,7 +253,7 @@ def download_histology_profiles(data_dir=None, template="fsaverage", overwrite=F
     urls = {
         "fsaverage": "https://box.bic.mni.mcgill.ca/s/znBp7Emls0mMW1a/download",
         "fsaverage5": "https://box.bic.mni.mcgill.ca/s/N8zstvuRb4sNcSe/download",
-        "fs_LR_64k": "https://box.bic.mni.mcgill.ca/s/d32QhjVIvVtEoNr/download",
+        "fs_LR_64k": "https://box.bic.mni.mcgill.ca/s/urziip5aXVltxXq/download",
     }
 
     try:
@@ -280,4 +284,3 @@ def _download_file(url, output_file, overwrite):
     logging.debug("Downloading " + str(output_file))
     with urllib.request.urlopen(url) as response, open(output_file, "wb") as out_file:
         shutil.copyfileobj(response, out_file)
-
