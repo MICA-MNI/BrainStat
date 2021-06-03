@@ -3,18 +3,11 @@ from pathlib import Path
 import logging
 import urllib.request
 import shutil
-import pandas as pd
 import numpy as np
 import h5py
-import hcp_utils as hcp
 
-from nilearn import datasets
 from brainspace.gradient.gradient import GradientMaps
-from brainspace.mesh.mesh_creation import build_polydata
-from brainspace.mesh.mesh_elements import get_points
 from brainspace.utils.parcellation import reduce_by_labels
-from pingouin import pcorr
-from .utils import read_surface_gz
 
 
 def compute_histology_gradients(
@@ -78,7 +71,7 @@ def compute_histology_gradients(
     return gm
 
 
-def compute_mpc(profile, labels, template=None):
+def compute_mpc(profile, labels):
     """Computes MPC for given labels on a surface template.
 
     Parameters
@@ -87,10 +80,6 @@ def compute_mpc(profile, labels, template=None):
         Histological profiles of size surface-by-vertex.
     labels : numpy.ndarray
         Labels of regions of interest. Use 0 to denote regions that will not be included.
-    template : str, None, optional
-        Surface template, either 'fsaverage', 'fsaverage5' or 'fs_LR_64k' or a list
-        of two strings ontaining paths to the left/right (in that order) hemispheres.
-        If provided, a regression based on y-coordinate is performed. By default None.
 
     Returns
     -------
@@ -98,89 +87,19 @@ def compute_mpc(profile, labels, template=None):
         Microstructural profile covariance.
     """
 
-    if template is not None:
-        profile = _y_correction(profile, template)
-
     roi_profile = reduce_by_labels(profile, labels)
     if np.any(labels==0):
         # Remove 0's in the labels. 
         roi_profile = roi_profile[:, 1:]
     
-    partial_correlation = pcorr(pd.DataFrame(roi_profile)).to_numpy()
+    p_corr = partial_correlation(roi_profile, np.mean(roi_profile, axis=1))
 
-    mpc = 0.5 * np.log((1 + partial_correlation) / (1 - partial_correlation))
+    mpc = 0.5 * np.log((1 + p_corr) / (1 - p_corr))
+    mpc[p_corr>0.99999] = 0 # Deals with floating point issues where p_corr==1
     mpc[mpc == np.inf] = 0
     mpc[mpc == np.nan] = 0
+
     return mpc
-
-
-def _y_correction(profile, template):
-    """Regresses y-coordinate from profiles and returns residuals.
-
-    Parameters
-    ----------
-    profile : numpy.ndarray
-        BigBrain intensity profiles.
-    template : str, list
-        Template name ('fs_LR', 'fsaverage') or a list containing two filenames
-        of left and right hemispheric surfaces.
-
-    Returns
-    -------
-    numpy.ndarray
-        Residuals.
-
-    Raises
-    ------
-    ValueError
-        Throws an error if template is None.
-    """
-
-    if isinstance(template, str):
-        surfaces = template_to_surfaces(template)
-    else:
-        surfaces = [read_surface_gz(x) for x in template]
-
-    coordinates = [np.array(get_points(x)) for x in surfaces]
-    coordinates = np.concatenate(coordinates)
-
-    # Transposes on Y in the regression because Y should be vertex-by-surface for
-    # matrix-style linear regression. 
-    linear_regression = lambda Y, X: (Y.T - X @ (np.linalg.inv(X.T @ X) @ X.T @ Y.T)).T
-    intercept = np.ones((coordinates.shape[0], 1))
-    residuals = linear_regression(
-        profile,
-        np.concatenate((intercept, coordinates[:, 1][:, None]), axis=1),
-    )
-    return residuals
-
-
-def template_to_surfaces(template):
-    """Converts a template string to BrainSpace surfaces.
-
-    Parameters
-    ----------
-    template : str
-        'fsaverage' or 'fs_LR'.
-
-    Returns
-    -------
-    list
-        BrainSpace surfaces. First element is the left hemisphere.
-    """
-
-    if isinstance(template, str):
-        if template == "fsaverage" or template == "fsaverage5":
-            fsaverage = datasets.fetch_surf_fsaverage(mesh=template)
-            surfaces = [
-                read_surface_gz(fsaverage["pial_left"]),
-                read_surface_gz(fsaverage["pial_right"]),
-            ]
-        elif template == "fs_LR_64k":
-            surfaces_hcp = [hcp.mesh["pial_left"], hcp.mesh["pial_right"]]
-            surfaces = [build_polydata(x[0], x[1]) for x in surfaces_hcp]
-
-    return surfaces
 
 
 def read_histology_profile(data_dir=None, template="fsaverage", overwrite=False):
@@ -284,3 +203,28 @@ def _download_file(url, output_file, overwrite):
     logging.debug("Downloading " + str(output_file))
     with urllib.request.urlopen(url) as response, open(output_file, "wb") as out_file:
         shutil.copyfileobj(response, out_file)
+
+
+def partial_correlation(X, covar):
+    """Runs a partial correlation whilst correcting for a covariate.
+
+    Parameters
+    ----------
+    X : numpy.ndarray
+        Two-dimensional array of the data to be correlated.
+    covar : numpy.ndarray
+        One-dimensional array of the covariate.
+
+    Returns
+    -------
+    numpy.ndarray
+        Partial correlation matrix. 
+    """
+    X_mean = np.concatenate((X, covar[:, None]), axis=1)
+    pearson_correlation = np.corrcoef(X_mean, rowvar=False)
+    r_xy = pearson_correlation[:-1, :-1]
+    r_xz = pearson_correlation[0:-1, -1][:, None]
+
+    return (r_xy - r_xz @ r_xz.T) / (np.sqrt(1 - r_xz ** 2) * np.sqrt(1 - r_xz.T ** 2))
+
+   

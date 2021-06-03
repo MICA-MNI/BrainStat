@@ -61,7 +61,8 @@ from brainstat.tutorial.utils import fetch_tutorial_data
 ## Load white matter surfaces.
 surfaces_white = [fsaverage["white_left"], fsaverage["white_right"]]
 
-## Load cortical thickness data
+## Load cortical thickness data.
+# Note: you can change the data_dir to wherever you'd like to save the data.
 brainstat_dir = os.path.dirname(brainstat.__file__)
 data_dir = os.path.join(brainstat_dir, "tutorial")
 
@@ -97,3 +98,41 @@ if run_analysis:
 ########################################################################
 # meta_analysis now contains a pandas.dataFrame with the correlation values
 # for each requested feature.
+#
+# Histological decoding
+# ---------------------
+# For histological decoding we use microstructural profile covariance gradients
+# computed from the BigBrain dataset. (TODO: Add more background). Firstly, lets
+# download the MPC data and compute its gradients. As the computations for this aren't
+# very intesnive, we can actually run this on ReadTheDocs!
+
+from brainstat.context.histology import (
+    read_histology_profile,
+    compute_mpc,
+    compute_histology_gradients,
+)
+from brainspace.datasets import load_parcellation
+
+# Load the Schaefer 400 atlas
+schaefer_400 = load_parcellation('schaefer', scale=400, join=True)
+
+# Run the analysis
+histology_profiles = read_histology_profile(template="fs_LR_64k")
+mpc = compute_mpc(histology_profiles, labels=schaefer_400)
+gradient_map = compute_histology_gradients(mpc)
+
+########################################################################
+# Lets plot the first gradient of histology to see what it looks like. 
+# We will use BrainSpace to create our plots. For full details on how 
+# BrainSpace's plotting functionality works, please consult the BrainSpace
+# ReadTheDocs.
+
+from brainspace.plotting.surface_plotting import plot_hemispheres
+from brainspace.utils.parcellation import map_to_labels
+from brainspace.datasets import load_conte69
+
+left_surface, right_surface = load_conte69()
+vertexwise_data = []
+for i in range(0,2):
+    vertexwise_data.append(map_to_labels(gradient_map.gradients_[:, i], schaefer_400, mask = schaefer_400!=0, fill=np.nan))
+plot_hemispheres(left_surface, right_surface, vertexwise_data)
