@@ -88,14 +88,14 @@ def compute_mpc(profile, labels):
     """
 
     roi_profile = reduce_by_labels(profile, labels)
-    if np.any(labels==0):
-        # Remove 0's in the labels. 
+    if np.any(labels == 0):
+        # Remove 0's in the labels.
         roi_profile = roi_profile[:, 1:]
-    
+
     p_corr = partial_correlation(roi_profile, np.mean(roi_profile, axis=1))
 
     mpc = 0.5 * np.log((1 + p_corr) / (1 - p_corr))
-    mpc[p_corr>0.99999] = 0 # Deals with floating point issues where p_corr==1
+    mpc[p_corr > 0.99999] = 0  # Deals with floating point issues where p_corr==1
     mpc[mpc == np.inf] = 0
     mpc[mpc == np.nan] = 0
 
@@ -137,9 +137,7 @@ def read_histology_profile(data_dir=None, template="fsaverage", overwrite=False)
         )
 
     with h5py.File(histology_file, "r") as h5_file:
-        return h5_file.get(template)[
-            ...
-        ]
+        return h5_file.get(template)[...]
 
 
 def download_histology_profiles(data_dir=None, template="fsaverage", overwrite=False):
@@ -218,7 +216,7 @@ def partial_correlation(X, covar):
     Returns
     -------
     numpy.ndarray
-        Partial correlation matrix. 
+        Partial correlation matrix.
     """
     X_mean = np.concatenate((X, covar[:, None]), axis=1)
     pearson_correlation = np.corrcoef(X_mean, rowvar=False)
@@ -226,5 +224,3 @@ def partial_correlation(X, covar):
     r_xz = pearson_correlation[0:-1, -1][:, None]
 
     return (r_xy - r_xz @ r_xz.T) / (np.sqrt(1 - r_xz ** 2) * np.sqrt(1 - r_xz.T ** 2))
-
-   

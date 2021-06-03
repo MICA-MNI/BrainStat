@@ -114,7 +114,7 @@ from brainstat.context.histology import (
 from brainspace.datasets import load_parcellation
 
 # Load the Schaefer 400 atlas
-schaefer_400 = load_parcellation('schaefer', scale=400, join=True)
+schaefer_400 = load_parcellation("schaefer", scale=400, join=True)
 
 # Run the analysis
 histology_profiles = read_histology_profile(template="fs_LR_64k")
@@ -122,8 +122,8 @@ mpc = compute_mpc(histology_profiles, labels=schaefer_400)
 gradient_map = compute_histology_gradients(mpc)
 
 ########################################################################
-# Lets plot the first gradient of histology to see what it looks like. 
-# We will use BrainSpace to create our plots. For full details on how 
+# Lets plot the first gradient of histology to see what it looks like.
+# We will use BrainSpace to create our plots. For full details on how
 # BrainSpace's plotting functionality works, please consult the BrainSpace
 # ReadTheDocs.
 
@@ -133,6 +133,13 @@ from brainspace.datasets import load_conte69
 
 left_surface, right_surface = load_conte69()
 vertexwise_data = []
-for i in range(0,2):
-    vertexwise_data.append(map_to_labels(gradient_map.gradients_[:, i], schaefer_400, mask = schaefer_400!=0, fill=np.nan))
+for i in range(0, 2):
+    vertexwise_data.append(
+        map_to_labels(
+            gradient_map.gradients_[:, i],
+            schaefer_400,
+            mask=schaefer_400 != 0,
+            fill=np.nan,
+        )
+    )
 plot_hemispheres(left_surface, right_surface, vertexwise_data)
