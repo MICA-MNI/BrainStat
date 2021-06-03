@@ -20,7 +20,7 @@ from .utils import read_surface_gz
 
 def compute_histology_gradients(
     mpc,
-    kernel="cosine",
+    kernel="normalized_angle",
     approach="dm",
     n_components=10,
     alignment=None,
@@ -40,7 +40,7 @@ def compute_histology_gradients(
          Kernel function to build the affinity matrix. Possible options: {‘pearson’,
          ‘spearman’, ‘cosine’, ‘normalized_angle’, ‘gaussian’}. If callable, must
          receive a 2D array and return a 2D square array. If None, use input matrix.
-         By default "cosine".
+         By default "normalized_angle".
     approach : str, optional
         Embedding approach. Can be 'pca' for Principal Component Analysis, 'le' for
         laplacian eigenmaps, or 'dm' for diffusion mapping, by default "dm".
@@ -79,7 +79,7 @@ def compute_histology_gradients(
     return gm
 
 
-def compute_mpc(profile, labels, template=None, regress_y=False):
+def compute_mpc(profile, labels, template=None):
     """Computes MPC for given labels on a surface template.
 
     Parameters
@@ -89,11 +89,9 @@ def compute_mpc(profile, labels, template=None, regress_y=False):
     labels : numpy.ndarray
         Labels of regions of interest.
     template : str, None, optional
-        Surface template, either 'fsaverage' or 'fs_LR' or a list of two strings
-        containing paths to the left/right (in that order) hemispheres, by default
-        'fsaverage'. This argument is required if regress_y==True.
-    regress_y : bool, optional
-        If true, regress the y-coordinate from the profiels, by default True.
+        Surface template, either 'fsaverage', 'fsaverage5' or 'fs_LR_64k' or a list
+        of two strings ontaining paths to the left/right (in that order) hemispheres. 
+        If provided, a regression based on y-coordinate is performed. By default None. 
 
     Returns
     -------
@@ -101,10 +99,8 @@ def compute_mpc(profile, labels, template=None, regress_y=False):
         Microstructural profile covariance.
     """
 
-    if regress_y:
-        if template is None:
-            raise ValueError("If regress_y is True, template may not be None.")
-        profile = y_correction(profile, template)
+    if template is not None:
+        profile = _y_correction(profile, template)
 
     roi_profile = reduce_by_labels(profile, labels)
     partial_correlation = pcorr(pd.DataFrame(roi_profile)).to_numpy()
@@ -115,7 +111,7 @@ def compute_mpc(profile, labels, template=None, regress_y=False):
     return mpc
 
 
-def y_correction(profile, template):
+def _y_correction(profile, template):
     """Regresses y-coordinate from profiles and returns residuals.
 
     Parameters
@@ -172,7 +168,13 @@ def template_to_surfaces(template):
                 read_surface_gz(fsaverage["pial_left"]),
                 read_surface_gz(fsaverage["pial_right"]),
             ]
-        elif template == "fs_LR":
+        elif template == "fsaverage5":
+            fsaverage5 = datasets.fetch_surf_fsaverage_5()
+            surfaces = [
+                read_surface_gz(fsaverage5["pial_left"]),
+                read_surface_gz(fsaverage5["pial_right"]),
+            ]
+        elif template == "fs_LR_64k":
             surfaces_hcp = [hcp.mesh["pial_left"], hcp.mesh["pial_right"]]
             surfaces = [build_polydata(x[0], x[1]) for x in surfaces_hcp]
 
@@ -213,9 +215,6 @@ def read_histology_profile(data_dir=None, template="fsaverage", overwrite=False)
             data_dir=data_dir, template=template, overwrite=overwrite
         )
 
-    import pdb
-
-    pdb.set_trace()
     with h5py.File(histology_file, "r") as h5_file:
         return h5_file.get(template)[...]
 
@@ -249,14 +248,15 @@ def download_histology_profiles(data_dir=None, template="fsaverage", overwrite=F
 
     urls = {
         "fsaverage": "https://box.bic.mni.mcgill.ca/s/znBp7Emls0mMW1a/download",
-        "fs_LR": "https://box.bic.mni.mcgill.ca/s/ge1GVQJ0YFwtYLL/download",
+        "fsaverage5": "https://box.bic.mni.mcgill.ca/s/N8zstvuRb4sNcSe/download",
+        "fs_LR_64k": "https://box.bic.mni.mcgill.ca/s/d32QhjVIvVtEoNr/download",
     }
 
     try:
         _download_file(urls[template], output_file, overwrite)
     except KeyError:
         raise KeyError(
-            "Could not find the requested template. Valid templates are: 'fs_LR', 'fsaverage'."
+            "Could not find the requested template. Valid templates are: 'fs_LR_64k', 'fsaverage', 'fsaverage5'."
         )
 
 
@@ -281,35 +281,3 @@ def _download_file(url, output_file, overwrite):
     with urllib.request.urlopen(url) as response, open(output_file, "wb") as out_file:
         shutil.copyfileobj(response, out_file)
 
-
-def __generate_histology_files(BigBrainWarpPath, output_dir):
-    """Generates the histology files from BigBrainWarp
-
-    Parameters
-    ----------
-    BigBrainWarpPath : str, pathlib.Path
-        Path to the BigBrainWarp repository.
-    output_dir : str, pathlib.Path
-        Path to the output directory.
-
-    Notes
-    -----
-    Function is for internal usage only. It is included here merely for
-    users who wish to inspect how the files were created. It is recommended
-    to use other functions in this module for downloading the output files.
-    Other templates were created from these using Workbench Tools.
-    """
-
-    base_dir = Path(BigBrainWarpPath) / "spaces"
-    for template in ["fsaverage", "fs_LR"]:
-        profile_file = base_dir / template / ("profiles_" + template + ".txt")
-        output_file = Path(output_dir) / ("histology_" + template + ".h5")
-
-        profile = pd.read_csv(profile_file, header=None)
-        with h5py.File(output_file, "w") as h5_file:
-            h5_file.create_dataset(
-                template,
-                data=profile.to_numpy(),
-                compression="gzip",
-                compression_opts=9,
-            )
