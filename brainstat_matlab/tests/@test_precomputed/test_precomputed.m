@@ -257,6 +257,11 @@ classdef test_precomputed < matlab.unittest.TestCase
                 output = load_pkl(pair{2});
                 slm = input2slm(input);
                 P = struct();
+                
+                if ~isempty(slm.tri)
+                    slm.debug_set('tri', slm.tri + 1); % Python starts at 0.
+                end
+                
                 if ismember('resl', fieldnames(input))
                     [P.resels, P.reselspvert, P.edg] = slm.compute_resels();
                     P.edg = double(P.edg-1);
@@ -319,12 +324,19 @@ function test_files = get_test_files(test_name)
 % Gets the files for a particular test. Returns them with the input/output
 % of the same test along the first dimension, different tests along the
 % second.
+
 data_dir = get_test_data_dir();
 data_dir_contents = dir(data_dir);
+
 all_files = {data_dir_contents.name};
-test_files = all_files(startsWith(all_files, test_name));
+
+% See if the updated tests exist.
+test_files = all_files(startsWith(all_files, ['x', test_name]));
 if isempty(test_files)
-    error('Did not find any test files.')
+    test_files = all_files(startsWith(all_files, test_name));
+    if isempty(test_files)
+        error('Could not find test files.')
+    end
 end
 test_files = reshape(test_files, 2, []);
 test_files = data_dir + string(filesep) + test_files;
