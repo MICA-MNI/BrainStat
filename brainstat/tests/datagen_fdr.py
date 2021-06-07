@@ -468,7 +468,8 @@ def generate_data_test_fdr():
     D["k"] = 1
     finname = datadir("xstatq_14_IN.pkl")
     with open(finname, "wb") as handle:
-        foutname = datadir("xstatq_14_OUT.pkl")
+        pickle.dump(D, handle, protocol=4)
+    foutname = datadir("xstatq_14_OUT.pkl")
     get_fdr_output(D, foutname)
 
 

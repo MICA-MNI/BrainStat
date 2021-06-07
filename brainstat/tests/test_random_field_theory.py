@@ -20,6 +20,7 @@ def dummy_test(infile, expfile):
             slm.cluster_threshold = idic[key]
         else:
             setattr(slm, key, idic[key])
+
     empirical_output = random_field_theory(slm)
 
     # load expected outout data
@@ -34,14 +35,20 @@ def dummy_test(infile, expfile):
             for key in expected:
                 if key == "mask":
                     continue
-                comp = np.allclose(
-                    empirical[key], expected[key], rtol=1e-05, equal_nan=True
-                )
-                testout.append(comp)
+                if empirical[key] is None:
+                    testout.append(expected[key] is None)
+                else:
+                    comp = np.allclose(
+                        empirical[key], expected[key], rtol=1e-05, equal_nan=True
+                    )
+                    testout.append(comp)
         else:
-            if len(expected) is not 0:
-                comp = np.allclose(empirical, expected, rtol=1e-05, equal_nan=True)
-                testout.append(comp)
+            if empirical is None:
+                testout.append(expected is None)
+            else:
+                if len(expected) is not 0:
+                    comp = np.allclose(empirical, expected, rtol=1e-05, equal_nan=True)
+                    testout.append(comp)
 
     assert all(flag == True for (flag) in testout)
 
