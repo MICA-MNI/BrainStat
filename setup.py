@@ -40,6 +40,7 @@ setuptools.setup(
     install_requires=[
         "abagen>=0.1",
         "brainspace>=0.1.1",
+        "h5py",
         "neurosynth",
         "nibabel",
         "nilearn>=0.7.0",
