@@ -49,7 +49,7 @@ expected_number_of_tests = 21
 parametrize = pytest.mark.parametrize
 @parametrize("test_number", range(1, expected_number_of_tests + 1))
 def test_run_all(test_number):
-    infile = datadir("xstatp" + f"{test_number:02d}" + "_IN.pkl")
-    expfile = datadir("xstatp" + f"{test_number:02d}" + "_OUT.pkl")
+    infile = datadir("xstatp_" + f"{test_number:02d}" + "_IN.pkl")
+    expfile = datadir("xstatp_" + f"{test_number:02d}" + "_OUT.pkl")
     dummy_test(infile, expfile)
 
