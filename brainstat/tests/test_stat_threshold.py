@@ -11,7 +11,7 @@ def dummy_test(infile, expfile):
     idic = pickle.load(ifile)
     ifile.close()
 
-    # run stat_threshold
+    # run stat_xthreshold
     A, B, C, D, E, F = stat_threshold(
         idic["search_volume"],
         idic["num_voxels"],
@@ -53,152 +53,288 @@ def dummy_test(infile, expfile):
 
 
 def test_01():
-    # search_volume = 5.59, df = 5, nconj = 0.5, nprint = 0
-    infile = datadir("thresh_01_IN.pkl")
-    expfile = datadir("thresh_01_OUT.pkl")
+    infile = datadir("xthresh_01_IN.pkl")
+    expfile = datadir("xthresh_01_OUT.pkl")
     dummy_test(infile, expfile)
 
 
 def test_02():
-    # search volume is a list,  search volume = [3.2, 8.82, 7.71],
-    # df = 5, nconj = 0.5, nprint=0
-    infile = datadir("thresh_02_IN.pkl")
-    expfile = datadir("thresh_02_OUT.pkl")
+    infile = datadir("xthresh_02_IN.pkl")
+    expfile = datadir("xthresh_02_OUT.pkl")
     dummy_test(infile, expfile)
 
 
 def test_03():
-    # search volume is a 1D numpy array, search volume = np.array([0.36, 6.22 , 2.13]),
-    # df = 5, nconj = 0.5, nprint=0
-    infile = datadir("thresh_03_IN.pkl")
-    expfile = datadir("thresh_03_OUT.pkl")
+    infile = datadir("xthresh_03_IN.pkl")
+    expfile = datadir("xthresh_03_OUT.pkl")
     dummy_test(infile, expfile)
 
 
 def test_04():
-    # search_volume is a 2D numpy array,
-    # search_volume = array([[ 0.46,  3.00], [13.00, 87.46]]),
-    # df = 5, nconj = 0.5, nprint=0
-    infile = datadir("thresh_04_IN.pkl")
-    expfile = datadir("thresh_04_OUT.pkl")
+    infile = datadir("xthresh_04_IN.pkl")
+    expfile = datadir("xthresh_04_OUT.pkl")
     dummy_test(infile, expfile)
 
 
 def test_05():
-    # search_volume is a float,  search_volume = 1.22,
-    # num_voxels = 560, df = 5, nconj = 0.5, nprint = 0
-    infile = datadir("thresh_05_IN.pkl")
-    expfile = datadir("thresh_05_OUT.pkl")
+    infile = datadir("xthresh_05_IN.pkl")
+    expfile = datadir("xthresh_05_OUT.pkl")
     dummy_test(infile, expfile)
 
 
 def test_06():
-    # search_volume is a 2D numpy array,
-    # search volume = array([[3955,  760], [ 770, 4042]]),
-    # num_voxels is a list of integers, num_voxels = [3955, 760, 8058],
-    # df = 5, nconj = 0.5, nprint = 0
-    infile = datadir("thresh_06_IN.pkl")
-    expfile = datadir("thresh_06_OUT.pkl")
+    infile = datadir("xthresh_06_IN.pkl")
+    expfile = datadir("xthresh_06_OUT.pkl")
     dummy_test(infile, expfile)
 
 
 def test_07():
-    # search_volume is a 2D numpy array,
-    # search_volume = array([[ 49,  47], [ 57, 136]]),
-    # num_voxels is a 2D array of shape (23, 1), including floats,
-    # fwhm = 5.34, df = 35, nconj = 0.5, nprint=0
-    infile = datadir("thresh_07_IN.pkl")
-    expfile = datadir("thresh_07_OUT.pkl")
+    infile = datadir("xthresh_07_IN.pkl")
+    expfile = datadir("xthresh_07_OUT.pkl")
     dummy_test(infile, expfile)
 
 
 def test_08():
-    # search_volume is a 2D numpy array, array([[ 76,  71], [ 81, 163]]),
-    # num_voxels is a 2D array of shape (75, 1), dtype('float64'),
-    # fwhm = 3.57,  df = inf, nconj = 0.5, nprint=0
-    infile = datadir("thresh_08_IN.pkl")
-    expfile = datadir("thresh_08_OUT.pkl")
+    infile = datadir("xthresh_08_IN.pkl")
+    expfile = datadir("xthresh_08_OUT.pkl")
     dummy_test(infile, expfile)
 
 
 def test_09():
-    # search_volume is a float,  search_volume = 70.66,
-    # num_voxels is a 1D array of shape (5,), dtype('int64'),
-    # fwhm = 6.95, df = 5, p_val_peak = 0.71, nconj = 0.5, nprint=0
-    infile = datadir("thresh_09_IN.pkl")
-    expfile = datadir("thresh_09_OUT.pkl")
+    infile = datadir("xthresh_09_IN.pkl")
+    expfile = datadir("xthresh_09_OUT.pkl")
     dummy_test(infile, expfile)
 
 
 def test_10():
-    # search_volume is a float,  search_volume = 72.70,
-    # num_voxels is a 1D array of shape (5,), dtype('int64'),
-    # fwhm = 5.21, df = 7,
-    # p_val_peak is a list,  p_val_peak = [0.48, 0.54, 0.24, 0.27],
-    # nconj = 0.5, nprint=0
-    infile = datadir("thresh_10_IN.pkl")
-    expfile = datadir("thresh_10_OUT.pkl")
+    infile = datadir("xthresh_10_IN.pkl")
+    expfile = datadir("xthresh_10_OUT.pkl")
     dummy_test(infile, expfile)
 
 
 def test_11():
-    # search_volume is a float, search_volume = 33.26,
-    # num_voxels is a 1D array of shape (5,), dtype('int64'),
-    # fwhm = 5.20, df = 7,
-    # p_val_peak is a 1D array of shape (7,), dtype('float64'),
-    # nconj = 0.5, nprint=0
-    infile = datadir("thresh_11_IN.pkl")
-    expfile = datadir("thresh_11_OUT.pkl")
+    infile = datadir("xthresh_11_IN.pkl")
+    expfile = datadir("xthresh_11_OUT.pkl")
     dummy_test(infile, expfile)
 
 
 def test_12():
-    # search_volume is a float, search_volume = 7.0,
-    # num_voxels = 55, fwhm = 9.50, df = 6,
-    # p_val_peak is a 1D array of shape (55,), dtype('float64'),
-    # cluster_threshold = 0.048,
-    # p_val_extent is a 1D array of shape (55,), dtype('float64'),
-    # nconj = 54, nprint = 0
-    infile = datadir("thresh_12_IN.pkl")
-    expfile = datadir("thresh_12_OUT.pkl")
+    infile = datadir("xthresh_12_IN.pkl")
+    expfile = datadir("xthresh_12_OUT.pkl")
     dummy_test(infile, expfile)
 
 
 def test_13():
-    # search_volume is a list, search_volume = [5.7, 8, 9],
-    # num_voxels = 100, df = 5,
-    # p_val_peak is a 2D array of shape (2,2), dtype('float64'),
-    # cluster_threshold is a list, cluster_threshold = [0.001, 0.1, 0, 6]
-    # p_val_extent = 0.01, nconj = 0.02, nvar = [1, 1], nprint = 0
-    infile = datadir("thresh_13_IN.pkl")
-    expfile = datadir("thresh_13_OUT.pkl")
+    infile = datadir("xthresh_13_IN.pkl")
+    expfile = datadir("xthresh_13_OUT.pkl")
     dummy_test(infile, expfile)
 
 
 def test_14():
-    # search_volume is a 2D numpy array,
-    # search_volume = np.array([[4.00e+00, nan, 6.59e+03]]).
-    # num_voxels = 64984, fwhm = 1,
-    # df a 2D array of shape (2,2), dtype('int64'),
-    # p_val_peak is a 1D array of shape (2,), dtype('float64'),
-    # cluster_threshold = 0.001, p_val_extent = 0.05, nprint = 1
-    infile = datadir("thresh_14_IN.pkl")
-    expfile = datadir("thresh_14_OUT.pkl")
+    infile = datadir("xthresh_14_IN.pkl")
+    expfile = datadir("xthresh_14_OUT.pkl")
     dummy_test(infile, expfile)
 
 
 def test_15():
-    # df a 2D array of shape (2, 2), dtype('int64'),
-    # p_val_peak is a 2D array of shape (1, 87), dtype('float64'),
-    # nprint = 0
-    infile = datadir("thresh_15_IN.pkl")
-    expfile = datadir("thresh_15_OUT.pkl")
+    infile = datadir("xthresh_15_IN.pkl")
+    expfile = datadir("xthresh_15_OUT.pkl")
     dummy_test(infile, expfile)
 
 
 def test_16():
-    # df a 2D array of shape (2, 2), dtype('int64'),
-    # p_val_peak = 0.001, nvar = 3.0 nprint = 0
-    infile = datadir("thresh_16_IN.pkl")
-    expfile = datadir("thresh_16_OUT.pkl")
+    infile = datadir("xthresh_16_IN.pkl")
+    expfile = datadir("xthresh_16_OUT.pkl")
+    dummy_test(infile, expfile)
+
+
+def test_17():
+    infile = datadir("xthresh_17_IN.pkl")
+    expfile = datadir("xthresh_17_OUT.pkl")
+    dummy_test(infile, expfile)
+
+
+def test_18():
+    infile = datadir("xthresh_18_IN.pkl")
+    expfile = datadir("xthresh_18_OUT.pkl")
+    dummy_test(infile, expfile)
+
+
+def test_19():
+    infile = datadir("xthresh_19_IN.pkl")
+    expfile = datadir("xthresh_19_OUT.pkl")
+    dummy_test(infile, expfile)
+
+
+def test_20():
+    infile = datadir("xthresh_20_IN.pkl")
+    expfile = datadir("xthresh_20_OUT.pkl")
+    dummy_test(infile, expfile)
+
+
+def test_21():
+    infile = datadir("xthresh_21_IN.pkl")
+    expfile = datadir("xthresh_21_OUT.pkl")
+    dummy_test(infile, expfile)
+
+
+def test_22():
+    infile = datadir("xthresh_22_IN.pkl")
+    expfile = datadir("xthresh_22_OUT.pkl")
+    dummy_test(infile, expfile)
+
+
+def test_23():
+    infile = datadir("xthresh_23_IN.pkl")
+    expfile = datadir("xthresh_23_OUT.pkl")
+    dummy_test(infile, expfile)
+
+
+def test_24():
+    infile = datadir("xthresh_24_IN.pkl")
+    expfile = datadir("xthresh_24_OUT.pkl")
+    dummy_test(infile, expfile)
+
+
+def test_25():
+    infile = datadir("xthresh_25_IN.pkl")
+    expfile = datadir("xthresh_25_OUT.pkl")
+    dummy_test(infile, expfile)
+
+
+def test_26():
+    infile = datadir("xthresh_26_IN.pkl")
+    expfile = datadir("xthresh_26_OUT.pkl")
+    dummy_test(infile, expfile)
+
+
+def test_27():
+    infile = datadir("xthresh_27_IN.pkl")
+    expfile = datadir("xthresh_27_OUT.pkl")
+    dummy_test(infile, expfile)
+
+
+def test_28():
+    infile = datadir("xthresh_28_IN.pkl")
+    expfile = datadir("xthresh_28_OUT.pkl")
+    dummy_test(infile, expfile)
+
+
+def test_29():
+    infile = datadir("xthresh_29_IN.pkl")
+    expfile = datadir("xthresh_29_OUT.pkl")
+    dummy_test(infile, expfile)
+
+
+def test_30():
+    infile = datadir("xthresh_30_IN.pkl")
+    expfile = datadir("xthresh_30_OUT.pkl")
+    dummy_test(infile, expfile)
+
+
+def test_31():
+    infile = datadir("xthresh_31_IN.pkl")
+    expfile = datadir("xthresh_31_OUT.pkl")
+    dummy_test(infile, expfile)
+
+
+def test_32():
+    infile = datadir("xthresh_32_IN.pkl")
+    expfile = datadir("xthresh_32_OUT.pkl")
+    dummy_test(infile, expfile)
+
+
+def test_33():
+    infile = datadir("xthresh_33_IN.pkl")
+    expfile = datadir("xthresh_33_OUT.pkl")
+    dummy_test(infile, expfile)
+
+
+def test_34():
+    infile = datadir("xthresh_34_IN.pkl")
+    expfile = datadir("xthresh_34_OUT.pkl")
+    dummy_test(infile, expfile)
+
+
+def test_35():
+    infile = datadir("xthresh_35_IN.pkl")
+    expfile = datadir("xthresh_35_OUT.pkl")
+    dummy_test(infile, expfile)
+
+
+def test_36():
+    infile = datadir("xthresh_36_IN.pkl")
+    expfile = datadir("xthresh_36_OUT.pkl")
+    dummy_test(infile, expfile)
+
+
+def test_37():
+    infile = datadir("xthresh_37_IN.pkl")
+    expfile = datadir("xthresh_37_OUT.pkl")
+    dummy_test(infile, expfile)
+
+
+def test_38():
+    infile = datadir("xthresh_38_IN.pkl")
+    expfile = datadir("xthresh_38_OUT.pkl")
+    dummy_test(infile, expfile)
+
+
+def test_39():
+    infile = datadir("xthresh_39_IN.pkl")
+    expfile = datadir("xthresh_39_OUT.pkl")
+    dummy_test(infile, expfile)
+
+
+def test_40():
+    infile = datadir("xthresh_40_IN.pkl")
+    expfile = datadir("xthresh_40_OUT.pkl")
+    dummy_test(infile, expfile)
+
+
+def test_41():
+    infile = datadir("xthresh_41_IN.pkl")
+    expfile = datadir("xthresh_41_OUT.pkl")
+    dummy_test(infile, expfile)
+
+
+def test_42():
+    infile = datadir("xthresh_42_IN.pkl")
+    expfile = datadir("xthresh_42_OUT.pkl")
+    dummy_test(infile, expfile)
+
+
+def test_43():
+    infile = datadir("xthresh_43_IN.pkl")
+    expfile = datadir("xthresh_43_OUT.pkl")
+    dummy_test(infile, expfile)
+
+
+def test_44():
+    infile = datadir("xthresh_44_IN.pkl")
+    expfile = datadir("xthresh_44_OUT.pkl")
+    dummy_test(infile, expfile)
+
+
+def test_45():
+    infile = datadir("xthresh_45_IN.pkl")
+    expfile = datadir("xthresh_45_OUT.pkl")
+    dummy_test(infile, expfile)
+
+
+def test_46():
+    infile = datadir("xthresh_46_IN.pkl")
+    expfile = datadir("xthresh_46_OUT.pkl")
+    dummy_test(infile, expfile)
+
+
+def test_47():
+    infile = datadir("xthresh_47_IN.pkl")
+    expfile = datadir("xthresh_47_OUT.pkl")
+    dummy_test(infile, expfile)
+
+
+def test_48():
+    infile = datadir("xthresh_48_IN.pkl")
+    expfile = datadir("xthresh_48_OUT.pkl")
     dummy_test(infile, expfile)
