@@ -208,6 +208,7 @@ def generate_data_test_linear_model():
     realdataf = datadir("thickness_n10.pkl")
     ifile = open(realdataf, "br")
     D = pickle.load(ifile)
+    D["M"] = D["M"].T
     ifile.close()
     Y = D["Y"]
     M = D["M"]
@@ -216,13 +217,14 @@ def generate_data_test_linear_model():
     with open(finname, "wb") as handle:
         pickle.dump(D, handle, protocol=4)
     foutname = datadir("xlinmod_12_OUT.pkl")
-    get_linmod_output(Y, M.T, foutname, tri=tri)
+    get_linmod_output(Y, M, foutname, tri=tri)
 
     ### test_13: real in data shuffled
     print("test_linear_model: test_13 data is generated..")
     realdataf = datadir("thickness_n10.pkl")
     ifile = open(realdataf, "br")
     D = pickle.load(ifile)
+    D["M"] = D["M"].T
     ifile.close()
     Y = D["Y"]
     np.random.seed(seed=454)
@@ -233,7 +235,7 @@ def generate_data_test_linear_model():
     with open(finname, "wb") as handle:
         pickle.dump(D, handle, protocol=4)
     foutname = datadir("xlinmod_13_OUT.pkl")
-    get_linmod_output(Y, M.T, foutname, tri=tri)
+    get_linmod_output(Y, M, foutname, tri=tri)
 
     ### test_14: real in data shuffled
     print("test_linear_model: test_14 data is generated..")
@@ -242,7 +244,7 @@ def generate_data_test_linear_model():
     Din = pickle.load(ifile)
     ifile.close()
     Y = Din["Y"]
-    M = Din["M"]
+    M = Din["M"].T
     tri = Din["tri"]
     np.random.seed(seed=455)
     np.random.shuffle(Y)
@@ -257,7 +259,7 @@ def generate_data_test_linear_model():
     with open(finname, "wb") as handle:
         pickle.dump(D, handle, protocol=4)
     foutname = datadir("xlinmod_14_OUT.pkl")
-    get_linmod_output(Y, M.T, foutname, tri=tri)
+    get_linmod_output(Y, M, foutname, tri=tri)
 
     ### test_15: real in data shuffled and is manually extended
     print("test_linear_model: test_15 data is generated..")
