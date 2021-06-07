@@ -3,7 +3,7 @@ import pickle
 from sklearn.model_selection import ParameterGrid
 from brainstat.stats._multiple_comparisons import peak_clus
 from brainstat.mesh.utils import mesh_edges
-from .testutil import generate_slm, datadir
+from brainstat.tests.testutil import generate_slm, datadir
 
 
 def generate_random_slm(I):
@@ -88,3 +88,7 @@ def generate_test_data():
         D = generate_peak_clus_out(slm, I)
         test_num += 1
         params2files(I, D, test_num)
+
+
+if __name__ == "__main__":
+    generate_test_data()

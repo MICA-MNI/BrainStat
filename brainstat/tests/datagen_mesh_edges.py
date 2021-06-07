@@ -1,6 +1,6 @@
 import numpy as np
 import pickle
-from .testutil import datadir
+from brainstat.tests.testutil import datadir
 from brainstat.mesh.utils import mesh_edges
 
 
@@ -94,3 +94,7 @@ def generate_data_test_mesh_edges():
     surf = generate_random_mesh_edge_data(key_dim, finname, key_name, key_dtype, seed)
     foutname = datadir("xstatedg_04_OUT.pkl")
     get_meshedge_output(surf, foutname)
+
+
+if __name__ == "__main__":
+    generate_data_test_mesh_edges()

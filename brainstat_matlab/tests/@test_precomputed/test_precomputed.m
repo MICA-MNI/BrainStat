@@ -49,6 +49,9 @@ classdef test_precomputed < matlab.unittest.TestCase
             for pair = linmod_files
                 input = load_pkl(pair{1});
                 output = load_pkl(pair{2});
+                if isvector(input.M)
+                    input.M = input.M(:);
+                end
                 slm = input2slm(input);
                 
                 slm.linear_model(input.Y);
@@ -146,7 +149,7 @@ classdef test_precomputed < matlab.unittest.TestCase
                 input = load_pkl(pair{1});
                 output = load_pkl(pair{2});
                 if ismember('tri', fieldnames(input))
-                    surf = struct('tri', input.tri);
+                    surf = struct('tri', input.tri + 1); % Python starts at 0.
                 else
                     surf = struct('lat', input.lat);
                 end
@@ -187,12 +190,15 @@ classdef test_precomputed < matlab.unittest.TestCase
                 slm = input2slm(input); 
                 thresh = input.thresh;
                 
-                f = fieldnames(input);
-                if ismember('reselspvert',f)
+                if iscell(input.df)
+                    input.df = cell2mat(input.df);
+                end
+                if ~isempty(input.reselspvert)
                     reselspvert = input.reselspvert;
                 else
                     reselspvert = ones(1, size(slm.t,2));
                 end
+                f = fieldnames(input);
                 if ismember('edg', f)
                     edg = input.edg+1;
                 else
