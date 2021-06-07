@@ -47,8 +47,8 @@ def generate_test_data():
     mygrid = [
         {
             "tri": [np.random.randint(1, int(50), size=(100, 3))],
-            "num_t": [1, 2],
-            "k": [1, 2],
+            "num_t": [1, 2, 3],
+            "k": [1, 2, 3],
             "df": [1, [1, 1]],
             "cluster_threshold": [np.random.rand()],
             "mask": [False, True],
