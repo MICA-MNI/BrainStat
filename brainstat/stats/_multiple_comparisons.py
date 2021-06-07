@@ -963,7 +963,7 @@ def peak_clus(self, thresh, reselspvert=None, edg=None):
         ucrsl = np.bincount(nf1.astype(int), reselsvox.flatten())
     if self.k == 2:
         if l == 1:
-            ndf = len(np.array([self.df]))
+            ndf = np.array([self.df]).size
             r = 2 * np.arccos((thresh / slm_t[0, vox - 1]) ** (float(1) / ndf))
         else:
             r = 2 * np.arccos(
@@ -976,7 +976,7 @@ def peak_clus(self, thresh, reselspvert=None, edg=None):
         ucrsl = np.bincount(nf1.astype(int), (r.T * reselsvox.T).flatten())
     if self.k == 3:
         if l == 1:
-            ndf = len(np.array([self.df]))
+            ndf = np.array([self.df]).size
             r = 2 * math.pi * (1 - (thresh / slm_t[0, vox - 1]) ** (float(1) / ndf))
         else:
             nt = 20

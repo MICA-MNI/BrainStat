@@ -43,31 +43,36 @@ def params2files(I, D, test_num):
 def generate_test_data():
     np.random.seed(0)
 
-    # generate the grid parameters to be looped
+    # generate the parameters
+    tri = np.random.randint(1, int(50), size=(100, 3))
+    edg = mesh_edges({"tri": tri})
+    n_edges = edg.shape[0]
+    n_vertices = int(tri.shape[0])
+    cluster_threshold = np.random.rand()
     mygrid = [
         {
-            "tri": [np.random.randint(1, int(50), size=(100, 3))],
             "num_t": [1, 2, 3],
             "k": [1, 2, 3],
             "df": [1, [1, 1]],
-            "cluster_threshold": [np.random.rand()],
             "mask": [False, True],
             "reselspvert": [None, True],
         },
     ]
     myparamgrid = ParameterGrid(mygrid)
 
-    # Test data with small randomly generated triangles shape (100,3).
+    # Generate data.
     test_num = 0
     for params in myparamgrid:
-        I = {}
-        # following parameters depend on params["tri"]
-        I["tri"] = params["tri"]
-        I["edg"] = mesh_edges(params)
-        n_edges = I["edg"].shape[0]
-        n_vertices = int(I["tri"].shape[0])
-        I["t"] = np.random.random_sample((params["num_t"], n_vertices))
-        I["resl"] = np.random.random_sample((n_edges, 1))
+        I = {
+            "tri": tri,
+            "edg": edg,
+            "thresh": cluster_threshold,
+            "t": np.random.random_sample((params["num_t"], n_vertices)),
+            "resl": np.random.random_sample((n_edges, 1)),
+            "k": params["k"],
+            "df": params["df"],
+        }
+
         if params["mask"] is True:
             I["mask"] = np.random.choice(a=[False, True], size=(n_vertices))
         else:
@@ -77,10 +82,6 @@ def generate_test_data():
             I["reselspvert"] = np.random.rand(n_vertices)
         else:
             I["reselspvert"] = None
-        # parameters below don't depend on params["tri"]
-        I["k"] = params["k"]
-        I["df"] = params["df"]
-        I["thresh"] = params["cluster_threshold"]
 
         # Here we go: generate slm & run peak_clus & save in-out
         slm = generate_random_slm(I)

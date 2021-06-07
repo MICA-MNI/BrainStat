@@ -59,11 +59,11 @@ def dummy_test(infile, expfile):
     assert all(flag == True for (flag) in testout)
 
 
-expected_number_of_tests = 32
+expected_number_of_tests = 72
 parametrize = pytest.mark.parametrize
 
 
-@parametrize("test_number", range(1, expected_number_of_tests))
+@parametrize("test_number", range(1, expected_number_of_tests + 1))
 def test_run_all(test_number):
     infile = datadir("xstatpeakc_" + f"{test_number:02d}" + "_IN.pkl")
     expfile = datadir("xstatpeakc_" + f"{test_number:02d}" + "_OUT.pkl")
