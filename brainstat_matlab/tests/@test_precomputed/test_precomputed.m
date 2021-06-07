@@ -149,7 +149,7 @@ classdef test_precomputed < matlab.unittest.TestCase
                 input = load_pkl(pair{1});
                 output = load_pkl(pair{2});
                 if ismember('tri', fieldnames(input))
-                    surf = struct('tri', input.tri + 1); % Python starts at 0.
+                    surf = struct('tri', input.tri); % Python starts at 0.
                 else
                     surf = struct('lat', input.lat);
                 end
