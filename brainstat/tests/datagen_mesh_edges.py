@@ -22,10 +22,11 @@ def generate_random_mesh_edge_data(
     surf = {}
 
     if key_name == "tri":
-        surf["tri"] = np.random.randint(1, 1024, size=key_dim, dtype=key_dtype)
+        surf["tri"] = np.random.randint(1, 1024, size=key_dim)
     elif key_name == "lat":
-        surf["lat"] = np.random.randint(0, 2, size=key_dim, dtype=key_dtype)
-
+        surf["lat"] = np.random.randint(0, 2, size=key_dim)
+    surf[key_name] = surf[key_name].astype(key_dtype)
+    
     with open(finname, "wb") as handle:
         pickle.dump(surf, handle, protocol=4)
     return surf
@@ -55,7 +56,7 @@ def generate_data_test_mesh_edges():
     key_dim = (78, 3)
     finname = datadir("xstatedg_01_IN.pkl")
     key_name = "tri"
-    key_dtype = "float"
+    key_dtype = np.float64
     seed = 444
     surf = generate_random_mesh_edge_data(key_dim, finname, key_name, key_dtype, seed)
     foutname = datadir("xstatedg_01_OUT.pkl")
@@ -67,7 +68,7 @@ def generate_data_test_mesh_edges():
     key_dim = (10, 10)
     finname = datadir("xstatedg_02_IN.pkl")
     key_name = "lat"
-    key_dtype = "float"
+    key_dtype = np.float64
     seed = 445
     surf = generate_random_mesh_edge_data(key_dim, finname, key_name, key_dtype, seed)
     foutname = datadir("xstatedg_02_OUT.pkl")
@@ -79,7 +80,7 @@ def generate_data_test_mesh_edges():
     key_dim = (10, 10, 10)
     finname = datadir("xstatedg_03_IN.pkl")
     key_name = "lat"
-    key_dtype = "int64"
+    key_dtype = np.int64
     seed = 446
     surf = generate_random_mesh_edge_data(key_dim, finname, key_name, key_dtype, seed)
     foutname = datadir("xstatedg_03_OUT.pkl")
@@ -91,7 +92,7 @@ def generate_data_test_mesh_edges():
     key_dim = (2044, 3)
     finname = datadir("xstatedg_04_IN.pkl")
     key_name = "tri"
-    key_dtype = "uint16"
+    key_dtype = np.uint16
     seed = 447
     surf = generate_random_mesh_edge_data(key_dim, finname, key_name, key_dtype, seed)
     foutname = datadir("xstatedg_04_OUT.pkl")

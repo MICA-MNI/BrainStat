@@ -3,7 +3,6 @@ import pickle
 from .testutil import datadir
 from brainstat.mesh.utils import mesh_edges
 
-
 def dummy_test(infile, expfile):
 
     # load input test data
@@ -38,8 +37,6 @@ def dummy_test(infile, expfile):
 
 # data *pkl consists of either keys ['tri'] or ['lat'], which will be assigned to
 # the surf{} dictionary while testing
-
-
 def test_01():
     infile = datadir("xstatedg_01_IN.pkl")
     expfile = datadir("xstatedg_01_OUT.pkl")
