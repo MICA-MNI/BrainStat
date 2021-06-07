@@ -167,11 +167,7 @@ def download_histology_profiles(data_dir=None, template="fsaverage", overwrite=F
     data_dir.mkdir(parents=True, exist_ok=True)
     output_file = data_dir / ("histology_" + template + ".h5")
 
-    urls = {
-        "fsaverage": "https://box.bic.mni.mcgill.ca/s/znBp7Emls0mMW1a/download",
-        "fsaverage5": "https://box.bic.mni.mcgill.ca/s/N8zstvuRb4sNcSe/download",
-        "fs_LR_64k": "https://box.bic.mni.mcgill.ca/s/urziip5aXVltxXq/download",
-    }
+    urls = _get_urls()
 
     try:
         _download_file(urls[template], output_file, overwrite)
@@ -179,28 +175,6 @@ def download_histology_profiles(data_dir=None, template="fsaverage", overwrite=F
         raise KeyError(
             "Could not find the requested template. Valid templates are: 'fs_LR_64k', 'fsaverage', 'fsaverage5'."
         )
-
-
-def _download_file(url, output_file, overwrite):
-    """Downloads a file.
-
-    Parameters
-    ----------
-    url : str
-        URL of the download.
-    file : pathlib.Path
-        Path object of the output file.
-    overwrite : bool
-        If true, overwrite existing files.
-    """
-
-    if output_file.exists() and not overwrite:
-        logging.debug(str(output_file) + " already exists and will not be overwritten.")
-        return
-
-    logging.debug("Downloading " + str(output_file))
-    with urllib.request.urlopen(url) as response, open(output_file, "wb") as out_file:
-        shutil.copyfileobj(response, out_file)
 
 
 def partial_correlation(X, covar):
@@ -224,3 +198,40 @@ def partial_correlation(X, covar):
     r_xz = pearson_correlation[0:-1, -1][:, None]
 
     return (r_xy - r_xz @ r_xz.T) / (np.sqrt(1 - r_xz ** 2) * np.sqrt(1 - r_xz.T ** 2))
+
+
+def _get_urls():
+    """Stores the URLs for histology file downloads.
+
+    Returns
+    -------
+    dict
+        Dictionary with template names as keys and urls to the files as values.
+    """
+    return {
+        "fsaverage": "https://box.bic.mni.mcgill.ca/s/znBp7Emls0mMW1a/download",
+        "fsaverage5": "https://box.bic.mni.mcgill.ca/s/N8zstvuRb4sNcSe/download",
+        "fs_LR_64k": "https://box.bic.mni.mcgill.ca/s/6zKHcg9xXu5inPR/download",
+    }
+
+
+def _download_file(url, output_file, overwrite):
+    """Downloads a file.
+
+    Parameters
+    ----------
+    url : str
+        URL of the download.
+    file : pathlib.Path
+        Path object of the output file.
+    overwrite : bool
+        If true, overwrite existing files.
+    """
+
+    if output_file.exists() and not overwrite:
+        logging.debug(str(output_file) + " already exists and will not be overwritten.")
+        return
+
+    logging.debug("Downloading " + str(output_file))
+    with urllib.request.urlopen(url) as response, open(output_file, "wb") as out_file:
+        shutil.copyfileobj(response, out_file)
