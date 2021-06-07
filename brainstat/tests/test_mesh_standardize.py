@@ -40,12 +40,14 @@ def dummy_test(infile, expfile):
 
     assert all(flag == True for (flag) in testout)
 
+
 @pytest.mark.skip(reason="Function pending deprecation.")
 def test_01():
     # ['Y'] : np array, shape (1, 1), int64
     infile = datadir("statsta_01_IN.pkl")
     expfile = datadir("statsta_01_OUT.pkl")
     dummy_test(infile, expfile)
+
 
 @pytest.mark.skip(reason="Function pending deprecation.")
 def test_02():
@@ -55,6 +57,7 @@ def test_02():
     expfile = datadir("statsta_02_OUT.pkl")
     dummy_test(infile, expfile)
 
+
 @pytest.mark.skip(reason="Function pending deprecation.")
 def test_03():
     # ['Y'] : np array, shape (2, 10), int64
@@ -62,6 +65,7 @@ def test_03():
     infile = datadir("statsta_03_IN.pkl")
     expfile = datadir("statsta_03_OUT.pkl")
     dummy_test(infile, expfile)
+
 
 @pytest.mark.skip(reason="Function pending deprecation.")
 def test_04():
