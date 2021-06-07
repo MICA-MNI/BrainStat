@@ -23,7 +23,7 @@ jobs:
           pip install pytest pytest-cov gitpython
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           git config remote.origin.fetch refs/heads/*:refs/remotes/origin/*
-          git fetch origin test-data
+          git fetch origin test-data-2.0
       - name: Generate coverage report
         run: |
           pytest --cov=./ --cov-report=xml
