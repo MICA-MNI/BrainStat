@@ -2,7 +2,7 @@ function home_dir = get_home_dir(type)
 % GET_HOME_DIR    gets the user's home directory.
 
 arguments
-    type char (1,:) = 'char'
+    type (1,:) char = 'char'
 end
 
 home_dir = java.lang.System.getProperty('user.home');
