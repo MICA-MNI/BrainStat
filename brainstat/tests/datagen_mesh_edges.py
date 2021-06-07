@@ -22,11 +22,8 @@ def generate_random_mesh_edge_data(
     surf = {}
 
     if key_name == "tri":
-        if key_dtype == "float":
-            surf["tri"] = np.random.random_sample(key_dim)
-        else:
-            surf["tri"] = np.random.randint(0, 1024, size=key_dim)
-            surf["tri"] = np.array(surf["tri"], dtype=key_dtype)
+        surf["tri"] = np.random.randint(1, 1024, size=key_dim)
+        surf["tri"] = np.array(surf["tri"], dtype=key_dtype)
 
     if key_name == "lat":
         surf["lat"] = np.random.randint(0, 2, size=key_dim)
