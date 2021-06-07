@@ -43,14 +43,14 @@ def params2files(rand_dict, O, test_num):
 # Single test with real data.
 # There's no forks in this function other than the tri/lat which is already
 # tested through the mesh_edges tests. We have to use real data as random data
-# is likely to result in nan arrays due to faulty fake meshes. 
+# is likely to result in nan arrays due to faulty fake meshes.
 def generate_tests():
     pial_fs5 = datasets.fetch_surf_fsaverage()["pial_left"]
     pial_surf = read_surface_gz(pial_fs5)
     tri = np.array(get_cells(pial_surf)) + 1
 
     np.random.seed(0)
-    data = {'tri': tri, 'Y' : np.random.uniform(-1, 1, (1, 10242)), 'FWHM': 3}
+    data = {"tri": tri, "Y": np.random.uniform(-1, 1, (1, 10242)), "FWHM": 3}
     O = generate_smooth_out(data)
     params2files(data, O, 1)
 

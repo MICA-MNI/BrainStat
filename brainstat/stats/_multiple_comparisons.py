@@ -1088,7 +1088,7 @@ def compute_resels(self):
         if self.mask is None:
             v = np.amax(edg) + 1
             self.mask = np.full(v, False)
-            self.mask[edg - 1] = True
+            self.mask[edg] = True
         else:
             # if np.ndim(mask) > 1:
             #    mask = np.squeeze(mask)

@@ -250,9 +250,12 @@ classdef test_precomputed < matlab.unittest.TestCase
                 P = struct();
                 
                 if ~isempty(slm.tri)
-                    slm.debug_set('tri', slm.tri + 1); % Python starts at 0.
+                    slm.debug_set('tri', slm.tri); % Python starts at 0.
                 end
                 
+                if ismember('mask', fieldnames(input))
+                    input.mask = logical(input.mask);
+                end
                 if ismember('resl', fieldnames(input))
                     [P.resels, P.reselspvert, P.edg] = slm.compute_resels();
                     P.edg = double(P.edg-1);
