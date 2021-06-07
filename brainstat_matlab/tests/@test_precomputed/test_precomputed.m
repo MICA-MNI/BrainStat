@@ -159,26 +159,26 @@ classdef test_precomputed < matlab.unittest.TestCase
             end
         end
         
-        function test_stand(testCase)
-            % Test mesh_standardize
-            stand_files = get_test_files('statsta');
-            for pair = stand_files
-                input = load_pkl(pair{1});
-                output = load_pkl(pair{2});
-                subdiv = 's';
-                if ismember('mask', fieldnames(input))
-                    mask = logical(input.mask);
-                else
-                    mask = [];
-                end
-                [Y, Ym] = mesh_standardize(input.Y, mask, subdiv);
-
-                verifyEqual(testCase, Y, output.Python_Y, 'abstol', 1e-5, ...
-                    ['Testing failed on input file: ', pair{1}]);
-                verifyEqual(testCase, Ym, output.Python_Ym, 'abstol', 1e-5, ...
-                    ['Testing failed on input file: ', pair{1}])
-            end
-        end
+%         function test_stand(testCase)
+%             % Test mesh_standardize
+%             stand_files = get_test_files('statsta');
+%             for pair = stand_files
+%                 input = load_pkl(pair{1});
+%                 output = load_pkl(pair{2});
+%                 subdiv = 's';
+%                 if ismember('mask', fieldnames(input))
+%                     mask = logical(input.mask);
+%                 else
+%                     mask = [];
+%                 end
+%                 [Y, Ym] = mesh_standardize(input.Y, mask, subdiv);
+% 
+%                 verifyEqual(testCase, Y, output.Python_Y, 'abstol', 1e-5, ...
+%                     ['Testing failed on input file: ', pair{1}]);
+%                 verifyEqual(testCase, Ym, output.Python_Ym, 'abstol', 1e-5, ...
+%                     ['Testing failed on input file: ', pair{1}])
+%             end
+%         end
         
         function test_peakclus(testCase)
             % Test SurfStatPeakClus
