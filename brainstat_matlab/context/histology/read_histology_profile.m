@@ -11,7 +11,7 @@ function profiles = read_histology_profile(options)
 %   See also COMPUTE_MPC.
 
 arguments
-    options.data_dir (1,1) string = string(java.lang.System.getProperty('user.home')) + filesep + "histology_data";
+    options.data_dir (1,1) string = brainstat_utils.get_home_dir('s') + filesep + "histology_data";
     options.template (1,1) string = "fsaverage"
     options.overwrite (1,1) logical = false
 end
@@ -32,7 +32,7 @@ end
 function download_histology_profiles(histology_file, template)
 urls = struct('fsaverage', 'https://box.bic.mni.mcgill.ca/s/znBp7Emls0mMW1a/download', ...
         'fsaverage5', 'https://box.bic.mni.mcgill.ca/s/N8zstvuRb4sNcSe/download', ...
-        'fs_LR_64k', 'https://box.bic.mni.mcgill.ca/s/urziip5aXVltxXq/download');
+        'fs_LR_64k', 'https://box.bic.mni.mcgill.ca/s/6zKHcg9xXu5inPR/download');
     
 websave(histology_file, urls.(template));
 end
