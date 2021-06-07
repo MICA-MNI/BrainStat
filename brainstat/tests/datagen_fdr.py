@@ -1,6 +1,6 @@
 import numpy as np
 import pickle
-from .testutil import datadir
+from brainstat.tests.testutil import datadir
 from brainstat.stats.SLM import SLM
 from brainstat.stats.terms import FixedEffect
 from brainstat.stats._t_test import t_test
@@ -470,3 +470,7 @@ def generate_data_test_fdr():
     with open(finname, "wb") as handle:
         foutname = datadir("xstatq_14_OUT.pkl")
     get_fdr_output(D, foutname)
+
+
+if __name__ == "__main__":
+    generate_data_test_fdr()
