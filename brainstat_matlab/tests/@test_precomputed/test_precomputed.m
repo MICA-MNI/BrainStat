@@ -219,10 +219,6 @@ classdef test_precomputed < matlab.unittest.TestCase
             % Test SurfStatP.
             statp_files = get_test_files('statp_');
             for pair = statp_files
-                if contains(pair{1}, "statp_18_IN.pkl")
-                    warning('SurfStatP test 18 skipped as the data file is bugged.')
-                    continue
-                end
                 input = load_pkl(pair{1});
                 output = load_pkl(pair{2});
                 slm = input2slm(input);
@@ -238,19 +234,8 @@ classdef test_precomputed < matlab.unittest.TestCase
                 if isempty(P.pval.C)
                     P.pval = rmfield(P.pval, 'C');
                 end
-                if isempty(P.pval.mask)
-                    P.pval = rmfield(P.pval, 'mask');
-                end
-                if all(structfun(@isempty, P.peak))
-                    P.peak = {};
-                end
-                if all(structfun(@isempty, P.clus))
-                    P.clus = {};
-                end
-                if isempty(P.clusid)
-                    P.clusid = {};
-                end
-                
+                P.pval = rmfield(P.pval, 'mask');
+
                 recursive_equality(testCase, P, output, pair{1});
             end
         end
