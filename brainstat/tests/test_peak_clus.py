@@ -1,5 +1,6 @@
 import numpy as np
 import pickle
+import pytest
 from .testutil import datadir
 from brainstat.stats._multiple_comparisons import peak_clus
 from brainstat.stats.SLM import SLM
@@ -19,7 +20,6 @@ def dummy_test(infile, expfile):
     slm.mask = idic["mask"]
     slm.df = idic["df"]
     slm.k = idic["k"]
-    slm.dfs = idic["dfs"]
     slm.resl = idic["resl"]
 
     thresh = idic["thresh"]
@@ -59,145 +59,12 @@ def dummy_test(infile, expfile):
     assert all(flag == True for (flag) in testout)
 
 
-def test_01():
-    infile = datadir("xstatpeakc_01_IN.pkl")
-    expfile = datadir("xstatpeakc_01_OUT.pkl")
-    dummy_test(infile, expfile)
+expected_number_of_tests = 32
+parametrize = pytest.mark.parametrize
 
 
-def test_02():
-    infile = datadir("xstatpeakc_02_IN.pkl")
-    expfile = datadir("xstatpeakc_02_OUT.pkl")
-    dummy_test(infile, expfile)
-
-
-def test_03():
-    infile = datadir("xstatpeakc_03_IN.pkl")
-    expfile = datadir("xstatpeakc_03_OUT.pkl")
-    dummy_test(infile, expfile)
-
-
-def test_04():
-    infile = datadir("xstatpeakc_04_IN.pkl")
-    expfile = datadir("xstatpeakc_04_OUT.pkl")
-    dummy_test(infile, expfile)
-
-
-def test_05():
-    infile = datadir("xstatpeakc_05_IN.pkl")
-    expfile = datadir("xstatpeakc_05_OUT.pkl")
-    dummy_test(infile, expfile)
-
-
-def test_06():
-    infile = datadir("xstatpeakc_06_IN.pkl")
-    expfile = datadir("xstatpeakc_06_OUT.pkl")
-    dummy_test(infile, expfile)
-
-
-def test_07():
-    infile = datadir("xstatpeakc_07_IN.pkl")
-    expfile = datadir("xstatpeakc_07_OUT.pkl")
-    dummy_test(infile, expfile)
-
-
-def test_08():
-    infile = datadir("xstatpeakc_08_IN.pkl")
-    expfile = datadir("xstatpeakc_08_OUT.pkl")
-    dummy_test(infile, expfile)
-
-
-def test_09():
-    infile = datadir("xstatpeakc_09_IN.pkl")
-    expfile = datadir("xstatpeakc_09_OUT.pkl")
-    dummy_test(infile, expfile)
-
-
-def test_10():
-    infile = datadir("xstatpeakc_10_IN.pkl")
-    expfile = datadir("xstatpeakc_10_OUT.pkl")
-    dummy_test(infile, expfile)
-
-
-def test_11():
-    infile = datadir("xstatpeakc_11_IN.pkl")
-    expfile = datadir("xstatpeakc_11_OUT.pkl")
-    dummy_test(infile, expfile)
-
-
-def test_12():
-    infile = datadir("xstatpeakc_12_IN.pkl")
-    expfile = datadir("xstatpeakc_12_OUT.pkl")
-    dummy_test(infile, expfile)
-
-
-def test_13():
-    infile = datadir("xstatpeakc_13_IN.pkl")
-    expfile = datadir("xstatpeakc_13_OUT.pkl")
-    dummy_test(infile, expfile)
-
-
-def test_14():
-    infile = datadir("xstatpeakc_14_IN.pkl")
-    expfile = datadir("xstatpeakc_14_OUT.pkl")
-    dummy_test(infile, expfile)
-
-
-def test_15():
-    infile = datadir("xstatpeakc_15_IN.pkl")
-    expfile = datadir("xstatpeakc_15_OUT.pkl")
-    dummy_test(infile, expfile)
-
-
-def test_16():
-    infile = datadir("xstatpeakc_16_IN.pkl")
-    expfile = datadir("xstatpeakc_16_OUT.pkl")
-    dummy_test(infile, expfile)
-
-
-def test_17():
-    infile = datadir("xstatpeakc_17_IN.pkl")
-    expfile = datadir("xstatpeakc_17_OUT.pkl")
-    dummy_test(infile, expfile)
-
-
-def test_18():
-    infile = datadir("xstatpeakc_18_IN.pkl")
-    expfile = datadir("xstatpeakc_18_OUT.pkl")
-    dummy_test(infile, expfile)
-
-
-def test_19():
-    infile = datadir("xstatpeakc_19_IN.pkl")
-    expfile = datadir("xstatpeakc_19_OUT.pkl")
-    dummy_test(infile, expfile)
-
-
-def test_20():
-    infile = datadir("xstatpeakc_20_IN.pkl")
-    expfile = datadir("xstatpeakc_20_OUT.pkl")
-    dummy_test(infile, expfile)
-
-
-def test_21():
-    infile = datadir("xstatpeakc_21_IN.pkl")
-    expfile = datadir("xstatpeakc_21_OUT.pkl")
-    dummy_test(infile, expfile)
-
-
-def test_22():
-    infile = datadir("xstatpeakc_22_IN.pkl")
-    expfile = datadir("xstatpeakc_22_OUT.pkl")
-    dummy_test(infile, expfile)
-
-
-def test_23():
-    infile = datadir("xstatpeakc_23_IN.pkl")
-    expfile = datadir("xstatpeakc_23_OUT.pkl")
-    dummy_test(infile, expfile)
-
-
-def test_24():
-    infile = datadir("xstatpeakc_24_IN.pkl")
-    expfile = datadir("xstatpeakc_24_OUT.pkl")
+@parametrize("test_number", range(1, expected_number_of_tests))
+def test_run_all(test_number):
+    infile = datadir("xstatpeakc_" + f"{test_number:02d}" + "_IN.pkl")
+    expfile = datadir("xstatpeakc_" + f"{test_number:02d}" + "_OUT.pkl")
     dummy_test(infile, expfile)

@@ -3,7 +3,7 @@ import pickle
 from nilearn import datasets
 from brainspace.mesh.mesh_elements import get_cells, get_points
 from brainstat.context.utils import read_surface_gz
-from testutil import datadir
+from .testutil import datadir
 from brainstat.stats._multiple_comparisons import compute_resels
 from brainstat.stats.SLM import SLM
 from brainstat.stats.terms import FixedEffect

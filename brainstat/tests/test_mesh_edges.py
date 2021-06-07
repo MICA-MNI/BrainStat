@@ -3,6 +3,7 @@ import pickle
 from .testutil import datadir
 from brainstat.mesh.utils import mesh_edges
 
+
 def dummy_test(infile, expfile):
 
     # load input test data
@@ -59,4 +60,3 @@ def test_04():
     infile = datadir("xstatedg_04_IN.pkl")
     expfile = datadir("xstatedg_04_OUT.pkl")
     dummy_test(infile, expfile)
-

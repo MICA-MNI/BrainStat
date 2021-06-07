@@ -894,6 +894,10 @@ def peak_clus(self, thresh, reselspvert=None, edg=None):
     clusid : numpy array of shape (1,v),
         array of cluster id's for each vertex.
     """
+
+    if self.k > 1 and self.df is None:
+        raise ValueError("If k>1 then df must be defined.")
+
     if edg is None:
         edg = mesh_edges(self)
 

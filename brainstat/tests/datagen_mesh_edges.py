@@ -26,7 +26,7 @@ def generate_random_mesh_edge_data(
     elif key_name == "lat":
         surf["lat"] = np.random.randint(0, 2, size=key_dim)
     surf[key_name] = surf[key_name].astype(key_dtype)
-    
+
     with open(finname, "wb") as handle:
         pickle.dump(surf, handle, protocol=4)
     return surf
@@ -46,9 +46,6 @@ def get_meshedge_output(surf, foutname):
 
 
 def generate_data_test_mesh_edges():
-
-
-
 
     ### test_01 data in-out generation
     print("test_mesh_edges.py : test_01 data is generated..")
