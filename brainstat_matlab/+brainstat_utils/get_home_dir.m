@@ -13,7 +13,6 @@ switch lower(type)
         home_dir = string(home_dir);
     otherwise
         error('Unknown variable type.');
-    end
 end
 end
 
