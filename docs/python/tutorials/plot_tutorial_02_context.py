@@ -125,7 +125,7 @@ gradient_map = compute_histology_gradients(mpc)
 # Lets plot the first gradient of histology to see what it looks like.
 # We will use BrainSpace to create our plots. For full details on how
 # BrainSpace's plotting functionality works, please consult the BrainSpace
-# ReadTheDocs.
+# ReadTheDocs. (NOTE: Temporarily disabled due to build errors)
 
 from brainspace.plotting.surface_plotting import plot_hemispheres
 from brainspace.utils.parcellation import map_to_labels
@@ -142,4 +142,4 @@ for i in range(0, 2):
             fill=np.nan,
         )
     )
-plot_hemispheres(left_surface, right_surface, vertexwise_data, embed_nb=True)
+# plot_hemispheres(left_surface, right_surface, vertexwise_data, embed_nb=True)
