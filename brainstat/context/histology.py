@@ -206,7 +206,7 @@ def _get_urls():
     Returns
     -------
     dict
-        Dictionary with template names as keys and urls to the files as values. 
+        Dictionary with template names as keys and urls to the files as values.
     """
     return {
         "fsaverage": "https://box.bic.mni.mcgill.ca/s/znBp7Emls0mMW1a/download",

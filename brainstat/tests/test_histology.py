@@ -7,16 +7,15 @@ import requests
 parametrize = pytest.mark.parametrize
 urls = _get_urls()
 
-@parametrize('template', list(urls.keys()))
+
+@parametrize("template", list(urls.keys()))
 def test_urls(template):
     """Tests whether the histology files can be downloaded.
 
     Parameters
     ----------
     template : list
-        Template names. 
+        Template names.
     """
     r = requests.head(urls[template])
     assert r.status_code == 200
-
-
