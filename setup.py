@@ -35,7 +35,7 @@ setuptools.setup(
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
     ],
-    python_requires="=3.6.*, =3.7.*, =3.8.*",
+    python_requires="==3.6.*, ==3.7.*, ==3.8.*",
     test_require=["pytest", "gitpython"],
     install_requires=[
         "abagen>=0.1",
