@@ -17,7 +17,7 @@ with open("README.rst", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="brainstat",
-    version="0.1.0",
+    version="0.1.1",
     author="MNI-MICA Lab and MPI-CNG Lab",
     author_email="reinder.vosdewael@gmail.com, sheymaba@gmail.com",
     description="A toolbox for statistical analysis of neuroimaging data",
@@ -35,7 +35,7 @@ setuptools.setup(
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
     ],
-    python_requires="==3.6.*, ==3.7.*, ==3.8.*",
+    python_requires=">=3.6.*, !=3.8.*, !=3.9.*",
     test_require=["pytest", "gitpython"],
     install_requires=[
         "abagen>=0.1",
