@@ -77,68 +77,73 @@ def slm2files(slm, basename, test_num):
         pickle.dump(D, f, protocol=4)
 
 
-## Fetch global data and settings.
-# Global test settings
-basename = "xstatp"
-test_num = 1
-np.random.seed(0)
+def generate_test_data():
+    ## Fetch global data and settings.
+    # Global test settings
+    basename = "xstatp"
+    test_num = 1
+    np.random.seed(0)
 
-# Fetch surface data.
-pial_fs5 = datasets.fetch_surf_fsaverage()["pial_left"]
-pial_surf = read_surface_gz(pial_fs5)
-n_vertices = get_points(pial_surf).shape[0]
+    # Fetch surface data.
+    pial_fs5 = datasets.fetch_surf_fsaverage()["pial_left"]
+    pial_surf = read_surface_gz(pial_fs5)
+    n_vertices = get_points(pial_surf).shape[0]
 
+    ## Define the test parameter grids.
+    # Variable types to test
+    var_types = {
+        "t": [np.float64],
+        "df": [int, np.uint16],
+        "k": [int, np.uint8],
+        "resl": [np.float64],
+        "tri": [np.int64],
+    }
+    type_parameter_grid = ParameterGrid(var_types)
 
-## Define the test parameter grids.
-# Variable types to test
-var_types = {
-    "t": [np.float64],
-    "df": [int, np.uint16],
-    "k": [int, np.uint8],
-    "resl": [np.float64],
-    "tri": [np.int64],
-}
-type_parameter_grid = ParameterGrid(var_types)
+    # Optional variable test.
+    var_optional = {
+        "dfs": [None, np.random.randint(1, 100, (1, n_vertices))],
+        "cluster_threshold": [0.1, 2],
+        "mask": [None, np.random.rand(n_vertices) > 0.1],
+        "k": [1, 3],
+    }
 
-# Optional variable test.
-var_optional = {
-    "dfs": [None, np.random.randint(1, 100, (1, n_vertices))],
-    "cluster_threshold": [0.1, 2],
-    "mask": [None, np.random.rand(n_vertices) > 0.1],
-    "k": [1, 3],
-}
+    # Nonsense variables to add.
+    var_nonsense = ["X", "coef", "SSE", "c", "ef", "sd"]
 
-# Nonsense variables to add.
-var_nonsense = ["X", "coef", "SSE", "c", "ef", "sd"]
+    ## Generate test data
+    # Variable type tests
+    for params in type_parameter_grid:
+        slm = generate_random_slm(pial_surf)
+        for key in list(params.keys()):
+            attr = getattr(slm, key)
+            setattr(slm, key, params[key](attr))
+        slm2files(slm, basename, test_num)
+        test_num += 1
 
+    # Additional variable tests.
+    additional_parameter_grid = ParameterGrid(var_optional)
+    for params in additional_parameter_grid:
+        slm = generate_random_slm(pial_surf)
+        for key in list(params.keys()):
+            setattr(slm, key, params[key])
+        slm2files(slm, basename, test_num)
+        test_num += 1
 
-## Generate test data
-# Variable type tests
-for params in type_parameter_grid:
+    # Nonsense variable tests.
     slm = generate_random_slm(pial_surf)
-    for key in list(params.keys()):
-        attr = getattr(slm, key)
-        setattr(slm, key, params[key](attr))
+    slm.dfs = np.random.randint(1, 100, (1, n_vertices))
+    slm.mask = np.random.rand(n_vertices) > 0.1
+    for key in var_nonsense:
+        if getattr(slm, key) is None:
+            setattr(
+                slm,
+                key,
+                np.random.rand(np.random.randint(1, 10), np.random.randint(1, 10)),
+            )
     slm2files(slm, basename, test_num)
     test_num += 1
 
-# Additional variable tests.
-additional_parameter_grid = ParameterGrid(var_optional)
-for params in additional_parameter_grid:
-    slm = generate_random_slm(pial_surf)
-    for key in list(params.keys()):
-        setattr(slm, key, params[key])
-    slm2files(slm, basename, test_num)
-    test_num += 1
 
-# Nonsense variable tests.
-slm = generate_random_slm(pial_surf)
-slm.dfs = np.random.randint(1, 100, (1, n_vertices))
-slm.mask = np.random.rand(n_vertices) > 0.1
-for key in var_nonsense:
-    if getattr(slm, key) is None:
-        setattr(
-            slm, key, np.random.rand(np.random.randint(1, 10), np.random.randint(1, 10))
-        )
-slm2files(slm, basename, test_num)
-test_num += 1
+if __name__ == "__main__":
+    generate_test_data()

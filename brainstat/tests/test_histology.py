@@ -1,8 +1,8 @@
 """Tests for histology."""
 
 import pytest
-from brainstat.context.histology import _get_urls
 import requests
+from brainstat.context.histology import _get_urls
 
 parametrize = pytest.mark.parametrize
 urls = _get_urls()

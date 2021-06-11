@@ -77,7 +77,6 @@ def mesh_smooth(Y, surf, FWHM):
     """
 
     niter = int(np.ceil(pow(FWHM, 2) / (2 * np.log(2))))
-
     if isinstance(Y, np.ndarray):
         Y = np.array(Y, dtype="float")
         if np.ndim(Y) == 2:

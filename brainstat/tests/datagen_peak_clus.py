@@ -1,12 +1,9 @@
 import numpy as np
 import pickle
 from sklearn.model_selection import ParameterGrid
-from nilearn import datasets
-from brainspace.mesh.mesh_elements import get_cells
 from brainstat.stats._multiple_comparisons import peak_clus
 from brainstat.mesh.utils import mesh_edges
-from brainstat.context.utils import read_surface_gz
-from testutil import generate_slm, datadir
+from brainstat.tests.testutil import generate_slm, datadir
 
 
 def generate_random_slm(I):
@@ -17,7 +14,6 @@ def generate_random_slm(I):
         resl=I["resl"],
         tri=I["tri"],
         surf=I,
-        dfs=I["dfs"],
         mask=I["mask"],
         cluster_threshold=I["thresh"],
     )
@@ -44,67 +40,55 @@ def params2files(I, D, test_num):
     return
 
 
-np.random.seed(0)
+def generate_test_data():
+    np.random.seed(0)
 
-# get some real data
-pial_fs5 = datasets.fetch_surf_fsaverage()["pial_left"]
-surf = read_surface_gz(pial_fs5)
-triangles = np.array(get_cells(surf))
+    # generate the parameters
+    tri = np.random.randint(1, int(50), size=(100, 3))
+    edg = mesh_edges({"tri": tri})
+    n_edges = edg.shape[0]
+    n_vertices = int(tri.shape[0])
+    cluster_threshold = np.random.rand()
+    mygrid = [
+        {
+            "num_t": [1, 2, 3],
+            "k": [1, 2, 3],
+            "df": [1, [1, 1]],
+            "mask": [False, True],
+            "reselspvert": [None, True],
+        },
+    ]
+    myparamgrid = ParameterGrid(mygrid)
 
-# generate the grid parameters to be looped
-mygrid = [
-    {
-        "tri": [np.random.randint(0, int(50), size=(100, 3))],
-        "k": [int(1), int(2)],
-        "df": [None, 1],
-        "dfs": [None, 1],
-        "cluster_threshold": [np.random.rand()],
-        "mask": [True],
-        "reselspvert": [None, True],
-    },
-    {
-        "tri": [triangles + 1],
-        "k": [1],
-        "df": [1, np.random.randint(2, 100)],
-        "dfs": [1, np.random.randint(2, 100)],
-        "cluster_threshold": [np.random.rand()],
-        "mask": [True],
-        "reselspvert": [None, True],
-    },
-]
+    # Generate data.
+    test_num = 0
+    for params in myparamgrid:
+        I = {
+            "tri": tri,
+            "edg": edg,
+            "thresh": cluster_threshold,
+            "t": np.random.random_sample((params["num_t"], n_vertices)),
+            "resl": np.random.random_sample((n_edges, 1)),
+            "k": params["k"],
+            "df": params["df"],
+        }
 
-myparamgrid = ParameterGrid(mygrid)
+        if params["mask"] is True:
+            I["mask"] = np.random.choice(a=[False, True], size=(n_vertices))
+        else:
+            I["mask"] = np.ones((n_vertices), dtype=bool)
 
-# Here wo go!
-# Test 1-16: test data with small randomly generated triangles shape (100,3)
-# Test 17-24: Test data from pial_fs5 triangles, other params randomized
-test_num = 0
-for params in myparamgrid:
-    I = {}
-    # following parameters depend on params["tri"]
-    I["tri"] = params["tri"]
-    I["edg"] = mesh_edges(params)
-    n_edges = I["edg"].shape[0]
-    n_vertices = int(I["tri"].shape[0])
-    I["t"] = np.random.random_sample((1, n_vertices))
-    I["resl"] = np.random.random_sample((n_edges, 1))
-    if params["mask"] is True:
-        I["mask"] = np.random.choice(a=[False, True], size=(n_vertices))
-    else:
-        I["mask"] = None
+        if params["reselspvert"] is True:
+            I["reselspvert"] = np.random.rand(n_vertices)
+        else:
+            I["reselspvert"] = None
 
-    if params["reselspvert"] is True:
-        I["reselspvert"] = np.random.rand(n_vertices)
-    else:
-        I["reselspvert"] = None
-    # parameters below don't depend on params["tri"]
-    I["k"] = params["k"]
-    I["df"] = params["df"]
-    I["dfs"] = params["dfs"]
-    I["thresh"] = params["cluster_threshold"]
+        # Here we go: generate slm & run peak_clus & save in-out
+        slm = generate_random_slm(I)
+        D = generate_peak_clus_out(slm, I)
+        test_num += 1
+        params2files(I, D, test_num)
 
-    # Here we go: generate slm & run peak_clus & save in-out
-    slm = generate_random_slm(I)
-    D = generate_peak_clus_out(slm, I)
-    test_num += 1
-    params2files(I, D, test_num)
+
+if __name__ == "__main__":
+    generate_test_data()

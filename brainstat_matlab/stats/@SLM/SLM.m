@@ -229,7 +229,6 @@ classdef SLM < matlab.mixin.Copyable
         %% Debugging Tools
         function debug_set(obj, varargin)
             % Set function to circumvent protected properties. 
-            warning('This function is for testing purposes only. Do not use this unless you really, really know what you''re doing.');
             for ii = 1:2:numel(varargin)
                 obj.(varargin{ii}) = varargin{ii+1}; 
             end

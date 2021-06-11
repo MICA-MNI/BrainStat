@@ -1,5 +1,6 @@
 import numpy as np
 import pickle
+import pytest
 from .testutil import datadir
 from brainstat.mesh.data import mesh_standardize
 
@@ -40,6 +41,7 @@ def dummy_test(infile, expfile):
     assert all(flag == True for (flag) in testout)
 
 
+@pytest.mark.skip(reason="Function pending deprecation.")
 def test_01():
     # ['Y'] : np array, shape (1, 1), int64
     infile = datadir("statsta_01_IN.pkl")
@@ -47,6 +49,7 @@ def test_01():
     dummy_test(infile, expfile)
 
 
+@pytest.mark.skip(reason="Function pending deprecation.")
 def test_02():
     # ['Y'] : np array, shape (1, 10), int64
     # ['mask'] : np array, shape (10,), bool
@@ -55,6 +58,7 @@ def test_02():
     dummy_test(infile, expfile)
 
 
+@pytest.mark.skip(reason="Function pending deprecation.")
 def test_03():
     # ['Y'] : np array, shape (2, 10), int64
     # ['mask'] : np array, shape (10,), bool
@@ -63,6 +67,7 @@ def test_03():
     dummy_test(infile, expfile)
 
 
+@pytest.mark.skip(reason="Function pending deprecation.")
 def test_04():
     # ['Y'] : np array, shape (3, 4, 2), float64
     # ['mask'] : np array, shape (4,), bool

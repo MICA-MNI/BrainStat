@@ -1,6 +1,7 @@
 import numpy as np
 import pickle
-from .testutil import datadir
+import pytest
+from brainstat.tests.testutil import datadir
 from brainstat.stats._multiple_comparisons import compute_resels
 from brainstat.stats.SLM import SLM
 from brainstat.stats.terms import FixedEffect
@@ -39,88 +40,12 @@ def dummy_test(infile, expfile):
     assert all(flag == True for (flag) in testout)
 
 
-def test_01():
-    infile = datadir("xstatresl_01_IN.pkl")
-    expfile = datadir("xstatresl_01_OUT.pkl")
-    dummy_test(infile, expfile)
+expected_number_of_tests = 12
+parametrize = pytest.mark.parametrize
 
 
-def test_02():
-    infile = datadir("xstatresl_02_IN.pkl")
-    expfile = datadir("xstatresl_02_OUT.pkl")
-    dummy_test(infile, expfile)
-
-
-def test_03():
-    infile = datadir("xstatresl_03_IN.pkl")
-    expfile = datadir("xstatresl_03_OUT.pkl")
-    dummy_test(infile, expfile)
-
-
-def test_04():
-    infile = datadir("xstatresl_04_IN.pkl")
-    expfile = datadir("xstatresl_04_OUT.pkl")
-    dummy_test(infile, expfile)
-
-
-def test_05():
-    infile = datadir("xstatresl_05_IN.pkl")
-    expfile = datadir("xstatresl_05_OUT.pkl")
-    dummy_test(infile, expfile)
-
-
-def test_06():
-    # ['lat'] :np array, shape (10, 10, 10), bool
-    # ['mask'] :np array, shape (457,), bool
-    infile = datadir("xstatresl_06_IN.pkl")
-    expfile = datadir("xstatresl_06_OUT.pkl")
-    dummy_test(infile, expfile)
-
-
-def test_07():
-    infile = datadir("xstatresl_07_IN.pkl")
-    expfile = datadir("xstatresl_07_OUT.pkl")
-    dummy_test(infile, expfile)
-
-
-def test_08():
-    # ['lat'] :np array, shape (10, 10, 10), bool
-    # ['resl'] :np array, shape (1251, 1), float64
-    # ['mask'] :np array, shape (499,), bool
-    infile = datadir("xstatresl_08_IN.pkl")
-    expfile = datadir("xstatresl_08_OUT.pkl")
-    dummy_test(infile, expfile)
-
-
-def test_09():
-    # ['lat'] :np array, shape (10, 10, 10), bool
-    # ['resl'] :np array, shape (1198, 1), float64
-    # ['mask'] :np array, shape (478,), bool
-    infile = datadir("xstatresl_09_IN.pkl")
-    expfile = datadir("xstatresl_09_OUT.pkl")
-    dummy_test(infile, expfile)
-
-
-def test_10():
-    # ['tri'] :np array, shape (129960, 3), int32
-    # ['resl'] :np array, shape (194940, 1), float64
-    infile = datadir("xstatresl_10_IN.pkl")
-    expfile = datadir("xstatresl_10_OUT.pkl")
-    dummy_test(infile, expfile)
-
-
-def test_11():
-    # ['tri'] :np array, shape (129960, 3), int32
-    # ['resl'] :np array, shape (194940, 1), float64
-    # ['mask'] :np array, shape (64984,), bool
-    infile = datadir("xstatresl_11_IN.pkl")
-    expfile = datadir("xstatresl_11_OUT.pkl")
-    dummy_test(infile, expfile)
-
-
-def test_12():
-    # ['tri'] :np array, shape (129960, 3), int32
-    # ['resl'] :np array, shape (194940, 1), float64
-    infile = datadir("xstatresl_12_IN.pkl")
-    expfile = datadir("xstatresl_12_OUT.pkl")
+@parametrize("test_number", range(1, expected_number_of_tests + 1))
+def test_run_all(test_number):
+    infile = datadir("xstatresl_" + f"{test_number:02d}" + "_IN.pkl")
+    expfile = datadir("xstatresl_" + f"{test_number:02d}" + "_OUT.pkl")
     dummy_test(infile, expfile)

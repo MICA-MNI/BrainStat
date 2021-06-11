@@ -1,6 +1,6 @@
 import numpy as np
 import pickle
-from .testutil import datadir
+from brainstat.tests.testutil import datadir
 from brainstat.stats.SLM import SLM
 from brainstat.stats.terms import FixedEffect
 
@@ -40,7 +40,7 @@ def generate_random_test_data(
         D["lat"] = lat
 
     with open(finname, "wb") as handle:
-        pickle.dump(D, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        pickle.dump(D, handle, protocol=4)
 
     if triD is not None:
         return Y, M, tri
@@ -80,7 +80,7 @@ def get_linmod_output(Y, M, foutname, tri=None, lat=None):
             D[key] = getattr(slm, key)
 
     with open(foutname, "wb") as handle:
-        pickle.dump(D, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        pickle.dump(D, handle, protocol=4)
 
     return D
 
@@ -126,7 +126,7 @@ def generate_data_test_linear_model():
     ### test_05 data in-out generation
     print("test_linear_model: test_05 data is generated..")
     Y_dim = (81, 1)
-    M_dim = (81, 2)
+    M_dim = (81, 1)
     finname = datadir("xlinmod_05_IN.pkl")
     Y, M = generate_random_test_data(Y_dim, M_dim, finname, seed=448)
     foutname = datadir("xlinmod_05_OUT.pkl")
@@ -208,10 +208,14 @@ def generate_data_test_linear_model():
     realdataf = datadir("thickness_n10.pkl")
     ifile = open(realdataf, "br")
     D = pickle.load(ifile)
+    D["M"] = D["M"].T
     ifile.close()
     Y = D["Y"]
     M = D["M"]
     tri = D["tri"]
+    finname = datadir("xlinmod_12_IN.pkl")
+    with open(finname, "wb") as handle:
+        pickle.dump(D, handle, protocol=4)
     foutname = datadir("xlinmod_12_OUT.pkl")
     get_linmod_output(Y, M, foutname, tri=tri)
 
@@ -220,6 +224,7 @@ def generate_data_test_linear_model():
     realdataf = datadir("thickness_n10.pkl")
     ifile = open(realdataf, "br")
     D = pickle.load(ifile)
+    D["M"] = D["M"].T
     ifile.close()
     Y = D["Y"]
     np.random.seed(seed=454)
@@ -228,7 +233,7 @@ def generate_data_test_linear_model():
     tri = D["tri"]
     finname = datadir("xlinmod_13_IN.pkl")
     with open(finname, "wb") as handle:
-        pickle.dump(D, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        pickle.dump(D, handle, protocol=4)
     foutname = datadir("xlinmod_13_OUT.pkl")
     get_linmod_output(Y, M, foutname, tri=tri)
 
@@ -239,7 +244,7 @@ def generate_data_test_linear_model():
     Din = pickle.load(ifile)
     ifile.close()
     Y = Din["Y"]
-    M = Din["M"]
+    M = Din["M"].T
     tri = Din["tri"]
     np.random.seed(seed=455)
     np.random.shuffle(Y)
@@ -252,7 +257,7 @@ def generate_data_test_linear_model():
     D["tri"] = tri
     finname = datadir("xlinmod_14_IN.pkl")
     with open(finname, "wb") as handle:
-        pickle.dump(D, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        pickle.dump(D, handle, protocol=4)
     foutname = datadir("xlinmod_14_OUT.pkl")
     get_linmod_output(Y, M, foutname, tri=tri)
 
@@ -292,6 +297,10 @@ def generate_data_test_linear_model():
     D["tri"] = tri
     finname = datadir("xlinmod_15_IN.pkl")
     with open(finname, "wb") as handle:
-        pickle.dump(D, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        pickle.dump(D, handle, protocol=4)
     foutname = datadir("xlinmod_15_OUT.pkl")
     get_linmod_output(Y, M, foutname, tri=tri)
+
+
+if __name__ == "__main__":
+    generate_data_test_linear_model()

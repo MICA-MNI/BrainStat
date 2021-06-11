@@ -3,7 +3,7 @@ import pickle
 from nilearn import datasets
 from brainspace.mesh.mesh_elements import get_cells, get_points
 from brainstat.context.utils import read_surface_gz
-from testutil import datadir
+from brainstat.tests.testutil import datadir
 from brainstat.stats._multiple_comparisons import compute_resels
 from brainstat.stats.SLM import SLM
 from brainstat.stats.terms import FixedEffect
@@ -49,122 +49,136 @@ def params2files(I, O, test_num):
     return
 
 
-# Test 01
-# ['tri'] will be a np array, shape (4, 3), int64
-np.random.seed(0)
-rand_dict = {}
-rand_dict["tri"] = np.random.randint(0, int(10), size=(4, 3))
-In, Out = generate_random_slm(rand_dict)
-params2files(In, Out, 1)
+def generate_tests():
+    # Test 01
+    # ['tri'] will be a np array, shape (4, 3), int64
+    np.random.seed(0)
+    rand_dict = {}
+    rand_dict["tri"] = np.random.randint(1, int(10), size=(4, 3))
+    In, Out = generate_random_slm(rand_dict)
+    params2files(In, Out, 1)
 
-# Test 02
-# ['tri'] :np array, shape (4, 3), int64
-# ['resl'] :np array, shape (8, 6), float64
-np.random.seed(0)
-rand_dict = {}
-n_vertices = 6
-rand_dict["tri"] = np.random.randint(1, n_vertices, size=(4, 3))
-rand_dict["resl"] = np.random.random_sample((8, n_vertices))
-In, Out = generate_random_slm(rand_dict)
-params2files(In, Out, 2)
+    # Test 02
+    # ['tri'] :np array, shape (4, 3), int64
+    # ['resl'] :np array, shape (8, 6), float64
+    np.random.seed(0)
+    rand_dict = {}
+    n_vertices = 6
+    rand_dict["tri"] = np.random.randint(1, n_vertices, size=(4, 3))
+    rand_dict["resl"] = np.random.random_sample((8, n_vertices))
+    In, Out = generate_random_slm(rand_dict)
+    params2files(In, Out, 2)
 
-# Test 03
-# ['tri'] :np array, shape (4, 3), int64
-# ['resl'] :np array, shape (8, 6), float64
-# ['mask'] :np array, shape (5,), bool
-np.random.seed(0)
-rand_dict = {}
-n_vertices = 6
-rand_dict["tri"] = np.random.randint(1, n_vertices, size=(4, 3))
-rand_dict["resl"] = np.random.random_sample((8, n_vertices))
-rand_dict["mask"] = np.random.choice(a=[False, True], size=(n_vertices - 1))
-In, Out = generate_random_slm(rand_dict)
-params2files(In, Out, 3)
+    # Test 03
+    # ['tri'] :np array, shape (4, 3), int64
+    # ['resl'] :np array, shape (8, 6), float64
+    # ['mask'] :np array, shape (5,), bool
+    np.random.seed(0)
+    rand_dict = {}
+    n_vertices = 6
+    rand_dict["tri"] = np.random.randint(1, n_vertices, size=(4, 3))
+    rand_dict["resl"] = np.random.random_sample((8, n_vertices))
+    rand_dict["mask"] = np.random.choice(
+        a=[True, False], size=(rand_dict["tri"].max(),)
+    )
+    In, Out = generate_random_slm(rand_dict)
+    params2files(In, Out, 3)
 
-# Test 04
-# ['lat'] :np array, shape (10, 10, 10), float64
-np.random.seed(0)
-rand_dict = {}
-rand_dict["lat"] = np.ones((10, 10, 10))
-In, Out = generate_random_slm(rand_dict)
-params2files(In, Out, 4)
+    # Test 04
+    # ['lat'] :np array, shape (10, 10, 10), float64
+    np.random.seed(0)
+    rand_dict = {}
+    rand_dict["lat"] = np.ones((10, 10, 10))
+    In, Out = generate_random_slm(rand_dict)
+    params2files(In, Out, 4)
 
-# Test 05
-# ['lat'] :np array, shape (10, 10, 10), bool
-np.random.seed(0)
-rand_dict = {}
-rand_dict["lat"] = np.random.choice(a=[False, True], size=(10, 10, 10))
-In, Out = generate_random_slm(rand_dict)
-params2files(In, Out, 5)
+    # Test 05
+    # ['lat'] :np array, shape (10, 10, 10), bool
+    np.random.seed(0)
+    rand_dict = {}
+    rand_dict["lat"] = np.random.choice(a=[False, True], size=(10, 10, 10))
+    In, Out = generate_random_slm(rand_dict)
+    params2files(In, Out, 5)
 
-# Test 06
-# ['tri] :np array, shape (1000,3)
-# ['mask'] :np array, shape (['tri'].max(),), bool
-np.random.seed(0)
-rand_dict = {}
-rand_dict["tri"] = np.random.randint(1, n_vertices, size=(1000, 3))
-rand_dict["mask"] = np.random.choice(a=[True, False], size=(rand_dict["tri"].max(),))
-In, Out = generate_random_slm(rand_dict)
-params2files(In, Out, 6)
+    # Test 06
+    # ['tri] :np array, shape (1000,3)
+    # ['mask'] :np array, shape (['tri'].max(),), bool
+    np.random.seed(0)
+    rand_dict = {}
+    rand_dict["tri"] = np.random.randint(1, n_vertices, size=(1000, 3))
+    rand_dict["mask"] = np.random.choice(
+        a=[True, False], size=(rand_dict["tri"].max(),)
+    )
+    In, Out = generate_random_slm(rand_dict)
+    params2files(In, Out, 6)
 
-# Test 07
-# ['lat'] :np array, shape (10, 10, 10), bool
-# ['resl'] :np array, shape (1359, 1), float64
-np.random.seed(0)
-rand_dict = {}
-rand_dict["lat"] = np.random.choice(a=[False, True], size=(10, 10, 10))
-rand_dict["resl"] = np.random.random_sample((1359, 1))
-In, Out = generate_random_slm(rand_dict)
-params2files(In, Out, 7)
+    # Test 07
+    # ['lat'] :np array, shape (10, 10, 10), bool
+    # ['resl'] :np array, shape (1359, 1), float64
+    np.random.seed(0)
+    rand_dict = {}
+    rand_dict["lat"] = np.random.choice(a=[False, True], size=(10, 10, 10))
+    rand_dict["resl"] = np.random.random_sample((1359, 1))
+    In, Out = generate_random_slm(rand_dict)
+    params2files(In, Out, 7)
 
-# Test 08
-# ['tri] :np array, shape (1000,3)
-# ['mask'] :np array, shape (499,), bool
-np.random.seed(1)
-rand_dict = {}
-rand_dict["tri"] = np.random.randint(1, 499, size=(1000, 3))
-rand_dict["mask"] = np.random.choice(a=[True, False], size=(499,))
-In, Out = generate_random_slm(rand_dict)
-params2files(In, Out, 8)
+    # Test 08
+    # ['tri] :np array, shape (1000,3)
+    # ['mask'] :np array, shape (499,), bool
+    np.random.seed(1)
+    rand_dict = {}
+    rand_dict["tri"] = np.random.randint(1, 499, size=(1000, 3))
+    rand_dict["mask"] = np.random.choice(
+        a=[True, False], size=(rand_dict["tri"].max(),)
+    )
+    In, Out = generate_random_slm(rand_dict)
+    params2files(In, Out, 8)
 
-# Test 09
-# ['lat'] :np array, shape (10, 10, 10), bool
-# ['resl'] :np array, shape (1198, 1), float64
-np.random.seed(1)
-rand_dict = {}
-rand_dict["lat"] = np.random.choice(a=[False, True], size=(10, 10, 10))
-rand_dict["resl"] = np.random.random_sample((1198, 1))
-In, Out = generate_random_slm(rand_dict)
-params2files(In, Out, 9)
+    # Test 09
+    # ['lat'] :np array, shape (10, 10, 10), bool
+    # ['resl'] :np array, shape (1198, 1), float64
+    np.random.seed(1)
+    rand_dict = {}
+    rand_dict["lat"] = np.random.choice(a=[False, True], size=(10, 10, 10))
+    rand_dict["resl"] = np.random.random_sample((1198, 1))
+    In, Out = generate_random_slm(rand_dict)
+    params2files(In, Out, 9)
 
-# Test 10
-# ['tri'] is pial_fs5, shape (20480, 3)
-pial_fs5 = datasets.fetch_surf_fsaverage()["pial_left"]
-pial_surf = read_surface_gz(pial_fs5)
-n_vertices = get_points(pial_surf).shape[0]
-rand_dict = {}
-rand_dict["tri"] = np.array(get_cells(pial_surf))
-In, Out = generate_random_slm(rand_dict)
-params2files(In, Out, 10)
+    # Test 10
+    # ['tri'] is pial_fs5, shape (20480, 3)
+    pial_fs5 = datasets.fetch_surf_fsaverage()["pial_left"]
+    pial_surf = read_surface_gz(pial_fs5)
+    n_vertices = get_points(pial_surf).shape[0]
+    rand_dict = {}
+    rand_dict["tri"] = np.array(get_cells(pial_surf)) + 1
+    In, Out = generate_random_slm(rand_dict)
+    params2files(In, Out, 10)
 
-# Test 11
-# ['tri'] :pial_fs5, shape (20480, 3)
-# ['mask'] :np array, shape (['tri'].max(),), bool
-np.random.seed(0)
-rand_dict = {}
-rand_dict["tri"] = np.array(get_cells(pial_surf))
-rand_dict["mask"] = np.random.choice(a=[True, False], size=(rand_dict["tri"].max(),))
-In, Out = generate_random_slm(rand_dict)
-params2files(In, Out, 11)
+    # Test 11
+    # ['tri'] :pial_fs5, shape (20480, 3)
+    # ['mask'] :np array, shape (['tri'].max(),), bool
+    np.random.seed(0)
+    rand_dict = {}
+    rand_dict["tri"] = np.array(get_cells(pial_surf)) + 1
+    rand_dict["mask"] = np.random.choice(
+        a=[True, False], size=(rand_dict["tri"].max(),)
+    )
+    In, Out = generate_random_slm(rand_dict)
+    params2files(In, Out, 11)
+
+    # Test 12
+    # ['tri'] :pial_fs5, shape (20480, 3) --> shuffle
+    # ['mask'] :np array, shape (['tri'].max(),), bool
+    np.random.seed(5)
+    rand_dict = {}
+    rand_dict["tri"] = np.array(get_cells(pial_surf)) + 1
+    np.random.shuffle(rand_dict["tri"])
+    rand_dict["mask"] = np.random.choice(
+        a=[True, False], size=(rand_dict["tri"].max(),)
+    )
+    In, Out = generate_random_slm(rand_dict)
+    params2files(In, Out, 12)
 
 
-# Test 12
-# ['tri'] :pial_fs5, shape (20480, 3) --> shuffle
-# ['mask'] :np array, shape (['tri'].max(),), bool
-np.random.seed(5)
-rand_dict = {}
-rand_dict["tri"] = np.array(get_cells(pial_surf))
-np.random.shuffle(rand_dict["tri"])
-rand_dict["mask"] = np.random.choice(a=[True, False], size=(rand_dict["tri"].max(),))
-In, Out = generate_random_slm(rand_dict)
-params2files(In, Out, 12)
+if __name__ == "__main__":
+    generate_tests()

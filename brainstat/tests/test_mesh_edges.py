@@ -38,8 +38,6 @@ def dummy_test(infile, expfile):
 
 # data *pkl consists of either keys ['tri'] or ['lat'], which will be assigned to
 # the surf{} dictionary while testing
-
-
 def test_01():
     infile = datadir("xstatedg_01_IN.pkl")
     expfile = datadir("xstatedg_01_OUT.pkl")
@@ -61,16 +59,4 @@ def test_03():
 def test_04():
     infile = datadir("xstatedg_04_IN.pkl")
     expfile = datadir("xstatedg_04_OUT.pkl")
-    dummy_test(infile, expfile)
-
-
-def test_05():
-    infile = datadir("thickness_n10.pkl")
-    expfile = datadir("xstatedg_05_OUT.pkl")
-    dummy_test(infile, expfile)
-
-
-def test_06():
-    infile = datadir("xstatedg_06_IN.pkl")
-    expfile = datadir("xstatedg_06_OUT.pkl")
     dummy_test(infile, expfile)

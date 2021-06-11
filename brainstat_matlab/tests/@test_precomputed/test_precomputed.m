@@ -49,6 +49,9 @@ classdef test_precomputed < matlab.unittest.TestCase
             for pair = linmod_files
                 input = load_pkl(pair{1});
                 output = load_pkl(pair{2});
+                if isvector(input.M)
+                    input.M = input.M(:);
+                end
                 slm = input2slm(input);
                 
                 slm.linear_model(input.Y);
@@ -146,7 +149,7 @@ classdef test_precomputed < matlab.unittest.TestCase
                 input = load_pkl(pair{1});
                 output = load_pkl(pair{2});
                 if ismember('tri', fieldnames(input))
-                    surf = struct('tri', input.tri);
+                    surf = struct('tri', input.tri); % Python starts at 0.
                 else
                     surf = struct('lat', input.lat);
                 end
@@ -156,26 +159,26 @@ classdef test_precomputed < matlab.unittest.TestCase
             end
         end
         
-        function test_stand(testCase)
-            % Test mesh_standardize
-            stand_files = get_test_files('statsta');
-            for pair = stand_files
-                input = load_pkl(pair{1});
-                output = load_pkl(pair{2});
-                subdiv = 's';
-                if ismember('mask', fieldnames(input))
-                    mask = logical(input.mask);
-                else
-                    mask = [];
-                end
-                [Y, Ym] = mesh_standardize(input.Y, mask, subdiv);
-
-                verifyEqual(testCase, Y, output.Python_Y, 'abstol', 1e-5, ...
-                    ['Testing failed on input file: ', pair{1}]);
-                verifyEqual(testCase, Ym, output.Python_Ym, 'abstol', 1e-5, ...
-                    ['Testing failed on input file: ', pair{1}])
-            end
-        end
+%         function test_stand(testCase)
+%             % Test mesh_standardize
+%             stand_files = get_test_files('statsta');
+%             for pair = stand_files
+%                 input = load_pkl(pair{1});
+%                 output = load_pkl(pair{2});
+%                 subdiv = 's';
+%                 if ismember('mask', fieldnames(input))
+%                     mask = logical(input.mask);
+%                 else
+%                     mask = [];
+%                 end
+%                 [Y, Ym] = mesh_standardize(input.Y, mask, subdiv);
+% 
+%                 verifyEqual(testCase, Y, output.Python_Y, 'abstol', 1e-5, ...
+%                     ['Testing failed on input file: ', pair{1}]);
+%                 verifyEqual(testCase, Ym, output.Python_Ym, 'abstol', 1e-5, ...
+%                     ['Testing failed on input file: ', pair{1}])
+%             end
+%         end
         
         function test_peakclus(testCase)
             % Test SurfStatPeakClus
@@ -187,12 +190,15 @@ classdef test_precomputed < matlab.unittest.TestCase
                 slm = input2slm(input); 
                 thresh = input.thresh;
                 
-                f = fieldnames(input);
-                if ismember('reselspvert',f)
+                if iscell(input.df)
+                    input.df = cell2mat(input.df);
+                end
+                if ~isempty(input.reselspvert)
                     reselspvert = input.reselspvert;
                 else
                     reselspvert = ones(1, size(slm.t,2));
                 end
+                f = fieldnames(input);
                 if ismember('edg', f)
                     edg = input.edg+1;
                 else
@@ -213,10 +219,6 @@ classdef test_precomputed < matlab.unittest.TestCase
             % Test SurfStatP.
             statp_files = get_test_files('statp_');
             for pair = statp_files
-                if contains(pair{1}, "statp_18_IN.pkl")
-                    warning('SurfStatP test 18 skipped as the data file is bugged.')
-                    continue
-                end
                 input = load_pkl(pair{1});
                 output = load_pkl(pair{2});
                 slm = input2slm(input);
@@ -232,19 +234,8 @@ classdef test_precomputed < matlab.unittest.TestCase
                 if isempty(P.pval.C)
                     P.pval = rmfield(P.pval, 'C');
                 end
-                if isempty(P.pval.mask)
-                    P.pval = rmfield(P.pval, 'mask');
-                end
-                if all(structfun(@isempty, P.peak))
-                    P.peak = {};
-                end
-                if all(structfun(@isempty, P.clus))
-                    P.clus = {};
-                end
-                if isempty(P.clusid)
-                    P.clusid = {};
-                end
-                
+                P.pval = rmfield(P.pval, 'mask');
+
                 recursive_equality(testCase, P, output, pair{1});
             end
         end
@@ -257,6 +248,14 @@ classdef test_precomputed < matlab.unittest.TestCase
                 output = load_pkl(pair{2});
                 slm = input2slm(input);
                 P = struct();
+                
+                if ~isempty(slm.tri)
+                    slm.debug_set('tri', slm.tri); % Python starts at 0.
+                end
+                
+                if ismember('mask', fieldnames(input))
+                    input.mask = logical(input.mask);
+                end
                 if ismember('resl', fieldnames(input))
                     [P.resels, P.reselspvert, P.edg] = slm.compute_resels();
                     P.edg = double(P.edg-1);
@@ -319,12 +318,19 @@ function test_files = get_test_files(test_name)
 % Gets the files for a particular test. Returns them with the input/output
 % of the same test along the first dimension, different tests along the
 % second.
+
 data_dir = get_test_data_dir();
 data_dir_contents = dir(data_dir);
+
 all_files = {data_dir_contents.name};
-test_files = all_files(startsWith(all_files, test_name));
+
+% See if the updated tests exist.
+test_files = all_files(startsWith(all_files, ['x', test_name]));
 if isempty(test_files)
-    error('Did not find any test files.')
+    test_files = all_files(startsWith(all_files, test_name));
+    if isempty(test_files)
+        error('Could not find test files.')
+    end
 end
 test_files = reshape(test_files, 2, []);
 test_files = data_dir + string(filesep) + test_files;
