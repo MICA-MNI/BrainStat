@@ -16,17 +16,21 @@ def dummy_test(infile, expfile):
     M = Din["M"]
 
     # Convert M to a true BrainStat model
-    fixed_effects = FixedEffect(1, "intercept") + FixedEffect(M[:, Din['n_random']:])
-    if Din['n_random'] != 0:
-        mixed_effects =  MixedEffect(
-            M[:, :Din['n_random']], name_ran=["f" + str(x) for x in range(Din['n_random'])]
-        ) + MixedEffect(1, "identity")
+    fixed_effects = FixedEffect(1, "intercept") + FixedEffect(M[:, Din["n_random"] :])
+    if Din["n_random"] != 0:
+        mixed_effects = (
+            MixedEffect(
+                M[:, : Din["n_random"]],
+                name_ran=["f" + str(x) for x in range(Din["n_random"])],
+            )
+            + MixedEffect(1, "identity")
+        )
         M = fixed_effects + mixed_effects
     else:
         M = fixed_effects
 
     # assign slm params
-    slm = SLM(M, FixedEffect(1), surf=Din['surf'])
+    slm = SLM(M, FixedEffect(1), surf=Din["surf"])
 
     # here we go --> run the linear model
     slm.linear_model(Y)
@@ -38,18 +42,14 @@ def dummy_test(infile, expfile):
     # compare...
     testout = []
     for makey_ in Dout.keys():
-        if  makey_ == 'surf':
+        if makey_ == "surf":
             # Surface data is only stored for reconstruction in MATLAB.
             continue
         comp = np.allclose(
             getattr(slm, makey_), Dout[makey_], rtol=1e-05, equal_nan=True
         )
         testout.append(comp)
-    try:
-        assert all(flag == True for (flag) in testout)
-    except:
-        import pdb
-        pdb.set_trace()
+    assert all(flag == True for (flag) in testout)
 
 
 expected_number_of_tests = 16
