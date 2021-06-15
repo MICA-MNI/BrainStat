@@ -208,6 +208,10 @@ classdef SLM < matlab.mixin.Copyable
         end
 
         function unmask(obj)
+            if all(obj.mask)
+                % Escape if there is no masking. 
+                return
+            end
             % Changes all masked parameters to their input dimensions.
             simple_unmask_parameters = {'t', 'coef', 'SSE', 'r', 'ef', 'sd', 'dfs'};
             for key = simple_unmask_parameters

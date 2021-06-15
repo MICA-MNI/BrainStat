@@ -141,9 +141,12 @@ def remove_duplicate_columns(df, tol=1e-8):
 
     df = df / df.abs().sum(0)
     df *= 1 / tol
-    # keep = df.round().T.drop_duplicates(keep='last').T.columns  # Slow!!
-    idx = np.unique(df.round().values, axis=1, return_index=True)[-1]
-    keep = df.columns[np.flipud(idx)]
+    keep = df.round().T.drop_duplicates(keep='last').T.columns  # Slow!!
+
+    # The below doesn't provide the same order of indices as the above method, which is important. 
+    # Leaving it commented out in case we want to optimize this for speed later on. - RV
+    #idx = np.unique(df.round().values, axis=1, return_index=True)[-1]
+    #keep = df.columns[np.flipud(idx)]
     return keep
 
 

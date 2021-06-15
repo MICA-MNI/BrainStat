@@ -45,18 +45,43 @@ classdef test_precomputed < matlab.unittest.TestCase
     methods (Test)
         function test_linmod(testCase)
             % Precomputed tests for SurfStatLinMod
-            linmod_files = get_test_files('linmod');
+            linmod_files = get_test_files('xlinmod');
             for pair = linmod_files
                 input = load_pkl(pair{1});
                 output = load_pkl(pair{2});
                 if isvector(input.M)
                     input.M = input.M(:);
                 end
-                slm = input2slm(input);
                 
+                % Build the model
+                if input.n_random ~= 0
+                    input.M = 1 + FixedEffect(input.M(:, input.n_random+1:end)) + ...
+                        MixedEffect(input.M(:, input.n_random)) + MixedEffect(1);
+                else
+                    input.M = 1 + FixedEffect(input.M);
+                end
+                
+                % Convert input data to an SLM
+                if isempty(input.surf)
+                    input.surf = struct();
+                end
+                slm = input2slm(rmfield(input, 'n_random'));
+                
+                % Run model.
                 slm.linear_model(input.Y);
-                slm_output = slm2struct(slm, fieldnames(output)); 
 
+                % Convert output to match Python implementation
+                slm_output = slm2struct(slm, fieldnames(output));
+                
+                if ~isempty(fieldnames(input.surf))
+                    slm_output.surf.tri = slm_output.surf.tri - 1; % correspond with 0 indexing. 
+                end
+                
+                % Sometimes the models aren't ordered identically, try
+                % reversing. 
+                slm_output.X = column_matching(output.X, slm_output.X);
+                slm_output.coef = permute(column_matching(permute(output.coef, [2, 1, 3]), ...
+                    permute(slm_output.coef, [2, 1, 3])), [2, 1, 3]);
                 recursive_equality(testCase, slm_output, output, pair{1});
             end
         end
@@ -158,27 +183,6 @@ classdef test_precomputed < matlab.unittest.TestCase
                     ['Testing failed on input file: ', pair{1}])
             end
         end
-        
-%         function test_stand(testCase)
-%             % Test mesh_standardize
-%             stand_files = get_test_files('statsta');
-%             for pair = stand_files
-%                 input = load_pkl(pair{1});
-%                 output = load_pkl(pair{2});
-%                 subdiv = 's';
-%                 if ismember('mask', fieldnames(input))
-%                     mask = logical(input.mask);
-%                 else
-%                     mask = [];
-%                 end
-%                 [Y, Ym] = mesh_standardize(input.Y, mask, subdiv);
-% 
-%                 verifyEqual(testCase, Y, output.Python_Y, 'abstol', 1e-5, ...
-%                     ['Testing failed on input file: ', pair{1}]);
-%                 verifyEqual(testCase, Ym, output.Python_Ym, 'abstol', 1e-5, ...
-%                     ['Testing failed on input file: ', pair{1}])
-%             end
-%         end
         
         function test_peakclus(testCase)
             % Test SurfStatPeakClus
@@ -473,3 +477,23 @@ slm = SLM(model, contrast);
 parameters = [fieldnames(input), struct2cell(input)]';
 slm.debug_set(parameters{:});
 end
+
+function M_out = column_matching(M1, M2)
+% Reorders the columns of M2 such that they match M1 as best as possible.
+
+for ii = 1:size(M2,3)
+    r(:,:,ii) = pdist2(M1(:,:,ii)', M2(:,:,ii)');
+end
+
+shortest_distance = sum(double(r == min(r)) .* (1:size(M2,2))');
+
+M_out = zeros(size(M2));
+for ii = 1:size(M2,3)
+    for jj = 1:size(M2,2)
+        M_out(:,shortest_distance(1, jj, ii),ii) = M2(:, jj, ii);
+    end
+end
+end
+
+
+
