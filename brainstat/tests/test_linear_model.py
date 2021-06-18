@@ -41,15 +41,17 @@ def dummy_test(infile, expfile):
 
     # compare...
     testout = []
-    for makey_ in Dout.keys():
-        if makey_ == "surf":
+
+    for k, v in Dout.items():
+        if k == "surf":
             # Surface data is only stored for reconstruction in MATLAB.
             continue
-        comp = np.allclose(
-            getattr(slm, makey_), Dout[makey_], rtol=1e-05, equal_nan=True
-        )
+
+        a = getattr(slm, k)
+
+        comp = np.allclose(a, v, rtol=1e-05, equal_nan=True)
         testout.append(comp)
-    assert all(flag == True for (flag) in testout)
+    assert all(testout)
 
 
 expected_number_of_tests = 16

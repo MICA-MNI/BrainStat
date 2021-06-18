@@ -64,10 +64,8 @@ def to_df(x, n=1, names=None, idx=None):
 
     if names is not None:
         if len(names) != x.shape[1]:
-            raise ValueError(
-                "Number of columns {} does not coincide with "
-                "column names {}".format(x.shape[1], names)
-            )
+            raise ValueError(f"Number of columns {x.shape[1]} does not "
+                             f"coincide with column names {names}")
         x.columns = names
 
     return pd.get_dummies(x)
@@ -119,7 +117,7 @@ def check_duplicate_names(df1, df2=None):
     else:
         names = np.intersect1d(df1.columns, df2.columns)
     if names.size > 0:
-        raise ValueError("Variables must have different names: {}".format(names))
+        raise ValueError(f"Variables must have different names: {names}")
 
 
 def remove_duplicate_columns(df, tol=1e-8):
@@ -141,12 +139,9 @@ def remove_duplicate_columns(df, tol=1e-8):
 
     df = df / df.abs().sum(0)
     df *= 1 / tol
-    keep = df.round().T.drop_duplicates(keep="last").T.columns  # Slow!!
-
-    # The below doesn't provide the same order of indices as the above method, which is important.
-    # Leaving it commented out in case we want to optimize this for speed later on. - RV
-    # idx = np.unique(df.round().values, axis=1, return_index=True)[-1]
-    # keep = df.columns[np.flipud(idx)]
+    # keep = df.round().T.drop_duplicates(keep="last").T.columns  # Slow!!
+    idx = np.unique(df.round().values, axis=1, return_index=True)[-1]
+    keep = df.columns[sorted(idx)]
     return keep
 
 
@@ -214,12 +209,11 @@ class FixedEffect:
         elif self.shape[0] == 1 and df.shape[0] > 1:
             self.m = to_df(self.m, n=df.shape[0])
         elif not df.empty and self.shape[0] != df.shape[0]:
-            raise ValueError(
-                "Cannot broadcast shape {} to " "{}.".format(df.shape, self.shape)
-            )
+            raise ValueError(f"Cannot broadcast shape {df.shape} to "
+                             f"{self.shape}.")
         return df
 
-    def _add(self, t, side="right"):
+    def _add(self, t, side="left"):
         if isinstance(t, MixedEffect):
             return NotImplemented
 
@@ -276,9 +270,9 @@ class FixedEffect:
                 return self
             m = self.m * t
             if side == "right":
-                names = ["{}*{}".format(t, k) for k in self.names]
+                names = [f"{t}*{k}" for k in self.names]
             else:
-                names = ["{}*{}".format(k, t) for k in self.names]
+                names = [f"{k}*{t}" for k in self.names]
             return FixedEffect(m, names=names)
 
         df = self._broadcast(t)
@@ -289,9 +283,9 @@ class FixedEffect:
         for c in df.columns:
             prod.append(df[[c]].values * self.m)
             if side == "left":
-                names.extend(["{}*{}".format(k, c) for k in self.names])
+                names.extend([f"{k}*{c}" for k in self.names])
             else:
-                names.extend(["{}*{}".format(c, k) for k in self.names])
+                names.extend([f"{c}*{k}" for k in self.names])
 
         df = pd.concat(prod, axis=1)
         df.columns = names
@@ -402,7 +396,7 @@ class MixedEffect:
                     name_ran = "I"
                     v = ran.values.flat[0]
                     if v != 1:
-                        name_ran += "{}**2".format(v)
+                        name_ran += f"{v}**2"
                 else:
                     name = check_names(ran)
                     if name is not None and name_ran is None:
@@ -419,7 +413,7 @@ class MixedEffect:
             return FixedEffect(v.ravel(), names="I")
         return r1.variance
 
-    def _add(self, r, side="right"):
+    def _add(self, r, side="left"):
         if not isinstance(r, MixedEffect):
             r = MixedEffect(fix=r)
 
@@ -483,9 +477,9 @@ class MixedEffect:
                     )
                 else:
                     xs = x[i] + x[j]
-                    xs_name = "({}+{})".format(*[self.mean.names[k] for k in [i, j]])
+                    xs_name = f"({self.mean.names[i]}+{self.mean.names[j]})"
                     xd = x[i] - x[j]
-                    xd_name = "({}-{})".format(*[self.mean.names[k] for k in [i, j]])
+                    xd_name = f"({self.mean.names[i]}-{self.mean.names[j]})"
 
                     v = np.outer(xs, xs) / 4
                     t = t + FixedEffect(v.ravel(), names=xs_name)
@@ -504,9 +498,9 @@ class MixedEffect:
                     )
                 else:
                     xs = x[i] + x[j]
-                    xs_name = "({}+{})".format(*[r.mean.names[k] for k in [i, j]])
+                    xs_name = f"({r.mean.names[i]}+{r.mean.names[j]})"
                     xd = x[i] - x[j]
-                    xd_name = "({}-{})".format(*[r.mean.names[k] for k in [i, j]])
+                    xd_name = f"({r.mean.names[i]}-{r.mean.names[j]})"
 
                     v = np.outer(xs, xs) / 4
                     t = t + FixedEffect(v.ravel(), names=xs_name)
