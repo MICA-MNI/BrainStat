@@ -1,84 +1,74 @@
-from sklearn.model_selection import ParameterGrid
 import numpy as np
-from brainstat.stats.terms import FixedEffect, MixedEffect
+import pickle
+import pytest
+from brainstat.tests.testutil import datadir
 from brainstat.stats.SLM import SLM
-from brainstat.context.utils import read_surface_gz
-from nilearn.datasets import fetch_surf_fsaverage
+from brainstat.stats.terms import FixedEffect
 
 
-def test_SLM():
-    """Tests the SLM model using a grid of parameters
-
-    Raises
-    ------
-    Exception
-        First exception that occurs in computing the SLM.
-    """
-    samples = 10
-    predictors = 3
-
-    grid = list(create_parameter_grid(samples, predictors))
-    Y = np.random.rand(samples, 10242, predictors)
-
-    for i in range(len(grid)):
-        # Skip exceptions that we know error.
-        if grid[i]["surf"] is None:
-            if grid[i]["correction"] is not None and "rft" in grid[i]["correction"]:
-                continue
-        if grid[i]["Y_idx"] > 1 and grid[i]["two_tailed"] is False:
+def recursive_dict_comparison(D1, D2):
+    if len(D1.keys()) != len(D2.keys()):
+        raise ValueError("Different number of keys in each dictionary.")
+    
+    output = True
+    for key in D1.keys():
+        if D1[key] is None and D2[key] is None:
             continue
+        if isinstance(D1[key], dict):
+            output = recursive_dict_comparison(D1[key], D2[key])
+        elif isinstance(D1[key], list):
+            output = np.all([np.all(x1 == x2) for x1, x2 in zip(D1[key], D2[key])])
+        else:
+            output = np.all(D1[key] == D2[key])
+        if not output:
+            return output
 
-        try:
-            slm = SLM(
-                model=grid[i]["model"],
-                contrast=grid[i]["contrast"],
-                surf=grid[i]["surf"],
-                mask=grid[i]["mask"],
-                correction=grid[i]["correction"],
-                two_tailed=grid[i]["two_tailed"],
-            )
-            slm.fit(Y[:, :, 0 : grid[i]["Y_idx"]])
-        except Exception as e:
-            print("Error on run:", i)
-            print("SLM failed with the following parameters:")
-            print("Model: ", grid[i]["model"])
-            print("Contrast: ", grid[i]["contrast"])
-            print("Surface: ", grid[i]["surf"])
-            print("Mask: ", grid[i]["mask"])
-            print("Correction: ", grid[i]["correction"])
-            print("Two_tailed: ", grid[i]["two_tailed"])
-            print("Y_idx: ", grid[i]["Y_idx"])
-            raise e
+    return output
 
 
-def create_parameter_grid(samples, predictors):
-    """Creates a parameter grid for the test function.
+def dummy_test(infile, expfile):
 
-    Returns
-    -------
-    ParameterGrid
-        All pairings of parameters to be run through the SLM class.
-    """
-    model = [
-        FixedEffect(1)
-        + FixedEffect(np.random.rand(samples, predictors), names=["y1", "y2", "y3"])
-    ]
+    # load input test data
+    ifile = open(infile, "br")
+    idic = pickle.load(ifile)
+    ifile.close()
 
-    Y_idx = [1, 2, 3]
-    contrast = [np.random.rand(samples), FixedEffect(np.random.rand(samples))]
-    surf = [None, read_surface_gz(fetch_surf_fsaverage()["pial_left"])]
-    mask = [None, np.random.rand(10242) > 0.1]
-    correction = [None, ["rft", "fdr"]]
-    two_tailed = [False, True]
-    param_grid = ParameterGrid(
-        {
-            "Y_idx": Y_idx,
-            "model": model,
-            "contrast": contrast,
-            "surf": surf,
-            "mask": mask,
-            "correction": correction,
-            "two_tailed": two_tailed,
-        }
-    )
-    return param_grid
+    slm = SLM(FixedEffect(1), FixedEffect(1))
+    for key in idic.keys():
+        if key == "Y":
+            continue
+        setattr(slm, key, idic[key])
+        if key == "surf" and slm.surf is not None:
+            slm.surf["tri"] += 1 
+
+    slm.fit(idic["Y"])
+
+    # load expected outout data
+    efile = open(expfile, "br")
+    out = pickle.load(efile)
+    efile.close()
+
+    testout = []
+
+    skip_keys = ['model', 'correction', "_tri", "surf"]
+    for key in out.keys():
+        if key in skip_keys:
+            continue
+        if key == "P":
+            testout.append(recursive_dict_comparison(out[key], getattr(slm, key)))
+        elif out[key] is not None:
+            comp = np.allclose(out[key], getattr(slm, key), rtol=1e-05, equal_nan=True)
+            testout.append(comp)
+
+
+    assert all(flag == True for (flag) in testout)
+
+
+expected_number_of_tests = 18
+parametrize = pytest.mark.parametrize
+
+@parametrize("test_number", range(1, expected_number_of_tests + 1))
+def test_run_all(test_number):
+    infile = datadir("slm_" + f"{test_number:02d}" + "_IN.pkl")
+    expfile = datadir("slm_" + f"{test_number:02d}" + "_OUT.pkl")
+    dummy_test(infile, expfile)

@@ -121,7 +121,7 @@ def combine_parcellations(files, output_file):
     """
     for i in range(len(files)):
         nii = nib.load(files[i])
-        if i is 0:
+        if i == 0:
             img = nii.get_fdata()
             affine = nii.affine
             header = nii.header

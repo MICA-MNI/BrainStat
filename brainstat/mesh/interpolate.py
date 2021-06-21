@@ -198,9 +198,9 @@ def ribbon_interpolation(
 
     ribbon_coord = nib.affines.apply_affine(nii.affine, points)
 
-    if interpolation is "nearest":
+    if interpolation == "nearest":
         interp = NearestNDInterpolator(mesh_coord, labels)
-    elif interpolation is "linear":
+    elif interpolation == "linear":
         interp = LinearNDInterpolator(mesh_coord, labels)
     else:
         ValueError("Unknown interpolation type.")

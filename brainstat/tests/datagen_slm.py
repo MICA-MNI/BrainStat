@@ -27,9 +27,17 @@ def slm2files(slm, basename, test_num, input=True):
     """
     D = slm2dict(slm)
     D['model'] = 'fixed' if type(D['model']) is FixedEffect else 'mixed'
+    dict2pkl(D, basename, test_num, input)
+
+
+def dict2pkl(D, basename, test_num, input=True):
+    if 'surf' in D and D['surf'] is not None:
+        D['surf'] = {'tri': np.array(get_cells(D['surf'])), 'coord': np.array(get_points(D['surf'])).T}
+
     if '_surf' in D and D['_surf'] is not None:
         D['surf'] = {'tri': get_cells(D['_surf']), 'coord': get_points(D['_surf'])}
         D.pop('_surf')
+    
     
     if input:
         stage = "IN"
@@ -73,32 +81,47 @@ def generate_test_data():
     variates_2 = np.concatenate((thickness[:, :, None], np.random.random_sample(thickness.shape)[:,:,None]), axis=2)
     variates_3 = np.concatenate((thickness[:, :, None], np.random.rand(thickness.shape[0], thickness.shape[1], 2)), axis=2)
 
-    # Separate RFT in the parameters as this requires a surface.
+    # Params 1: No surface, fixed effect.
+    # Params 2: One-tailed mixed with theta/dr changes. 
+    # Params 3: With surface. and RFT correction.
     parameters = [
         {
             "Y": [thickness, variates_2, variates_3],
-            "model": [fixed_model, mixed_model],
+            "model": [fixed_model],
             "contrast": [-age],
             "correction": [None, "fdr"],
-            "surf": [None, pial],
-            "mask": [None, mask],
-            "niter": [1, 10],
-            "thetalim": [0.01, 0.05],
-            "drlim": [0.1, 0.2],
-            "two_tailed": [True, False],
-            "cluster_threshold": [0.001, 1.2],
+            "surf": [None],
+            "mask": [mask],
+            "niter": [1],
+            "thetalim": [0.01],
+            "drlim": [0.1],
+            "two_tailed": [True],
+            "cluster_threshold": [0.001],
         },
         {
-            "Y": [thickness, variates_2, variates_3],
+            "Y": [thickness],
+            "model": [mixed_model],
+            "contrast": [-age],
+            "correction": ["fdr"],
+            "surf": [pial],
+            "mask": [mask],
+            "niter": [1],
+            "thetalim": [0.01, 0.05],
+            "drlim": [0.1, 0.2],
+            "two_tailed": [False],
+            "cluster_threshold": [0.001],
+        },
+        {
+            "Y": [thickness],
             "model": [fixed_model, mixed_model],
             "contrast": [-age],
             "surf": [pial],
-            "mask": [None, mask],
-            "correction": ["rft"],
-            "niter": [1, 10],
-            "thetalim": [0.01, 0.05],
-            "drlim": [0.1, 0.2],
-            "two_tailed": [True, False],
+            "mask": [mask],
+            "correction": [None, ["fdr", "rft"]],
+            "niter": [1],
+            "thetalim": [0.01],
+            "drlim": [0.1],
+            "two_tailed": [True],
             "cluster_threshold": [0.001, 1.2],
         },
     ]
@@ -118,13 +141,9 @@ def generate_test_data():
             two_tailed=params["two_tailed"],
             cluster_threshold=params["cluster_threshold"],
         )
-        slm2files(slm, 'slm', test_num, input=True)
-        print(type(params["model"]))
-        try:
-            slm.fit(params["Y"])
-        except:
-            import pdb
-            pdb.set_trace()
+        slm.fit(params["Y"])
+
+        dict2pkl(params, "slm", test_num, input=True)
         slm2files(slm, 'slm', test_num, input=False)
 
 
