@@ -22,7 +22,7 @@ end
 histology_file = options.data_dir + filesep + "histology_" + options.template + ".h5";
 
 if ~isfile(histology_file) || options.overwrite
-    download_histology_profiles(histology_file, options.template, options.overwrite)
+    download_histology_profiles(histology_file, options.template)
 end
 
 profiles = double(h5read(histology_file, "/" + options.template));
