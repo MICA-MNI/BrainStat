@@ -64,8 +64,10 @@ def to_df(x, n=1, names=None, idx=None):
 
     if names is not None:
         if len(names) != x.shape[1]:
-            raise ValueError(f"Number of columns {x.shape[1]} does not "
-                             f"coincide with column names {names}")
+            raise ValueError(
+                f"Number of columns {x.shape[1]} does not "
+                f"coincide with column names {names}"
+            )
         x.columns = names
 
     return pd.get_dummies(x)
@@ -209,8 +211,7 @@ class FixedEffect:
         elif self.shape[0] == 1 and df.shape[0] > 1:
             self.m = to_df(self.m, n=df.shape[0])
         elif not df.empty and self.shape[0] != df.shape[0]:
-            raise ValueError(f"Cannot broadcast shape {df.shape} to "
-                             f"{self.shape}.")
+            raise ValueError(f"Cannot broadcast shape {df.shape} to " f"{self.shape}.")
         return df
 
     def _add(self, t, side="left"):
