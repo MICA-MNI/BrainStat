@@ -29,7 +29,7 @@ def mesh_edges(surf, mask=None):
     # This doesn't strictly test that its BrainStat SLM, but we can't import
     # directly without causing a circular import.
     class_name = surf.__class__.__name__
-    if class_name is "SLM":
+    if class_name == "SLM":
         if surf.tri is not None:
             surf = {"tri": surf.tri}
         elif surf.lat is not None:
@@ -221,7 +221,7 @@ def mesh_average(filenames, fun=np.add, output_surfstat=False):
         surface [BSPolyData, dict]: The output surface.
     """
 
-    if filenames.ndim is not 2:
+    if filenames.ndim != 2:
         raise ValueError("Filenames must be a 2-dimensional array.")
 
     for i in range(0, filenames.shape[0]):
@@ -235,7 +235,7 @@ def mesh_average(filenames, fun=np.add, output_surfstat=False):
                 surfaces[j] = read_surface(filenames[i, j])
 
             # Concatenate second dimension of filenames.
-            if j is 0:
+            if j == 0:
                 tri = get_cells(surfaces[j])
                 coord = get_points(surfaces[j])
             else:
@@ -244,7 +244,7 @@ def mesh_average(filenames, fun=np.add, output_surfstat=False):
                 )
                 coord = np.concatenate((coord, get_points(surfaces[j])), axis=0)
 
-        if i is 0:
+        if i == 0:
             m = 1
             coord_all = coord
         else:

@@ -1,12 +1,12 @@
 import numpy as np
 import pytest
 from brainstat.tests.testutil import datadir
-from brainstat.stats.terms import FixedEffect
+from brainstat.stats.terms import FixedEffect, MixedEffect
 from brainstat.stats.SLM import SLM
 import pickle
 
 
-def dummy_test(infile, expfile, simple=True):
+def dummy_test(infile, expfile):
 
     ifile = open(infile, "br")
     Din = pickle.load(ifile)
@@ -15,13 +15,22 @@ def dummy_test(infile, expfile, simple=True):
     Y = Din["Y"]
     M = Din["M"]
 
-    # assign slm params
-    slm = SLM(M, FixedEffect(1))
+    # Convert M to a true BrainStat model
+    fixed_effects = FixedEffect(1, "intercept") + FixedEffect(M[:, Din["n_random"] :])
+    if Din["n_random"] != 0:
+        mixed_effects = (
+            MixedEffect(
+                M[:, : Din["n_random"]],
+                name_ran=["f" + str(x) for x in range(Din["n_random"])],
+            )
+            + MixedEffect(1, "identity")
+        )
+        M = fixed_effects + mixed_effects
+    else:
+        M = fixed_effects
 
-    if "tri" in Din:
-        slm.surf = {"tri": Din["tri"]}
-    if "lat" in Din:
-        slm.surf = {"lat": Din["lat"]}
+    # assign slm params
+    slm = SLM(M, FixedEffect(1), surf=Din["surf"])
 
     # here we go --> run the linear model
     slm.linear_model(Y)
@@ -32,15 +41,20 @@ def dummy_test(infile, expfile, simple=True):
 
     # compare...
     testout = []
-    for makey_ in Dout.keys():
-        comp = np.allclose(
-            getattr(slm, makey_), Dout[makey_], rtol=1e-05, equal_nan=True
-        )
+
+    for k, v in Dout.items():
+        if k == "surf":
+            # Surface data is only stored for reconstruction in MATLAB.
+            continue
+
+        a = getattr(slm, k)
+
+        comp = np.allclose(a, v, rtol=1e-05, equal_nan=True)
         testout.append(comp)
-    assert all(flag == True for (flag) in testout)
+    assert all(testout)
 
 
-expected_number_of_tests = 15
+expected_number_of_tests = 16
 parametrize = pytest.mark.parametrize
 
 
