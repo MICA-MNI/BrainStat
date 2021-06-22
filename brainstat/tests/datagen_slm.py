@@ -26,19 +26,21 @@ def slm2files(slm, basename, test_num, input=True):
         Number of the test.
     """
     D = slm2dict(slm)
-    D['model'] = 'fixed' if type(D['model']) is FixedEffect else 'mixed'
+    D["model"] = "fixed" if type(D["model"]) is FixedEffect else "mixed"
     dict2pkl(D, basename, test_num, input)
 
 
 def dict2pkl(D, basename, test_num, input=True):
-    if 'surf' in D and D['surf'] is not None:
-        D['surf'] = {'tri': np.array(get_cells(D['surf'])), 'coord': np.array(get_points(D['surf'])).T}
+    if "surf" in D and D["surf"] is not None:
+        D["surf"] = {
+            "tri": np.array(get_cells(D["surf"])),
+            "coord": np.array(get_points(D["surf"])).T,
+        }
 
-    if '_surf' in D and D['_surf'] is not None:
-        D['surf'] = {'tri': get_cells(D['_surf']), 'coord': get_points(D['_surf'])}
-        D.pop('_surf')
-    
-    
+    if "_surf" in D and D["_surf"] is not None:
+        D["surf"] = {"tri": get_cells(D["_surf"]), "coord": get_points(D["_surf"])}
+        D.pop("_surf")
+
     if input:
         stage = "IN"
     else:
@@ -78,11 +80,20 @@ def generate_test_data():
         + MixedEffect(1, name_ran="Identity")
     )
 
-    variates_2 = np.concatenate((thickness[:, :, None], np.random.random_sample(thickness.shape)[:,:,None]), axis=2)
-    variates_3 = np.concatenate((thickness[:, :, None], np.random.rand(thickness.shape[0], thickness.shape[1], 2)), axis=2)
+    variates_2 = np.concatenate(
+        (thickness[:, :, None], np.random.random_sample(thickness.shape)[:, :, None]),
+        axis=2,
+    )
+    variates_3 = np.concatenate(
+        (
+            thickness[:, :, None],
+            np.random.rand(thickness.shape[0], thickness.shape[1], 2),
+        ),
+        axis=2,
+    )
 
     # Params 1: No surface, fixed effect.
-    # Params 2: One-tailed mixed with theta/dr changes. 
+    # Params 2: One-tailed mixed with theta/dr changes.
     # Params 3: With surface. and RFT correction.
     parameters = [
         {
@@ -143,8 +154,13 @@ def generate_test_data():
         )
         slm.fit(params["Y"])
 
+        # Save input/output
+        if isinstance(params["model"], FixedEffect):
+            params["model"] = age[:, None]
+        else:
+            params["model"] = np.concatenate((age[:, None], iq[:, None]), axis=1)
         dict2pkl(params, "slm", test_num, input=True)
-        slm2files(slm, 'slm', test_num, input=False)
+        slm2files(slm, "slm", test_num, input=False)
 
 
 if __name__ == "__main__":

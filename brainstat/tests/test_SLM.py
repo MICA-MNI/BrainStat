@@ -3,13 +3,13 @@ import pickle
 import pytest
 from brainstat.tests.testutil import datadir
 from brainstat.stats.SLM import SLM
-from brainstat.stats.terms import FixedEffect
+from brainstat.stats.terms import FixedEffect, MixedEffect
 
 
 def recursive_dict_comparison(D1, D2):
     if len(D1.keys()) != len(D2.keys()):
         raise ValueError("Different number of keys in each dictionary.")
-    
+
     output = True
     for key in D1.keys():
         if D1[key] is None and D2[key] is None:
@@ -34,12 +34,21 @@ def dummy_test(infile, expfile):
     ifile.close()
 
     slm = SLM(FixedEffect(1), FixedEffect(1))
+    # Data are saved a little differently from the actual input due to compatibility with MATLAB.
+    # Data wrangle a bit to bring it back into the Python input format.
     for key in idic.keys():
         if key == "Y":
+            # Y is input for slm.fit(), not a property.
             continue
+        if key == "model":
+            # Model is saved as a matrix rather than a Fixed/MixedEffect
+            if idic[key].shape[1] == 1:
+                idic[key] = FixedEffect(1) + FixedEffect(idic[key])
+            else:
+                idic[key] = FixedEffect(1) + FixedEffect(idic[key][:,0]) + MixedEffect(idic[key][:,1]) + MixedEffect(1)
         setattr(slm, key, idic[key])
         if key == "surf" and slm.surf is not None:
-            slm.surf["tri"] += 1 
+            slm.surf["tri"] += 1
 
     slm.fit(idic["Y"])
 
@@ -50,7 +59,7 @@ def dummy_test(infile, expfile):
 
     testout = []
 
-    skip_keys = ['model', 'correction', "_tri", "surf"]
+    skip_keys = ["model", "correction", "_tri", "surf"]
     for key in out.keys():
         if key in skip_keys:
             continue
@@ -60,12 +69,12 @@ def dummy_test(infile, expfile):
             comp = np.allclose(out[key], getattr(slm, key), rtol=1e-05, equal_nan=True)
             testout.append(comp)
 
-
     assert all(flag == True for (flag) in testout)
 
 
 expected_number_of_tests = 18
 parametrize = pytest.mark.parametrize
+
 
 @parametrize("test_number", range(1, expected_number_of_tests + 1))
 def test_run_all(test_number):

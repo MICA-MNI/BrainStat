@@ -8,6 +8,7 @@ from brainstat.mesh.utils import mesh_edges, _mask_edges
 from brainspace.mesh.mesh_elements import get_cells, get_points
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 
+
 class SLM:
     """Core Class for running BrainStat linear models"""
 
