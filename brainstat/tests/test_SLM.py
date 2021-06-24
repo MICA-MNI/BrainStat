@@ -76,11 +76,12 @@ def dummy_test(infile, expfile):
 
     if not all(flag == True for (flag) in testout):
         [print(x,y) for x, y in zip(testout, out.keys())]
+        print(out["ef"], getattr(slm, "ef"))
 
     assert all(flag == True for (flag) in testout)
 
 
-expected_number_of_tests = 18
+expected_number_of_tests = 22
 parametrize = pytest.mark.parametrize
 
 
