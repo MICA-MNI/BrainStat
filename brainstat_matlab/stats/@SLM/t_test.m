@@ -43,7 +43,7 @@ if ndims(obj.coef)==2
             vc=v2-v1+1;
             irs(:,v1:v2)=round(obj.r(:,v1:v2).*repmat(1./obj.dr(:,ic),1,vc));
         end
-        [ur,ir,jr]=unique(irs','rows');
+        [ur, ~, jr]=unique(irs','rows');
         nr=size(ur,1);
         obj.dfs=zeros(1,v);
         Vc=zeros(1,v);
@@ -72,7 +72,6 @@ if ndims(obj.coef)==2
                 end
             end
             vc=c'*Vbeta*c;
-            iv=(ir==jr);
             Vc(iv)=vc;
             obj.dfs(iv)=vc^2/(E'*pinv(M)*E);
         end
