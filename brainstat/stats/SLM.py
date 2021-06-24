@@ -222,6 +222,8 @@ class SLM:
 
     @tri.setter
     def tri(self, value):
+        if np.any(value < 0):
+            raise ValueError("Triangle indices must be non-negative.")
         self._tri = value
 
     @tri.deleter
