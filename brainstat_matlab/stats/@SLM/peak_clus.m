@@ -129,7 +129,17 @@ rankrsl(iucrsl)=nclus:-1:1;
 
 % add these to lm as extra columns:
 lmid=lmvox(ismember(lmvox,vox));
-lm=flipud(sortrows([local_t(1,lmid)' lmid' rankrsl(jclmid)'],1));
+
+% The line lm=... bugs out when there is only one cluster as
+% rankrsl(jclmid) becomes a column vector instead of a row vector.
+% Fix by enforcing the vector directionality - RV.
+% lm=flipud(sortrows([local_t(1,lmid)' lmid' rankrsl(jclmid)'],1));
+lm = flipud(sortrows([ ...
+    column_vector(local_t(1, lmid)), ...
+    column_vector(lmid), ...
+    column_vector(rankrsl(jclmid))], ...
+    1));
+
 cl=sortrows([rankrsl' ucvol' ucrsl'],1);
 
 clusid=zeros(1,v);
@@ -145,4 +155,10 @@ clus.resels=cl(:,3);
 return
 end
 
-
+function v_col = column_vector(v)
+% Converts the input vector to a column vector.
+arguments
+    v {mustBeVector}
+end
+v_col = v(:);
+end

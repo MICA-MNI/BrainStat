@@ -37,8 +37,11 @@ def dict2pkl(D, basename, test_num, input=True):
             "coord": np.array(get_points(D["surf"])).T,
         }
 
+    if "_tri" in D:
+        D.pop("_tri")
+
     if "_surf" in D and D["_surf"] is not None:
-        D["surf"] = {"tri": get_cells(D["_surf"]), "coord": get_points(D["_surf"])}
+        D["surf"] = {"tri": np.array(get_cells(D["_surf"])), "coord": np.array(get_points(D["_surf"]))}
         D.pop("_surf")
 
     if input:
@@ -114,7 +117,7 @@ def generate_test_data():
             "model": [mixed_model],
             "contrast": [-age],
             "correction": ["fdr"],
-            "surf": [pial],
+            "surf": [None, pial],
             "mask": [mask],
             "niter": [1],
             "thetalim": [0.01, 0.05],
