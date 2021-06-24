@@ -119,6 +119,7 @@ def slm2files(slm, basename, test_num):
             "coord": np.array(get_points(D["_surf"])).T,
         }
         D.pop("_surf")
+        D.pop("_tri")
 
     filename = datadir(basename + "_" + f"{test_num:02d}" + "_OUT.pkl")
     with open(filename, "wb") as f:

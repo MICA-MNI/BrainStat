@@ -108,14 +108,10 @@ classdef test_precomputed < matlab.unittest.TestCase
                 end
                 
                 % Compare
-                if isa(input.model, 'MixedEffect')
-                    keyboard;
-                else
-                    try
-                        recursive_equality(testCase, slm_output, output, pair{1});
-                    catch
-                            keyboard;
-                    end
+                try
+                    recursive_equality(testCase, slm_output, output, pair{1});
+                catch
+                        keyboard;
                 end
             end
         end
@@ -386,8 +382,28 @@ classdef test_precomputed < matlab.unittest.TestCase
             for pair = statt_files
                 input = load_pkl(pair{1});
                 output = load_pkl(pair{2});
-                slm = input2slm(input);
+                if input.n_random ~= 0
+                    input.M = 1 + FixedEffect(input.M(:, input.n_random+1:end)) + ...
+                        MixedEffect(input.M(:, input.n_random)) + MixedEffect(1);
+                else
+                    input.M = 1 + FixedEffect(input.M);
+                end
+                input.contrast = input.contrast(:);
+                if ismember('surf', fieldnames(output))
+                    output.surf.tri = output.surf.tri + 1;
+                end
+                
+                % Convert input data to an SLM
+                if isempty(input.surf)
+                    input.surf = struct();
+                end
+                slm = input2slm(rmfield(input, 'n_random'));
+                
+                % Run model.
+                slm.linear_model(input.Y);
                 slm.t_test();
+                
+                % Convert output to match Python implementation
                 slm_output = slm2struct(slm, fieldnames(output));
                 recursive_equality(testCase, slm_output, output, pair{1});           
             end
@@ -562,22 +578,6 @@ parameters = [fieldnames(input), struct2cell(input)]';
 slm.debug_set(parameters{:});
 end
 
-function M_out = column_matching(M1, M2)
-% Reorders the columns of M2 such that they match M1 as best as possible.
-
-for ii = 1:size(M2,3)
-    r(:,:,ii) = pdist2(M1(:,:,ii)', M2(:,:,ii)');
-end
-
-shortest_distance = sum(double(r == min(r)) .* (1:size(M2,2))');
-
-M_out = zeros(size(M2));
-for ii = 1:size(M2,3)
-    for jj = 1:size(M2,2)
-        M_out(:,shortest_distance(1, jj, ii),ii) = M2(:, jj, ii);
-    end
-end
-end
 
 
 
