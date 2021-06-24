@@ -202,8 +202,8 @@ class SLM:
         self._surf = value
         if self.surf is not None:
             if isinstance(self.surf, BSPolyData):
-                self.tri = get_cells(self.surf)
-                self.coord = get_points(self.surf).T
+                self.tri = np.array(get_cells(self.surf)) + 1
+                self.coord = np.array(get_points(self.surf)).T
             else:
                 if "tri" in value:
                     self.tri = value["tri"]

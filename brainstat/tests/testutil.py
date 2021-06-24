@@ -70,6 +70,10 @@ def save_slm(slm, basename, testnum, input=True):
     D = slm2dict(slm)
     # Custom classes won't support MATLAB conversion.
     D.pop("surf", None)
+    D.pop("_surf")
+    if "_tri" in D:
+        D["tri"] = D["_tri"]
+        D.pop("_tri")
     D.pop("model", None)
     if input:
         stage = "IN"

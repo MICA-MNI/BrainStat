@@ -45,6 +45,7 @@ def generate_test_data():
 
     # generate the parameters
     tri = np.random.randint(1, int(50), size=(100, 3))
+    coord = np.random.rand(3, 50)
     edg = mesh_edges({"tri": tri})
     n_edges = edg.shape[0]
     n_vertices = int(tri.shape[0])
@@ -71,6 +72,7 @@ def generate_test_data():
             "resl": np.random.random_sample((n_edges, 1)),
             "k": params["k"],
             "df": params["df"],
+            "coord": coord,
         }
 
         if params["mask"] is True:

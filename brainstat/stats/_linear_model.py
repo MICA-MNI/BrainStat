@@ -22,7 +22,7 @@ def linear_model(self, Y):
 
     # PATCHWORK FIX: Y is modified in place a lot which also modifies it outside
     # the scope of this function. Lets just make a deep copy.
-    # TODO: Stop modifying in place. 
+    # TODO: Stop modifying in place.
     Y_copy = deepcopy(Y)
 
     if isinstance(Y_copy, FixedEffect):
@@ -35,7 +35,9 @@ def linear_model(self, Y):
     _check_constant_term(self.X)
 
     self.df = n_samples - la.matrix_rank(self.X)
-    residuals, self.V, self.coef, self.SSE, self.r, self.dr = _run_linear_model(self, Y_copy)
+    residuals, self.V, self.coef, self.SSE, self.r, self.dr = _run_linear_model(
+        self, Y_copy
+    )
 
     if self.surf is not None:
         self.resl, mesh_connections = _compute_resls(self, residuals)

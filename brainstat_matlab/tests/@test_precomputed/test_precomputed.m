@@ -78,11 +78,7 @@ classdef test_precomputed < matlab.unittest.TestCase
                 slm = input2slm(input);
                 
                 % Run model.
-                try
-                    slm.fit(input.Y);
-                catch
-                    keyboard;
-                end
+                slm.fit(input.Y);
 
                 % Convert output to match Python implementation
                 slm_output = slm2struct(slm, fieldnames(output));
@@ -108,11 +104,8 @@ classdef test_precomputed < matlab.unittest.TestCase
                 end
                 
                 % Compare
-                try
-                    recursive_equality(testCase, slm_output, output, pair{1});
-                catch
-                        keyboard;
-                end
+                recursive_equality(testCase, slm_output, output, pair{1});
+
             end
         end
         
@@ -312,7 +305,6 @@ classdef test_precomputed < matlab.unittest.TestCase
                 if isempty(P.pval.C)
                     P.pval = rmfield(P.pval, 'C');
                 end
-                P.pval = rmfield(P.pval, 'mask');
 
                 recursive_equality(testCase, P, output, pair{1});
             end
