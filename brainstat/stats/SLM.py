@@ -201,7 +201,7 @@ class SLM:
     def surf(self, value):
         self._surf = value
         if self.surf is not None:
-            if type(self.surf) is BSPolyData:
+            if isinstance(self.surf, BSPolyData):
                 self.tri = get_cells(self.surf)
                 self.coord = get_points(self.surf).T
             else:
@@ -222,7 +222,7 @@ class SLM:
 
     @tri.setter
     def tri(self, value):
-        if np.any(value < 0):
+        if value is not None and np.any(value < 0):
             raise ValueError("Triangle indices must be non-negative.")
         self._tri = value
 
