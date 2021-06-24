@@ -9,6 +9,7 @@ from brainspace.vtk_interface import wrap_vtk
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 from brainspace.mesh.mesh_elements import get_cells, get_points
 
+
 def datadir(file):
     topdir = os.path.dirname(__file__)
     topdir = os.path.join(topdir, "../../")
@@ -137,7 +138,7 @@ def save_input_dict(params, basename, test_num):
         Number of the test.
     """
     filename = datadir(basename + "_" + f"{test_num:02d}" + "_IN.pkl")
-    
+
     if isinstance(params["surf"], BSPolyData):
         params["surf"] = {
             "tri": np.array(get_cells(params["surf"])) + 1,
@@ -195,11 +196,11 @@ def generate_random_data_model(
 
 
 def array2effect(A, n_random=0):
-    fixed_effects = FixedEffect(1, "intercept") + FixedEffect(A[:, n_random :])
+    fixed_effects = FixedEffect(1, "intercept") + FixedEffect(A[:, n_random:])
     if n_random != 0:
         mixed_effects = (
             MixedEffect(
-                A[:, : n_random],
+                A[:, :n_random],
                 name_ran=["f" + str(x) for x in range(n_random)],
             )
             + MixedEffect(1, "identity")
@@ -207,5 +208,3 @@ def array2effect(A, n_random=0):
         return fixed_effects + mixed_effects
     else:
         return fixed_effects
-
-    

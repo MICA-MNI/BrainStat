@@ -41,7 +41,10 @@ def dict2pkl(D, basename, test_num, input=True):
         D.pop("_tri")
 
     if "_surf" in D and D["_surf"] is not None:
-        D["surf"] = {"tri": np.array(get_cells(D["_surf"])), "coord": np.array(get_points(D["_surf"]))}
+        D["surf"] = {
+            "tri": np.array(get_cells(D["_surf"])),
+            "coord": np.array(get_points(D["_surf"])),
+        }
         D.pop("_surf")
 
     if input:

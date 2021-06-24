@@ -45,7 +45,12 @@ def dummy_test(infile, expfile):
             if idic[key].shape[1] == 1:
                 idic[key] = FixedEffect(1) + FixedEffect(idic[key])
             else:
-                idic[key] = FixedEffect(1) + FixedEffect(idic[key][:,0]) + MixedEffect(idic[key][:,1]) + MixedEffect(1)
+                idic[key] = (
+                    FixedEffect(1)
+                    + FixedEffect(idic[key][:, 0])
+                    + MixedEffect(idic[key][:, 1])
+                    + MixedEffect(1)
+                )
         setattr(slm, key, idic[key])
         if key == "surf" and slm.surf is not None:
             slm.surf["tri"] += 1

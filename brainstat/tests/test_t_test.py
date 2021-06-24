@@ -30,15 +30,25 @@ def dummy_test(infile, expfile):
         if isinstance(expdic[key], dict):
             slm_sub_dict = getattr(slm, key)
             exp_sub_dict = expdic[key]
-            comp = np.all([np.allclose(slm_sub_dict[x], exp_sub_dict[x]) for x in exp_sub_dict.keys()])
+            comp = np.all(
+                [
+                    np.allclose(slm_sub_dict[x], exp_sub_dict[x])
+                    for x in exp_sub_dict.keys()
+                ]
+            )
         else:
-            comp = np.allclose(getattr(slm, key), expdic[key], rtol=1e-05, equal_nan=True)
+            comp = np.allclose(
+                getattr(slm, key), expdic[key], rtol=1e-05, equal_nan=True
+            )
             testout.append(comp)
 
     assert all(flag == True for (flag) in testout)
 
+
 expected_number_of_tests = 16
 parametrize = pytest.mark.parametrize
+
+
 @parametrize("test_number", range(1, expected_number_of_tests + 1))
 def test_run_all(test_number):
     infile = datadir("xstatt_" + f"{test_number:02d}" + "_IN.pkl")

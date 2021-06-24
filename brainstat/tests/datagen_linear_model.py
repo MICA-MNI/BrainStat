@@ -1,9 +1,15 @@
 import numpy as np
-from brainstat.tests.testutil import datadir, _generate_sphere, generate_random_data_model, array2effect, slm2files, save_input_dict
+from brainstat.tests.testutil import (
+    _generate_sphere,
+    generate_random_data_model,
+    array2effect,
+    slm2files,
+    save_input_dict,
+)
 from brainstat.stats.SLM import SLM
-from brainstat.stats.terms import FixedEffect, 
+from brainstat.stats.terms import FixedEffect
 from sklearn.model_selection import ParameterGrid
-from brainspace.mesh.mesh_elements import get_cells, get_points
+from brainspace.mesh.mesh_elements import get_points
 
 
 def generate_test_data():
