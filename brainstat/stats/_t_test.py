@@ -1,7 +1,6 @@
 import warnings
 import math
 import numpy as np
-import scipy
 import sys
 from scipy.linalg import null_space
 from scipy.linalg import cholesky
@@ -21,12 +20,6 @@ def t_test(self):
 
     if isinstance(self.contrast, FixedEffect):
         self.contrast = self.contrast.m.to_numpy()
-
-    def null(A, eps=1e-15):
-        u, s, vh = scipy.linalg.svd(A)
-        null_mask = s <= eps
-        null_space = scipy.compress(null_mask, vh, axis=0)
-        return scipy.transpose(null_space)
 
     if not isinstance(self.df, np.ndarray):
         self.df = np.array([self.df])
