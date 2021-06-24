@@ -569,7 +569,3 @@ slm = SLM(model, contrast);
 parameters = [fieldnames(input), struct2cell(input)]';
 slm.debug_set(parameters{:});
 end
-
-
-
-
