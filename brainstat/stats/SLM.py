@@ -112,8 +112,8 @@ class SLM:
 
         self._reset_fit_parameters()
         if self.mask is not None:
-            Y = apply_mask(Y, self.mask, axis=1)
-        self.linear_model(Y)
+            Y_masked = apply_mask(Y, self.mask, axis=1)
+        self.linear_model(Y_masked)
         self.t_test()
         if self.mask is not None:
             self._unmask()
