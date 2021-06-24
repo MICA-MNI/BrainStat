@@ -71,7 +71,7 @@ def dummy_test(infile, expfile):
         if key == "P":
             testout.append(recursive_dict_comparison(out[key], getattr(slm, key)))
         elif out[key] is not None:
-            comp = np.allclose(out[key], getattr(slm, key), rtol=1e-05, equal_nan=True)
+            comp = np.allclose(out[key], getattr(slm, key), rtol=1e-05, atol=1e-05, equal_nan=True)
             testout.append(comp)
 
     if not all(flag == True for (flag) in testout):
