@@ -74,6 +74,9 @@ def dummy_test(infile, expfile):
             comp = np.allclose(out[key], getattr(slm, key), rtol=1e-05, equal_nan=True)
             testout.append(comp)
 
+    if not all(flag == True for (flag) in testout):
+        [print(x,y) for x, y in zip(testout, out.keys())]
+
     assert all(flag == True for (flag) in testout)
 
 
