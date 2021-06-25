@@ -37,7 +37,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install pytest gitpython
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    
      - name: Install macOS dependencies
       if: matrix.os == 'macos-latest' 
       run: |
@@ -51,7 +50,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install pytest gitpython
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-
       - name: Install Windows dependencies
       if: matrix.os == 'macos-latest' 
       run: |
@@ -65,8 +63,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install pytest gitpython
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-
-
     - name: Test with pytest
       run: |
         python3 -m pytest
