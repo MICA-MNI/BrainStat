@@ -27,7 +27,7 @@ jobs:
     - name: Install Ubuntu dependencies
       run: |
         echo ${{ matrix.os }}
-        if [ ${{ matrix.os }} != 'windows-latest' ] |; then
+        if [ ${{ matrix.os }} != 'windows-latest' ] ; then
           is_fork=[ -z $(git remote show origin | grep "Fetch URL:" | grep git@github.com:MICA-MNI/BrainStat.git) ]
         else
           is_fork=( -z $(git remote show origin | grep "Fetch URL:" | grep git@github.com:MICA-MNI/BrainStat.git) )
