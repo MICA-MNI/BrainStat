@@ -6,20 +6,32 @@ from brainstat.stats.SLM import SLM
 from brainstat.stats.terms import FixedEffect, MixedEffect
 
 
-def recursive_dict_comparison(D1, D2):
-    if len(D1.keys()) != len(D2.keys()):
-        raise ValueError("Different number of keys in each dictionary.")
+def recursive_comparison(X1, X2):
+    """ Recursively compares lists/dictionaries."""
+
+    if type(X1) != type(X2):
+        raise ValueError("Both inputs must be of the same type.")
+
+    if isinstance(X1, dict):
+        if len(X1.keys()) != len(X2.keys()):
+            raise ValueError("Different number of keys in each dictionary.")
+        iterator = zip(X1.values(), X2.values())
+    elif isinstance(X1, list):
+        if len(X1) != len(X2):
+            raise ValueError("Different number of elements in each list.")
+        iterator = zip(X1, X2)
+    else:
+        # Assume not iterable.
+        iterator = zip([X1], [X2])
 
     output = True
-    for key in D1.keys():
-        if D1[key] is None and D2[key] is None:
-            continue
-        if isinstance(D1[key], dict):
-            output = recursive_dict_comparison(D1[key], D2[key])
-        elif isinstance(D1[key], list):
-            output = np.all([np.allclose(x1 == x2) for x1, x2 in zip(D1[key], D2[key])])
+    for x, y in iterator:
+        if x is None and y is None:
+            output = True
+        elif isinstance(x, list) or isinstance(x, dict):
+            output = recursive_comparison(x, y)
         else:
-            output = np.allclose(D1[key] == D2[key])
+            output = np.allclose(x, y)
         if not output:
             return output
 
@@ -69,10 +81,10 @@ def dummy_test(infile, expfile):
         if key in skip_keys:
             continue
         if key == "P":
-            testout.append(recursive_dict_comparison(out[key], getattr(slm, key)))
+            testout.append(recursive_comparison(out[key], getattr(slm, key)))
         elif out[key] is not None:
             comp = np.allclose(out[key], getattr(slm, key), rtol=1e-05, equal_nan=True)
-            testout.append(comp)
+            testout.append(comp)            
 
     assert all(flag == True for (flag) in testout)
 
