@@ -26,15 +26,15 @@ jobs:
    
     - name: Install Ubuntu dependencies
       run: |
-        OS="`uname`"
+        OS="$OSTYPE"
         case $OS in
-          'Linux')
+          'linux*')
             OS='linux'
             ;;
-          'Windows*')
+          'msys*')
             OS='windows'
             ;;
-          'Darwin') 
+          'darwin*') 
             OS='mac'
             ;;
         esac
