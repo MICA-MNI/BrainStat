@@ -1,8 +1,9 @@
 """Utilities for running tests and test data generation."""
-import os
 import numpy as np
 import pickle
 import vtk
+from pathlib import Path
+import brainstat
 from brainstat.stats.SLM import SLM
 from brainstat.stats.terms import FixedEffect, MixedEffect
 from brainspace.vtk_interface import wrap_vtk
@@ -10,11 +11,22 @@ from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 from brainspace.mesh.mesh_elements import get_cells, get_points
 
 
-def datadir(file):
-    topdir = os.path.dirname(__file__)
-    topdir = os.path.join(topdir, "../../")
-    topdir = os.path.abspath(topdir)
-    return os.path.join(topdir, "extern/test-data", file)
+def datadir(filename):
+    """Returns the path to a given file in the test data directory.
+
+    Parameters
+    ----------
+    filename : str
+        Name of a file in the data directory.
+
+    Returns
+    -------
+    str
+        Full path to file in the data directory.
+    """
+    test_dir = Path(brainstat.__file__)
+    repo_dir = test_dir.parents[1]
+    return str(repo_dir / "extern" / "test-data" / filename)
 
 
 def generate_slm(**kwargs):

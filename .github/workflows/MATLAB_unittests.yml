@@ -9,7 +9,7 @@ on:
 jobs:
   matlab_unit_test:
     runs-on: ubuntu-latest
-
+    
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python 3.8
@@ -17,6 +17,7 @@ jobs:
       with:
         python-version: 3.8
     - name: Install dependencies
+      shell: bash
       run: |
         python -m pip install numpy vtk
         [[ -z $(git remote show origin | grep "Fetch URL:" | grep git@github.com:MICA-MNI/BrainStat.git) ]] && git config remote.upstream.fetch refs/heads/*:refs/remotes/upstream/* || git config remote.origin.fetch refs/heads/*:refs/origin/upstream/*
