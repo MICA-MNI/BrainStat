@@ -24,7 +24,6 @@ function [ pval, peak, clus, clusid ] = random_field_theory(obj)
 %
 % pval.P      = 1 x v vector of corrected P-values for vertices.
 % pval.C      = 1 x v vector of corrected P-values for clusters.
-% pval.mask   = copy of mask.
 % peak.t      = np x 1 vector of peaks (local maxima).
 % peak.vertid = np x 1 vector of vertex id's (1-based).
 % peak.clusid = np x 1 vector of cluster id's that contain the peak.
@@ -40,7 +39,7 @@ function [ pval, peak, clus, clusid ] = random_field_theory(obj)
 % Human Brain Mapping, 8:98-101.
 
 % RV - initialize output.
-pval = struct('P', [], 'C', [], 'mask', []);
+pval = struct('P', [], 'C', []);
 peak = struct('t', [], 'vertid', [], 'clusid', [], 'P', []);
 clus = struct('clusid', [], 'nverts', [], 'resels', [], 'P', []);
 clusid = [];
@@ -105,7 +104,6 @@ end
 tlim=stat_threshold(resels,N,1,df,[0.5 1],[],[],[],obj.k,[],[],0);
 tlim=tlim(2);
 pval.P=pval.P.*(obj.t(1,:)>tlim)+(obj.t(1,:)<=tlim);
-pval.mask=obj.mask;
 
 return
 end

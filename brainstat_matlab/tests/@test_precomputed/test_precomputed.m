@@ -43,6 +43,73 @@ classdef test_precomputed < matlab.unittest.TestCase
     end
     
     methods (Test)
+        function test_slm(testCase)
+            % Precomputed tests for SurfStatLinMod
+            slm_files = get_test_files('slm');
+            for pair = slm_files
+                input = load_pkl(pair{1});
+                output = load_pkl(pair{2});
+                if isvector(input.model)
+                    input.model = input.model(:);
+                end
+                
+                % Build the model
+                if size(input.model,2) == 2
+                    input.model = 1 + FixedEffect(input.model(:, 1)) + ...
+                        MixedEffect(input.model(:, 2)) + MixedEffect(1);
+                else
+                    input.model = 1 + FixedEffect(input.model);
+                end
+                
+                % Convert input data to an SLM
+                if isempty(input.surf)
+                    input.surf = struct();
+                end
+                input.contrast = input.contrast(:);
+                if ismember('coord', fieldnames(input))
+                    input = rmfield(input, 'coord');
+                end
+                if ismember('surf', fieldnames(input))
+                    if ismember('tri', fieldnames(input.surf))
+                        input.surf.tri = input.surf.tri + 1;
+                    end
+                end
+
+                slm = input2slm(input);
+                
+                % Run model.
+                slm.fit(input.Y);
+
+                % Convert output to match Python implementation
+                slm_output = slm2struct(slm, fieldnames(output));
+                
+                if ~isempty(fieldnames(input.surf))
+                    slm_output.surf.tri = slm_output.surf.tri - 1; % correspond with 0 indexing. 
+                end
+                slm_output = rmfield(slm_output, 'model');
+                output = rmfield(output, 'model');
+                output.mask = logical(output.mask);
+                if ismember('correction', fieldnames(slm_output))
+                    if ischar(slm_output.correction)
+                        slm_output.correction = {slm_output.correction};
+                    end
+                end
+                if ismember('surf', fieldnames(input))
+                    if ismember('coord', fieldnames(input.surf))
+                        output.surf.coord = output.surf.coord';
+                    end
+                    if ismember('tri', fieldnames(input))
+                        output.surf.tri = output.surf.tri - 1;
+                    end
+                end
+                
+                % Compare
+                recursive_equality(testCase, slm_output, output, pair{1});
+
+            end
+        end
+        
+        
         function test_linmod(testCase)
             % Precomputed tests for SurfStatLinMod
             linmod_files = get_test_files('xlinmod');
@@ -79,9 +146,9 @@ classdef test_precomputed < matlab.unittest.TestCase
                 
                 % Sometimes the models aren't ordered identically, try
                 % reversing. 
-                slm_output.X = column_matching(output.X, slm_output.X);
-                slm_output.coef = permute(column_matching(permute(output.coef, [2, 1, 3]), ...
-                    permute(slm_output.coef, [2, 1, 3])), [2, 1, 3]);
+                % slm_output.X = column_matching(output.X, slm_output.X);
+                % slm_output.coef = permute(column_matching(permute(output.coef, [2, 1, 3]), ...
+                %     permute(slm_output.coef, [2, 1, 3])), [2, 1, 3]);
                 recursive_equality(testCase, slm_output, output, pair{1});
             end
         end
@@ -238,7 +305,6 @@ classdef test_precomputed < matlab.unittest.TestCase
                 if isempty(P.pval.C)
                     P.pval = rmfield(P.pval, 'C');
                 end
-                P.pval = rmfield(P.pval, 'mask');
 
                 recursive_equality(testCase, P, output, pair{1});
             end
@@ -308,8 +374,28 @@ classdef test_precomputed < matlab.unittest.TestCase
             for pair = statt_files
                 input = load_pkl(pair{1});
                 output = load_pkl(pair{2});
-                slm = input2slm(input);
+                if input.n_random ~= 0
+                    input.M = 1 + FixedEffect(input.M(:, input.n_random+1:end)) + ...
+                        MixedEffect(input.M(:, input.n_random)) + MixedEffect(1);
+                else
+                    input.M = 1 + FixedEffect(input.M);
+                end
+                input.contrast = input.contrast(:);
+                if ismember('surf', fieldnames(output))
+                    output.surf.tri = output.surf.tri + 1;
+                end
+                
+                % Convert input data to an SLM
+                if isempty(input.surf)
+                    input.surf = struct();
+                end
+                slm = input2slm(rmfield(input, 'n_random'));
+                
+                % Run model.
+                slm.linear_model(input.Y);
                 slm.t_test();
+                
+                % Convert output to match Python implementation
                 slm_output = slm2struct(slm, fieldnames(output));
                 recursive_equality(testCase, slm_output, output, pair{1});           
             end
@@ -366,13 +452,16 @@ conversions = {
     'py.int', @(x) double(x);
     'py.numpy.uint8', @(x) double(x);
     'py.numpy.uint16', @(x) double(x);
+    'py.vtk.numpy_interface.dataset_adapter.VTKArray', @(x) double(x);
     'py.NoneType', @(x) [];
     'double', @(x)x;
     'logical', @(x)x;
+    
 };
 
 selection = ismember(conversions(:,1), class(pkl_data));
 fun = conversions{selection,2};
+
 
 
 try
@@ -435,6 +524,9 @@ end
 if any(f == "M")
     model = input.M;
     input = rmfield(input, "M");
+elseif any(f == "model")
+    model = input.model;
+    input = rmfield(input, "model"); 
 else
     model = 1;
 end
@@ -477,23 +569,3 @@ slm = SLM(model, contrast);
 parameters = [fieldnames(input), struct2cell(input)]';
 slm.debug_set(parameters{:});
 end
-
-function M_out = column_matching(M1, M2)
-% Reorders the columns of M2 such that they match M1 as best as possible.
-
-for ii = 1:size(M2,3)
-    r(:,:,ii) = pdist2(M1(:,:,ii)', M2(:,:,ii)');
-end
-
-shortest_distance = sum(double(r == min(r)) .* (1:size(M2,2))');
-
-M_out = zeros(size(M2));
-for ii = 1:size(M2,3)
-    for jj = 1:size(M2,2)
-        M_out(:,shortest_distance(1, jj, ii),ii) = M2(:, jj, ii);
-    end
-end
-end
-
-
-

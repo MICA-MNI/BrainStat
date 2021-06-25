@@ -133,7 +133,7 @@ m2=2*sum(Vt)';
 Vr=m1(1:q1)-m2(1:q1).*mean(obj.r,2)+sum(Vt(:))*mean(r.^2,2);
 dr=sqrt(Vr)*obj.drlim;
 
-%% Exrtra Fisher scoring iterations
+%% Extra Fisher scoring iterations
 for iter=1:obj.niter
     irs=round(r.*repmat(1./dr,1,n_vertices));
     [ur,ir,jr]=unique(irs','rows');
