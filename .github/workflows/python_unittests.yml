@@ -22,7 +22,10 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
+   
+   
+    - name: Install Ubuntu dependencies
+      if: matrix.os == 'ubuntu-latest' 
       run: |
         if [ -z $(git remote show origin | grep "Fetch URL:" | grep git@github.com:MICA-MNI/BrainStat.git) ]
         then
@@ -34,6 +37,36 @@ jobs:
         python -m pip install --upgrade pip
         pip install pytest gitpython
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    
+     - name: Install macOS dependencies
+      if: matrix.os == 'macos-latest' 
+      run: |
+        if [ -z $(git remote show origin | grep "Fetch URL:" | grep git@github.com:MICA-MNI/BrainStat.git) ]
+        then
+          git config remote.upstream.fetch refs/heads/*:refs/remotes/upstream/*
+        else
+          git config remote.origin.fetch refs/heads/*:refs/origin/upstream/*
+        fi
+        git fetch origin test-data-2.0
+        python -m pip install --upgrade pip
+        pip install pytest gitpython
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Install Windows dependencies
+      if: matrix.os == 'macos-latest' 
+      run: |
+        if ( -z $(git remote show origin | grep "Fetch URL:" | grep git@github.com:MICA-MNI/BrainStat.git) )
+        then
+          git config remote.upstream.fetch refs/heads/*:refs/remotes/upstream/*
+        else
+          git config remote.origin.fetch refs/heads/*:refs/origin/upstream/*
+        fi
+        git fetch origin test-data-2.0
+        python -m pip install --upgrade pip
+        pip install pytest gitpython
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+
     - name: Test with pytest
       run: |
         python3 -m pytest
