@@ -7,7 +7,7 @@ from brainstat.stats.terms import FixedEffect, MixedEffect
 
 
 def recursive_comparison(X1, X2):
-    """ Recursively compares lists/dictionaries."""
+    """Recursively compares lists/dictionaries."""
 
     if type(X1) != type(X2):
         raise ValueError("Both inputs must be of the same type.")
@@ -34,9 +34,7 @@ def recursive_comparison(X1, X2):
             output = np.allclose(x, y)
         if not output:
             return output
-
     return output
-
 
 def dummy_test(infile, expfile):
 
@@ -84,7 +82,7 @@ def dummy_test(infile, expfile):
             testout.append(recursive_comparison(out[key], getattr(slm, key)))
         elif out[key] is not None:
             comp = np.allclose(out[key], getattr(slm, key), rtol=1e-05, equal_nan=True)
-            testout.append(comp)            
+            testout.append(comp)
 
     assert all(flag == True for (flag) in testout)
 
