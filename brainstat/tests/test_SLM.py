@@ -36,6 +36,7 @@ def recursive_comparison(X1, X2):
             return output
     return output
 
+
 def dummy_test(infile, expfile):
 
     # load input test data
