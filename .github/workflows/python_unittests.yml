@@ -25,6 +25,7 @@ jobs:
    
    
     - name: Install Ubuntu/macOS dependencies
+      shell: bash
       if: matrix.os != 'windows-latest'
       run: | 
         [[ -z $(git remote show origin | grep "Fetch URL:" | grep git@github.com:MICA-MNI/BrainStat.git) ]] && git config remote.upstream.fetch refs/heads/*:refs/remotes/upstream/* || git config remote.origin.fetch refs/heads/*:refs/origin/upstream/*
@@ -32,15 +33,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install pytest gitpython
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    - name: Install Windows dependencies
-      if: matrix.os == 'windows-latest'
-      run: | 
-        [[ -z $(git remote show origin | grep "Fetch URL:" | grep git@github.com:MICA-MNI/BrainStat.git) ]] && git config remote.upstream.fetch refs/heads/*:refs/remotes/upstream/* || git config remote.origin.fetch refs/heads/*:refs/origin/upstream/*
-        git fetch origin test-data-2.0
-        python -m pip install --upgrade pip
-        pip install pytest gitpython
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-      shell: bash
+
 
     - name: Test with pytest
       run: |
