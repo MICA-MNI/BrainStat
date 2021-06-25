@@ -26,34 +26,19 @@ jobs:
    
     - name: Install Ubuntu dependencies
       run: |
-        OS="$OSTYPE"
-        case $OS in
-          'linux*')
-            OS='linux'
-            ;;
-          'msys*')
-            OS='windows'
-            ;;
-          'darwin*') 
-            OS='mac'
-            ;;
-        esac
-
-        if [ $OS == 'mac' ] | [ $OS == 'linux' ]; then
-          if [ -z $(git remote show origin | grep "Fetch URL:" | grep git@github.com:MICA-MNI/BrainStat.git) ]
-          then
-            git config remote.upstream.fetch refs/heads/*:refs/remotes/upstream/*
-          else
-            git config remote.origin.fetch refs/heads/*:refs/origin/upstream/*
-          fi
+        echo ${{ matrix.os }}
+        if [ ${{ matrix.os }} != 'windows-latest' ] |; then
+          is_fork=[ -z $(git remote show origin | grep "Fetch URL:" | grep git@github.com:MICA-MNI/BrainStat.git) ]
         else
-          if ( -z $(git remote show origin | grep "Fetch URL:" | grep git@github.com:MICA-MNI/BrainStat.git) )
-          then
-            git config remote.upstream.fetch refs/heads/*:refs/remotes/upstream/*
-          else
-            git config remote.origin.fetch refs/heads/*:refs/origin/upstream/*
-          fi
+          is_fork=( -z $(git remote show origin | grep "Fetch URL:" | grep git@github.com:MICA-MNI/BrainStat.git) )
         fi
+
+        if $is_fork; then
+          git config remote.upstream.fetch refs/heads/*:refs/remotes/upstream/*
+        else
+          git config remote.origin.fetch refs/heads/*:refs/origin/upstream/*
+        fi
+      
         git fetch origin test-data-2.0
         python -m pip install --upgrade pip
         pip install pytest gitpython
