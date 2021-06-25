@@ -17,9 +17,9 @@ def recursive_dict_comparison(D1, D2):
         if isinstance(D1[key], dict):
             output = recursive_dict_comparison(D1[key], D2[key])
         elif isinstance(D1[key], list):
-            output = np.all([np.all(x1 == x2) for x1, x2 in zip(D1[key], D2[key])])
+            output = np.all([np.allclose(x1 == x2) for x1, x2 in zip(D1[key], D2[key])])
         else:
-            output = np.all(D1[key] == D2[key])
+            output = np.allclose(D1[key] == D2[key])
         if not output:
             return output
 
