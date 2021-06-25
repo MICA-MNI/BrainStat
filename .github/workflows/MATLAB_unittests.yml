@@ -8,8 +8,10 @@ on:
 
 jobs:
   matlab_unit_test:
-    runs-on: ubuntu-latest
+    matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
 
+    runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python 3.8
