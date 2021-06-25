@@ -147,7 +147,7 @@ def remove_duplicate_columns(df, tol=1e-8):
     return keep
 
 
-class FixedEffect:
+class FixedEffect(object):
     """Build a term object for a linear model.
 
     Parameters
@@ -320,18 +320,18 @@ class FixedEffect:
 
     @property
     def names(self):
-        return self.m.columns.tolist()
+        return object.__getattribute__(self, "m").columns.tolist()
 
     @property
     def is_empty(self):
         return self.m.empty
 
     def __getattr__(self, name):
-        if name in self.names:
-            return self.m[name].values
+        if name in object.__getattribute__(self, "names"):
+            return object._getattribute__("m")[name].values
         if name in {"shape", "size", "empty"}:
             return getattr(self.m, name)
-        return super().__getattribute__(name)
+        return object.__getattribute__(self, name)
 
 
 class MixedEffect:

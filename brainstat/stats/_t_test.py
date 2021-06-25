@@ -1,7 +1,6 @@
 import warnings
 import math
 import numpy as np
-import scipy
 import sys
 from scipy.linalg import null_space
 from scipy.linalg import cholesky
@@ -21,12 +20,6 @@ def t_test(self):
 
     if isinstance(self.contrast, FixedEffect):
         self.contrast = self.contrast.m.to_numpy()
-
-    def null(A, eps=1e-15):
-        u, s, vh = scipy.linalg.svd(A)
-        null_mask = s <= eps
-        null_space = scipy.compress(null_mask, vh, axis=0)
-        return scipy.transpose(null_space)
 
     if not isinstance(self.df, np.ndarray):
         self.df = np.array([self.df])
@@ -90,16 +83,15 @@ def t_test(self):
                     )
                 )
 
-            ur, ir, jr = np.unique(irs, axis=0, return_index=True, return_inverse=True)
-            ir = ir + 1
+            ur, _, jr = np.unique(irs.T, axis=0, return_index=True, return_inverse=True)
             jr = jr + 1
             nr = np.shape(ur)[0]
             self.dfs = np.zeros((1, v))
             Vc = np.zeros((1, v))
 
             for ir in range(1, nr + 1):
-                iv = (jr == ir).astype(int)
-                rv = self.r[:, (iv - 1)].mean(axis=1)
+                iv = (jr == ir).astype(bool)
+                rv = self.r[:, iv].mean(axis=1)
                 V = (1 - rv.sum()) * self.V[:, :, (q - 1)]
 
                 for j in range(1, q1 + 1):
@@ -127,9 +119,8 @@ def t_test(self):
                         M[(j2 - 1), (j1 - 1)] = M[(j1 - 1), (j2 - 1)]
 
                 vc = np.dot(c.T, np.dot(Vbeta, c))
-                iv = (jr == ir).astype(int)
-                Vc[iv - 1] = vc
-                self.dfs[iv - 1] = np.square(vc) / np.dot(
+                Vc[0, iv] = vc
+                self.dfs[0, iv] = np.square(vc) / np.dot(
                     E.T, np.dot(np.linalg.pinv(M), E)
                 )
 

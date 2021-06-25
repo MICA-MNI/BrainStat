@@ -5,6 +5,8 @@ from cmath import sqrt
 from .terms import FixedEffect
 from .utils import apply_mask, undo_mask
 from brainstat.mesh.utils import mesh_edges, _mask_edges
+from brainspace.mesh.mesh_elements import get_cells, get_points
+from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 
 
 class SLM:
@@ -110,8 +112,8 @@ class SLM:
 
         self._reset_fit_parameters()
         if self.mask is not None:
-            Y = apply_mask(Y, self.mask, axis=1)
-        self.linear_model(Y)
+            Y_masked = apply_mask(Y, self.mask, axis=1)
+        self.linear_model(Y_masked)
         self.t_test()
         if self.mask is not None:
             self._unmask()
@@ -188,6 +190,57 @@ class SLM:
             edges = mesh_edges(self.surf)
             _, idx = _mask_edges(edges, self.mask)
             self.resl = undo_mask(self.resl, idx, axis=0)
+
+    """ Property specifications. """
+
+    @property
+    def surf(self):
+        return self._surf
+
+    @surf.setter
+    def surf(self, value):
+        self._surf = value
+        if self.surf is not None:
+            if isinstance(self.surf, BSPolyData):
+                self.tri = np.array(get_cells(self.surf)) + 1
+                self.coord = np.array(get_points(self.surf)).T
+            else:
+                if "tri" in value:
+                    self.tri = value["tri"]
+                    self.coord = value["coord"]
+                elif "lat" in value:
+                    self.lat = value["lat"]
+                    self.coord = value["coord"]
+
+    @surf.deleter
+    def surf(self):
+        del self._surf
+
+    @property
+    def tri(self):
+        return self._tri
+
+    @tri.setter
+    def tri(self, value):
+        if value is not None and np.any(value < 0):
+            raise ValueError("Triangle indices must be non-negative.")
+        self._tri = value
+
+    @tri.deleter
+    def tri(self):
+        del self._tri
+
+    @property
+    def lat(self):
+        return self._lat
+
+    @lat.setter
+    def lat(self, value):
+        self._lat = value
+
+    @lat.deleter
+    def lat(self):
+        del self._lat
 
 
 def _merge_rft(P1, P2):

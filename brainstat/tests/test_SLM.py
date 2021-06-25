@@ -1,84 +1,99 @@
-from sklearn.model_selection import ParameterGrid
 import numpy as np
-from brainstat.stats.terms import FixedEffect, MixedEffect
+import pickle
+import pytest
+from brainstat.tests.testutil import datadir
 from brainstat.stats.SLM import SLM
-from brainstat.context.utils import read_surface_gz
-from nilearn.datasets import fetch_surf_fsaverage
+from brainstat.stats.terms import FixedEffect, MixedEffect
 
 
-def test_SLM():
-    """Tests the SLM model using a grid of parameters
+def recursive_comparison(X1, X2):
+    """Recursively compares lists/dictionaries."""
 
-    Raises
-    ------
-    Exception
-        First exception that occurs in computing the SLM.
-    """
-    samples = 10
-    predictors = 3
+    if type(X1) != type(X2):
+        raise ValueError("Both inputs must be of the same type.")
 
-    grid = list(create_parameter_grid(samples, predictors))
-    Y = np.random.rand(samples, 10242, predictors)
+    if isinstance(X1, dict):
+        if len(X1.keys()) != len(X2.keys()):
+            raise ValueError("Different number of keys in each dictionary.")
+        iterator = zip(X1.values(), X2.values())
+    elif isinstance(X1, list):
+        if len(X1) != len(X2):
+            raise ValueError("Different number of elements in each list.")
+        iterator = zip(X1, X2)
+    else:
+        # Assume not iterable.
+        iterator = zip([X1], [X2])
 
-    for i in range(len(grid)):
-        # Skip exceptions that we know error.
-        if grid[i]["surf"] is None:
-            if grid[i]["correction"] is not None and "rft" in grid[i]["correction"]:
-                continue
-        if grid[i]["Y_idx"] > 1 and grid[i]["two_tailed"] is False:
+    output = True
+    for x, y in iterator:
+        if x is None and y is None:
+            output = True
+        elif isinstance(x, list) or isinstance(x, dict):
+            output = recursive_comparison(x, y)
+        else:
+            output = np.allclose(x, y)
+        if not output:
+            return output
+    return output
+
+
+def dummy_test(infile, expfile):
+
+    # load input test data
+    ifile = open(infile, "br")
+    idic = pickle.load(ifile)
+    ifile.close()
+
+    slm = SLM(FixedEffect(1), FixedEffect(1))
+    # Data are saved a little differently from the actual input due to compatibility with MATLAB.
+    # Data wrangle a bit to bring it back into the Python input format.
+    for key in idic.keys():
+        if key == "Y":
+            # Y is input for slm.fit(), not a property.
             continue
+        if key == "model":
+            # Model is saved as a matrix rather than a Fixed/MixedEffect
+            if idic[key].shape[1] == 1:
+                idic[key] = FixedEffect(1) + FixedEffect(idic[key])
+            else:
+                idic[key] = (
+                    FixedEffect(1)
+                    + FixedEffect(idic[key][:, 0])
+                    + MixedEffect(idic[key][:, 1])
+                    + MixedEffect(1)
+                )
+        setattr(slm, key, idic[key])
+        if key == "surf" and slm.surf is not None:
+            slm.surf["tri"] += 1
 
-        try:
-            slm = SLM(
-                model=grid[i]["model"],
-                contrast=grid[i]["contrast"],
-                surf=grid[i]["surf"],
-                mask=grid[i]["mask"],
-                correction=grid[i]["correction"],
-                two_tailed=grid[i]["two_tailed"],
-            )
-            slm.fit(Y[:, :, 0 : grid[i]["Y_idx"]])
-        except Exception as e:
-            print("Error on run:", i)
-            print("SLM failed with the following parameters:")
-            print("Model: ", grid[i]["model"])
-            print("Contrast: ", grid[i]["contrast"])
-            print("Surface: ", grid[i]["surf"])
-            print("Mask: ", grid[i]["mask"])
-            print("Correction: ", grid[i]["correction"])
-            print("Two_tailed: ", grid[i]["two_tailed"])
-            print("Y_idx: ", grid[i]["Y_idx"])
-            raise e
+    slm.fit(idic["Y"])
+
+    # load expected outout data
+    efile = open(expfile, "br")
+    out = pickle.load(efile)
+    efile.close()
+
+    testout = []
+
+    skip_keys = ["model", "correction", "_tri", "surf"]
+    for key in out.keys():
+        if key in skip_keys:
+            continue
+        if key == "P":
+            testout.append(recursive_comparison(out[key], getattr(slm, key)))
+        elif out[key] is not None:
+            comp = np.allclose(out[key], getattr(slm, key), rtol=1e-05, equal_nan=True)
+            testout.append(comp)
+
+    assert all(flag == True for (flag) in testout)
 
 
-def create_parameter_grid(samples, predictors):
-    """Creates a parameter grid for the test function.
+expected_number_of_tests = 22
+parametrize = pytest.mark.parametrize
 
-    Returns
-    -------
-    ParameterGrid
-        All pairings of parameters to be run through the SLM class.
-    """
-    model = [
-        FixedEffect(1)
-        + FixedEffect(np.random.rand(samples, predictors), names=["y1", "y2", "y3"])
-    ]
 
-    Y_idx = [1, 2, 3]
-    contrast = [np.random.rand(samples), FixedEffect(np.random.rand(samples))]
-    surf = [None, read_surface_gz(fetch_surf_fsaverage()["pial_left"])]
-    mask = [None, np.random.rand(10242) > 0.1]
-    correction = [None, ["rft", "fdr"]]
-    two_tailed = [False, True]
-    param_grid = ParameterGrid(
-        {
-            "Y_idx": Y_idx,
-            "model": model,
-            "contrast": contrast,
-            "surf": surf,
-            "mask": mask,
-            "correction": correction,
-            "two_tailed": two_tailed,
-        }
-    )
-    return param_grid
+@parametrize("test_number", range(1, expected_number_of_tests + 1))
+def test_run_all(test_number):
+    infile = datadir("slm_" + f"{test_number:02d}" + "_IN.pkl")
+    expfile = datadir("slm_" + f"{test_number:02d}" + "_OUT.pkl")
+    dummy_test(infile, expfile)

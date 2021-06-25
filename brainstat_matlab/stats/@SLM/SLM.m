@@ -72,6 +72,7 @@ classdef SLM < matlab.mixin.Copyable
     properties(SetAccess=protected, Dependent=true)
         tri
         lat 
+        coord
     end
 
     methods
@@ -148,6 +149,18 @@ classdef SLM < matlab.mixin.Copyable
                 lat = obj.surf.lat;
             else
                 lat = [];
+            end
+        end
+        
+        function set.coord(obj, value)
+            obj.surf.coord = value;
+        end
+        
+        function coord = get.coord(obj)
+            if contains('coord', fieldnames(obj.surf))
+                coord = obj.surf.coord;
+            else 
+                coord = [];
             end
         end
     end
@@ -254,7 +267,7 @@ classdef SLM < matlab.mixin.Copyable
             for key1_loop = fieldnames(P1)'
                 key1 = key1_loop{1};
                 if key1 == "clusid"
-                    P.(key1) = [P1.(key1), P2.(key1)];
+                    P.(key1) = {P1.(key1), P2.(key1)};
                 else
                     P.(key1) = struct();
                     for key2_loop = fieldnames(P1.(key1))'

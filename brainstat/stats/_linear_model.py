@@ -1,6 +1,7 @@
 import warnings
 import numpy as np
 import numpy.linalg as la
+from copy import deepcopy
 from brainstat.mesh.utils import mesh_edges
 from brainstat.stats.terms import FixedEffect, MixedEffect
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
@@ -19,9 +20,14 @@ def linear_model(self, Y):
 
     """
 
-    if isinstance(Y, FixedEffect):
-        Y = Y.m.to_numpy()
-    Y = np.atleast_3d(Y)
+    # PATCHWORK FIX: Y is modified in place a lot which also modifies it outside
+    # the scope of this function. Lets just make a deep copy.
+    # TODO: Stop modifying in place.
+    Y_copy = deepcopy(Y)
+
+    if isinstance(Y_copy, FixedEffect):
+        Y_copy = Y_copy.m.to_numpy()
+    Y_copy = np.atleast_3d(Y_copy)
 
     n_samples = Y.shape[0]
 
@@ -29,7 +35,9 @@ def linear_model(self, Y):
     _check_constant_term(self.X)
 
     self.df = n_samples - la.matrix_rank(self.X)
-    residuals, self.V, self.coef, self.SSE, self.r, self.dr = _run_linear_model(self, Y)
+    residuals, self.V, self.coef, self.SSE, self.r, self.dr = _run_linear_model(
+        self, Y_copy
+    )
 
     if self.surf is not None:
         self.resl, mesh_connections = _compute_resls(self, residuals)

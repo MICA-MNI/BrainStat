@@ -36,7 +36,6 @@ def generate_random_slm(surf, n_var=1, dfs=None, mask=None, cluster_threshold=0.
     brainstat.stats.SLM
         SLM object.
     """
-    triangles = np.array(get_cells(surf))
     edges = get_edges(surf)
     vertices = get_points(surf)
 
@@ -48,7 +47,6 @@ def generate_random_slm(surf, n_var=1, dfs=None, mask=None, cluster_threshold=0.
         df=np.random.randint(2, 100),
         k=n_var,
         resl=np.random.random_sample((n_edges, 1)),
-        tri=triangles + 1,
         surf=surf,
         dfs=dfs,
         mask=mask,
@@ -73,6 +71,8 @@ def slm2files(slm, basename, test_num):
     D["pval"], D["peak"], D["clus"], D["clusid"] = slm.random_field_theory()
     save_slm(slm, basename, test_num, input=True)
     filename = datadir(basename + "_" + f"{test_num:02d}" + "_OUT.pkl")
+    if "_tri" in D:
+        D.pop("_tri")
     with open(filename, "wb") as f:
         pickle.dump(D, f, protocol=4)
 
