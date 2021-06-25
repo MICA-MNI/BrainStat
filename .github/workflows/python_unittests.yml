@@ -26,7 +26,6 @@ jobs:
    
     - name: Install Ubuntu/macOS dependencies
       shell: bash
-      if: matrix.os != 'windows-latest'
       run: | 
         [[ -z $(git remote show origin | grep "Fetch URL:" | grep git@github.com:MICA-MNI/BrainStat.git) ]] && git config remote.upstream.fetch refs/heads/*:refs/remotes/upstream/* || git config remote.origin.fetch refs/heads/*:refs/origin/upstream/*
         git fetch origin test-data-2.0
