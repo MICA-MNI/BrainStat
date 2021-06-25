@@ -24,26 +24,22 @@ jobs:
         python-version: ${{ matrix.python-version }}
    
    
-    - name: Install Ubuntu dependencies
-      run: |
-        echo ${{ matrix.os }}
-        if [ ${{ matrix.os }} != 'windows-latest' ] ; then
-          is_fork=[ -z $(git remote show origin | grep "Fetch URL:" | grep git@github.com:MICA-MNI/BrainStat.git) ]
-        else
-          is_fork=( -z $(git remote show origin | grep "Fetch URL:" | grep git@github.com:MICA-MNI/BrainStat.git) )
-        fi
-
-        if $is_fork; then
-          git config remote.upstream.fetch refs/heads/*:refs/remotes/upstream/*
-        else
-          git config remote.origin.fetch refs/heads/*:refs/origin/upstream/*
-        fi
-      
+    - name: Install Ubuntu/macOS dependencies
+      if: matrix.os != 'windows-latest'
+      run: | 
+        [[ -z $(git remote show origin | grep "Fetch URL:" | grep git@github.com:MICA-MNI/BrainStat.git) ]] && git config remote.upstream.fetch refs/heads/*:refs/remotes/upstream/* || git config remote.origin.fetch refs/heads/*:refs/origin/upstream/*
         git fetch origin test-data-2.0
         python -m pip install --upgrade pip
         pip install pytest gitpython
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-
+    - name: Install Windows dependencies
+      if: matrix.os == 'windows-latest'
+      run: | 
+        [[ -z $(git remote show origin | grep "Fetch URL:" | grep git@github.com:MICA-MNI/BrainStat.git) ]] && git config remote.upstream.fetch refs/heads/*:refs/remotes/upstream/* || git config remote.origin.fetch refs/heads/*:refs/origin/upstream/*
+        git fetch origin test-data-2.0
+        python -m pip install --upgrade pip
+        pip install pytest gitpython
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Test with pytest
       run: |
         python3 -m pytest
