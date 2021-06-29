@@ -1,3 +1,4 @@
+"""Unit tests of peak_clus."""
 import numpy as np
 import pickle
 import pytest

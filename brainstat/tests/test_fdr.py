@@ -1,3 +1,5 @@
+"""Unit tests of fdr."""
+
 import numpy as np
 import pickle
 import pytest

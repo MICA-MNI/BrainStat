@@ -1,3 +1,4 @@
+"""Unit tests of stat_threshold."""
 import numpy as np
 import pickle
 from .testutil import datadir

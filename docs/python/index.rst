@@ -8,10 +8,6 @@ Python Index
     :caption: Table of Contents:
 
     generated_tutorials/index
+    api
 
 
-.. autosummary::
-   :toctree: _autosummary
-   :recursive:
-
-   brainstat

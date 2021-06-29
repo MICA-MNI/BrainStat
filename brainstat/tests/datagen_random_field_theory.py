@@ -1,4 +1,5 @@
-"""Generates test data for random_field_theory.
+"""Data generation for random field theory unit tests.
+
 
 Tests 1-4 test for variance in the input data types.
 Tests 5-20 test input of the optional variables. 

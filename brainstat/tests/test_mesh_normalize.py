@@ -1,3 +1,4 @@
+"""Unit tests of mesh_normalize."""
 import numpy as np
 import pickle
 from .testutil import datadir

@@ -1,5 +1,4 @@
-"""Tests for histology."""
-
+"""Unit tests for the histology module."""
 import pytest
 import requests
 from brainstat.context.histology import _get_urls

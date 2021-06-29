@@ -1,3 +1,4 @@
+"""Data generation for linear model unit tests."""
 import numpy as np
 from brainstat.tests.testutil import (
     _generate_sphere,

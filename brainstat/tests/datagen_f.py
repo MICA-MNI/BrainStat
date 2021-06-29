@@ -1,3 +1,5 @@
+"""Data generation for f-test unit tests."""
+
 import numpy as np
 import pickle
 from sklearn.model_selection import ParameterGrid

@@ -1,3 +1,4 @@
+"""Interpolations on a mesh."""
 import nibabel as nib
 import numpy as np
 from scipy.interpolate.ndgriddata import NearestNDInterpolator, LinearNDInterpolator

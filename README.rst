@@ -20,12 +20,13 @@ Welcome to BrainStat's documentation!
 
 BrainStat is a toolbox for the statistical analysis and context decoding of
 neuroimaging data. It implements both univariate and multivariate linear models
-and interfaces with the Allen Human Brain Atlas and Nimare databases. BrainStat
-flexibly handles common surface, volume, and parcel level data formats, and
-provides a series of interactive visualization functions. The toolbox has been
-implemented in both python and matlab, the two most widely adopted programming 
-languages in the neuroimaging and neuroinformatics communities. It is openly
-available, and documented `here <https://brainstat.readthedocs.io/en/latest/>`_. 
+and interfaces with the BigBrain Atlas, Allen Human Brain Atlas and Nimare
+databases. BrainStat flexibly handles common surface, volume, and parcel level
+data formats, and provides a series of interactive visualization functions. The
+toolbox has been implemented in both Python and MATLAB, the two most widely
+adopted programming languages in the neuroimaging and neuroinformatics
+communities. It is openly available, and documented `here
+<https://brainstat.readthedocs.io/>`_. 
 
 .. image:: https://github.com/MICA-LAB/BrainStat/blob/master/docs/figures/brainstat_logo_bw.png?raw=true
 
