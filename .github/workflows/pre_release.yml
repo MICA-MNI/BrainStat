@@ -3,7 +3,7 @@ name: "pre_release"
 on:
   push:
     branches:
-      - master
+      - master_TEMP_DISABLE
 
 jobs:
   tagged-release:
