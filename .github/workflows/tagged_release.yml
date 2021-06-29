@@ -52,7 +52,8 @@ jobs:
           .github/matlab_toolbox/BrainStat.mltbx
           dist/*
 
-    - name: Publish to PyPi test.
+    - name: Publish to PyPi.
       uses: pypa/gh-action-pypi-publish@master
       with:
+        user: __token__
         password: ${{ secrets.PYPI_API_TOKEN }}
