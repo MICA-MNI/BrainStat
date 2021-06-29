@@ -1,3 +1,5 @@
+"""Data generation for mesh_smooth unit tests."""
+
 import numpy as np
 import pickle
 from brainstat.mesh.data import mesh_smooth

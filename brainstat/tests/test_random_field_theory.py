@@ -1,3 +1,4 @@
+"""Unit tests of random_field_theory."""
 import numpy as np
 import pickle
 import pytest
@@ -46,7 +47,7 @@ def dummy_test(infile, expfile):
             if empirical is None:
                 testout.append(expected is None)
             else:
-                if len(expected) is not 0:
+                if len(expected) != 0:
                     comp = np.allclose(empirical, expected, rtol=1e-05, equal_nan=True)
                     testout.append(comp)
 

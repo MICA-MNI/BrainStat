@@ -213,6 +213,21 @@ def generate_random_data_model(
 
 
 def array2effect(A, n_random=0):
+    """Converts an input array to a set of effects.
+
+    Parameters
+    ----------
+    A : np.array
+        A samples-by-effects array.
+    n_random : int, optional
+        Number of random effects, by default 0. Random effects are selected from
+        the first columns of A.
+
+    Returns
+    -------
+    brainstat.stats.terms.FixedEffect, brainstat.stats.terms.MixedEffect
+        The fixed/mixed effects.
+    """
     fixed_effects = FixedEffect(1, "intercept") + FixedEffect(A[:, n_random:])
     if n_random != 0:
         mixed_effects = (

@@ -1,3 +1,5 @@
+"""Data generation for stat_threshold unit tests."""
+
 import numpy as np
 import pickle
 from brainstat.tests.testutil import datadir

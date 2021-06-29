@@ -1,3 +1,4 @@
+"""Configurations for pytest."""
 import git
 
 

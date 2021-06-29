@@ -1,3 +1,4 @@
+"""Unit tests of SLM."""
 import numpy as np
 import pickle
 import pytest

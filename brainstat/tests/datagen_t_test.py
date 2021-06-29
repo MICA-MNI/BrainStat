@@ -1,3 +1,5 @@
+"""Data generation for t-test unit tests."""
+
 import numpy as np
 from brainstat.tests.testutil import (
     _generate_sphere,

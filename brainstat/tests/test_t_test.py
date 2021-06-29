@@ -1,3 +1,4 @@
+"""Unit tests of t-test."""
 import numpy as np
 import pickle
 import pytest

@@ -1,3 +1,4 @@
+"""Unit tests of linear_model."""
 import numpy as np
 import pytest
 from brainstat.tests.testutil import datadir

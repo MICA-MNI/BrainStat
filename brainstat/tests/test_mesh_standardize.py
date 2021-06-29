@@ -1,3 +1,4 @@
+"""Unit tests of mesh_standardize."""
 import numpy as np
 import pickle
 import pytest

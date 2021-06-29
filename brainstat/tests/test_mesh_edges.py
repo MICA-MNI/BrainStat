@@ -1,3 +1,5 @@
+"""Unit tests of mesh_edges."""
+
 import numpy as np
 import pickle
 from .testutil import datadir
