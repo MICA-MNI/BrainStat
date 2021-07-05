@@ -2,8 +2,8 @@ classdef test_term_random_overloads < matlab.unittest.TestCase
     methods (Test)
         function test_subsref(testCase)
             v1 = rand(100,2);
-            t1 = FixedEffect(v1);
-            r1 = MixedEffect(v1);
+            t1 = FixedEffect(v1, "", false);
+            r1 = MixedEffect(v1, [], 'add_identity', false);
             
             testCase.verifyEqual(t1.matrix, v1);
             testCase.verifyEqual(t1.names, ["v11","v12"]);
@@ -17,8 +17,8 @@ classdef test_term_random_overloads < matlab.unittest.TestCase
         
         function test_size(testCase)
             v1 = rand(100,2);
-            t1 = FixedEffect(v1);
-            r1 = MixedEffect(v1);
+            t1 = FixedEffect(v1, "", false);
+            r1 = MixedEffect(v1, [], 'add_identity', false, 'add_intercept', false);
             
             % Test size.
             testCase.verifyEqual(size(t1),size(v1));
@@ -28,11 +28,11 @@ classdef test_term_random_overloads < matlab.unittest.TestCase
         function test_math(testCase)
             v1 = rand(100,2);
             v2 = rand(100,2);
-            t1 = FixedEffect(v1);
-            t2 = FixedEffect([v1,v2]);
-            t3 = FixedEffect(v2);
-            r1 = MixedEffect(v1);
-            r3 = MixedEffect(v2);
+            t1 = FixedEffect(v1, "", false);
+            t2 = FixedEffect([v1,v2], "", false);
+            t3 = FixedEffect(v2, "", false);
+            r1 = MixedEffect(v1, [], 'add_identity', false);
+            r3 = MixedEffect(v2, [], 'add_identity', false);
             as_variance = @(x)reshape(x*x',[],1);
             
             % Test plus.

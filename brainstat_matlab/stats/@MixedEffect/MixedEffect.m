@@ -99,6 +99,8 @@ classdef (InferiorClasses = {?FixedEffect}) MixedEffect
             
             % Parse input
             p = inputParser;
+            addOptional(p,'add_identity', true, @islogical)
+            addOptional(p,'add_intercept', true, @islogical);
             addOptional(p,'name_ran', 'ran', @(x) ischar(x) || isempty(x));
             addOptional(p,'name_fix', [], @(x) ischar(x) || iscell(x) || isstring(x) || isempty(x))
             addOptional(p,'ranisvar', [], @(x)(islogical(x) || x == 0 || x == 1) && numel(x) == 1);
@@ -132,11 +134,11 @@ classdef (InferiorClasses = {?FixedEffect}) MixedEffect
                 if R.ranisvar
                     % If the random term is already a variance term, simply set
                     % the variance. 
-                    obj.variance = FixedEffect(ran,R.name_ran);
+                    obj.variance = FixedEffect(ran, R.name_ran, false);
                 else
                     if numel(ran) == 1
                         % If the random term is a scalar, set the name to
-                        % I. (Why?)
+                        % I.
                         if ran == 1
                             R.name_ran = 'I';
                         else
@@ -146,14 +148,19 @@ classdef (InferiorClasses = {?FixedEffect}) MixedEffect
                     
                     % Compute the variance and set it. 
                     v = double(ran)*double(ran)';
-                    obj.variance = FixedEffect(v(:), R.name_ran);
+                    obj.variance = FixedEffect(v(:), R.name_ran, false);
                 end
             end
                 
             if ~isempty(fix)
                 % Set the fixed effect. 
-                obj.mean = FixedEffect(fix,R.name_fix);
+                obj.mean = FixedEffect(fix, R.name_fix, R.add_intercept);
             end
+            
+            if R.add_identity 
+                obj = obj + MixedEffect(1, [], 'name_ran', 'I', 'add_identity', false);
+            end
+            obj = obj.set_identity_last();
         end
     end
 end

@@ -2,8 +2,8 @@ function s=minus(t1,t2)
 if (~isa(t1,'FixedEffect') && numel(t1)>1) || (~isa(t2,'FixedEffect') && numel(t2)>1)
     warning('If you don''t convert vectors to terms you can get unexpected results :-(') 
 end
-t1=FixedEffect(t1,inputname(1));
-t2=FixedEffect(t2,inputname(2));
+t1=FixedEffect(t1,inputname(1), false);
+t2=FixedEffect(t2,inputname(2), false);
 if isempty(t1) || isempty(t2)
     s=t1;
     return
@@ -19,10 +19,10 @@ if n2==1
 end
 m1=t1.matrix./repmat(sum(abs(t1.matrix)),n,1);
 m2=t2.matrix./repmat(sum(abs(t2.matrix)),n,1);
-[d,i1]=setdiff(m1',m2','rows');
+[~,i1]=setdiff(m1',m2','rows');
 i1=sort(i1);
 
-s = FixedEffect(t1.matrix(:,i1),t1.names(i1));
+s = FixedEffect(t1.matrix(:,i1), t1.names(i1), false);
 
 
 % s.names=t1.names(i1);
