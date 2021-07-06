@@ -2,7 +2,8 @@ name: "development_release"
 
 on:
   push:
-    - development
+    branches:
+      - development
 
 jobs:
   development-release:
