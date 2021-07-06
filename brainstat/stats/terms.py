@@ -122,6 +122,35 @@ def check_duplicate_names(df1, df2=None):
         raise ValueError(f"Variables must have different names: {names}")
 
 
+def remove_identical_columns(df1, df2):
+    """Check columns with duplicate names.
+
+    Parameters
+    ----------
+    df1 : DataFrame
+        Input dataframe from which to drop columns.
+    df2 : DataFrame
+        Reference dataFrame
+
+    Returns
+    -------
+    DataFrame
+        df1 with columns appearing in df2 removed.
+
+    Raises
+    ------
+    ValueError
+        If there are columns with duplicate names but no duplicate values.
+
+    """
+    names = np.intersect1d(df1.columns, df2.columns)
+    for col in names:
+        if np.array_equal(df1[col], df2[col]):
+            df1 = df1.drop(col, axis=1)
+        else:
+            raise ValueError(f"Column {col} must be identical for duplicate removal. Either alter the column name or remove the duplicate data.")
+    return df1
+
 def remove_duplicate_columns(df, tol=1e-8):
     """Remove duplicate columns.
 
@@ -157,6 +186,8 @@ class FixedEffect(object):
     names : str or list of str, optional
         Names for each column in `x`. If None, it defauts to {'x0', 'x1', ...}.
         Default is None.
+    add_intercept : logical
+        If true, adds an intercept term. Defaults to True.
 
     Attributes
     ----------
@@ -185,7 +216,7 @@ class FixedEffect(object):
 
     tolerance = 1e-8
 
-    def __init__(self, x=None, names=None):
+    def __init__(self, x=None, names=None, add_intercept=True):
 
         if x is None:
             self.m = pd.DataFrame()
@@ -202,6 +233,8 @@ class FixedEffect(object):
             names = [names]
 
         self.m = to_df(x, names=names).reset_index(drop=True)
+        if add_intercept and 'intercept' not in self.names:
+            self.m.insert(0, 'intercept', 1)
         check_duplicate_names(self.m)
 
     def _broadcast(self, t, idx=None):
@@ -219,7 +252,7 @@ class FixedEffect(object):
             return NotImplemented
 
         if self.empty:
-            return FixedEffect(t)
+            return FixedEffect(t, add_intercept=False)
 
         idx = None
         if check_names(t) is None:
@@ -229,7 +262,9 @@ class FixedEffect(object):
         if df.empty:
             return self
 
-        check_duplicate_names(df, df2=self.m)
+        df = remove_identical_columns(df, self.m)
+
+        #check_duplicate_names(df, df2=self.m)
         terms = [self.m, df]
         names = [self.names, list(df.columns)]
         if side == "right":
@@ -238,7 +273,7 @@ class FixedEffect(object):
         df = pd.concat(terms, axis=1)
         df.columns = names[0] + names[1]
         cols = remove_duplicate_columns(df, tol=self.tolerance)
-        return FixedEffect(df[cols])
+        return FixedEffect(df[cols], add_intercept=False)
 
     def __add__(self, t):
         return self._add(t)
@@ -258,7 +293,7 @@ class FixedEffect(object):
         m = self.m / self.m.abs().sum(0)
         merged = m.T.merge(df.T, how="outer", indicator=True)
         mask = (merged._merge.values == "left_only")[: self.m.shape[1]]
-        return FixedEffect(self.m[self.m.columns[mask]])
+        return FixedEffect(self.m[self.m.columns[mask]], add_intercept=False)
 
     def _mul(self, t, side="left"):
         if isinstance(t, MixedEffect):
@@ -274,7 +309,7 @@ class FixedEffect(object):
                 names = [f"{t}*{k}" for k in self.names]
             else:
                 names = [f"{k}*{t}" for k in self.names]
-            return FixedEffect(m, names=names)
+            return FixedEffect(m, names=names, add_intercept=False)
 
         df = self._broadcast(t)
         if df.empty:
@@ -291,7 +326,7 @@ class FixedEffect(object):
         df = pd.concat(prod, axis=1)
         df.columns = names
         cols = remove_duplicate_columns(df, tol=self.tolerance)
-        return FixedEffect(df[cols])
+        return FixedEffect(df[cols], add_intercept=False)
 
     def __mul__(self, t):
         return self._mul(t)
