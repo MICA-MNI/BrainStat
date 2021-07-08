@@ -147,7 +147,9 @@ def remove_identical_columns(df1, df2):
     for col in names:
         if np.array_equal(df1[col], df2[col]):
             df1 = df1.drop(col, axis=1)
-        elif (df1[col].size == 1 or df2[col].size == 1) and np.all(df1[col].to_numpy() == df2[col].to_numpy()):
+        elif (df1[col].size == 1 or df2[col].size == 1) and np.all(
+            df1[col].to_numpy() == df2[col].to_numpy()
+        ):
             # Assume its an intercept term.
             df1 = df1.drop(col, axis=1)
         else:
