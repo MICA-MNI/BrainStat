@@ -231,9 +231,9 @@ def array2effect(A, n_random=0):
     fixed_effects = FixedEffect(A[:, n_random:])
     if n_random != 0:
         mixed_effects = MixedEffect(
-                A[:, :n_random],
-                name_ran=["f" + str(x) for x in range(n_random)],
-            )
+            A[:, :n_random],
+            name_ran=["f" + str(x) for x in range(n_random)],
+        )
         return fixed_effects + mixed_effects
     else:
         return fixed_effects

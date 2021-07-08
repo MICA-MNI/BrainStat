@@ -19,7 +19,10 @@ def dummy_test(infile, expfile):
     # Convert M to a true BrainStat model
     fixed_effects = FixedEffect(M[:, Din["n_random"] :])
     if Din["n_random"] != 0:
-        mixed_effects = MixedEffect(M[:, : Din["n_random"]],name_ran=["f" + str(x) for x in range(Din["n_random"])],)
+        mixed_effects = MixedEffect(
+            M[:, : Din["n_random"]],
+            name_ran=["f" + str(x) for x in range(Din["n_random"])],
+        )
         M = fixed_effects + mixed_effects
     else:
         M = fixed_effects
