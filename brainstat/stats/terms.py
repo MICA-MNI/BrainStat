@@ -123,7 +123,7 @@ def check_duplicate_names(df1, df2=None):
 
 
 def remove_identical_columns(df1, df2):
-    """Check columns with duplicate names.
+    """Remove columns with duplicate names across dataframes.
 
     Parameters
     ----------
@@ -147,9 +147,15 @@ def remove_identical_columns(df1, df2):
     for col in names:
         if np.array_equal(df1[col], df2[col]):
             df1 = df1.drop(col, axis=1)
+        elif (df1[col].size == 1 or df2[col].size == 1) and np.all(df1[col].to_numpy() == df2[col].to_numpy()):
+            # Assume its an intercept term.
+            df1 = df1.drop(col, axis=1)
         else:
-            raise ValueError(f"Column {col} must be identical for duplicate removal. Either alter the column name or remove the duplicate data.")
+            raise ValueError(
+                f"Column {col} must be identical for duplicate removal. Either alter the column name or remove the duplicate data."
+            )
     return df1
+
 
 def remove_duplicate_columns(df, tol=1e-8):
     """Remove duplicate columns.
@@ -233,8 +239,8 @@ class FixedEffect(object):
             names = [names]
 
         self.m = to_df(x, names=names).reset_index(drop=True)
-        if add_intercept and 'intercept' not in self.names:
-            self.m.insert(0, 'intercept', 1)
+        if add_intercept and "intercept" not in self.names:
+            self.m.insert(0, "intercept", 1)
         check_duplicate_names(self.m)
 
     def _broadcast(self, t, idx=None):
@@ -264,7 +270,7 @@ class FixedEffect(object):
 
         df = remove_identical_columns(df, self.m)
 
-        #check_duplicate_names(df, df2=self.m)
+        # check_duplicate_names(df, df2=self.m)
         terms = [self.m, df]
         names = [self.names, list(df.columns)]
         if side == "right":
@@ -440,13 +446,13 @@ class MixedEffect:
                 ran = ran @ ran.T
                 ran = ran.values.ravel()
 
-            self.variance = FixedEffect(ran, names=name_ran)
-        self.mean = FixedEffect(fix, names=name_fix)
+            self.variance = FixedEffect(ran, names=name_ran, add_intercept=False)
+        self.mean = FixedEffect(fix, names=name_fix, add_intercept=False)
 
     def broadcast_to(self, r1, r2):
         if r1.variance.shape[0] == 1:
             v = np.eye(max(r2.shape[0], int(np.sqrt(r2.shape[2]))))
-            return FixedEffect(v.ravel(), names="I")
+            return FixedEffect(v.ravel(), names="I", add_intercept=False)
         return r1.variance
 
     def _add(self, r, side="left"):
@@ -509,7 +515,9 @@ class MixedEffect:
             for j in range(i + 1):
                 if i == j:
                     t = t + FixedEffect(
-                        np.outer(x[i], x[j]).T.ravel(), names=self.mean.names[i]
+                        np.outer(x[i], x[j]).T.ravel(),
+                        names=self.mean.names[i],
+                        add_intercept=False,
                     )
                 else:
                     xs = x[i] + x[j]
@@ -518,9 +526,9 @@ class MixedEffect:
                     xd_name = f"({self.mean.names[i]}-{self.mean.names[j]})"
 
                     v = np.outer(xs, xs) / 4
-                    t = t + FixedEffect(v.ravel(), names=xs_name)
+                    t = t + FixedEffect(v.ravel(), names=xs_name, add_intercept=False)
                     v = np.outer(xd, xd) / 4
-                    t = t + FixedEffect(v.ravel(), names=xd_name)
+                    t = t + FixedEffect(v.ravel(), names=xd_name, add_intercept=False)
 
         s.variance = s.variance + t * r.variance
 
@@ -539,9 +547,9 @@ class MixedEffect:
                     xd_name = f"({r.mean.names[i]}-{r.mean.names[j]})"
 
                     v = np.outer(xs, xs) / 4
-                    t = t + FixedEffect(v.ravel(), names=xs_name)
+                    t = t + FixedEffect(v.ravel(), names=xs_name, add_intercept=False)
                     v = np.outer(xd, xd) / 4
-                    t = t + FixedEffect(v.ravel(), names=xd_name)
+                    t = t + FixedEffect(v.ravel(), names=xd_name, add_intercept=False)
         s.variance = s.variance + self.variance * t
         return s
 
@@ -575,8 +583,8 @@ class MixedEffect:
 
 ## Deprecated functions
 @deprecated("Please use FixedEffect instead.")
-def Term(x=None, names=None):
-    return FixedEffect(x=x, names=names)
+def Term(x=None, names=None, add_intercept=True):
+    return FixedEffect(x=x, names=names, add_intercept=add_intercept)
 
 
 @deprecated("Please use MixedEffect instead.")
