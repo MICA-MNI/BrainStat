@@ -216,7 +216,7 @@ class FixedEffect(object):
 
     >>> t1 = FixedEffect(np.arange(5), names='t1')
     >>> t2 = FixedEffect(np.random.randn(5, 1), names=['t2'])
-    >>> t3 = t1 + t2 + 1
+    >>> t3 = t1 + t2
     >>> t3.shape
     (5, 3)
 
@@ -418,12 +418,12 @@ class MixedEffect:
     >>> r2.mean.is_empty
     True
     >>> r2.variance.shape
-    (25, 1)
+    (25, 2)
 
     """
 
     def __init__(
-        self, ran=None, fix=None, name_ran=None, name_fix=None, ranisvar=False
+        self, ran=None, fix=None, name_ran=None, name_fix=None, ranisvar=False, add_intercept=True, add_identity=True,
     ):
 
         if isinstance(ran, MixedEffect):
@@ -449,7 +449,36 @@ class MixedEffect:
                 ran = ran.values.ravel()
 
             self.variance = FixedEffect(ran, names=name_ran, add_intercept=False)
-        self.mean = FixedEffect(fix, names=name_fix, add_intercept=False)
+        self.mean = FixedEffect(fix, names=name_fix, add_intercept=add_intercept)
+
+        if add_identity:
+            I = MixedEffect(1, name_ran='I', add_identity=False)
+            tmp_mixed = self + I
+            self.variance = tmp_mixed.variance
+
+        self.set_identity_last()
+    
+    def set_identity_last(self):
+        """Sets the identity matrix column last.
+
+        Raises
+        ------
+        ValueError
+            Raised if "I" occurs more than once in the names.
+        """
+
+        if self.variance.is_empty:
+            return
+
+        idx = np.argwhere(["I" == x for x in self.variance.names])
+        if idx.size == 0:
+            return
+        elif idx.size == 1:
+            self.variance.names.append(self.variance.names.pop(idx[0][0]))
+            self.variance.m = self.variance.m[self.variance.names]
+        else:
+            raise ValueError('Found the name "I" twice in the dataframe names.')
+
 
     def broadcast_to(self, r1, r2):
         if r1.variance.shape[0] == 1:
@@ -459,7 +488,7 @@ class MixedEffect:
 
     def _add(self, r, side="left"):
         if not isinstance(r, MixedEffect):
-            r = MixedEffect(fix=r)
+            r = MixedEffect(fix=r, add_intercept=False, add_identity=False)
 
         r.variance = self.broadcast_to(r, self)
         self.variance = self.broadcast_to(self, r)
@@ -470,7 +499,9 @@ class MixedEffect:
             ran = r.variance + self.variance
             fix = r.mean + self.mean
 
-        return MixedEffect(ran=ran, fix=fix, ranisvar=True)
+        s = MixedEffect(ran=ran, fix=fix, ranisvar=True, add_intercept=False, add_identity=False)
+        s.set_identity_last()
+        return s
 
     def __add__(self, r):
         return self._add(r)
@@ -480,7 +511,7 @@ class MixedEffect:
 
     def _sub(self, r, side="left"):
         if not isinstance(r, MixedEffect):
-            r = MixedEffect(fix=r)
+            r = MixedEffect(fix=r, add_intercept=False, add_identity=False)
         r.variance = self.broadcast_to(r, self)
         self.variance = self.broadcast_to(self, r)
         if side == "left":
@@ -489,7 +520,7 @@ class MixedEffect:
         else:
             ran = r.variance - self.variance
             fix = r.mean - self.mean
-        return MixedEffect(ran=ran, fix=fix, ranisvar=True)
+        return MixedEffect(ran=ran, fix=fix, ranisvar=True, add_intercept=False, add_identity=False)
 
     def __sub__(self, r):
         return self._sub(r)
@@ -499,7 +530,7 @@ class MixedEffect:
 
     def _mul(self, r, side="left"):
         if not isinstance(r, MixedEffect):
-            r = MixedEffect(fix=r)
+            r = MixedEffect(fix=r, add_intercept=False, add_identity=False)
         r.variance = self.broadcast_to(r, self)
         self.variance = self.broadcast_to(self, r)
 
@@ -509,7 +540,7 @@ class MixedEffect:
         else:
             ran = r.variance * self.variance
             fix = r.mean * self.mean
-        s = MixedEffect(ran=ran, fix=fix, ranisvar=True)
+        s = MixedEffect(ran=ran, fix=fix, ranisvar=True, add_intercept=False, add_identity=False)
 
         x = self.mean.matrix.values.T / self.mean.matrix.abs().values.max()
         t = FixedEffect()
@@ -553,6 +584,7 @@ class MixedEffect:
                     v = np.outer(xd, xd) / 4
                     t = t + FixedEffect(v.ravel(), names=xd_name, add_intercept=False)
         s.variance = s.variance + self.variance * t
+        s.set_identity_last()
         return s
 
     def __mul__(self, r):
@@ -585,12 +617,12 @@ class MixedEffect:
 
 ## Deprecated functions
 @deprecated("Please use FixedEffect instead.")
-def Term(x=None, names=None, add_intercept=True):
-    return FixedEffect(x=x, names=names, add_intercept=add_intercept)
+def Term(x=None, names=None):
+    return FixedEffect(x=x, names=names, add_intercept=False)
 
 
 @deprecated("Please use MixedEffect instead.")
 def Random(ran=None, fix=None, name_ran=None, name_fix=None, ranisvar=False):
     return MixedEffect(
-        ran=ran, fix=fix, name_ran=name_ran, name_fix=name_fix, ranisvar=ranisvar
+        ran=ran, fix=fix, name_ran=name_ran, name_fix=name_fix, ranisvar=ranisvar, add_intercept=False, add_identity = False
     )
