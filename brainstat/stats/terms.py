@@ -573,9 +573,13 @@ class MixedEffect:
                         xd_name = f"({self.mean.names[i]}-{self.mean.names[j]})"
 
                         v = np.outer(xs, xs) / 4
-                        t = t + FixedEffect(v.ravel(), names=xs_name, add_intercept=False)
+                        t = t + FixedEffect(
+                            v.ravel(), names=xs_name, add_intercept=False
+                        )
                         v = np.outer(xd, xd) / 4
-                        t = t + FixedEffect(v.ravel(), names=xd_name, add_intercept=False)
+                        t = t + FixedEffect(
+                            v.ravel(), names=xd_name, add_intercept=False
+                        )
 
             s.variance = s.variance + t * r.variance
 
@@ -595,9 +599,13 @@ class MixedEffect:
                         xd_name = f"({r.mean.names[i]}-{r.mean.names[j]})"
 
                         v = np.outer(xs, xs) / 4
-                        t = t + FixedEffect(v.ravel(), names=xs_name, add_intercept=False)
+                        t = t + FixedEffect(
+                            v.ravel(), names=xs_name, add_intercept=False
+                        )
                         v = np.outer(xd, xd) / 4
-                        t = t + FixedEffect(v.ravel(), names=xd_name, add_intercept=False)
+                        t = t + FixedEffect(
+                            v.ravel(), names=xd_name, add_intercept=False
+                        )
             s.variance = s.variance + self.variance * t
         s.set_identity_last()
         return s
