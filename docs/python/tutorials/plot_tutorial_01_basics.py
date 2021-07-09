@@ -82,10 +82,8 @@ from brainstat.stats.terms import MixedEffect
 random_handedness = MixedEffect(
     tutorial_data["demographics"]["HAND"], name_ran="Handedness"
 )
-random_identity = MixedEffect(1, name_ran="identity")
-model_random = (
-    term_age + term_iq + term_age * term_iq + random_handedness + random_identity
-)
+
+model_random = term_age + term_iq + term_age * term_iq + random_handedness
 slm_random = SLM(model_random, -age, surf=pial_left, correction="fdr", mask=mask)
 slm_random.fit(thickness)
 
