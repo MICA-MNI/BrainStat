@@ -481,8 +481,9 @@ class MixedEffect:
         if idx.size == 0:
             return
         elif idx.size == 1:
-            self.variance.names.append(self.variance.names.pop(idx[0][0]))
-            self.variance.m = self.variance.m[self.variance.names]
+            names = self.variance.names
+            names.append(names.pop(idx[0][0]))
+            self.variance.m = self.variance.m[names]
         else:
             raise ValueError('Found the name "I" twice in the dataframe names.')
 
@@ -554,48 +555,50 @@ class MixedEffect:
             ran=ran, fix=fix, ranisvar=True, add_intercept=False, add_identity=False
         )
 
-        x = self.mean.matrix.values.T / self.mean.matrix.abs().values.max()
-        t = FixedEffect()
-        for i in range(x.shape[0]):
-            for j in range(i + 1):
-                if i == j:
-                    t = t + FixedEffect(
-                        np.outer(x[i], x[j]).T.ravel(),
-                        names=self.mean.names[i],
-                        add_intercept=False,
-                    )
-                else:
-                    xs = x[i] + x[j]
-                    xs_name = f"({self.mean.names[i]}+{self.mean.names[j]})"
-                    xd = x[i] - x[j]
-                    xd_name = f"({self.mean.names[i]}-{self.mean.names[j]})"
+        if self.mean.matrix.values.size > 0:
+            x = self.mean.matrix.values.T / self.mean.matrix.abs().values.max()
+            t = FixedEffect()
+            for i in range(x.shape[0]):
+                for j in range(i + 1):
+                    if i == j:
+                        t = t + FixedEffect(
+                            np.outer(x[i], x[j]).T.ravel(),
+                            names=self.mean.names[i],
+                            add_intercept=False,
+                        )
+                    else:
+                        xs = x[i] + x[j]
+                        xs_name = f"({self.mean.names[i]}+{self.mean.names[j]})"
+                        xd = x[i] - x[j]
+                        xd_name = f"({self.mean.names[i]}-{self.mean.names[j]})"
 
-                    v = np.outer(xs, xs) / 4
-                    t = t + FixedEffect(v.ravel(), names=xs_name, add_intercept=False)
-                    v = np.outer(xd, xd) / 4
-                    t = t + FixedEffect(v.ravel(), names=xd_name, add_intercept=False)
+                        v = np.outer(xs, xs) / 4
+                        t = t + FixedEffect(v.ravel(), names=xs_name, add_intercept=False)
+                        v = np.outer(xd, xd) / 4
+                        t = t + FixedEffect(v.ravel(), names=xd_name, add_intercept=False)
 
-        s.variance = s.variance + t * r.variance
+            s.variance = s.variance + t * r.variance
 
-        x = r.mean.matrix.values.T / r.mean.matrix.abs().values.max()
-        t = FixedEffect()
-        for i in range(x.shape[0]):
-            for j in range(i + 1):
-                if i == j:
-                    t = t + FixedEffect(
-                        np.outer(x[i], x[j]).ravel(), names=r.mean.names[i]
-                    )
-                else:
-                    xs = x[i] + x[j]
-                    xs_name = f"({r.mean.names[i]}+{r.mean.names[j]})"
-                    xd = x[i] - x[j]
-                    xd_name = f"({r.mean.names[i]}-{r.mean.names[j]})"
+        if r.mean.matrix.values.size > 0:
+            x = r.mean.matrix.values.T / r.mean.matrix.abs().values.max()
+            t = FixedEffect()
+            for i in range(x.shape[0]):
+                for j in range(i + 1):
+                    if i == j:
+                        t = t + FixedEffect(
+                            np.outer(x[i], x[j]).ravel(), names=r.mean.names[i]
+                        )
+                    else:
+                        xs = x[i] + x[j]
+                        xs_name = f"({r.mean.names[i]}+{r.mean.names[j]})"
+                        xd = x[i] - x[j]
+                        xd_name = f"({r.mean.names[i]}-{r.mean.names[j]})"
 
-                    v = np.outer(xs, xs) / 4
-                    t = t + FixedEffect(v.ravel(), names=xs_name, add_intercept=False)
-                    v = np.outer(xd, xd) / 4
-                    t = t + FixedEffect(v.ravel(), names=xd_name, add_intercept=False)
-        s.variance = s.variance + self.variance * t
+                        v = np.outer(xs, xs) / 4
+                        t = t + FixedEffect(v.ravel(), names=xs_name, add_intercept=False)
+                        v = np.outer(xd, xd) / 4
+                        t = t + FixedEffect(v.ravel(), names=xd_name, add_intercept=False)
+            s.variance = s.variance + self.variance * t
         s.set_identity_last()
         return s
 
