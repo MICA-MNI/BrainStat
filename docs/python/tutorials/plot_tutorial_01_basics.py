@@ -84,11 +84,7 @@ random_handedness = MixedEffect(
 )
 random_identity = MixedEffect(1, name_ran="identity")
 model_random = (
-    term_age
-    + term_iq
-    + term_age * term_iq
-    + random_handedness
-    + random_identity
+    term_age + term_iq + term_age * term_iq + random_handedness + random_identity
 )
 slm_random = SLM(model_random, -age, surf=pial_left, correction="fdr", mask=mask)
 slm_random.fit(thickness)
