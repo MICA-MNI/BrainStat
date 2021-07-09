@@ -17,14 +17,11 @@ def dummy_test(infile, expfile):
     M = Din["M"]
 
     # Convert M to a true BrainStat model
-    fixed_effects = FixedEffect(1, "intercept") + FixedEffect(M[:, Din["n_random"] :])
+    fixed_effects = FixedEffect(M[:, Din["n_random"] :])
     if Din["n_random"] != 0:
-        mixed_effects = (
-            MixedEffect(
-                M[:, : Din["n_random"]],
-                name_ran=["f" + str(x) for x in range(Din["n_random"])],
-            )
-            + MixedEffect(1, "identity")
+        mixed_effects = MixedEffect(
+            M[:, : Din["n_random"]],
+            name_ran=["f" + str(x) for x in range(Din["n_random"])],
         )
         M = fixed_effects + mixed_effects
     else:

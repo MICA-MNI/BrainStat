@@ -41,15 +41,14 @@ pial_left = read_surface_gz(fetch_surf_fsaverage()["pial_left"])
 
 from brainstat.stats.terms import FixedEffect
 
-term_intercept = FixedEffect(1, names="intercept")
 term_age = FixedEffect(age, "age")
 term_iq = FixedEffect(iq, "iq")
-model = term_intercept + term_age + term_iq
+model = term_age + term_iq
 
 ###################################################################
 # We can also add interaction effects to the model by multiplying terms.
 
-model_interaction = term_intercept + term_age + term_iq + term_age * term_iq
+model_interaction = term_age + term_iq + term_age * term_iq
 
 ###################################################################
 # Now, lets imagine we have some cortical marker (e.g. cortical thickness) for
@@ -83,15 +82,8 @@ from brainstat.stats.terms import MixedEffect
 random_handedness = MixedEffect(
     tutorial_data["demographics"]["HAND"], name_ran="Handedness"
 )
-random_identity = MixedEffect(1, name_ran="identity")
-model_random = (
-    term_intercept
-    + term_age
-    + term_iq
-    + term_age * term_iq
-    + random_handedness
-    + random_identity
-)
+
+model_random = term_age + term_iq + term_age * term_iq + random_handedness
 slm_random = SLM(model_random, -age, surf=pial_left, correction="fdr", mask=mask)
 slm_random.fit(thickness)
 

@@ -57,7 +57,13 @@ classdef FixedEffect
     end
 
     methods
-        function obj = FixedEffect(x, names)
+        function obj = FixedEffect(x, names, add_intercept)
+            arguments
+                x = []
+                names string = ""
+                add_intercept logical = true
+            end
+            
             % If no input.
             if nargin == 0
                 obj.names = [];
@@ -83,11 +89,11 @@ classdef FixedEffect
             % usage)
             elseif isnumeric(x) && ~isscalar(x) 
                 % Grab the term name. 
-                if nargin < 2
+                if names == ""
                     names = inputname(1);
-                end
-                if isempty(names)
-                    names = '?';
+                    if isempty(names)
+                        names = '?';
+                    end
                 end
                 names = string(names); 
                 
@@ -103,7 +109,11 @@ classdef FixedEffect
             
             % If x is an numeric scalar. 
             elseif isnumeric(x) && isscalar(x)
-                obj.names = string(x);
+                if exist('names', 'var')
+                    obj.names = string(names);
+                else
+                    obj.names = string(x);
+                end
                 obj.matrix = double(x);
             
             % If x is a structure.
@@ -113,6 +123,11 @@ classdef FixedEffect
                 for ii = 1:length(obj.names)
                     obj.matrix = [obj.matrix double(x.(obj.names{ii}))];
                 end                    
+            end
+            
+            % Add an intercept if none exists.
+            if add_intercept && ~any(all(obj.matrix == 1))
+                obj = FixedEffect(1, 'intercept', false) + obj;
             end
         end
     end

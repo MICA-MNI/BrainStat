@@ -228,14 +228,11 @@ def array2effect(A, n_random=0):
     brainstat.stats.terms.FixedEffect, brainstat.stats.terms.MixedEffect
         The fixed/mixed effects.
     """
-    fixed_effects = FixedEffect(1, "intercept") + FixedEffect(A[:, n_random:])
+    fixed_effects = FixedEffect(A[:, n_random:])
     if n_random != 0:
-        mixed_effects = (
-            MixedEffect(
-                A[:, :n_random],
-                name_ran=["f" + str(x) for x in range(n_random)],
-            )
-            + MixedEffect(1, "identity")
+        mixed_effects = MixedEffect(
+            A[:, :n_random],
+            name_ran=["f" + str(x) for x in range(n_random)],
         )
         return fixed_effects + mixed_effects
     else:

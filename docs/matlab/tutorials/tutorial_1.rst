@@ -19,20 +19,15 @@ Next, we can create the model by simply adding the terms together.
 
 .. code-block:: matlab
 
-   intercept = FixedEffect(1); 
    term_age = FixedEffect(demographic_data.AGE); 
    term_iq = FixedEffect(demographic_data.IQ); 
-   model = intercept + term_age + term_iq;
-
-   % Note that + 1 can be used as a shorthand for the intercept.
-   % In other words, model2 == model1
-   model2 = 1 + term_age + term_iq;
+   model = term_age + term_iq;
 
 We can also add an interaction effect to the model by multiplying age and handedness.
 
 .. code-block:: matlab
 
-   model_interaction = 1 + term_age + term_iq + ...
+   model_interaction = term_age + term_iq + ...
       term_age * term_iq;
 
 Now, lets imagine we have some cortical marker (e.g. cortical thickness) for
@@ -69,9 +64,8 @@ class instead, all other code remains identical.
 .. code-block:: matlab
 
    random_handedness = MixedEffect(demographic_data.HAND == "L");
-   random_identity = MixedEffect(1); % Note: "I" can be used as a shorthand. 
-   model_random = 1 + term_age + term_iq + term_age * term_iq ...
-      + random_handedness + random_identity;
+   model_random = term_age + term_iq + term_age * term_iq ...
+      + random_handedness;
    
    BrainStatModel_random = SLM(model_random, -demographic_data.AGE, ...
       'surf', surfaces);
