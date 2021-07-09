@@ -95,6 +95,18 @@ def test_mixed_overload():
     assert np.array_equal(mix_mul.variance.m, expected_mul)
 
 
+def test_identity_detection():
+    """Tests that the identity matrix is correctly placed last."""
+    mix1 = MixedEffect(np.random.rand(3, 1), add_identity=False)
+    mix2 = MixedEffect(1, name_ran="test_identity")
+    I = np.identity(3).flatten()
+
+    mix_add1 = mix2 + mix1
+    mix_add2 = mix1 + mix2
+    assert np.all(mix_add1.variance.m.to_numpy()[:, 1] == I)
+    assert np.all(mix_add2.variance.m.to_numpy()[:, 1] == I)
+
+
 def as_variance(M):
     var = [np.reshape(x[:, None] @ x[None, :], (-1, 1)) for x in M.T]
     return np.squeeze(var, axis=2).T

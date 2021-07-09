@@ -477,15 +477,22 @@ class MixedEffect:
         if self.variance.is_empty:
             return
 
-        idx = np.argwhere(["I" == x for x in self.variance.names])
-        if idx.size == 0:
+        if self.variance.m.size == 1:
+            # Class is the identity.
             return
-        elif idx.size == 1:
+
+        n = int(round(np.sqrt(self.variance.m.shape[0])))
+        I = np.reshape(np.identity(n), (-1, 1))
+        index = np.argwhere(np.all(self.variance.m.to_numpy() == I, axis=0))
+
+        if index.size == 0:
+            return
+        elif index.size == 1:
             names = self.variance.names
-            names.append(names.pop(idx[0][0]))
+            names.append(names.pop(index[0][0]))
             self.variance.m = self.variance.m[names]
         else:
-            raise ValueError('Found the name "I" twice in the dataframe names.')
+            raise ValueError("Found the identity matrix twice in the dataframe.")
 
     def broadcast_to(self, r1, r2):
         if r1.variance.shape[0] == 1:
