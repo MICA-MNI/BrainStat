@@ -75,5 +75,16 @@ classdef test_term_random_overloads < matlab.unittest.TestCase
             
             testCase.verifyEqual(as_variance(v1).^2, powerr.variance.matrix);
         end
+        
+        function test_identity_detection(testCase)
+            r1 = MixedEffect(rand(3,1), [], 'add_identity', false);
+            r2 = MixedEffect(1, [], 'name_ran', 'test_identity');
+            I = eye(3);
+            
+            r12 = r1 + r2;
+            r21 = r2 + r1;
+            testCase.verifyEqual(r12.variance.matrix(:,2), I(:));
+            testCase.verifyEqual(r21.variance.matrix(:,2), I(:));
+        end
     end
 end
