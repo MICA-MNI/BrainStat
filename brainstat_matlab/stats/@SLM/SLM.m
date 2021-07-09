@@ -112,6 +112,7 @@ classdef SLM < matlab.mixin.Copyable
                     error('One-tailed tests are not implemented for multivariate data.');
                 end
             end
+            student_t_test = size(Y,3) == 1; 
 
             obj.reset_fit_parameters();
             if isempty(obj.mask)
@@ -123,7 +124,7 @@ classdef SLM < matlab.mixin.Copyable
             obj.t_test();
             obj.unmask();
             if ~isempty(obj.correction)
-                obj.multiple_comparisons_corrections();
+                obj.multiple_comparisons_corrections(student_t_test);
             end
         end
 
@@ -189,11 +190,11 @@ classdef SLM < matlab.mixin.Copyable
             obj.du = [];
         end
 
-        function multiple_comparisons_corrections(obj)
+        function multiple_comparisons_corrections(obj, student_t_test)
             % Wrapper for running and merging multiple comparisons tests.
             [P1, Q1] = obj.run_multiple_comparisons();
 
-            if obj.two_tailed
+            if obj.two_tailed && student_t_test
                 obj.t = -obj.t;
                 [P2, Q2] = obj.run_multiple_comparisons();
                 obj.t = -obj.t;
