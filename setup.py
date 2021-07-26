@@ -41,6 +41,7 @@ setuptools.setup(
         "abagen>=0.1",
         "brainspace>=0.1.1",
         "h5py",
+        "netneurotools",
         "neurosynth",
         "nibabel",
         "nilearn>=0.7.0",
