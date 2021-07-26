@@ -6,8 +6,8 @@ https://packaging.python.org/guides/distributing-packages-using-setuptools/
 """
 
 from os import path
-import setuptools
 
+import setuptools
 
 here = path.abspath(path.dirname(__file__))
 

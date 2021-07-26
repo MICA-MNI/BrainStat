@@ -1,11 +1,13 @@
 """Unit tests of random_field_theory."""
-import numpy as np
 import pickle
+
+import numpy as np
 import pytest
-from brainstat.tests.testutil import datadir
+
 from brainstat.stats._multiple_comparisons import random_field_theory
 from brainstat.stats.SLM import SLM
 from brainstat.stats.terms import FixedEffect
+from brainstat.tests.testutil import datadir
 
 
 def dummy_test(infile, expfile):

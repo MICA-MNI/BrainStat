@@ -1,11 +1,13 @@
 """Data generation for FDR unit tests."""
-import numpy as np
 import pickle
-from brainstat.tests.testutil import datadir
+
+import numpy as np
+
+from brainstat.stats._multiple_comparisons import fdr
+from brainstat.stats._t_test import t_test
 from brainstat.stats.SLM import SLM
 from brainstat.stats.terms import FixedEffect
-from brainstat.stats._t_test import t_test
-from brainstat.stats._multiple_comparisons import fdr
+from brainstat.tests.testutil import datadir
 
 
 def generate_random_fdr_data(

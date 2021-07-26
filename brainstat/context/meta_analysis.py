@@ -1,11 +1,13 @@
 """ Meta-analytic decoding based on NiMARE """
+import logging
 import os
 import tempfile
-import logging
 from pathlib import Path
-from neurosynth.base.dataset import download, Dataset
-from nilearn.datasets import load_mni152_brain_mask
+
 import nimare
+from neurosynth.base.dataset import Dataset, download
+from nilearn.datasets import load_mni152_brain_mask
+
 from .utils import multi_surface_to_volume
 
 

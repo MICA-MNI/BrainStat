@@ -1,11 +1,13 @@
 import warnings
+from copy import deepcopy
+
 import numpy as np
 import numpy.linalg as la
-from copy import deepcopy
+from brainspace.mesh.mesh_elements import get_cells
+from brainspace.vtk_interface.wrappers.data_object import BSPolyData
+
 from brainstat.mesh.utils import mesh_edges
 from brainstat.stats.terms import FixedEffect, MixedEffect
-from brainspace.vtk_interface.wrappers.data_object import BSPolyData
-from brainspace.mesh.mesh_elements import get_cells
 
 
 def linear_model(self, Y):

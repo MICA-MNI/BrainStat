@@ -1,9 +1,10 @@
-import warnings
 import math
-import numpy as np
 import sys
-from scipy.linalg import null_space
-from scipy.linalg import cholesky
+import warnings
+
+import numpy as np
+from scipy.linalg import cholesky, null_space
+
 from .terms import FixedEffect
 
 

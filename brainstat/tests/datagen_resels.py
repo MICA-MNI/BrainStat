@@ -1,14 +1,16 @@
 """Data generation for compute_resels unit tests."""
 
-import numpy as np
 import pickle
-from nilearn import datasets
+
+import numpy as np
 from brainspace.mesh.mesh_elements import get_cells, get_points
+from nilearn import datasets
+
 from brainstat.context.utils import read_surface_gz
-from brainstat.tests.testutil import datadir
 from brainstat.stats._multiple_comparisons import compute_resels
 from brainstat.stats.SLM import SLM
 from brainstat.stats.terms import FixedEffect
+from brainstat.tests.testutil import datadir
 
 
 def generate_random_slm(rand_dict):

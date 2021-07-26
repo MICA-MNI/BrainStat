@@ -1,11 +1,13 @@
 """Data generation for f-test unit tests."""
 
-import numpy as np
 import pickle
+
+import numpy as np
 from sklearn.model_selection import ParameterGrid
-from brainstat.tests.testutil import datadir
-from brainstat.stats.terms import FixedEffect
+
 from brainstat.stats.SLM import SLM, f_test
+from brainstat.stats.terms import FixedEffect
+from brainstat.tests.testutil import datadir
 
 
 def generate_random_two_slms(I):

@@ -1,7 +1,8 @@
 """ Tests the fixed and mixed effects classes. """
 
-from brainstat.stats.terms import FixedEffect, MixedEffect
 import numpy as np
+
+from brainstat.stats.terms import FixedEffect, MixedEffect
 
 
 def test_fixed_init():

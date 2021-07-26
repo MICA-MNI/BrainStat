@@ -6,13 +6,15 @@ First lets load some example data to play around with. We'll load age, IQ, and l
 hemispheric cortical thickness for a few subjects.
 """
 
-import numpy as np
-import nibabel as nib
 import os
-import brainstat
-from brainstat.tutorial.utils import fetch_tutorial_data
-from brainstat.context.utils import read_surface_gz
+
+import nibabel as nib
+import numpy as np
 from nilearn.datasets import fetch_surf_fsaverage
+
+import brainstat
+from brainstat.context.utils import read_surface_gz
+from brainstat.tutorial.utils import fetch_tutorial_data
 
 brainstat_dir = os.path.dirname(brainstat.__file__)
 data_dir = os.path.join(brainstat_dir, "tutorial")

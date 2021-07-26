@@ -1,11 +1,14 @@
 """Unit tests of peak_clus."""
-import numpy as np
 import pickle
+
+import numpy as np
 import pytest
-from .testutil import datadir
+
 from brainstat.stats._multiple_comparisons import peak_clus
 from brainstat.stats.SLM import SLM
 from brainstat.stats.terms import FixedEffect
+
+from .testutil import datadir
 
 
 def dummy_test(infile, expfile):

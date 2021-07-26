@@ -1,10 +1,12 @@
 """Data generation for stat_threshold unit tests."""
 
-import numpy as np
 import pickle
-from brainstat.tests.testutil import datadir
+
+import numpy as np
 from sklearn.model_selection import ParameterGrid
+
 from brainstat.stats._multiple_comparisons import stat_threshold
+from brainstat.tests.testutil import datadir
 
 
 def generate_stat_threshold_out(I):

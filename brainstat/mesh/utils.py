@@ -1,11 +1,13 @@
 """Operations on meshes."""
 
-import numpy as np
-from brainspace.mesh.mesh_io import read_surface
-from brainspace.mesh.mesh_creation import build_polydata
-from brainspace.mesh.mesh_elements import get_cells, get_points, get_edges
-from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 import sys
+
+import numpy as np
+from brainspace.mesh.mesh_creation import build_polydata
+from brainspace.mesh.mesh_elements import get_cells, get_edges, get_points
+from brainspace.mesh.mesh_io import read_surface
+from brainspace.vtk_interface.wrappers.data_object import BSPolyData
+
 from ..stats.utils import colon
 
 

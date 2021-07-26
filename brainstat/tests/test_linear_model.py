@@ -1,10 +1,12 @@
 """Unit tests of linear_model."""
+import pickle
+
 import numpy as np
 import pytest
-from brainstat.tests.testutil import datadir
-from brainstat.stats.terms import FixedEffect, MixedEffect
+
 from brainstat.stats.SLM import SLM
-import pickle
+from brainstat.stats.terms import FixedEffect, MixedEffect
+from brainstat.tests.testutil import datadir
 
 
 def dummy_test(infile, expfile):

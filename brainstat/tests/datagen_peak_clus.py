@@ -1,11 +1,13 @@
 """Data generation for peak_clus unit tests."""
 
-import numpy as np
 import pickle
+
+import numpy as np
 from sklearn.model_selection import ParameterGrid
-from brainstat.stats._multiple_comparisons import peak_clus
+
 from brainstat.mesh.utils import mesh_edges
-from brainstat.tests.testutil import generate_slm, datadir
+from brainstat.stats._multiple_comparisons import peak_clus
+from brainstat.tests.testutil import datadir, generate_slm
 
 
 def generate_random_slm(I):
