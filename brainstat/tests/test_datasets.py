@@ -1,7 +1,6 @@
 """ Tests for brainstat.datasets module. """
 import numpy as np
 import pytest
-from _pytest.mark import param
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 
 from brainstat.datasets import load_surface_parcels, load_surface_templates
