@@ -23,6 +23,7 @@ def test_load_surfaces(template):
     assert isinstance(surface, BSPolyData)
 
     surface_lh, surface_rh = fetch_template_surface(template, join=False)
+
     assert isinstance(surface_lh, BSPolyData)
     assert isinstance(surface_rh, BSPolyData)
 
