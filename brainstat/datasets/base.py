@@ -11,7 +11,7 @@ from nibabel import load as nib_load
 from nibabel.freesurfer.io import read_annot, read_geometry
 
 
-def load_surface_parcels(
+def fetch_parcellation(
     atlas: str,
     n_regions: Union[int, str],
     template: str = "fsaverage5",
@@ -27,7 +27,7 @@ def load_surface_parcels(
         Name of the atlas. Valid names are "schaefer", "cammoun".
     n_regions : int, str
         Number of regions of the requested atlas. Valid values for the "schaefer " atlas are
-        100, 200, 300, 400, 600, 800, 1000. Valid values for the cammoun atlas are 33,
+        100, 200, 300, 400, 500, 600, 800, 1000. Valid values for the cammoun atlas are 33,
         60, 125, 250, 500.
     template : str, optional
         The surface template. Valid values are "fsaverage", "fsaverage5",
@@ -74,7 +74,7 @@ def load_surface_parcels(
         return parcellations[0], parcellations[1]
 
 
-def load_surface_templates(
+def fetch_template_surface(
     template: str,
     join: bool = True,
     layer: Optional[str] = None,
