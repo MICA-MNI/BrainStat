@@ -3,7 +3,7 @@ import numpy as np
 import pytest
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 
-from brainstat.datasets import load_surface_parcels, load_surface_templates
+from brainstat.datasets import fetch_parcellation, fetch_template_surface
 
 parametrize = pytest.mark.parametrize
 valid_n_regions = {
@@ -19,10 +19,10 @@ valid_n_regions = {
 def test_load_surfaces(template):
     """Test loading surface templates. For now this only tests whether it runs
     without error and whether the output type is correct."""
-    surface = load_surface_templates(template, join=True)
+    surface = fetch_template_surface(template, join=True)
     assert isinstance(surface, BSPolyData)
 
-    surface_lh, surface_rh = load_surface_templates(template, join=False)
+    surface_lh, surface_rh = fetch_template_surface(template, join=False)
     assert isinstance(surface_lh, BSPolyData)
     assert isinstance(surface_rh, BSPolyData)
 
@@ -32,10 +32,10 @@ def test_load_surfaces(template):
 def test_load_parcels(atlas, template):
     """Test loading surface parcels."""
     for n_regions in valid_n_regions[atlas]:
-        parcels = load_surface_parcels(atlas, n_regions, template=template, join=True)
+        parcels = fetch_parcellation(atlas, n_regions, template=template, join=True)
         assert isinstance(parcels, np.ndarray)
 
-        parcels_lh, parcels_rh = load_surface_parcels(
+        parcels_lh, parcels_rh = fetch_parcellation(
             atlas, n_regions, template=template, join=False
         )
         assert isinstance(parcels_lh, np.ndarray)
@@ -44,7 +44,7 @@ def test_load_parcels(atlas, template):
         assert parcels.size == parcels_lh.size + parcels_rh.size
 
         if atlas == "schaefer":
-            parcels = load_surface_parcels(
+            parcels = fetch_parcellation(
                 atlas, n_regions, template=template, join=True, seven_networks=False
             )
             assert isinstance(parcels, np.ndarray)

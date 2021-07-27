@@ -14,5 +14,6 @@ switch lower(type)
     otherwise
         error('Unknown variable type.');
 end
+
 end
 
