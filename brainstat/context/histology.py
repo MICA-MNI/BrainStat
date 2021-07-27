@@ -1,11 +1,11 @@
 """ Histology context decoder """
-from pathlib import Path
 import logging
-import urllib.request
 import shutil
-import numpy as np
-import h5py
+import urllib.request
+from pathlib import Path
 
+import h5py
+import numpy as np
 from brainspace.gradient.gradient import GradientMaps
 from brainspace.utils.parcellation import reduce_by_labels
 

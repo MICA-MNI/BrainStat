@@ -1,18 +1,20 @@
 """Data generation for SLM unit tests."""
 
-import pickle
-import numpy as np
-from sklearn.model_selection import ParameterGrid
-import nibabel as nib
 import os
-import brainstat
-from brainstat.tests.testutil import datadir, slm2dict
-from brainstat.stats.SLM import SLM
-from brainstat.stats.terms import FixedEffect, MixedEffect
-from brainstat.tutorial.utils import fetch_tutorial_data
-from brainstat.context.utils import read_surface_gz
+import pickle
+
+import nibabel as nib
+import numpy as np
 from brainspace.mesh.mesh_elements import get_cells, get_points
 from nilearn.datasets import fetch_surf_fsaverage
+from sklearn.model_selection import ParameterGrid
+
+import brainstat
+from brainstat.context.utils import read_surface_gz
+from brainstat.stats.SLM import SLM
+from brainstat.stats.terms import FixedEffect, MixedEffect
+from brainstat.tests.testutil import datadir, slm2dict
+from brainstat.tutorial.utils import fetch_tutorial_data
 
 
 def slm2files(slm, basename, test_num, input=True):

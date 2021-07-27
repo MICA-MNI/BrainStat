@@ -1,10 +1,12 @@
 """Unit tests of SLM."""
-import numpy as np
 import pickle
+
+import numpy as np
 import pytest
-from brainstat.tests.testutil import datadir
+
 from brainstat.stats.SLM import SLM
 from brainstat.stats.terms import FixedEffect, MixedEffect
+from brainstat.tests.testutil import datadir
 
 
 def recursive_comparison(X1, X2):

@@ -1,8 +1,11 @@
 """Unit tests of stat_threshold."""
-import numpy as np
 import pickle
-from .testutil import datadir
+
+import numpy as np
+
 from brainstat.stats._multiple_comparisons import stat_threshold
+
+from .testutil import datadir
 
 
 def dummy_test(infile, expfile):

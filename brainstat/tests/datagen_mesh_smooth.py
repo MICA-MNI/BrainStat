@@ -1,11 +1,13 @@
 """Data generation for mesh_smooth unit tests."""
 
-import numpy as np
 import pickle
-from brainstat.mesh.data import mesh_smooth
+
+import numpy as np
 from brainspace.mesh.mesh_elements import get_cells
-from brainstat.context.utils import read_surface_gz
 from nilearn import datasets
+
+from brainstat.context.utils import read_surface_gz
+from brainstat.mesh.data import mesh_smooth
 from brainstat.tests.testutil import datadir
 
 

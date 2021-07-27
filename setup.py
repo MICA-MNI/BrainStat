@@ -6,8 +6,8 @@ https://packaging.python.org/guides/distributing-packages-using-setuptools/
 """
 
 from os import path
-import setuptools
 
+import setuptools
 
 here = path.abspath(path.dirname(__file__))
 
@@ -35,12 +35,13 @@ setuptools.setup(
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
     ],
-    python_requires=">=3.6.*, !=3.9.*, !=3.10.*",
+    python_requires=">=3.6.*",
     test_require=["pytest", "gitpython"],
     install_requires=[
         "abagen>=0.1",
         "brainspace>=0.1.1",
         "h5py",
+        "netneurotools",
         "neurosynth",
         "nibabel",
         "nilearn>=0.7.0",

@@ -1,14 +1,16 @@
 """Multiple comparison corrections."""
+import copy
+import math
+
 import numpy as np
 from numpy import concatenate as cat
 from scipy.interpolate import interp1d
-from scipy.special import betaln, gammaln, gamma
 from scipy.linalg import toeplitz
 from scipy.sparse import csr_matrix
-import math
-import copy
-from brainstat.stats.utils import interp1, colon, ismember, row_ismember
+from scipy.special import betaln, gamma, gammaln
+
 from brainstat.mesh.utils import mesh_edges
+from brainstat.stats.utils import colon, interp1, ismember, row_ismember
 
 
 def fdr(self):

@@ -1,13 +1,14 @@
 """Interpolations on a mesh."""
+import logging
+
 import nibabel as nib
 import numpy as np
-from scipy.interpolate.ndgriddata import NearestNDInterpolator, LinearNDInterpolator
-from scipy.spatial import cKDTree
+import trimesh
+from brainspace.mesh.mesh_elements import get_cells, get_points
 from brainspace.mesh.mesh_io import read_surface
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
-from brainspace.mesh.mesh_elements import get_points, get_cells
-import trimesh
-import logging
+from scipy.interpolate.ndgriddata import LinearNDInterpolator, NearestNDInterpolator
+from scipy.spatial import cKDTree
 
 
 def surface_to_volume(

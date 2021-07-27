@@ -1,10 +1,13 @@
 """Unit tests of f-test."""
 
-import numpy as np
 import pickle
-from .testutil import datadir
+
+import numpy as np
+
 from brainstat.stats.SLM import SLM, f_test
 from brainstat.stats.terms import FixedEffect
+
+from .testutil import datadir
 
 
 def dummy_test(infile, expfile):

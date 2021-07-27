@@ -1,10 +1,12 @@
 """Unit tests of linear_model."""
+import pickle
+
 import numpy as np
 import pytest
-from brainstat.tests.testutil import datadir
-from brainstat.stats.terms import FixedEffect, MixedEffect
+
 from brainstat.stats.SLM import SLM
-import pickle
+from brainstat.stats.terms import FixedEffect, MixedEffect
+from brainstat.tests.testutil import datadir
 
 
 def dummy_test(infile, expfile):
@@ -17,14 +19,11 @@ def dummy_test(infile, expfile):
     M = Din["M"]
 
     # Convert M to a true BrainStat model
-    fixed_effects = FixedEffect(1, "intercept") + FixedEffect(M[:, Din["n_random"] :])
+    fixed_effects = FixedEffect(M[:, Din["n_random"] :])
     if Din["n_random"] != 0:
-        mixed_effects = (
-            MixedEffect(
-                M[:, : Din["n_random"]],
-                name_ran=["f" + str(x) for x in range(Din["n_random"])],
-            )
-            + MixedEffect(1, "identity")
+        mixed_effects = MixedEffect(
+            M[:, : Din["n_random"]],
+            name_ran=["f" + str(x) for x in range(Din["n_random"])],
         )
         M = fixed_effects + mixed_effects
     else:

@@ -1,8 +1,10 @@
 """Operations on data on a mesh."""
 
-import numpy as np
-from .utils import mesh_edges
 import sys
+
+import numpy as np
+
+from .utils import mesh_edges
 
 
 def mesh_normalize(Y, mask=None, subdiv="s"):

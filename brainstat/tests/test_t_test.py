@@ -1,9 +1,11 @@
 """Unit tests of t-test."""
-import numpy as np
 import pickle
+
+import numpy as np
 import pytest
-from brainstat.tests.testutil import datadir, array2effect
+
 from brainstat.stats.SLM import SLM
+from brainstat.tests.testutil import array2effect, datadir
 
 
 def dummy_test(infile, expfile):

@@ -1,9 +1,11 @@
 """Data generation for mesh_edges unit tests."""
 
-import numpy as np
 import pickle
-from brainstat.tests.testutil import datadir
+
+import numpy as np
+
 from brainstat.mesh.utils import mesh_edges
+from brainstat.tests.testutil import datadir
 
 
 def generate_random_mesh_edge_data(

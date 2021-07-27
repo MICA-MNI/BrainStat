@@ -1,14 +1,16 @@
 """Utilities for running tests and test data generation."""
-import numpy as np
 import pickle
-import vtk
 from pathlib import Path
+
+import numpy as np
+import vtk
+from brainspace.mesh.mesh_elements import get_cells, get_points
+from brainspace.vtk_interface import wrap_vtk
+from brainspace.vtk_interface.wrappers.data_object import BSPolyData
+
 import brainstat
 from brainstat.stats.SLM import SLM
 from brainstat.stats.terms import FixedEffect, MixedEffect
-from brainspace.vtk_interface import wrap_vtk
-from brainspace.vtk_interface.wrappers.data_object import BSPolyData
-from brainspace.mesh.mesh_elements import get_cells, get_points
 
 
 def datadir(filename):
@@ -228,14 +230,11 @@ def array2effect(A, n_random=0):
     brainstat.stats.terms.FixedEffect, brainstat.stats.terms.MixedEffect
         The fixed/mixed effects.
     """
-    fixed_effects = FixedEffect(1, "intercept") + FixedEffect(A[:, n_random:])
+    fixed_effects = FixedEffect(A[:, n_random:])
     if n_random != 0:
-        mixed_effects = (
-            MixedEffect(
-                A[:, :n_random],
-                name_ran=["f" + str(x) for x in range(n_random)],
-            )
-            + MixedEffect(1, "identity")
+        mixed_effects = MixedEffect(
+            A[:, :n_random],
+            name_ran=["f" + str(x) for x in range(n_random)],
         )
         return fixed_effects + mixed_effects
     else:

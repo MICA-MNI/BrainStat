@@ -18,9 +18,10 @@ Destrieux atlas. Please note that downloading the dataset and running this
 analysis can take several minutes. As such, we will not run the analysis here.
 """
 
-from brainstat.context.genetics import surface_genetic_expression
-from nilearn import datasets
 import numpy as np
+from nilearn import datasets
+
+from brainstat.context.genetics import surface_genetic_expression
 
 run_analysis = False  # Too resource intensive to run on ReadTheDocs
 
@@ -53,8 +54,10 @@ if run_analysis:
 # the white matter surface (recall that we've already loaded the pial surface).
 
 import os
-import brainstat
+
 import nibabel as nib
+
+import brainstat
 from brainstat.context.meta_analysis import surface_decode_nimare
 from brainstat.tutorial.utils import fetch_tutorial_data
 
@@ -106,12 +109,13 @@ if run_analysis:
 # download the MPC data and compute its gradients. As the computations for this aren't
 # very intesnive, we can actually run this on ReadTheDocs!
 
-from brainstat.context.histology import (
-    read_histology_profile,
-    compute_mpc,
-    compute_histology_gradients,
-)
 from brainspace.datasets import load_parcellation
+
+from brainstat.context.histology import (
+    compute_histology_gradients,
+    compute_mpc,
+    read_histology_profile,
+)
 
 # Load the Schaefer 400 atlas
 schaefer_400 = load_parcellation("schaefer", scale=400, join=True)
@@ -127,9 +131,9 @@ gradient_map = compute_histology_gradients(mpc)
 # BrainSpace's plotting functionality works, please consult the BrainSpace
 # ReadTheDocs. (NOTE: Temporarily disabled due to build errors)
 
+from brainspace.datasets import load_conte69
 from brainspace.plotting.surface_plotting import plot_hemispheres
 from brainspace.utils.parcellation import map_to_labels
-from brainspace.datasets import load_conte69
 
 left_surface, right_surface = load_conte69()
 vertexwise_data = []

@@ -1,16 +1,17 @@
 """Data generation for linear model unit tests."""
 import numpy as np
-from brainstat.tests.testutil import (
-    _generate_sphere,
-    generate_random_data_model,
-    array2effect,
-    slm2files,
-    save_input_dict,
-)
+from brainspace.mesh.mesh_elements import get_points
+from sklearn.model_selection import ParameterGrid
+
 from brainstat.stats.SLM import SLM
 from brainstat.stats.terms import FixedEffect
-from sklearn.model_selection import ParameterGrid
-from brainspace.mesh.mesh_elements import get_points
+from brainstat.tests.testutil import (
+    _generate_sphere,
+    array2effect,
+    generate_random_data_model,
+    save_input_dict,
+    slm2files,
+)
 
 
 def generate_test_data():

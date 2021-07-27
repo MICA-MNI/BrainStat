@@ -1,8 +1,11 @@
 """Unit tests of mesh_normalize."""
-import numpy as np
 import pickle
-from .testutil import datadir
+
+import numpy as np
+
 from brainstat.mesh.data import mesh_normalize
+
+from .testutil import datadir
 
 
 def dummy_test(infile, expfile):

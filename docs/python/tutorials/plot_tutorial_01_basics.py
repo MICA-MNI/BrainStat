@@ -6,13 +6,15 @@ First lets load some example data to play around with. We'll load age, IQ, and l
 hemispheric cortical thickness for a few subjects.
 """
 
-import numpy as np
-import nibabel as nib
 import os
-import brainstat
-from brainstat.tutorial.utils import fetch_tutorial_data
-from brainstat.context.utils import read_surface_gz
+
+import nibabel as nib
+import numpy as np
 from nilearn.datasets import fetch_surf_fsaverage
+
+import brainstat
+from brainstat.context.utils import read_surface_gz
+from brainstat.tutorial.utils import fetch_tutorial_data
 
 brainstat_dir = os.path.dirname(brainstat.__file__)
 data_dir = os.path.join(brainstat_dir, "tutorial")
@@ -41,15 +43,14 @@ pial_left = read_surface_gz(fetch_surf_fsaverage()["pial_left"])
 
 from brainstat.stats.terms import FixedEffect
 
-term_intercept = FixedEffect(1, names="intercept")
 term_age = FixedEffect(age, "age")
 term_iq = FixedEffect(iq, "iq")
-model = term_intercept + term_age + term_iq
+model = term_age + term_iq
 
 ###################################################################
 # We can also add interaction effects to the model by multiplying terms.
 
-model_interaction = term_intercept + term_age + term_iq + term_age * term_iq
+model_interaction = term_age + term_iq + term_age * term_iq
 
 ###################################################################
 # Now, lets imagine we have some cortical marker (e.g. cortical thickness) for
@@ -83,15 +84,8 @@ from brainstat.stats.terms import MixedEffect
 random_handedness = MixedEffect(
     tutorial_data["demographics"]["HAND"], name_ran="Handedness"
 )
-random_identity = MixedEffect(1, name_ran="identity")
-model_random = (
-    term_intercept
-    + term_age
-    + term_iq
-    + term_age * term_iq
-    + random_handedness
-    + random_identity
-)
+
+model_random = term_age + term_iq + term_age * term_iq + random_handedness
 slm_random = SLM(model_random, -age, surf=pial_left, correction="fdr", mask=mask)
 slm_random.fit(thickness)
 

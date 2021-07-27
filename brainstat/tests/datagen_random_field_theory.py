@@ -7,13 +7,15 @@ Test 21 tests for nonsense variables in the SLM.
 
 """
 
-import numpy as np
 import pickle
-from brainstat.tests.testutil import generate_slm, save_slm, datadir
+
+import numpy as np
 from brainspace.mesh.mesh_elements import get_cells, get_edges, get_points
-from brainstat.context.utils import read_surface_gz
 from nilearn import datasets
 from sklearn.model_selection import ParameterGrid
+
+from brainstat.context.utils import read_surface_gz
+from brainstat.tests.testutil import datadir, generate_slm, save_slm
 
 
 def generate_random_slm(surf, n_var=1, dfs=None, mask=None, cluster_threshold=0.001):

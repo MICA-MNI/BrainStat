@@ -1,13 +1,15 @@
 """Data generation for mesh_normalize unit tests."""
 
-import numpy as np
 import pickle
-from brainstat.tests.testutil import datadir
-from nilearn import datasets
-from brainstat.mesh.data import mesh_normalize
-from sklearn.model_selection import ParameterGrid
-from brainstat.context.utils import read_surface_gz
+
+import numpy as np
 from brainspace.mesh.mesh_elements import get_cells
+from nilearn import datasets
+from sklearn.model_selection import ParameterGrid
+
+from brainstat.context.utils import read_surface_gz
+from brainstat.mesh.data import mesh_normalize
+from brainstat.tests.testutil import datadir
 
 
 def generate_mesh_normalize_out(I):

@@ -1,8 +1,9 @@
 import warnings
 from pathlib import Path
+
 import pandas as pd
+from nilearn.datasets.utils import _fetch_files, _get_dataset_dir
 from sklearn.utils import Bunch
-from nilearn.datasets.utils import _get_dataset_dir, _fetch_files
 
 
 def fetch_tutorial_data(n_subjects=20, data_dir=None, resume=True, verbose=1):

@@ -1,13 +1,15 @@
 """Utilities for handling label files"""
 
+import gzip
 import os
+import shutil
+import tempfile
+
 import nibabel as nib
 import numpy as np
-import tempfile
-import gzip
-import shutil
 from brainspace.mesh.mesh_io import read_surface
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
+
 from brainstat.mesh.interpolate import surface_to_volume
 
 

@@ -1,21 +1,24 @@
 """ Standard Linear regression models. """
 import warnings
-import numpy as np
 from cmath import sqrt
-from .terms import FixedEffect
-from .utils import apply_mask, undo_mask
-from brainstat.mesh.utils import mesh_edges, _mask_edges
+
+import numpy as np
 from brainspace.mesh.mesh_elements import get_cells, get_points
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
+
+from brainstat.mesh.utils import _mask_edges, mesh_edges
+
+from .terms import FixedEffect
+from .utils import apply_mask, undo_mask
 
 
 class SLM:
     """Core Class for running BrainStat linear models"""
 
     # Import class methods
-    from ._t_test import t_test
     from ._linear_model import linear_model
     from ._multiple_comparisons import fdr, random_field_theory
+    from ._t_test import t_test
 
     def __init__(
         self,
@@ -109,6 +112,9 @@ class SLM:
                 raise ValueError(
                     "One-tailed tests are not implemented for multivariate data."
                 )
+            student_t_test = Y.shape[2] == 1
+        else:
+            student_t_test = True
 
         self._reset_fit_parameters()
         if self.mask is not None:
@@ -120,13 +126,14 @@ class SLM:
         if self.mask is not None:
             self._unmask()
         if self.correction is not None:
-            self.multiple_comparison_corrections()
+            self.multiple_comparison_corrections(student_t_test)
 
-    def multiple_comparison_corrections(self):
-        """Performs multiple comparisons corrections."""
+    def multiple_comparison_corrections(self, student_t_test):
+        """Performs multiple comparisons corrections. If a (one-sided) student-t
+        test was run, then make it two-tailed if requested."""
         P1, Q1 = self._run_multiple_comparisons()
 
-        if self.two_tailed:
+        if self.two_tailed and student_t_test:
             self.t = -self.t
             P2, Q2 = self._run_multiple_comparisons()
             self.t = -self.t
