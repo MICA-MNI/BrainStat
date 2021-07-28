@@ -1,5 +1,5 @@
 classdef test_datasets < matlab.unittest.TestCase
-    %TEST_DATASETS test class for testing the dataset functions. 
+    %TEST_DATASETS test class for testing the dataset functions.
     
     methods (Test)
         function test_fetch_template_surface(testCase)
@@ -12,7 +12,7 @@ classdef test_datasets < matlab.unittest.TestCase
                 end
                 for layer = layers
                     try
-                        [surf_lh, surf_rh] = fetch_template_surface(surface, 'layer', layer{1});   
+                        [surf_lh, surf_rh] = fetch_template_surface(surface, 'layer', layer{1});
                     catch err
                         if err.message == "Could not find the GIFTI library. Please install it from https://www.artefact.tk/software/matlab/gifti/";
                             % GIFTI library isn't installed on Github
@@ -43,7 +43,15 @@ classdef test_datasets < matlab.unittest.TestCase
                 for n = n_roi
                     for template = ["fsaverage5", "fsaverage6", "fsaverage", "fslr32k"]
                         for networks = seven_networks
-                            parcellation = fetch_parcellation(atlas, template, n, 'seven_networks', networks);
+                            try
+                                parcellation = fetch_parcellation(atlas, template, n, 'seven_networks', networks);
+                            catch err
+                                if err.identifier == "MATLAB:UndefinedFunction" && contains(err.message, '''gifti''')
+                                    continue
+                                else
+                                    rethrow(err)
+                                end
+                            end
                             testCase.verifyEqual(double(min(parcellation)), 0);
                         end
                     end
