@@ -33,7 +33,7 @@ if iscell(S)
         error('Multiple inputs are not supported for surface writing.');
     end
     for ii = 1:numel(S)
-        S2{ii} = convert_surface(S{ii},'format',format);
+        S2{ii} = io_utils.convert_surface(S{ii},'format',format);
     end
     return
 end
@@ -65,7 +65,7 @@ elseif endsWith(S, '.mat')
     S = load(S);
 else
     try
-        S = SurfStatReadSurf1(S);
+        S = io_utils.SurfStatReadSurf1(S);
     catch
         error('Could not read surface.');
     end
@@ -143,7 +143,7 @@ else
     end
     S.tri = faces; 
     S.coord = vertices';
-    SurfStatWriteSurf1(path,S);    
+    io_utils.SurfStatWriteSurf1(path,S);    
 end
 
 end
