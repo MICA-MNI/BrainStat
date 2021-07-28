@@ -4,6 +4,7 @@ import gzip
 import os
 import shutil
 import tempfile
+from typing import List, Tuple, Union
 
 import nibabel as nib
 import numpy as np
@@ -12,26 +13,33 @@ from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 
 from brainstat.mesh.interpolate import surface_to_volume
 
+valid_surfaces = Union[
+    str,
+    BSPolyData,
+    List[Union[str, BSPolyData]],
+    Tuple[Union[str, BSPolyData], ...],
+]
+
 
 def multi_surface_to_volume(
-    pial,
-    white,
-    volume_template,
-    labels,
-    output_file,
-    interpolation="nearest",
-):
+    pial: valid_surfaces,
+    white: valid_surfaces,
+    volume_template: Union[str, nib.nifti1.Nifti1Image],
+    output_file: str,
+    labels: Union[str, np.ndarray, List[Union[np.ndarray, str]]],
+    interpolation: str = "nearest",
+) -> None:
     """Interpolates multiple surfaces to the volume.
 
     Parameters
     ----------
-    pial : str, BSPolyData, list
+    pial : str, BSPolyData, list, tuple
         Path of a pial surface file, BSPolyData of a pial surface or a list
         containing multiple of the aforementioned.
-    white : str, BSPolyData, list
+    white : str, BSPolyData, list, tuple
         Path of a white matter surface file, BSPolyData of a pial surface or a
         list containing multiple of the aforementioned.
-    labels : str, numpy.ndarray, list
+    labels : str, numpy.ndarray, list, tuple
         Path to a label file for the surfaces, numpy array containing the
         labels, or a list containing multiple of the aforementioned.
     output_file: str
@@ -54,44 +62,36 @@ def multi_surface_to_volume(
     if type(pial) is not type(white):
         ValueError("Pial and white must be of the same type.")
 
-    if isinstance(pial, tuple):
-        pial = list(pial)
-        white = list(white)
-    elif not isinstance(pial, list):
-        pial = [pial]
-        white = [white]
+    pial_list = _input_to_list(pial)
+    white_list = _input_to_list(white)
+    labels_list = _input_to_list(labels)
 
-    if isinstance(labels, tuple):
-        labels = list(labels)
-    elif not isinstance(labels, list):
-        labels = [labels]
-
-    if len(pial) is not len(white):
+    if len(pial_list) is not len(white):
         ValueError("The same number of pial and white surfces must be provided.")
 
-    for i in range(len(pial)):
-        if not isinstance(pial[i], BSPolyData):
-            pial[i] = read_surface_gz(pial[i])
+    for i in range(len(pial_list)):
+        if not isinstance(pial_list[i], BSPolyData):
+            pial_list[i] = read_surface_gz(pial_list[i])
 
-        if not isinstance(white[i], BSPolyData):
-            white[i] = read_surface_gz(white[i])
+        if not isinstance(white_list[i], BSPolyData):
+            white_list[i] = read_surface_gz(white_list[i])
 
     if not isinstance(volume_template, nib.nifti1.Nifti1Image):
         volume_template = nib.load(volume_template)
 
-    for i in range(len(labels)):
-        if isinstance(labels[i], np.bool_):
-            labels[i] = np.array(labels[i])
+    for i in range(len(labels_list)):
+        if isinstance(labels_list[i], np.bool_):
+            labels_list[i] = np.array(labels_list[i])
         elif not isinstance(labels[i], np.ndarray):
-            labels[i] = load_mesh_labels(labels[i])
+            labels_list[i] = load_mesh_labels(labels_list[i])
 
     # Surface data to volume.
     T = []
     for i in range(len(pial)):
         T.append(tempfile.NamedTemporaryFile(suffix=".nii.gz"))
         surface_to_volume(
-            pial[i],
-            white[i],
+            pial_list[i],
+            white_list[i],
             labels[i],
             volume_template,
             T[i].name,
@@ -105,7 +105,7 @@ def multi_surface_to_volume(
         shutil.copy(T[0].name, output_file)
 
 
-def combine_parcellations(files, output_file):
+def combine_parcellations(files: List[str], output_file: str) -> None:
     """Combines multiple nifti files into one.
 
     Parameters
@@ -133,7 +133,7 @@ def combine_parcellations(files, output_file):
     nib.save(new_nii, output_file)
 
 
-def load_mesh_labels(label_file, as_int=True):
+def load_mesh_labels(label_file: str, as_int: bool = True) -> np.ndarray:
     """Loads a .label.gii or .csv file.
 
     Parameters
@@ -145,7 +145,7 @@ def load_mesh_labels(label_file, as_int=True):
 
     Returns
     -------
-    numpy.array
+    numpy.ndarray
         Labels in the file.
     """
 
@@ -161,7 +161,7 @@ def load_mesh_labels(label_file, as_int=True):
     return labels
 
 
-def read_surface_gz(filename):
+def read_surface_gz(filename: str) -> BSPolyData:
     """Extension of brainspace's read_surface to include .gz files.
 
     Parameters
@@ -182,3 +182,10 @@ def read_surface_gz(filename):
             return read_surface(f_tmp.name)
     else:
         return read_surface(filename)
+
+
+def _input_to_list(x: valid_surfaces) -> List[Union[str, BSPolyData]]:
+    if isinstance(x, str):
+        return [x]
+    else:
+        return list(x)

@@ -1,5 +1,6 @@
 """Interpolations on a mesh."""
 import logging
+from typing import Union
 
 import nibabel as nib
 import numpy as np
@@ -12,13 +13,13 @@ from scipy.spatial import cKDTree
 
 
 def surface_to_volume(
-    pial_mesh,
-    wm_mesh,
-    labels,
-    volume_template,
-    volume_save,
-    interpolation="nearest",
-):
+    pial_mesh: Union[str, BSPolyData],
+    wm_mesh: Union[str, BSPolyData],
+    labels: Union[str, np.ndarray],
+    volume_template: Union[str, nib.nifti1.Nifti1Image],
+    volume_save: str,
+    interpolation: str = "nearest",
+) -> None:
     """Projects surface labels to the cortical ribbon.
 
     Parameters
@@ -74,7 +75,12 @@ def surface_to_volume(
     nib.save(new_nii, volume_save)
 
 
-def cortical_ribbon(pial_mesh, wm_mesh, nii, mesh_distance=6):
+def cortical_ribbon(
+    pial_mesh: BSPolyData,
+    wm_mesh: BSPolyData,
+    nii: nib.nifti1.Nifti1Image,
+    mesh_distance: float = 6,
+) -> np.ndarray:
     """Finds voxels inside of the cortical ribbon.
 
     Parameters
@@ -85,13 +91,13 @@ def cortical_ribbon(pial_mesh, wm_mesh, nii, mesh_distance=6):
         White matter mesh.
     nii : Nibabel nifti
         Nifti image containing the space in which to output the ribbon.
-    mesh_distance : int, optional
+    mesh_distance : float, optional
         Maximum distance from the cortical mesh at which the ribbon may occur.
         Used to reduce the search space, by default 6.
 
     Returns
     -------
-    numpy.array
+    numpy.ndarray
         Matrix coordinates of voxels inside the cortical ribbon.
     """
 
@@ -159,8 +165,13 @@ def cortical_ribbon(pial_mesh, wm_mesh, nii, mesh_distance=6):
 
 
 def ribbon_interpolation(
-    pial_mesh, wm_mesh, labels, nii, points, interpolation="nearest"
-):
+    pial_mesh: BSPolyData,
+    wm_mesh: BSPolyData,
+    labels: Union[str, np.ndarray],
+    nii: nib.nifti1.Nifti1Image,
+    points: np.ndarray,
+    interpolation: str = "nearest",
+) -> np.ndarray:
     """Performs label interpolation in the cortical ribbon.
 
     Parameters
@@ -176,10 +187,12 @@ def ribbon_interpolation(
         Reference nifti image.
     points : numpy.array
         Numpy array containing the coordinates of the ribbon.
+    interpolation : str, optional
+        Interpolation method. Can be either 'nearest' or 'linear'.
 
     Returns
     -------
-    numpy.array
+    numpy.ndarray
         Interpolated value for each input point.
 
     Notes

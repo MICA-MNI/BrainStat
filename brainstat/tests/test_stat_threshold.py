@@ -27,7 +27,6 @@ def dummy_test(infile, expfile):
         idic["nconj"],
         idic["nvar"],
         None,
-        None,
         idic["nprint"],
     )
     outdic = {

@@ -3,25 +3,28 @@ import logging
 import shutil
 import urllib.request
 from pathlib import Path
+from typing import Callable, Optional, Union
 
 import h5py
 import numpy as np
 from brainspace.gradient.gradient import GradientMaps
 from brainspace.utils.parcellation import reduce_by_labels
 
+from brainstat._typing import ArrayLike
+
 
 def compute_histology_gradients(
-    mpc,
-    kernel="normalized_angle",
-    approach="dm",
-    n_components=10,
-    alignment=None,
-    random_state=None,
-    gamma=None,
-    sparsity=0.9,
-    reference=None,
-    n_iter=10,
-):
+    mpc: np.ndarray,
+    kernel: Union[str, Callable[[np.ndarray], np.ndarray]] = "normalized_angle",
+    approach: Union[str, Callable[[np.ndarray], np.ndarray]] = "dm",
+    n_components: int = 10,
+    alignment: Optional[str] = None,
+    random_state: Optional[int] = None,
+    gamma: Optional[float] = None,
+    sparsity: Optional[float] = 0.9,
+    reference: Optional[np.ndarray] = None,
+    n_iter: int = 10,
+) -> GradientMaps:
     """Computes microstructural profile covariance gradients.
 
     Parameters
@@ -71,7 +74,7 @@ def compute_histology_gradients(
     return gm
 
 
-def compute_mpc(profile, labels):
+def compute_mpc(profile: np.ndarray, labels: np.ndarray) -> np.ndarray:
     """Computes MPC for given labels on a surface template.
 
     Parameters
@@ -102,12 +105,16 @@ def compute_mpc(profile, labels):
     return mpc
 
 
-def read_histology_profile(data_dir=None, template="fsaverage", overwrite=False):
+def read_histology_profile(
+    data_dir: Optional[Union[str, Path]] = None,
+    template: str = "fsaverage",
+    overwrite: bool = False,
+) -> np.ndarray:
     """Reads BigBrain histology profiles.
 
     Parameters
     ----------
-    data_dir : str, None, optional
+    data_dir : str, pathlib.Path, None, optional
         Path to the data directory. If data is not found here then data will be
         downloaded. If None, data_dir is set to the home directory, by default None.
     template : str, optional
@@ -140,12 +147,16 @@ def read_histology_profile(data_dir=None, template="fsaverage", overwrite=False)
         return h5_file.get(template)[...]
 
 
-def download_histology_profiles(data_dir=None, template="fsaverage", overwrite=False):
+def download_histology_profiles(
+    data_dir: Optional[Union[str, Path]] = None,
+    template: str = "fsaverage",
+    overwrite: bool = False,
+) -> None:
     """Downloads BigBrain histology profiles.
 
     Parameters
     ----------
-    data_dir : str, None, optional
+    data_dir : str, pathlib,Path, None, optional
         Path to the directory to store the data. If None, defaults to the home
         directory, by default None.
     template : str, optional
@@ -177,12 +188,12 @@ def download_histology_profiles(data_dir=None, template="fsaverage", overwrite=F
         )
 
 
-def partial_correlation(X, covar):
+def partial_correlation(X: ArrayLike, covar: np.ndarray) -> np.ndarray:
     """Runs a partial correlation whilst correcting for a covariate.
 
     Parameters
     ----------
-    X : numpy.ndarray
+    X : ArrayLike
         Two-dimensional array of the data to be correlated.
     covar : numpy.ndarray
         One-dimensional array of the covariate.
@@ -200,7 +211,7 @@ def partial_correlation(X, covar):
     return (r_xy - r_xz @ r_xz.T) / (np.sqrt(1 - r_xz ** 2) * np.sqrt(1 - r_xz.T ** 2))
 
 
-def _get_urls():
+def _get_urls() -> dict:
     """Stores the URLs for histology file downloads.
 
     Returns
@@ -215,14 +226,14 @@ def _get_urls():
     }
 
 
-def _download_file(url, output_file, overwrite):
+def _download_file(url: str, output_file: Path, overwrite: bool) -> None:
     """Downloads a file.
 
     Parameters
     ----------
     url : str
         URL of the download.
-    file : pathlib.Path
+    output_file : pathlib.Path
         Path object of the output file.
     overwrite : bool
         If true, overwrite existing files.

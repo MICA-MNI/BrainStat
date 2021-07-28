@@ -1,17 +1,22 @@
 """Operations on meshes."""
 
 import sys
+from typing import TYPE_CHECKING, Optional, Tuple, Union
 
 import numpy as np
-from brainspace.mesh.mesh_creation import build_polydata
-from brainspace.mesh.mesh_elements import get_cells, get_edges, get_points
-from brainspace.mesh.mesh_io import read_surface
+from brainspace.mesh.mesh_elements import get_edges
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 
-from ..stats.utils import colon
+from brainstat._typing import ArrayLike
+from brainstat.stats.utils import colon
+
+if TYPE_CHECKING:
+    from brainstat.stats.SLM import SLM  # type: ignore
 
 
-def mesh_edges(surf, mask=None):
+def mesh_edges(
+    surf: Union[dict, BSPolyData, "SLM"], mask: Optional[ArrayLike] = None
+) -> np.ndarray:
     """Converts the triangles or lattices of a mesh to edges.
 
     Args:
@@ -30,8 +35,7 @@ def mesh_edges(surf, mask=None):
 
     # This doesn't strictly test that its BrainStat SLM, but we can't import
     # directly without causing a circular import.
-    class_name = surf.__class__.__name__
-    if class_name == "SLM":
+    if not isinstance(surf, dict) and not isinstance(surf, BSPolyData):
         if surf.tri is not None:
             surf = {"tri": surf.tri}
         elif surf.lat is not None:
@@ -146,13 +150,13 @@ def mesh_edges(surf, mask=None):
             if f:
                 for k in colon(2, K - 1, 2):
                     edg[(k - 1) * n1 + np.arange(0, n1), :] = (
-                        np.block([[edg0], [edg2], [edg1], [IJ, 2 * IJ]]) + (k - 1) * IJ
+                        np.block([[edg0], [edg2], [edg1], [IJ, 2 * IJ]]) + (k - 1) * IJ  # type: ignore
                     )
 
             else:
                 for k in colon(1, K - 1, 2):
                     edg[(k - 1) * n1 + np.arange(0, n1), :] = (
-                        np.block([[edg0], [edg1], [edg2], [IJ, 2 * IJ]]) + (k - 1) * IJ
+                        np.block([[edg0], [edg1], [edg2], [IJ, 2 * IJ]]) + (k - 1) * IJ  # type: ignore
                     )
 
             if np.remainder((K + 1), 2) == f:
@@ -193,9 +197,9 @@ def mesh_edges(surf, mask=None):
     return edg
 
 
-def _mask_edges(edges, mask):
+def _mask_edges(edges: np.ndarray, mask: ArrayLike) -> Tuple[np.ndarray, np.ndarray]:
     # TODO: this section is sloppily written.
-    missing_edges = np.where(~mask)
+    missing_edges = np.where(np.logical_not(mask))
     remove_edges = np.zeros(edges.shape, dtype=bool)
     for i in range(edges.shape[0]):
         for j in range(edges.shape[1]):
@@ -206,74 +210,17 @@ def _mask_edges(edges, mask):
     return edges, idx
 
 
-def mesh_average(filenames, fun=np.add, output_surfstat=False):
-    """Average, minimum, or maximum of surfaces.
-
-    Args:
-        filenames (2D numpy array): Numpy array of filenames of surfaces or BSPolyData objects.
-
-        fun : function handle to apply to two surfaces, e.g.
-        np.add (default) will give the average of the surfaces,
-        np.fmin or np.fmax will give the min or max, respectively.
-
-        output_surfstat (boolean): If True, outputs the surface in SurfStat format. If false
-            outputs the surface as BSPolyData. Default is False.
-
-    Returns:
-        surface [BSPolyData, dict]: The output surface.
-    """
-
-    if filenames.ndim != 2:
-        raise ValueError("Filenames must be a 2-dimensional array.")
-
-    for i in range(0, filenames.shape[0]):
-        surfaces = np.empty(filenames.shape[1], dtype=np.object)
-        for j in range(0, filenames.shape[1]):
-
-            # Check whether input is BSPolyData or a filename.
-            if isinstance(filenames[i, j], BSPolyData):
-                surfaces[j] = filenames[i, j]
-            else:
-                surfaces[j] = read_surface(filenames[i, j])
-
-            # Concatenate second dimension of filenames.
-            if j == 0:
-                tri = get_cells(surfaces[j])
-                coord = get_points(surfaces[j])
-            else:
-                tri = np.concatenate(
-                    (tri, get_cells(surfaces[j]) + coord.shape[0]), axis=0
-                )
-                coord = np.concatenate((coord, get_points(surfaces[j])), axis=0)
-
-        if i == 0:
-            m = 1
-            coord_all = coord
-        else:
-            coord_all = fun(coord_all, coord)
-            m = fun(m, 1)
-
-    coord_all = coord_all / m
-
-    if output_surfstat:
-        surface = {"tri": np.array(tri) + 1, "coord": np.array(coord_all).T}
-    else:
-        surface = build_polydata(coord_all, tri)
-
-    return surface
-
-
-def _make_contiguous(Y):
+def _make_contiguous(Y: np.ndarray) -> np.ndarray:
     """Makes values of Y contiguous integers
 
     Parameters
     ----------
-    Y : numpy.array
+    Y : numpy.ndarray
         Array with uncontiguous numbers.
 
     Returns
     -------
-    numpy.array
+    numpy.ndarray
         Array Y converted to contiguous numbers in range(np.unique(Y).size).
     """
     val = np.unique(Y)

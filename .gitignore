@@ -23,5 +23,7 @@ __pycache__/
 
 .idea
 
+.mypy_cache
+
 # test input data lives in a separate branch and will be pulled on demand
 /extern/test-data/

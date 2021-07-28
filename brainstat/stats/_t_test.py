@@ -8,7 +8,7 @@ from scipy.linalg import cholesky, null_space
 from .terms import FixedEffect
 
 
-def t_test(self):
+def t_test(self) -> None:
     """T statistics for a contrast in a univariate or multivariate model.
 
     Parameters

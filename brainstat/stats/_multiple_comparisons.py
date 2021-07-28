@@ -1,6 +1,8 @@
+# type: ignore
 """Multiple comparison corrections."""
 import copy
 import math
+from typing import List, Optional, Tuple, Union
 
 import numpy as np
 from numpy import concatenate as cat
@@ -9,11 +11,12 @@ from scipy.linalg import toeplitz
 from scipy.sparse import csr_matrix
 from scipy.special import betaln, gamma, gammaln
 
+from brainstat._typing import ArrayLike
 from brainstat.mesh.utils import mesh_edges
 from brainstat.stats.utils import colon, interp1, ismember, row_ismember
 
 
-def fdr(self):
+def fdr(self) -> np.ndarray:
     """Q-values for False Discovey Rate of resels.
 
     Parameters
@@ -46,7 +49,7 @@ def fdr(self):
         reselspvert = np.ones((v))
 
     varA = np.append(10, self.t[0, self.mask.astype(bool)])
-    P_val = stat_threshold(df=df, p_val_peak=varA, nvar=float(self.k), nprint=0)[0]
+    P_val = stat_threshold(df=df, p_val_peak=varA, nvar=self.k, nprint=0)[0]
     P_val = P_val[1 : len(P_val)]
     nx = len(P_val)
     index = P_val.argsort()
@@ -71,7 +74,12 @@ def fdr(self):
     return Q
 
 
-def random_field_theory(self):
+valid_rft_output = Union[
+    Tuple[dict, dict, dict, np.ndarray], Tuple[dict, List, List, List]
+]
+
+
+def random_field_theory(self) -> valid_rft_output:
     """Corrected P-values for vertices and clusters.
     Parameters
     ----------
@@ -125,9 +133,7 @@ def random_field_theory(self):
     if v == 1:
         varA = varA = np.concatenate((np.array([10]), self.t[0]))
         pval = {}
-        pval["P"] = stat_threshold(
-            df=df, p_val_peak=varA, nvar=float(self.k), nprint=0
-        )[0]
+        pval["P"] = stat_threshold(df=df, p_val_peak=varA, nvar=self.k, nprint=0)[0]
         pval["P"] = pval["P"][1]
         peak = []
         clus = []
@@ -136,10 +142,10 @@ def random_field_theory(self):
         return pval, peak, clus, clusid
 
     if self.cluster_threshold < 1:
-        thresh = stat_threshold(
-            df=df, p_val_peak=self.cluster_threshold, nvar=float(self.k), nprint=0
+        thresh_tmp = stat_threshold(
+            df=df, p_val_peak=self.cluster_threshold, nvar=self.k, nprint=0
         )[0]
-        thresh = float(thresh[0])
+        thresh = float(thresh_tmp[0])
     else:
         thresh = self.cluster_threshold
 
@@ -155,7 +161,7 @@ def random_field_theory(self):
             fwhm=1,
             df=df,
             p_val_peak=varA.flatten(),
-            nvar=float(self.k),
+            nvar=self.k,
             nprint=0,
         )[0]
         pval["P"] = pval["P"][1 : v + 1]
@@ -228,19 +234,18 @@ def random_field_theory(self):
 
 
 def stat_threshold(
-    search_volume=0,
-    num_voxels=1,
-    fwhm=0.0,
-    df=math.inf,
-    p_val_peak=0.05,
-    cluster_threshold=0.001,
-    p_val_extent=0.05,
-    nconj=1,
-    nvar=1,
-    EC_file=None,
-    expr=None,
-    nprint=5,
-):
+    search_volume: Union[float, ArrayLike] = 0,
+    num_voxels: Union[float, ArrayLike] = 1,
+    fwhm: float = 0.0,
+    df: Union[float, ArrayLike] = math.inf,
+    p_val_peak: float = 0.05,
+    cluster_threshold: float = 0.001,
+    p_val_extent: Union[float, ArrayLike] = 0.05,
+    nconj: float = 1,
+    nvar: int = 1,
+    EC_file: Optional[bool] = None,
+    nprint: int = 5,
+) -> Tuple[np.ndarray, ...]:
     """Thresholds and P-values of peaks and clusters of random fields in any D.
 
     Parameters
@@ -846,36 +851,22 @@ def stat_threshold(
     )
 
 
-def peak_clus(self, thresh, reselspvert=None, edg=None):
+def peak_clus(
+    self,
+    thresh: float,
+    reselspvert: Optional[np.ndarray] = None,
+    edg: Optional[np.ndarray] = None,
+) -> Tuple[dict, dict, np.ndarray]:
     """Finds peaks (local maxima) and clusters for surface data.
     Parameters
     ----------
-    slm : a dictionary, mandatory keys: 't', 'tri' (or 'lat'),
-        optional keys 'df', 'k'.
-        slm['t'] : numpy array of shape (l,v),
-            v is the number of vertices, the first row slm['t'][0,:] is used
-            for the clusters, and the other rows are used to calculate cluster
-            resels if slm['k']>1. See F for the precise definition
-            of the extra rows.
-        slm['tri'] : numpy array of shape (t,3), dype=int,
-            triangle indices, values should be 1 and v,
-        or,
-        slm['lat'] : numpy array of shape (nx,nx,nz),
-            values should be either 0 or 1.
-            note that [nx,ny,nz]=size(volume).
-        mask : numpy array of shape (v), dytpe=int,
-            values should be either 0 or 1.
-        thresh : float,
-            clusters are vertices where slm['t'][0,mask]>=thresh.
-        reselspvert : numpy array of shape (v),
-            resels per vertex, by default: np.ones(v).
-        edg :  numpy array of shape (e,2), dtype=int,
-            edge indices, by default computed from mesh_edges function.
-        slm['df'] : int,
-            degrees of freedom, note that only the length (1 or 2) is used
-            to determine if slm['t'] is Hotelling's T or T^2 when k>1.
-        slm['k'] : int,
-             k is number of variates, by default 1.
+    thresh : float,
+        clusters are vertices where slm['t'][0,mask]>=thresh.
+    reselspvert : numpy array of shape (v),
+        resels per vertex, by default: np.ones(v).
+    edg :  numpy array of shape (e,2), dtype=int,
+        edge indices, by default computed from mesh_edges function.
+
 
     Returns
     -------
@@ -1046,7 +1037,7 @@ def peak_clus(self, thresh, reselspvert=None, edg=None):
     return peak, clus, clusid
 
 
-def compute_resels(self):
+def compute_resels(self) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """SurfStatResels of surface or volume data inside a mask.
 
     Parameters
