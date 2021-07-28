@@ -1,4 +1,7 @@
-Contents of this directory were published with the following license:
+All contents of @xmltree/ are copyright 2002-2015 Guillaume Flandin, and 
+released under LGPL v3+, see @xmltree/LICENSE
+
+Remaining contents of this directory were published with the following license:
 
 Copyright (c) 2020 Washington University School of Medicine
 

@@ -9,5 +9,5 @@ function surf_out = read_surface(file)
 %   For complete documentation, please consult our <a
 %   href="https://brainspace.readthedocs.io/en/latest/pages/matlab_doc/main_functionality/read_surface.html">ReadTheDocs</a>.
 
-surf_out = convert_surface(file,'format','MATLAB');
+surf_out = io_utils.convert_surface(file,'format','MATLAB');
 

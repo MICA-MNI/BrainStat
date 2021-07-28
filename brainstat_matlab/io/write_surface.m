@@ -8,4 +8,4 @@ function write_surface(surface,file)
 %   For complete documentation, please consult our <a
 %   href="https://brainspace.readthedocs.io/en/latest/pages/matlab_doc/main_functionality/write_surface.html">ReadTheDocs</a>.
 
-convert_surface(surface,'path',file); 
+io_utils.convert_surface(surface,'path',file); 
