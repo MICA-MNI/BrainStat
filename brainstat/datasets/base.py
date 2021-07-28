@@ -13,7 +13,7 @@ from nibabel.freesurfer.io import read_annot, read_geometry
 
 def fetch_parcellation(
     atlas: str,
-    n_regions: Union[int, str],
+    n_regions: int,
     template: str = "fsaverage5",
     join: bool = True,
     seven_networks: bool = True,
@@ -25,7 +25,7 @@ def fetch_parcellation(
     ----------
     atlas : str
         Name of the atlas. Valid names are "schaefer", "cammoun".
-    n_regions : int, str
+    n_regions : int
         Number of regions of the requested atlas. Valid values for the "schaefer " atlas are
         100, 200, 300, 400, 500, 600, 800, 1000. Valid values for the cammoun atlas are 33,
         60, 125, 250, 500.

@@ -1,12 +1,15 @@
 """Utilities for the stats functions."""
 
 import warnings
+from typing import Callable, Tuple, Union
 
 import numpy as np
 from scipy.interpolate import interp1d
 
+from brainstat._typing import ArrayLike
 
-def row_ismember(a, b):
+
+def row_ismember(a: np.ndarray, b: np.ndarray) -> np.ndarray:
     """Tests whether rows of a occur in b.
 
     Parameters
@@ -29,18 +32,20 @@ def row_ismember(a, b):
     return [bind.get(tuple(itm), None) for itm in a]
 
 
-def interp1(x, y, ix, kind="linear"):
+def interp1(
+    x: ArrayLike, y: ArrayLike, ix: ArrayLike, kind: Union[str, int] = "linear"
+):
     """Interpolation between datapoints.
 
     Parameters
     ----------
-    x : (numpy.array)
+    x : ArrayLike
         x coordinates of training data.
-    y : (numpy.array)
+    y : ArrayLike
         y coordinates of training data.
-    ix : (numpy.array)
+    ix : ArrayLike
         coordinates of the interpolated points.
-    kind (numpy.array)
+    kind str, int, optional
         type of interpolation; see scipy.interpolate.interp1d for options.
 
     Returns
@@ -54,23 +59,25 @@ def interp1(x, y, ix, kind="linear"):
     return iy
 
 
-def ismember(A, B, rows=False):
+def ismember(
+    A: np.ndarray, B: np.ndarray, rows: bool = False
+) -> Tuple[bool, np.ndarray]:
     """Tests whether elements of A appear in B.
 
     Parameters
     ----------
-    A : (numpy.array)
+    A : numpy.ndarray
         1D or 2D array
-    B : (numpy.array)
+    B : numpy.ndarray
         1D or 2D array
-    rows : (logical)
+    rows : bool, optional
         If true test for row correspondence rather than element correpondence.
 
     Returns
     -------
-    logical
+    bool
         Boolean of the same size as A denoting which elements (or rows) occur in B.
-    numpy.array
+    numpy.ndarray
         Indices of matching elements/rows in A.
 
     Notes
@@ -108,17 +115,17 @@ def ismember(A, B, rows=False):
     return bool_array, locations
 
 
-def colon(start, stop, increment=1):
+def colon(start: float, stop: float, increment: float = 1) -> np.ndarray:
     """Generates a range of numbers including the stop number.
 
     Parameters
     ----------
-    start : (int)
-        Starting scalar number of the range.
-    stop :  (int)
-        Stopping scalar number of the range.
-    increment (float)
-        Increments of the range.
+    start : float
+        Starting number of the range.
+    stop : float
+        Stopping number of the range.
+    increment : float, optional
+        Increments of the range, defaults to 1.
 
     Returns
     -------
@@ -133,21 +140,21 @@ def colon(start, stop, increment=1):
     return r
 
 
-def apply_mask(Y, mask, axis=0):
+def apply_mask(Y: np.ndarray, mask: np.ndarray, axis: int = 0) -> np.ndarray:
     """Masks the data along a specified axis
 
     Parameters
     ----------
-    Y : array-like
+    Y : numpy.ndarray
         Data to be masked.
-    mask : array-like
+    mask : numpy.ndarray
         Boolean vector containing True for each element to keep.
     axis : int, optional
         Axis along which to operate, by default 0.
 
     Returns
     -------
-    numpy.array
+    numpy.ndarray
         Masked data.
     """
     Y = Y.swapaxes(0, axis)
@@ -155,14 +162,16 @@ def apply_mask(Y, mask, axis=0):
     return Y.swapaxes(0, axis)
 
 
-def undo_mask(Y, mask, axis=0, missing_value=np.nan):
+def undo_mask(
+    Y: np.ndarray, mask: np.ndarray, axis: int = 0, missing_value: float = np.nan
+) -> np.ndarray:
     """Restores the original dimensions of masked data.
 
     Parameters
     ----------
-    Y : array-like
+    Y : numpy.ndarray
         Masked data.
-    mask : array-like
+    mask : numpy.ndarray
         Boolean vector used to mask the data.
     axis : int, optional
         Axis along which to operate, by default 0.
@@ -171,7 +180,7 @@ def undo_mask(Y, mask, axis=0, missing_value=np.nan):
 
     Returns
     -------
-    numpy.array
+    numpy.ndarray
         Unmasked data.
     """
     new_dims = list(Y.shape)
@@ -187,7 +196,7 @@ def undo_mask(Y, mask, axis=0, missing_value=np.nan):
     return Y2
 
 
-def deprecated(message):
+def deprecated(message: str) -> Callable:
     """Decorator for deprecated functions.
 
     Parameters

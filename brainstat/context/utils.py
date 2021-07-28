@@ -4,6 +4,7 @@ import gzip
 import os
 import shutil
 import tempfile
+from typing import List, Optional, Tuple, Union
 
 import nibabel as nib
 import numpy as np
@@ -12,26 +13,30 @@ from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 
 from brainstat.mesh.interpolate import surface_to_volume
 
+valid_surfaces = Union[
+    str, BSPolyData, List[BSPolyData, str], Tuple[BSPolyData, ...], Tuple[str, ...]
+]
+
 
 def multi_surface_to_volume(
-    pial,
-    white,
-    volume_template,
-    labels,
-    output_file,
-    interpolation="nearest",
-):
+    pial: valid_surfaces,
+    white: valid_surfaces,
+    volume_template: Union[str, nib.nifti1.Nifti1Image],
+    output_file: str,
+    labels: Optional[Union[str, np.ndarray, List[np.ndarray, str]]] = None,
+    interpolation: str = "nearest",
+) -> None:
     """Interpolates multiple surfaces to the volume.
 
     Parameters
     ----------
-    pial : str, BSPolyData, list
+    pial : str, BSPolyData, list, tuple
         Path of a pial surface file, BSPolyData of a pial surface or a list
         containing multiple of the aforementioned.
-    white : str, BSPolyData, list
+    white : str, BSPolyData, list, tuple
         Path of a white matter surface file, BSPolyData of a pial surface or a
         list containing multiple of the aforementioned.
-    labels : str, numpy.ndarray, list
+    labels : str, numpy.ndarray, list, tuple
         Path to a label file for the surfaces, numpy array containing the
         labels, or a list containing multiple of the aforementioned.
     output_file: str
@@ -105,7 +110,7 @@ def multi_surface_to_volume(
         shutil.copy(T[0].name, output_file)
 
 
-def combine_parcellations(files, output_file):
+def combine_parcellations(files: List[str], output_file: str) -> None:
     """Combines multiple nifti files into one.
 
     Parameters
@@ -133,7 +138,7 @@ def combine_parcellations(files, output_file):
     nib.save(new_nii, output_file)
 
 
-def load_mesh_labels(label_file, as_int=True):
+def load_mesh_labels(label_file: str, as_int: bool = True) -> np.ndarray:
     """Loads a .label.gii or .csv file.
 
     Parameters
@@ -145,7 +150,7 @@ def load_mesh_labels(label_file, as_int=True):
 
     Returns
     -------
-    numpy.array
+    numpy.ndarray
         Labels in the file.
     """
 
@@ -161,7 +166,7 @@ def load_mesh_labels(label_file, as_int=True):
     return labels
 
 
-def read_surface_gz(filename):
+def read_surface_gz(filename: str) -> BSPolyData:
     """Extension of brainspace's read_surface to include .gz files.
 
     Parameters

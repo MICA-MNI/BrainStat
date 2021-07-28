@@ -1,14 +1,16 @@
 """ Standard Linear regression models. """
 import warnings
 from cmath import sqrt
+from typing import List, Optional, Tuple, Union
 
 import numpy as np
 from brainspace.mesh.mesh_elements import get_cells, get_points
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 
+from brainstat._typing import ArrayLike
 from brainstat.mesh.utils import _mask_edges, mesh_edges
 
-from .terms import FixedEffect
+from .terms import FixedEffect, MixedEffect
 from .utils import apply_mask, undo_mask
 
 
@@ -22,18 +24,18 @@ class SLM:
 
     def __init__(
         self,
-        model,
-        contrast,
-        surf=None,
-        mask=None,
+        model: Union[FixedEffect, MixedEffect],
+        contrast: Union[ArrayLike, FixedEffect],
+        surf: Optional[Union[dict, BSPolyData]] = None,
+        mask: Optional[ArrayLike] = None,
         *,
-        correction=None,
-        niter=1,
-        thetalim=0.01,
-        drlim=0.1,
-        two_tailed=True,
-        cluster_threshold=0.001,
-    ):
+        correction: Optional[Union[str, List[str], Tuple[str, ...]]] = None,
+        niter: int = 1,
+        thetalim: float = 0.01,
+        drlim: float = 0.1,
+        two_tailed: bool = True,
+        cluster_threshold: float = 0.001,
+    ) -> None:
         """Constructor for the SLM class.
 
         Parameters
@@ -49,7 +51,7 @@ class SLM:
         mask : array-like, optional
             A mask containing True for vertices to include in the analysis, by
             default None.
-        correction : str, list, optional
+        correction : str, list, tuple, optional
             String or list of strings. If it contains "rft" a random field
             theory multiple comparisons correction will be run. If it contains
             "fdr" a false discovery rate multiple comparisons correction will be
@@ -93,7 +95,7 @@ class SLM:
         # TODO: remove this requirement.
         self._reset_fit_parameters()
 
-    def fit(self, Y):
+    def fit(self, Y: np.ndarray) -> None:
         """Fits the SLM model
 
         Parameters
@@ -128,7 +130,7 @@ class SLM:
         if self.correction is not None:
             self.multiple_comparison_corrections(student_t_test)
 
-    def multiple_comparison_corrections(self, student_t_test):
+    def multiple_comparison_corrections(self, student_t_test: bool) -> None:
         """Performs multiple comparisons corrections. If a (one-sided) student-t
         test was run, then make it two-tailed if requested."""
         P1, Q1 = self._run_multiple_comparisons()
@@ -143,7 +145,7 @@ class SLM:
             self.P = P1
             self.Q = Q1
 
-    def _run_multiple_comparisons(self):
+    def _run_multiple_comparisons(self) -> Tuple[Optional[dict], Optional[np.ndarray]]:
         """Runs the multiple comparisons tests and returns their outputs.
 
         Returns
@@ -162,7 +164,7 @@ class SLM:
             Q = self.fdr()
         return P, Q
 
-    def _reset_fit_parameters(self):
+    def _reset_fit_parameters(self) -> None:
         """Sets empty parameters before fitting. Prevents issues arising from
         using the same object to fit twice.
         """
@@ -186,7 +188,7 @@ class SLM:
         self.Q = None
         self.du = None
 
-    def _unmask(self):
+    def _unmask(self) -> None:
         """Changes all masked parameters to their input dimensions."""
         simple_unmask_parameters = ["t", "coef", "SSE", "r", "ef", "sd", "dfs"]
         for key in simple_unmask_parameters:
@@ -203,7 +205,7 @@ class SLM:
     """ Property specifications. """
 
     @property
-    def surf(self):
+    def surf(self) -> Union[BSPolyData, dict, None]:
         return self._surf
 
     @surf.setter
@@ -226,7 +228,7 @@ class SLM:
         del self._surf
 
     @property
-    def tri(self):
+    def tri(self) -> np.ndarray:
         return self._tri
 
     @tri.setter
@@ -240,7 +242,7 @@ class SLM:
         del self._tri
 
     @property
-    def lat(self):
+    def lat(self) -> np.ndarray:
         return self._lat
 
     @lat.setter
@@ -252,7 +254,7 @@ class SLM:
         del self._lat
 
 
-def _merge_rft(P1, P2):
+def _merge_rft(P1: dict, P2: dict) -> dict:
     """Merge two one-tailed outputs of the random_field_theory function.
 
     Parameters
@@ -284,7 +286,7 @@ def _merge_rft(P1, P2):
     return P
 
 
-def _merge_fdr(Q1, Q2):
+def _merge_fdr(Q1: Optional[ArrayLike], Q2: Optional[ArrayLike]) -> np.ndarray:
     """Merge two one-tailed outputs of the fdr function.
 
     Parameters
@@ -296,7 +298,7 @@ def _merge_fdr(Q1, Q2):
 
     Returns
     -------
-    array-like
+    np.ndarray
         Two-tailed FDR p-values
     """
     if Q1 is None and Q2 is None:
@@ -304,12 +306,12 @@ def _merge_fdr(Q1, Q2):
     return _onetailed_to_twotailed(Q1, Q2)
 
 
-def _onetailed_to_twotailed(p1, p2):
+def _onetailed_to_twotailed(p1: ArrayLike, p2: ArrayLike) -> np.ndarray:
     """Converts two one-tailed tests to a two-tailed test"""
     return np.minimum(np.minimum(p1, p2) * 2, 1)
 
 
-def f_test(slm1, slm2):
+def f_test(slm1: SLM, slm2: SLM) -> SLM:
     """F-statistics for comparing two uni- or multi-variate fixed effects models.
 
     Parameters

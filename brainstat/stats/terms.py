@@ -1,13 +1,18 @@
 """Classes for fixed, mixed, and random effects."""
 import re
+from typing import Any, List, Optional, Union
 
 import numpy as np
 import pandas as pd
+from pandas.core.frame import DataFrame
+from pandas.io.pytables import Fixed
+
+from brainstat._typing import ArrayLike
 
 from .utils import deprecated
 
 
-def check_names(x):
+def check_names(x: Any) -> Optional[List[str]]:
     """Return True if `x` is FixedEffect, Series or DataFrame."""
     if isinstance(x, (pd.DataFrame, pd.Series)):
         return x.columns.tolist()
@@ -16,7 +21,12 @@ def check_names(x):
     return None
 
 
-def to_df(x, n=1, names=None, idx=None):
+def to_df(
+    x: Union[ArrayLike, "FixedEffect"],
+    n: int = 1,
+    names: Optional[Union[str, List[str]]] = None,
+    idx: Optional[int] = None,
+) -> pd.DataFrame:
     """Convert input to DataFrame.
 
     Parameters
@@ -75,7 +85,7 @@ def to_df(x, n=1, names=None, idx=None):
     return pd.get_dummies(x)
 
 
-def get_index(df):
+def get_index(df: pd.DataFrame) -> int:
     """Get index for column names of the form x{i}.
 
     If there are none, return 0.
@@ -98,7 +108,9 @@ def get_index(df):
     return 0 if len(r2) == 0 else max(r2) + 1
 
 
-def check_duplicate_names(df1, df2=None):
+def check_duplicate_names(
+    df1: pd.DataFrame, df2: Optional[pd.DataFrame] = None
+) -> None:
     """Check columns with duplicate names.
 
     Parameters
@@ -124,7 +136,7 @@ def check_duplicate_names(df1, df2=None):
         raise ValueError(f"Variables must have different names: {names}")
 
 
-def remove_identical_columns(df1, df2):
+def remove_identical_columns(df1: pd.DataFrame, df2: pd.DataFrame) -> pd.DataFrame:
     """Remove columns with duplicate names across dataframes.
 
     Parameters
@@ -161,7 +173,7 @@ def remove_identical_columns(df1, df2):
     return df1
 
 
-def remove_duplicate_columns(df, tol=1e-8):
+def remove_duplicate_columns(df: pd.DataFrame, tol: float = 1e-8) -> List[str]:
     """Remove duplicate columns.
 
     Parameters
@@ -196,7 +208,7 @@ class FixedEffect(object):
     names : str or list of str, optional
         Names for each column in `x`. If None, it defauts to {'x0', 'x1', ...}.
         Default is None.
-    add_intercept : logical
+    add_intercept : bool, optional
         If true, adds an intercept term. Defaults to True.
 
     Attributes
@@ -226,7 +238,12 @@ class FixedEffect(object):
 
     tolerance = 1e-8
 
-    def __init__(self, x=None, names=None, add_intercept=True):
+    def __init__(
+        self,
+        x: Optional[Union[ArrayLike, pd.DataFrame]] = None,
+        names: Optional[Union[str, List[str]]] = None,
+        add_intercept: bool = True,
+    ) -> None:
 
         if x is None:
             self.m = pd.DataFrame()
@@ -247,7 +264,9 @@ class FixedEffect(object):
             self.m.insert(0, "intercept", 1)
         check_duplicate_names(self.m)
 
-    def _broadcast(self, t, idx=None):
+    def _broadcast(
+        self, t: Union[ArrayLike, "FixedEffect"], idx: Optional[int] = None
+    ) -> pd.DataFrame:
         df = to_df(t, idx=idx)
         if self.shape[0] > 1 and df.shape[0] == 1:
             df = to_df(df, n=self.shape[0])
@@ -257,7 +276,9 @@ class FixedEffect(object):
             raise ValueError(f"Cannot broadcast shape {df.shape} to " f"{self.shape}.")
         return df
 
-    def _add(self, t, side="left"):
+    def _add(
+        self, t: Union[ArrayLike, "FixedEffect", "MixedEffect"], side: str = "left"
+    ) -> "FixedEffect":
         if isinstance(t, MixedEffect):
             return NotImplemented
 
@@ -285,13 +306,17 @@ class FixedEffect(object):
         cols = remove_duplicate_columns(df, tol=self.tolerance)
         return FixedEffect(df[cols], add_intercept=False)
 
-    def __add__(self, t):
+    def __add__(
+        self, t: Union[ArrayLike, "FixedEffect", "MixedEffect"]
+    ) -> "FixedEffect":
         return self._add(t)
 
-    def __radd__(self, t):
+    def __radd__(
+        self, t: Union[ArrayLike, "FixedEffect", "MixedEffect"]
+    ) -> "FixedEffect":
         return self._add(t, side="right")
 
-    def __sub__(self, t):
+    def __sub__(self, t: Union[ArrayLike, "FixedEffect"]) -> "FixedEffect":
         if self.empty:
             return self
         df = self._broadcast(t)
@@ -305,7 +330,9 @@ class FixedEffect(object):
         mask = (merged._merge.values == "left_only")[: self.m.shape[1]]
         return FixedEffect(self.m[self.m.columns[mask]], add_intercept=False)
 
-    def _mul(self, t, side="left"):
+    def _mul(
+        self, t: Union[ArrayLike, "FixedEffect", "MixedEffect"], side: str = "left"
+    ) -> "FixedEffect":
         if isinstance(t, MixedEffect):
             return NotImplemented
 
@@ -338,40 +365,44 @@ class FixedEffect(object):
         cols = remove_duplicate_columns(df, tol=self.tolerance)
         return FixedEffect(df[cols], add_intercept=False)
 
-    def __mul__(self, t):
+    def __mul__(
+        self, t: Union[ArrayLike, "FixedEffect", "MixedEffect"]
+    ) -> "FixedEffect":
         return self._mul(t)
 
-    def __rmul__(self, t):
+    def __rmul__(
+        self, t: Union[ArrayLike, "FixedEffect", "MixedEffect"]
+    ) -> "FixedEffect":
         return self._mul(t, side="right")
 
-    def __pow__(self, p):
+    def __pow__(self, p: int) -> "FixedEffect":
         if p > 1:
             return self * self ** (p - 1)
         return self
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return self.m.__repr__()
 
-    def _repr_html_(self):
+    def _repr_html_(self) -> str:
         return self.m._repr_html_()
 
     @property
-    def is_scalar(self):
+    def is_scalar(self) -> bool:
         return self.size == 1
 
     @property
-    def matrix(self):
+    def matrix(self) -> pd.DataFrame:
         return self.m
 
     @property
-    def names(self):
+    def names(self) -> List[str]:
         return object.__getattribute__(self, "m").columns.tolist()
 
     @property
-    def is_empty(self):
+    def is_empty(self) -> bool:
         return self.m.empty
 
-    def __getattr__(self, name):
+    def __getattr__(self, name: str) -> Any:
         if name in object.__getattribute__(self, "names"):
             return object._getattribute__("m")[name].values
         if name in {"shape", "size", "empty"}:
@@ -426,14 +457,14 @@ class MixedEffect:
 
     def __init__(
         self,
-        ran=None,
-        fix=None,
-        name_ran=None,
-        name_fix=None,
-        ranisvar=False,
-        add_intercept=True,
-        add_identity=True,
-    ):
+        ran: Optional[Union[ArrayLike, pd.DataFrame]] = None,
+        fix: Optional[Union[ArrayLike, pd.DataFrame]] = None,
+        name_ran: str = None,
+        name_fix: str = None,
+        ranisvar: bool = False,
+        add_intercept: bool = True,
+        add_identity: bool = True,
+    ) -> None:
 
         if isinstance(ran, MixedEffect):
             self.mean = ran.mean
@@ -467,7 +498,7 @@ class MixedEffect:
 
         self.set_identity_last()
 
-    def set_identity_last(self):
+    def set_identity_last(self) -> None:
         """Sets the identity matrix column last.
 
         Raises
@@ -496,13 +527,15 @@ class MixedEffect:
         else:
             raise ValueError("Found the identity matrix twice in the dataframe.")
 
-    def broadcast_to(self, r1, r2):
+    def broadcast_to(self, r1: "MixedEffect", r2: "MixedEffect") -> FixedEffect:
         if r1.variance.shape[0] == 1:
             v = np.eye(max(r2.shape[0], int(np.sqrt(r2.shape[2]))))
             return FixedEffect(v.ravel(), names="I", add_intercept=False)
         return r1.variance
 
-    def _add(self, r, side="left"):
+    def _add(
+        self, r: Union[FixedEffect, "MixedEffect"], side: str = "left"
+    ) -> "MixedEffect":
         if not isinstance(r, MixedEffect):
             r = MixedEffect(fix=r, add_intercept=False, add_identity=False)
 
@@ -521,13 +554,15 @@ class MixedEffect:
         s.set_identity_last()
         return s
 
-    def __add__(self, r):
+    def __add__(self, r: Union[FixedEffect, "MixedEffect"]) -> "MixedEffect":
         return self._add(r)
 
-    def __radd__(self, r):
+    def __radd__(self, r: Union[FixedEffect, "MixedEffect"]) -> "MixedEffect":
         return self._add(r, side="right")
 
-    def _sub(self, r, side="left"):
+    def _sub(
+        self, r: Union[FixedEffect, "MixedEffect"], side: str = "left"
+    ) -> "MixedEffect":
         if not isinstance(r, MixedEffect):
             r = MixedEffect(fix=r, add_intercept=False, add_identity=False)
         r.variance = self.broadcast_to(r, self)
@@ -542,13 +577,15 @@ class MixedEffect:
             ran=ran, fix=fix, ranisvar=True, add_intercept=False, add_identity=False
         )
 
-    def __sub__(self, r):
+    def __sub__(self, r: Union[FixedEffect, "MixedEffect"]) -> "MixedEffect":
         return self._sub(r)
 
-    def __rsub__(self, r):
+    def __rsub__(self, r: Union[FixedEffect, "MixedEffect"]) -> "MixedEffect":
         return self._sub(r, side="right")
 
-    def _mul(self, r, side="left"):
+    def _mul(
+        self, r: Union[FixedEffect, "MixedEffect"], side: str = "left"
+    ) -> "MixedEffect":
         if not isinstance(r, MixedEffect):
             r = MixedEffect(fix=r, add_intercept=False, add_identity=False)
         r.variance = self.broadcast_to(r, self)
@@ -619,26 +656,26 @@ class MixedEffect:
         s.set_identity_last()
         return s
 
-    def __mul__(self, r):
+    def __mul__(self, r: Union[FixedEffect, "MixedEffect"]) -> "MixedEffect":
         return self._mul(r)
 
-    def __rmul__(self, r):
+    def __rmul__(self, r: Union[FixedEffect, "MixedEffect"]) -> "MixedEffect":
         return self._mul(r, side="right")
 
-    def __pow__(self, p):
+    def __pow__(self, p: int) -> "MixedEffect":
         if p > 1:
             return self * self ** (p - 1)
         return self
 
     @property
-    def empty(self):
+    def empty(self) -> bool:
         return self.mean.empty and self.variance.empty
 
     @property
-    def shape(self):
+    def shape(self) -> np.ndarray:
         return self.mean.shape + self.variance.shape
 
-    def _repr_html_(self):
+    def _repr_html_(self) -> str:
         return (
             "Mean:\n"
             + self.mean._repr_html_()

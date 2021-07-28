@@ -1,36 +1,39 @@
 """Genetic decoding using abagen."""
+from typing import List, Optional, Tuple, Union
 
+import numpy as np
+import pandas as pd
 from abagen import check_atlas, get_expression_data
 
 
 def surface_genetic_expression(
-    labels,
-    surfaces=None,
-    space=None,
+    labels: Union[List[str], np.ndarray],
+    surfaces: Union[List[str], Tuple[str, ...]] = None,
+    space: Optional[str] = None,
     *,
-    atlas_info=None,
-    ibf_threshold=0.5,
-    probe_selection="diff_stability",
-    donor_probes="aggregate",
-    lr_mirror=None,
-    missing=None,
-    tolerance=2,
-    sample_norm="srs",
-    gene_norm="srs",
-    norm_matched=True,
-    norm_structures=False,
-    region_agg="donors",
-    agg_metric="mean",
-    corrected_mni=True,
-    reannotated=True,
-    return_counts=False,
-    return_donors=False,
-    return_report=False,
-    donors="all",
-    data_dir=None,
-    verbose=0,
-    n_proc=1
-):
+    atlas_info: str = None,
+    ibf_threshold: float = 0.5,
+    probe_selection: str = "diff_stability",
+    donor_probes: str = "aggregate",
+    lr_mirror: Optional[bool] = None,
+    missing: Optional[str] = None,
+    tolerance: float = 2,
+    sample_norm: str = "srs",
+    gene_norm: str = "srs",
+    norm_matched: bool = True,
+    norm_structures: bool = False,
+    region_agg: str = "donors",
+    agg_metric: str = "mean",
+    corrected_mni: bool = True,
+    reannotated: bool = True,
+    return_counts: bool = False,
+    return_donors: bool = False,
+    return_report: bool = False,
+    donors: str = "all",
+    data_dir: Optional[str] = None,
+    verbose: float = 0,
+    n_proc: int = 1
+) -> pd.DataFrame:
     """Computes genetic expression of surface parcels.
 
     Parameters
