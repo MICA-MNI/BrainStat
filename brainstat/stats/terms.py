@@ -4,8 +4,6 @@ from typing import Any, List, Optional, Union
 
 import numpy as np
 import pandas as pd
-from pandas.core.frame import DataFrame
-from pandas.io.pytables import Fixed
 
 from brainstat._typing import ArrayLike
 
