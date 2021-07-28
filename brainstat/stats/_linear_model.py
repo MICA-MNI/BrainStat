@@ -1,6 +1,6 @@
 import warnings
 from copy import deepcopy
-from typing import Tuple, Union
+from typing import Optional, Tuple, Union
 
 import numpy as np
 import numpy.linalg as la
@@ -48,7 +48,16 @@ def linear_model(self, Y: Union[np.ndarray, FixedEffect]) -> None:
         setattr(self, key, mesh_connections[key])
 
 
-def _run_linear_model(self, Y: np.ndarray) -> Tuple[np.ndarray, ...]:
+def _run_linear_model(
+    self, Y: np.ndarray
+) -> Tuple[
+    np.ndarray,
+    Optional[np.ndarray],
+    np.ndarray,
+    np.ndarray,
+    Optional[np.ndarray],
+    Optional[np.ndarray],
+]:
     """Runs a linear model and returns relevant parameters.
 
     Parameters
@@ -96,7 +105,9 @@ def _run_linear_model(self, Y: np.ndarray) -> Tuple[np.ndarray, ...]:
     return residuals, V, coef, SSE, r, dr
 
 
-def _model_univariate_fixed_effects(self, Y: np.ndarray) -> Tuple[np.ndarray, ...]:
+def _model_univariate_fixed_effects(
+    self, Y: np.ndarray
+) -> Tuple[np.ndarray, Optional[np.ndarray], np.ndarray, np.ndarray]:
     """Runs a univariate fixed effects linear model
 
     Parameters
@@ -256,7 +267,9 @@ def _model_univariate_mixed_effects(self, Y: np.ndarray) -> Tuple[np.ndarray, ..
     return residuals, V, coef, SSE, r, dr[:, None]
 
 
-def _model_multivariate_fixed_effects(self, Y: np.ndarray) -> Tuple[np.ndarray, ...]:
+def _model_multivariate_fixed_effects(
+    self, Y: np.ndarray
+) -> Tuple[np.ndarray, Optional[np.ndarray], np.ndarray, np.ndarray]:
     """Runs a multivariate linear fixed effects model.
 
     Parameters
@@ -303,7 +316,7 @@ def _model_multivariate_fixed_effects(self, Y: np.ndarray) -> Tuple[np.ndarray, 
     return residuals, V, coef, SSE
 
 
-def _get_design_matrix(self, n_samples: int) -> Tuple[np.ndarray, ...]:
+def _get_design_matrix(self, n_samples: int) -> Tuple[np.ndarray, Optional[np.ndarray]]:
     """Wrapper for fetching the design matrix
 
     Parameters
@@ -327,7 +340,7 @@ def _get_design_matrix(self, n_samples: int) -> Tuple[np.ndarray, ...]:
     return X, V
 
 
-def _get_mixed_design(self) -> Tuple[np.ndarray, ...]:
+def _get_mixed_design(self) -> Tuple[np.ndarray, Optional[np.ndarray]]:
     """Fetches the design matrix from a mixed effects model.
 
     Parameters

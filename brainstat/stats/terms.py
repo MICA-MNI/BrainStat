@@ -12,17 +12,20 @@ from brainstat._typing import ArrayLike
 from .utils import deprecated
 
 
-def check_names(x: Any) -> Optional[List[str]]:
+def check_names(
+    x: Union[int, "FixedEffect", pd.DataFrame, pd.Series]
+) -> Optional[List[str]]:
     """Return True if `x` is FixedEffect, Series or DataFrame."""
     if isinstance(x, (pd.DataFrame, pd.Series)):
         return x.columns.tolist()
-    if isinstance(x, FixedEffect):
+    elif isinstance(x, FixedEffect):
         return x.names
-    return None
+    else:
+        return None
 
 
 def to_df(
-    x: Union[ArrayLike, "FixedEffect"],
+    x: Union[int, ArrayLike, "FixedEffect"],
     n: int = 1,
     names: Optional[Union[str, List[str]]] = None,
     idx: Optional[int] = None,
@@ -31,7 +34,7 @@ def to_df(
 
     Parameters
     ----------
-    x : array-like or FixedEffect
+    x : int, array-like FixedEffect
         Input data.
     n : int, optional
         If input is a scalar, broadcast to column of `n` entries.
@@ -52,40 +55,42 @@ def to_df(
         return pd.DataFrame()
 
     has_names = True
-    if isinstance(x, FixedEffect):
-        x = x.m
+    if isinstance(x, pd.DataFrame):
+        df = x
+    elif isinstance(x, FixedEffect):
+        df = x.m
     elif isinstance(x, pd.Series):
-        x = pd.DataFrame(x)
-    elif not isinstance(x, pd.DataFrame):
-        x = np.atleast_2d(x)
-        if x.shape[0] == 1:
-            x = x.T
-        x = pd.DataFrame(x)
+        df = pd.DataFrame(x)
+    else:
+        x_2d = np.atleast_2d(x)
+        if x_2d.shape[0] == 1:
+            x_2d = x_2d.T
+        df = pd.DataFrame(x_2d)
         has_names = False
 
-    if x.empty:
-        return x
+    if df.empty:
+        return df
 
-    if x.size == 1 and n > 1:
-        x = pd.concat([x] * n, ignore_index=True)
+    if df.size == 1 and n > 1:
+        df = pd.concat([df] * n, ignore_index=True)
 
     if names is None and (idx is not None or not has_names):
         if idx is None:
             idx = 0
-        names = ["x%d" % i for i in range(idx, idx + x.shape[1])]
+        names = ["x%d" % i for i in range(idx, idx + df.shape[1])]
 
     if names is not None:
-        if len(names) != x.shape[1]:
+        if len(names) != df.shape[1]:
             raise ValueError(
-                f"Number of columns {x.shape[1]} does not "
+                f"Number of columns {df.shape[1]} does not "
                 f"coincide with column names {names}"
             )
-        x.columns = names
+        df.columns = names
 
-    return pd.get_dummies(x)
+    return pd.get_dummies(df)
 
 
-def get_index(df: pd.DataFrame) -> int:
+def get_index(df: pd.DataFrame) -> Optional[int]:
     """Get index for column names of the form x{i}.
 
     If there are none, return 0.
@@ -404,7 +409,7 @@ class FixedEffect(object):
 
     def __getattr__(self, name: str) -> Any:
         if name in object.__getattribute__(self, "names"):
-            return object._getattribute__("m")[name].values
+            return object.__getattribute__(self, "m")[name].values
         if name in {"shape", "size", "empty"}:
             return getattr(self.m, name)
         return object.__getattribute__(self, name)
@@ -420,8 +425,8 @@ class MixedEffect:
         Default is None.
     fix : array-like or DataFrame, optional
         If None, the fixed effects.
-    name_ran : str, optional
-        Name for the random term. If None, it defauts to 'xi'.
+    name_ran : str, list, optional
+        Name(s) for the random term(s). If None, it defauts to 'xi'.
         Default is None.
     name_fix : str, optional
         Name for the `fix` term. If None, it defauts to 'xi'.
@@ -459,16 +464,16 @@ class MixedEffect:
         self,
         ran: Optional[Union[ArrayLike, pd.DataFrame]] = None,
         fix: Optional[Union[ArrayLike, pd.DataFrame]] = None,
-        name_ran: str = None,
-        name_fix: str = None,
+        name_ran: Optional[Union[str, List[str]]] = None,
+        name_fix: Optional[Union[str, List[str]]] = None,
         ranisvar: bool = False,
         add_intercept: bool = True,
         add_identity: bool = True,
     ) -> None:
 
         if isinstance(ran, MixedEffect):
-            self.mean = ran.mean
-            self.variance = ran.variance
+            self.mean = ran.mean  # type: ignore
+            self.variance = ran.variance  # type: ignore
             return
 
         if ran is None:
@@ -554,10 +559,10 @@ class MixedEffect:
         s.set_identity_last()
         return s
 
-    def __add__(self, r: Union[FixedEffect, "MixedEffect"]) -> "MixedEffect":
+    def __add__(self, r: Union[FixedEffect, "MixedEffect"]) -> "MixedEffect":  # type: ignore[misc]
         return self._add(r)
 
-    def __radd__(self, r: Union[FixedEffect, "MixedEffect"]) -> "MixedEffect":
+    def __radd__(self, r: Union[FixedEffect, "MixedEffect"]) -> "MixedEffect":  # type: ignore[misc]
         return self._add(r, side="right")
 
     def _sub(
@@ -656,10 +661,10 @@ class MixedEffect:
         s.set_identity_last()
         return s
 
-    def __mul__(self, r: Union[FixedEffect, "MixedEffect"]) -> "MixedEffect":
+    def __mul__(self, r: Union[FixedEffect, "MixedEffect"]) -> "MixedEffect":  # type: ignore[misc]
         return self._mul(r)
 
-    def __rmul__(self, r: Union[FixedEffect, "MixedEffect"]) -> "MixedEffect":
+    def __rmul__(self, r: Union[FixedEffect, "MixedEffect"]) -> "MixedEffect":  # type: ignore[misc]
         return self._mul(r, side="right")
 
     def __pow__(self, p: int) -> "MixedEffect":

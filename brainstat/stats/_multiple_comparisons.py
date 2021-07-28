@@ -1,3 +1,4 @@
+# type: ignore
 """Multiple comparison corrections."""
 import copy
 import math
@@ -48,7 +49,7 @@ def fdr(self) -> np.ndarray:
         reselspvert = np.ones((v))
 
     varA = np.append(10, self.t[0, self.mask.astype(bool)])
-    P_val = stat_threshold(df=df, p_val_peak=varA, nvar=float(self.k), nprint=0)[0]
+    P_val = stat_threshold(df=df, p_val_peak=varA, nvar=self.k, nprint=0)[0]
     P_val = P_val[1 : len(P_val)]
     nx = len(P_val)
     index = P_val.argsort()
@@ -132,9 +133,7 @@ def random_field_theory(self) -> valid_rft_output:
     if v == 1:
         varA = varA = np.concatenate((np.array([10]), self.t[0]))
         pval = {}
-        pval["P"] = stat_threshold(
-            df=df, p_val_peak=varA, nvar=float(self.k), nprint=0
-        )[0]
+        pval["P"] = stat_threshold(df=df, p_val_peak=varA, nvar=self.k, nprint=0)[0]
         pval["P"] = pval["P"][1]
         peak = []
         clus = []
@@ -143,10 +142,10 @@ def random_field_theory(self) -> valid_rft_output:
         return pval, peak, clus, clusid
 
     if self.cluster_threshold < 1:
-        thresh = stat_threshold(
-            df=df, p_val_peak=self.cluster_threshold, nvar=float(self.k), nprint=0
+        thresh_tmp = stat_threshold(
+            df=df, p_val_peak=self.cluster_threshold, nvar=self.k, nprint=0
         )[0]
-        thresh = float(thresh[0])
+        thresh = float(thresh_tmp[0])
     else:
         thresh = self.cluster_threshold
 
@@ -162,7 +161,7 @@ def random_field_theory(self) -> valid_rft_output:
             fwhm=1,
             df=df,
             p_val_peak=varA.flatten(),
-            nvar=float(self.k),
+            nvar=self.k,
             nprint=0,
         )[0]
         pval["P"] = pval["P"][1 : v + 1]

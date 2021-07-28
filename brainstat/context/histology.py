@@ -106,13 +106,15 @@ def compute_mpc(profile: np.ndarray, labels: np.ndarray) -> np.ndarray:
 
 
 def read_histology_profile(
-    data_dir: Optional[str] = None, template: str = "fsaverage", overwrite: bool = False
+    data_dir: Optional[Union[str, Path]] = None,
+    template: str = "fsaverage",
+    overwrite: bool = False,
 ) -> np.ndarray:
     """Reads BigBrain histology profiles.
 
     Parameters
     ----------
-    data_dir : str, None, optional
+    data_dir : str, pathlib.Path, None, optional
         Path to the data directory. If data is not found here then data will be
         downloaded. If None, data_dir is set to the home directory, by default None.
     template : str, optional
@@ -146,13 +148,15 @@ def read_histology_profile(
 
 
 def download_histology_profiles(
-    data_dir: Optional[str] = None, template: str = "fsaverage", overwrite: bool = False
+    data_dir: Optional[Union[str, Path]] = None,
+    template: str = "fsaverage",
+    overwrite: bool = False,
 ) -> None:
     """Downloads BigBrain histology profiles.
 
     Parameters
     ----------
-    data_dir : str, None, optional
+    data_dir : str, pathlib,Path, None, optional
         Path to the directory to store the data. If None, defaults to the home
         directory, by default None.
     template : str, optional

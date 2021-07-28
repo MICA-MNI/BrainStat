@@ -1,19 +1,21 @@
 """Operations on meshes."""
 
 import sys
-from typing import Optional, Tuple, Union
+from typing import TYPE_CHECKING, Optional, Tuple, Union
 
 import numpy as np
 from brainspace.mesh.mesh_elements import get_edges
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 
 from brainstat._typing import ArrayLike
-from brainstat.stats.SLM import SLM
 from brainstat.stats.utils import colon
+
+if TYPE_CHECKING:
+    from brainstat.stats.SLM import SLM  # type: ignore
 
 
 def mesh_edges(
-    surf: Union[dict, BSPolyData, SLM], mask: Optional[ArrayLike] = None
+    surf: Union[dict, BSPolyData, "SLM"], mask: Optional[ArrayLike] = None
 ) -> np.ndarray:
     """Converts the triangles or lattices of a mesh to edges.
 
@@ -33,8 +35,7 @@ def mesh_edges(
 
     # This doesn't strictly test that its BrainStat SLM, but we can't import
     # directly without causing a circular import.
-    class_name = surf.__class__.__name__
-    if class_name == "SLM":
+    if not isinstance(surf, dict) and not isinstance(surf, BSPolyData):
         if surf.tri is not None:
             surf = {"tri": surf.tri}
         elif surf.lat is not None:
@@ -149,13 +150,13 @@ def mesh_edges(
             if f:
                 for k in colon(2, K - 1, 2):
                     edg[(k - 1) * n1 + np.arange(0, n1), :] = (
-                        np.block([[edg0], [edg2], [edg1], [IJ, 2 * IJ]]) + (k - 1) * IJ
+                        np.block([[edg0], [edg2], [edg1], [IJ, 2 * IJ]]) + (k - 1) * IJ  # type: ignore
                     )
 
             else:
                 for k in colon(1, K - 1, 2):
                     edg[(k - 1) * n1 + np.arange(0, n1), :] = (
-                        np.block([[edg0], [edg1], [edg2], [IJ, 2 * IJ]]) + (k - 1) * IJ
+                        np.block([[edg0], [edg1], [edg2], [IJ, 2 * IJ]]) + (k - 1) * IJ  # type: ignore
                     )
 
             if np.remainder((K + 1), 2) == f:
@@ -198,7 +199,7 @@ def mesh_edges(
 
 def _mask_edges(edges: np.ndarray, mask: ArrayLike) -> Tuple[np.ndarray, np.ndarray]:
     # TODO: this section is sloppily written.
-    missing_edges = np.where(~mask)
+    missing_edges = np.where(np.logical_not(mask))
     remove_edges = np.zeros(edges.shape, dtype=bool)
     for i in range(edges.shape[0]):
         for j in range(edges.shape[1]):

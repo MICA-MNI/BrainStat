@@ -1,7 +1,7 @@
 """Utilities for the stats functions."""
 
 import warnings
-from typing import Callable, Tuple, Union
+from typing import Callable, List, Optional, Tuple, Union
 
 import numpy as np
 from scipy.interpolate import interp1d
@@ -9,7 +9,7 @@ from scipy.interpolate import interp1d
 from brainstat._typing import ArrayLike
 
 
-def row_ismember(a: np.ndarray, b: np.ndarray) -> np.ndarray:
+def row_ismember(a: np.ndarray, b: np.ndarray) -> List[Optional[int]]:
     """Tests whether rows of a occur in b.
 
     Parameters
@@ -21,7 +21,7 @@ def row_ismember(a: np.ndarray, b: np.ndarray) -> np.ndarray:
 
     Returns
     -------
-    numpy.array
+    list
         Indices of rows in a that occur in b.
     """
 
