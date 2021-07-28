@@ -1,5 +1,3 @@
-Contents of this directory were published with the following license:
-
 Copyright (c) 2020 Washington University School of Medicine
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following

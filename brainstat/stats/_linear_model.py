@@ -1,5 +1,6 @@
 import warnings
 from copy import deepcopy
+from typing import Optional, Tuple, Union
 
 import numpy as np
 import numpy.linalg as la
@@ -10,7 +11,7 @@ from brainstat.mesh.utils import mesh_edges
 from brainstat.stats.terms import FixedEffect, MixedEffect
 
 
-def linear_model(self, Y):
+def linear_model(self, Y: Union[np.ndarray, FixedEffect]) -> None:
     """Fits linear mixed effects models to surface data and estimates resels.
 
     Parameters
@@ -47,7 +48,16 @@ def linear_model(self, Y):
         setattr(self, key, mesh_connections[key])
 
 
-def _run_linear_model(self, Y):
+def _run_linear_model(
+    self, Y: np.ndarray
+) -> Tuple[
+    np.ndarray,
+    Optional[np.ndarray],
+    np.ndarray,
+    np.ndarray,
+    Optional[np.ndarray],
+    Optional[np.ndarray],
+]:
     """Runs a linear model and returns relevant parameters.
 
     Parameters
@@ -95,7 +105,9 @@ def _run_linear_model(self, Y):
     return residuals, V, coef, SSE, r, dr
 
 
-def _model_univariate_fixed_effects(self, Y):
+def _model_univariate_fixed_effects(
+    self, Y: np.ndarray
+) -> Tuple[np.ndarray, Optional[np.ndarray], np.ndarray, np.ndarray]:
     """Runs a univariate fixed effects linear model
 
     Parameters
@@ -132,7 +144,7 @@ def _model_univariate_fixed_effects(self, Y):
     return residuals, V, coef, SSE
 
 
-def _model_univariate_mixed_effects(self, Y):
+def _model_univariate_mixed_effects(self, Y: np.ndarray) -> Tuple[np.ndarray, ...]:
     """Runs a univariate linear mixed effects model.
 
     Parameters
@@ -255,7 +267,9 @@ def _model_univariate_mixed_effects(self, Y):
     return residuals, V, coef, SSE, r, dr[:, None]
 
 
-def _model_multivariate_fixed_effects(self, Y):
+def _model_multivariate_fixed_effects(
+    self, Y: np.ndarray
+) -> Tuple[np.ndarray, Optional[np.ndarray], np.ndarray, np.ndarray]:
     """Runs a multivariate linear fixed effects model.
 
     Parameters
@@ -302,12 +316,12 @@ def _model_multivariate_fixed_effects(self, Y):
     return residuals, V, coef, SSE
 
 
-def _get_design_matrix(self, n_samples):
+def _get_design_matrix(self, n_samples: int) -> Tuple[np.ndarray, Optional[np.ndarray]]:
     """Wrapper for fetching the design matrix
 
     Parameters
     ----------
-    n_samples : numpy.array
+    n_samples: int
         Scalar describing the number of samples.
 
     Returns
@@ -326,7 +340,7 @@ def _get_design_matrix(self, n_samples):
     return X, V
 
 
-def _get_mixed_design(self):
+def _get_mixed_design(self) -> Tuple[np.ndarray, Optional[np.ndarray]]:
     """Fetches the design matrix from a mixed effects model.
 
     Parameters
@@ -365,12 +379,12 @@ def _get_mixed_design(self):
     return X, V
 
 
-def _get_fixed_design(self, n_samples):
+def _get_fixed_design(self, n_samples: int) -> np.ndarray:
     """Fetches the design matrix from a fixed effects model.
 
     Parameters
     ----------
-    n_samples : numpy.array
+    n_samples : int
         Scalar describing the number of samples.
 
     Returns
@@ -394,7 +408,7 @@ def _get_fixed_design(self, n_samples):
     return X
 
 
-def _compute_resls(self, Y):
+def _compute_resls(self, Y: np.ndarray) -> Tuple[np.ndarray, dict]:
     """Computes the sum over observations of squares of differences of
     normalized residuals along each edge.
 
@@ -435,7 +449,7 @@ def _compute_resls(self, Y):
     return resl, mesh_connections
 
 
-def _check_constant_term(X):
+def _check_constant_term(X: np.ndarray) -> None:
     """Checks whether an error term was provided.
 
     Parameters
@@ -448,7 +462,7 @@ def _check_constant_term(X):
         warnings.warn("Did you forget an error term, I? :-)")
 
 
-def _get_n_random_effects(self):
+def _get_n_random_effects(self) -> int:
     """Gets the number of random effects.
 
     Returns

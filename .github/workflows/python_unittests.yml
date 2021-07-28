@@ -30,9 +30,16 @@ jobs:
         [[ -z $(git remote show origin | grep "Fetch URL:" | grep git@github.com:MICA-MNI/BrainStat.git) ]] && git config remote.upstream.fetch refs/heads/*:refs/remotes/upstream/* || git config remote.origin.fetch refs/heads/*:refs/origin/upstream/*
         git fetch origin test-data-2.0
         python -m pip install --upgrade pip
-        pip install pytest gitpython
+        pip install pytest mypy gitpython
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
     - name: Test with pytest
+      shell: bash
       run: |
         python3 -m pytest
+      
+    - name: Test with mypy
+      shell: bash
+      if: ${{ matrix.python-version == 3.9 }}
+      run: |
+        python3 -m mypy $(find brainstat -path "*tests*" -prune -false -o -name "*.py")

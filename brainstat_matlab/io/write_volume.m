@@ -8,9 +8,9 @@ addParameter(p,'description',[])
 parse(p,varargin{:}); 
 
 if endsWith(filename,{'.nii','.nii.gz'})
-    nii = nifti_toolbox.make_nii(vol, p.Results.voxelsize, p.Results.origin, ...
+    nii = io_utils.nifti_toolbox.make_nii(vol, p.Results.voxelsize, p.Results.origin, ...
         p.Results.datatype,p.Results.description);
-    nifti_toolbox.save_nii(nii,filename)
+    io_utils.nifti_toolbox.save_nii(nii,filename)
 else
     error('Only the writing of nifti files is supported.');
 end

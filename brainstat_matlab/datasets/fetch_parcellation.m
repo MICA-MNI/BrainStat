@@ -6,6 +6,10 @@ function parcellation = fetch_parcellation(atlas, template, n_regions, options)
 %   template. By default, a pial surface is loaded for fsaverage templates
 %   and a midthickness surface is loaded for conte69.
 %
+%   Supported number of regions for the Schaefer atlas are: 100, 200, 300,
+%   400, 500, 600, 800, 1000. Supported number of regions for the Cammoun
+%   atlas are: 33, 60, 125, 250, 500.
+%
 %   Valid name-value pairs are:
 %       'data_dir': a char containing the path to the location to store the
 %           data. Defaults to ${HOME_DIRECTORY}/brainstat_data/surfaces.
@@ -40,7 +44,7 @@ parcellation = read_parcellation_from_targz(...
 
 end
 
-function parcellation = read_parcellation_from_targz(filename, template, parcellation, n_regions, seven_networks)
+function labels = read_parcellation_from_targz(filename, template, parcellation, n_regions, seven_networks)
 % Reads the requested file from a .tar.gz file. 
 data_dir = fileparts(filename);
 
@@ -48,7 +52,11 @@ gunzip(filename)
 untar(filename(1:end-3), data_dir)
 
 if template == "fslr32k"
-    extension = ".dlabel.nii";
+    if parcellation == "schaefer"
+        extension = ".dlabel.nii";
+    else
+        extension = ".label.gii";
+    end
 else
     extension = ".annot";
 end
@@ -73,38 +81,22 @@ switch parcellation
     case {'cammoun', 'cammoun2012'}
         files = string(data_dir) + filesep + "atl-cammoun2012" + filesep + template + ...
             filesep + "atl-Cammoun2012_space-" + template + "_res-" + sprintf('%03d', n_regions) + ...
-            "_hemi-" + ["L", "R"] + "_deterministic.annot";
+            "_hemi-" + ["L", "R"] + "_deterministic" + extension;
     otherwise
         error('Unknown parcellation %s.', parcellation);
 end
 
-if endsWith(files{1}, '.dlabel.nii')
-    cii = brainstat_cifti_matlab.cifti_read(char(files));
-    parcellation = cii.cdata;
-elseif endsWith(files{1}, '.annot')
-    parcellation = annot2parcellation(files);
+labels = read_surface_data(files);
+if iscell(labels)
+    labels = cell2mat(labels(:));
+end
+
+if endsWith(files{1}, '.annot')
+    labels = labels - 1;
     if startsWith(parcellation, 'schaefer')
-        parcellation(end/2+1:end) = parcellation(end/2+1:end) + n_regions / 2;
-    end
-else
-    error('Unknown file extension for %s.', files{1})
-end
-   
-end
-
-function parcellation = annot2parcellation(files)
-
-for ii = 1:numel(files)
-    [~, labels_tmp, color_table] = io_utils.freesurfer.read_annotation(files{ii});
-    [vertex_id, labels_compress] = find(labels_tmp == color_table.table(:,5)');
-    [~, indices] = sort(vertex_id);
-    labels{ii} = labels_compress(indices);
-
-    % Sanity check that we find the correct number of labels:
-    if numel(labels{ii}) ~= numel(labels_tmp)
-        error('Woops! Seems like something is wrong with this .annot file.');
+        labels(end/2+1:end) = labels(end/2+1:end) + n_regions / 2;
     end
 end
-parcellation = [labels{1}; labels{2}];
 end
+
 

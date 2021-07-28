@@ -1,62 +1,15 @@
 """Operations on data on a mesh."""
-
-import sys
+from typing import Union
 
 import numpy as np
+from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 
 from .utils import mesh_edges
 
 
-def mesh_normalize(Y, mask=None, subdiv="s"):
-    """Normalizes by subtracting the global mean, or dividing it.
-
-    Parameters
-    ----------
-    Y : numpy.ndarray
-        Data to be normalized, shape of (n,v) or (n,v,k).
-    mask : numpy.ndarray, bool
-        Optional mask.
-    subdiv : str
-        If 's', it demeans 'Y', if 'd', it standardizes to mean 0,
-        standard deviation 100.
-
-    Returns
-    -------
-    numpy.ndarray
-        Normalized data of shape (n,v) or (n,v,k).
-    numpy.ndarray
-        Mean of the input Y along the maks, shape of (n,1) or (n,k)
-    """
-
-    Y = np.array(Y, dtype="float64")
-
-    if np.ndim(Y) < 2:
-        sys.exit("input array should be np.ndims >= 2, tip: reshape it!")
-    elif np.ndim(Y) == 2:
-        n, v = np.shape(Y)
-        k = 1
-    elif np.ndim(Y) > 2:
-        n, v, k = np.shape(Y)
-
-    if mask is None:
-        mask = np.array(np.ones(v), dtype=bool)
-
-    if np.ndim(Y) == 2:
-        Yav = np.mean(Y[:, mask], axis=1)
-        Yav = Yav.reshape(len(Yav), 1)
-    elif np.ndim(Y) > 2:
-        Yav = np.mean(Y[:, mask, :], axis=1)
-        Yav = np.expand_dims(Yav, axis=1)
-
-    if subdiv == "s":
-        Y = Y - Yav
-    elif subdiv == "d":
-        Y = Y / Yav
-
-    return Y, np.squeeze(Yav)
-
-
-def mesh_smooth(Y, surf, FWHM):
+def mesh_smooth(
+    Y: np.ndarray, surf: Union[dict, BSPolyData], FWHM: float
+) -> np.ndarray:
     """Smooths surface data by repeatedly averaging over edges.
 
     Parameters
@@ -129,52 +82,3 @@ def mesh_smooth(Y, surf, FWHM):
         print("Done")
 
     return Y
-
-
-def mesh_standardize(Y, mask=None, subdiv="s"):
-    """Standardizes by subtracting the global mean, or dividing it.
-
-    Parameters
-    ----------
-    Y : numpy.ndarray
-        Data to be standardized, shape of (n,v).
-    mask : numpy.ndarray, bool
-        Optional mask of shape (1,v).
-    subdiv : str
-        If 's', it demeans Y; if 'd', it standardizes Y to the mean 0,
-        standard deviation 100.
-
-    Returns
-    -------
-    numpy.ndarray
-        Standardized data of shape (n,v).
-    numpy.ndarray
-        Mean of the input Y along the mask.
-    """
-
-    Y = np.array(Y, dtype="float64")
-
-    if mask is None:
-        mask = np.array(np.ones(Y.shape[1]), dtype=bool)
-
-    if np.ndim(Y) < 2:
-        sys.exit("input array should be np.ndims >= 2, tip: reshape it!")
-    elif np.ndim(Y) == 2:
-        Ym = Y[:, mask].mean(axis=1)
-        Ym = Ym.reshape(len(Ym), 1)
-        for i in range(0, Y.shape[0]):
-            if subdiv == "s":
-                Y[i, :] = Y[i, :] - Ym[i]
-            elif subdiv == "d":
-                Y[i, :] = (Y[i, :] / Ym[i] - 1) * 100
-
-    elif np.ndim(Y) > 2:
-        Ym = np.mean(Y[:, mask, 0], axis=1)
-        Ym = Ym.reshape(len(Ym), 1)
-        for i in range(0, Y.shape[0]):
-            if subdiv == "s":
-                Y[i, :, :] = Y[i, :, :] - Ym[i]
-            elif subdiv == "d":
-                Y[i, :, :] = (Y[i, :, :] / Ym[i] - 1) * 100
-
-    return Y, Ym
