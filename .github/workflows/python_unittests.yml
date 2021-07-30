@@ -29,9 +29,7 @@ jobs:
       run: | 
         [[ -z $(git remote show origin | grep "Fetch URL:" | grep git@github.com:MICA-MNI/BrainStat.git) ]] && git config remote.upstream.fetch refs/heads/*:refs/remotes/upstream/* || git config remote.origin.fetch refs/heads/*:refs/origin/upstream/*
         git fetch origin test-data-2.0
-        python -m pip install --upgrade pip
-        pip install pytest mypy gitpython
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        python -m pip install -e .[dev]
 
     - name: Test with pytest
       shell: bash
