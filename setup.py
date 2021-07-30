@@ -31,11 +31,11 @@ setuptools.setup(
         "Intended Audience :: Developers",
         "Topic :: Software Development :: Build Tools",
         "Topic :: Scientific/Engineering",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
     ],
-    python_requires=">=3.6.*",
+    python_requires=">=3.7.*",
     test_require=["pytest", "gitpython"],
     install_requires=[
         "abagen>=0.1",

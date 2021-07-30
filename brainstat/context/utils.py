@@ -4,7 +4,7 @@ import gzip
 import os
 import shutil
 import tempfile
-from typing import List, Tuple, Union
+from typing import List, Sequence, Tuple, Union
 
 import nibabel as nib
 import numpy as np
@@ -26,7 +26,7 @@ def multi_surface_to_volume(
     white: valid_surfaces,
     volume_template: Union[str, nib.nifti1.Nifti1Image],
     output_file: str,
-    labels: Union[str, np.ndarray, List[Union[np.ndarray, str]]],
+    labels: Union[str, np.ndarray, Sequence[Union[np.ndarray, str]]],
     interpolation: str = "nearest",
 ) -> None:
     """Interpolates multiple surfaces to the volume.
@@ -39,14 +39,14 @@ def multi_surface_to_volume(
     white : str, BSPolyData, list, tuple
         Path of a white matter surface file, BSPolyData of a pial surface or a
         list containing multiple of the aforementioned.
-    labels : str, numpy.ndarray, list, tuple
-        Path to a label file for the surfaces, numpy array containing the
-        labels, or a list containing multiple of the aforementioned.
-    output_file: str
-        Path to the output file, must end in .nii or .nii.gz.
     volume_template : str, nibabel.nifti1.Nifti1Image
         Path to a nifti file to use as a template for the surface to volume
         procedure, or a loaded NIfTI image.
+    output_file: str
+        Path to the output file, must end in .nii or .nii.gz.
+    labels : str, numpy.ndarray, list, tuple
+        Path to a label file for the surfaces, numpy array containing the
+        labels, or a list containing multiple of the aforementioned.
     interpolation : str
         Either 'nearest' for nearest neighbor interpolation, or 'linear'
         for trilinear interpolation, defaults to 'nearest'.

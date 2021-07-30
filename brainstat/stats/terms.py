@@ -1,6 +1,6 @@
 """Classes for fixed, mixed, and random effects."""
 import re
-from typing import Any, List, Optional, Union
+from typing import Any, List, Optional, Sequence, Union
 
 import numpy as np
 import pandas as pd
@@ -25,7 +25,7 @@ def check_names(
 def to_df(
     x: Union[int, ArrayLike, "FixedEffect"],
     n: int = 1,
-    names: Optional[Union[str, List[str]]] = None,
+    names: Optional[Union[str, Sequence[str]]] = None,
     idx: Optional[int] = None,
 ) -> pd.DataFrame:
     """Convert input to DataFrame.
@@ -37,7 +37,7 @@ def to_df(
     n : int, optional
         If input is a scalar, broadcast to column of `n` entries.
         Default is 1.
-    names : str, list of str or None, optional
+    names : str, sequence of str or None, optional
         Names for each column in `x`. Default is None.
     idx : int or None, optional
         Staring index for variable names of the for `x{i}`.
@@ -244,7 +244,7 @@ class FixedEffect(object):
     def __init__(
         self,
         x: Optional[Union[ArrayLike, pd.DataFrame]] = None,
-        names: Optional[Union[str, List[str]]] = None,
+        names: Optional[Union[str, Sequence[str]]] = None,
         add_intercept: bool = True,
     ) -> None:
 
@@ -462,8 +462,8 @@ class MixedEffect:
         self,
         ran: Optional[Union[ArrayLike, pd.DataFrame]] = None,
         fix: Optional[Union[ArrayLike, pd.DataFrame]] = None,
-        name_ran: Optional[Union[str, List[str]]] = None,
-        name_fix: Optional[Union[str, List[str]]] = None,
+        name_ran: Optional[Union[str, Sequence[str]]] = None,
+        name_fix: Optional[Union[str, Sequence[str]]] = None,
         ranisvar: bool = False,
         add_intercept: bool = True,
         add_identity: bool = True,
