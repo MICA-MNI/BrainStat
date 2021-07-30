@@ -3,38 +3,44 @@ import logging
 import os
 import tempfile
 from pathlib import Path
+from typing import Optional, Sequence, Tuple, Union
 
 import nimare
+import numpy as np
+import pandas as pd
+from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 from neurosynth.base.dataset import Dataset, download
+from nibabel.nifti1 import NiftiImage
 from nilearn.datasets import load_mni152_brain_mask
+from nilearn.input_data import NiftiMasker
 
 from .utils import multi_surface_to_volume
 
 
 def surface_decode_nimare(
-    pial,
-    white,
-    stat_labels,
-    mask_labels,
-    interpolation="linear",
-    data_dir=None,
-    feature_group=None,
-    features=None,
-):
+    pial: Union[str, BSPolyData, Sequence[Union[str, BSPolyData]]],
+    white: Union[str, BSPolyData, Sequence[Union[str, BSPolyData]]],
+    stat_labels: Union[str, np.ndarray, Sequence[Union[str, np.ndarray]]],
+    mask_labels: Union[str, np.ndarray, Sequence[Union[str, np.ndarray]]],
+    interpolation: str = "linear",
+    data_dir: str = None,
+    feature_group: str = None,
+    features: Sequence[str] = None,
+) -> pd.DataFrame:
     """Meta-analytic decoding of surface maps using NeuroSynth or Brainmap.
 
     Parameters
     ----------
-    pial : str, BSPolyData, list
+    pial : str, BSPolyData, sequence of str or BSPolyData
         Path of a pial surface file, BSPolyData of a pial surface or a list
         containing multiple of the aforementioned.
-    white : str, BSPolyData, list
+    white : str, BSPolyData, sequence of str or BSPolyData
         Path of a white matter surface file, BSPolyData of a pial surface or a
         list containing multiple of the aforementioned.
-    stat_labels : str, numpy.ndarray, list
+    stat_labels : str, numpy.ndarray, sequence of str or numpy.ndarray
         Path to a label file for the surfaces, numpy array containing the
         labels, or a list containing multiple of the aforementioned.
-    mask_labels : str, numpy.ndarray, list
+    mask_labels : str, numpy.ndarray, sequence of str of or numpy.ndarray
         Path to a mask file for the surfaces, numpy array containing the
         mask, or a list containing multiple of the aforementioned. If None
         all vertices are included in the mask. Defaults to None.
@@ -66,20 +72,20 @@ def surface_decode_nimare(
     mask_image = tempfile.NamedTemporaryFile(suffix=".nii.gz")
 
     multi_surface_to_volume(
-        pial,
-        white,
-        mni152,
-        stat_labels,
-        stat_image.name,
+        pial=pial,
+        white=white,
+        volume_template=mni152,
+        output_file=stat_image.name,
+        labels=stat_labels,
         interpolation=interpolation,
     )
     multi_surface_to_volume(
-        pial,
-        white,
-        mni152,
-        mask_labels,
-        mask_image.name,
-        interpolation="nearest",
+        pial=pial,
+        white=white,
+        volume_template=mni152,
+        output_file=mask_image.name,
+        labels=mask_labels,
+        interpolation=interpolation,
     )
 
     dataset = fetch_nimare_dataset(data_dir, mask=mask_image.name, keep_neurosynth=True)
@@ -96,7 +102,11 @@ def surface_decode_nimare(
     return decoder.transform(stat_image.name)
 
 
-def fetch_nimare_dataset(data_dir, mask=None, keep_neurosynth=True):
+def fetch_nimare_dataset(
+    data_dir: str,
+    mask: Optional[Union[str, NiftiImage, NiftiMasker]] = None,
+    keep_neurosynth: bool = True,
+) -> str:
     """Downloads the nimare dataset and fetches its path.
 
     Parameters
@@ -126,7 +136,7 @@ def fetch_nimare_dataset(data_dir, mask=None, keep_neurosynth=True):
         D = tempfile.TemporaryDirectory()
         ns_dir = D.name
 
-    ns_data_file, ns_feature_file = fetch_neurosynth_dataset(ns_dir, return_pkl=False)
+    ns_data_file, ns_feature_file = fetch_neurosynth_dataset(ns_dir, return_pkl=False)  # type: ignore
 
     ns_dict = nimare.io.convert_neurosynth_to_dict(
         ns_data_file, annotations_file=ns_feature_file
@@ -138,7 +148,9 @@ def fetch_nimare_dataset(data_dir, mask=None, keep_neurosynth=True):
     return dset
 
 
-def fetch_neurosynth_dataset(data_dir, return_pkl=True):
+def fetch_neurosynth_dataset(
+    data_dir: str, return_pkl: bool = True
+) -> Union[Tuple[str, str], str]:
     """Downloads the Neurosynth dataset
 
     Parameters

@@ -1065,7 +1065,7 @@ def compute_resels(self) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         Array of edge indices.
     """
 
-    def pacos(x):
+    def pacos(x: ArrayLike) -> np.ndarray:
         return np.arccos(np.minimum(np.abs(x), 1) * np.sign(x))
 
     if self.tri is not None:

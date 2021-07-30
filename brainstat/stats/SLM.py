@@ -2,7 +2,7 @@
 """ Standard Linear regression models. """
 import warnings
 from cmath import sqrt
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Sequence, Tuple, Union
 
 import numpy as np
 from brainspace.mesh.mesh_elements import get_cells, get_points
@@ -30,7 +30,7 @@ class SLM:
         surf: Optional[Union[dict, BSPolyData]] = None,
         mask: Optional[ArrayLike] = None,
         *,
-        correction: Optional[Union[str, List[str], Tuple[str, ...]]] = None,
+        correction: Optional[Union[str, Sequence[str]]] = None,
         niter: int = 1,
         thetalim: float = 0.01,
         drlim: float = 0.1,
@@ -52,8 +52,8 @@ class SLM:
         mask : array-like, optional
             A mask containing True for vertices to include in the analysis, by
             default None.
-        correction : str, list, tuple, optional
-            String or list of strings. If it contains "rft" a random field
+        correction : str, Sequence, optional
+            String or sequence of strings. If it contains "rft" a random field
             theory multiple comparisons correction will be run. If it contains
             "fdr" a false discovery rate multiple comparisons correction will be
             run. Both may be provided. By default None.

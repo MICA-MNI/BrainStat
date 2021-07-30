@@ -1,5 +1,5 @@
 """Genetic decoding using abagen."""
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Sequence, Union
 
 import numpy as np
 import pandas as pd
@@ -7,8 +7,8 @@ from abagen import check_atlas, get_expression_data
 
 
 def surface_genetic_expression(
-    labels: Union[List[str], np.ndarray],
-    surfaces: Union[List[str], Tuple[str, ...]] = None,
+    labels: Union[Sequence[str], np.ndarray],
+    surfaces: Optional[Union[str, Sequence[str]]] = None,
     space: Optional[str] = None,
     *,
     atlas_info: str = None,
