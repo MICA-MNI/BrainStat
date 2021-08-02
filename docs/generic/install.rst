@@ -9,11 +9,11 @@ BrainStat is available in Python and MATLAB.
 Python installation
 -------------------
 
-BrainStat is compatible with Python 3.7+. 
+BrainStat requires Python 3.7+. Assuming you have the correct version of Python
+installed and aliased to `python`, you can install BrainStat by running the
+following ::
 
-The latest version of BrainStat can be installed using ``pip``: ::
-
-    pip install brainstat
+    python -m pip install brainstat
 
 Python Dependencies
 +++++++++++++++++++++++
