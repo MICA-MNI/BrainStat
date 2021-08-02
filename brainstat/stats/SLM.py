@@ -206,11 +206,7 @@ class SLM:
     def __str__(self) -> str:
         """Returns a string representation of the model."""
         return pformat(
-            {
-                key: value
-                for key, value in self.__dict__.items()
-                if not callable(value)
-            }
+            {key: value for key, value in self.__dict__.items() if not callable(value)}
         )
 
     """ Property specifications. """
