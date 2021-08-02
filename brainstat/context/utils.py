@@ -60,14 +60,14 @@ def multi_surface_to_volume(
 
     # Deal with variety of ways to provide input.
     if type(pial) is not type(white):
-        ValueError("Pial and white must be of the same type.")
+        raise ValueError("Pial and white must be of the same type.")
 
     pial_list = _input_to_list(pial)
     white_list = _input_to_list(white)
     labels_list = _input_to_list(labels)
 
     if len(pial_list) is not len(white):
-        ValueError("The same number of pial and white surfces must be provided.")
+        raise ValueError("The same number of pial and white surfces must be provided.")
 
     for i in range(len(pial_list)):
         if not isinstance(pial_list[i], BSPolyData):
@@ -154,7 +154,7 @@ def load_mesh_labels(label_file: str, as_int: bool = True) -> np.ndarray:
     elif label_file.endswith(".csv"):
         labels = np.loadtxt(label_file)
     else:
-        ValueError("Unrecognized label file type.")
+        raise ValueError("Unrecognized label file type.")
 
     if as_int:
         labels = np.round(labels).astype(int)
