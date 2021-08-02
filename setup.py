@@ -6,13 +6,14 @@ https://packaging.python.org/guides/distributing-packages-using-setuptools/
 """
 
 import setuptools
+from brainstat import __version__ as brainstat_version
 
 with open("README.rst", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name="brainstat",
-    version="0.2.2",
+    version=brainstat_version,
     author="MNI-MICA Lab and MPI-CNG Lab",
     author_email="reinder.vosdewael@gmail.com, sheymaba@gmail.com",
     description="A toolbox for statistical analysis of neuroimaging data",
@@ -30,7 +31,7 @@ setuptools.setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
     ],
-    python_requires=">=3.7.*",
+    python_requires=">=3.6.*",
     install_requires=[
         "abagen>=0.1",
         "brainspace>=0.1.2",
