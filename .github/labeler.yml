@@ -3,10 +3,14 @@ Documentation:
   - docs/**/*
   - ./*.rst
   - ./*.md
+  - LICENSE
+  - .readthedocs.yml
 
 Python:
   - brainstat/*
   - brainstat/**/*
+  - setup.py
+  - requirements.txt
 
 MATLAB:
   - brainstat_matlab/*

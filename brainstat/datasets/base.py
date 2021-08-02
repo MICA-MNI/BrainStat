@@ -12,9 +12,9 @@ from nibabel.freesurfer.io import read_annot, read_geometry
 
 
 def fetch_parcellation(
+    template: str,
     atlas: str,
     n_regions: int,
-    template: str = "fsaverage5",
     join: bool = True,
     seven_networks: bool = True,
     data_dir: Optional[str] = None,
@@ -23,15 +23,15 @@ def fetch_parcellation(
 
     Parameters
     ----------
+    template : str,
+        The surface template. Valid values are "fsaverage", "fsaverage5",
+        "fsaverage6", "fslr32k", by default "fsaverage5".
     atlas : str
         Name of the atlas. Valid names are "schaefer", "cammoun".
     n_regions : int
         Number of regions of the requested atlas. Valid values for the "schaefer " atlas are
         100, 200, 300, 400, 500, 600, 800, 1000. Valid values for the cammoun atlas are 33,
         60, 125, 250, 500.
-    template : str, optional
-        The surface template. Valid values are "fsaverage", "fsaverage5",
-        "fsaverage6", "fslr32k", by default "fsaverage5".
     join : bool, optional
         If true, returns parcellation as a single array, if false, returns an
         array per hemisphere, by default True.

@@ -32,7 +32,7 @@ jobs:
 
     - name: Modify MATLAB version and path
       run: |
-        current_release=$(cat setup.py | grep "version=" | grep -Eo "[0-9]\.[0-9]\.[0-9]")
+        current_release=$(cat brainstat/__init__.py | grep "__version__ =" | grep -Eo "[0-9]\.[0-9]\.[0-9]")
         brainstat_dir=$(pwd)
         sed -i "s:<param\.version>.*</param\.version>:<param\.version>${current_release}</param\.version>:" .github/matlab_toolbox/BrainStat.prj
         sed -i "s:BRAINSTAT_DIR/:${brainstat_dir}/:g" .github/matlab_toolbox/BrainStat.prj

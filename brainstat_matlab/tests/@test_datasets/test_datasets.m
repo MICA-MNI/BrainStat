@@ -44,7 +44,7 @@ classdef test_datasets < matlab.unittest.TestCase
                     for template = ["fsaverage5", "fsaverage6", "fsaverage", "fslr32k"]
                         for networks = seven_networks
                             try
-                                parcellation = fetch_parcellation(atlas, template, n, 'seven_networks', networks);
+                                parcellation = fetch_parcellation(template, atlas, n, 'seven_networks', networks);
                             catch err
                                 if err.identifier == "MATLAB:UndefinedFunction" && contains(err.message, '''gifti''')
                                     continue

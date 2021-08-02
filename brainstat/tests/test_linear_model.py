@@ -33,7 +33,7 @@ def dummy_test(infile, expfile):
     slm = SLM(M, FixedEffect(1), surf=Din["surf"])
 
     # here we go --> run the linear model
-    slm.linear_model(Y)
+    slm._linear_model(Y)
 
     ofile = open(expfile, "br")
     Dout = pickle.load(ofile)

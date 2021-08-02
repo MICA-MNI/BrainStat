@@ -1,5 +1,5 @@
 Contributing to BrainStat
-====================
+=========================
 
 .. start-marker-cont
 

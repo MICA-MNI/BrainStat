@@ -4,7 +4,7 @@ import gzip
 import os
 import shutil
 import tempfile
-from typing import List, Tuple, Union
+from typing import List, Sequence, Tuple, Union
 
 import nibabel as nib
 import numpy as np
@@ -26,7 +26,7 @@ def multi_surface_to_volume(
     white: valid_surfaces,
     volume_template: Union[str, nib.nifti1.Nifti1Image],
     output_file: str,
-    labels: Union[str, np.ndarray, List[Union[np.ndarray, str]]],
+    labels: Union[str, np.ndarray, Sequence[Union[np.ndarray, str]]],
     interpolation: str = "nearest",
 ) -> None:
     """Interpolates multiple surfaces to the volume.
@@ -39,14 +39,14 @@ def multi_surface_to_volume(
     white : str, BSPolyData, list, tuple
         Path of a white matter surface file, BSPolyData of a pial surface or a
         list containing multiple of the aforementioned.
-    labels : str, numpy.ndarray, list, tuple
-        Path to a label file for the surfaces, numpy array containing the
-        labels, or a list containing multiple of the aforementioned.
-    output_file: str
-        Path to the output file, must end in .nii or .nii.gz.
     volume_template : str, nibabel.nifti1.Nifti1Image
         Path to a nifti file to use as a template for the surface to volume
         procedure, or a loaded NIfTI image.
+    output_file: str
+        Path to the output file, must end in .nii or .nii.gz.
+    labels : str, numpy.ndarray, list, tuple
+        Path to a label file for the surfaces, numpy array containing the
+        labels, or a list containing multiple of the aforementioned.
     interpolation : str
         Either 'nearest' for nearest neighbor interpolation, or 'linear'
         for trilinear interpolation, defaults to 'nearest'.
@@ -60,14 +60,14 @@ def multi_surface_to_volume(
 
     # Deal with variety of ways to provide input.
     if type(pial) is not type(white):
-        ValueError("Pial and white must be of the same type.")
+        raise ValueError("Pial and white must be of the same type.")
 
     pial_list = _input_to_list(pial)
     white_list = _input_to_list(white)
     labels_list = _input_to_list(labels)
 
     if len(pial_list) is not len(white):
-        ValueError("The same number of pial and white surfces must be provided.")
+        raise ValueError("The same number of pial and white surfces must be provided.")
 
     for i in range(len(pial_list)):
         if not isinstance(pial_list[i], BSPolyData):
@@ -154,7 +154,7 @@ def load_mesh_labels(label_file: str, as_int: bool = True) -> np.ndarray:
     elif label_file.endswith(".csv"):
         labels = np.loadtxt(label_file)
     else:
-        ValueError("Unrecognized label file type.")
+        raise ValueError("Unrecognized label file type.")
 
     if as_int:
         labels = np.round(labels).astype(int)

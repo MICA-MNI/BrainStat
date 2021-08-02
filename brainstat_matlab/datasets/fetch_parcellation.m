@@ -1,6 +1,6 @@
-function parcellation = fetch_parcellation(atlas, template, n_regions, options)
+function parcellation = fetch_parcellation(template, atlas, n_regions, options)
 % FETCH_PARCELLATION    loads a fsaverage or conte69 surface template
-%   parcellation = FETCH_PARCELLATION(atlas, template, n_regions, varargin)
+%   parcellation = FETCH_PARCELLATION(template, atlas, n_regions, varargin)
 %   downloads and loads the 'schaefer' or 'cammoun' atlas on 'fsaverage5',
 %   'fsaverage6', 'fsaverage', or 'fslr32k' (a.k.a. conte69) surface
 %   template. By default, a pial surface is loaded for fsaverage templates
@@ -18,8 +18,8 @@ function parcellation = fetch_parcellation(atlas, template, n_regions, options)
 
 
 arguments
-    atlas (1,:) char
     template (1,:) char
+    atlas (1,:) char
     n_regions (1,1) double
     options.data_dir (1,:) string {mustBeFolder} = brainstat_utils.get_data_dir( ...
         'subdirectory', 'surfaces', 'mkdir', true);
@@ -44,13 +44,38 @@ parcellation = read_parcellation_from_targz(...
 
 end
 
-function labels = read_parcellation_from_targz(filename, template, parcellation, n_regions, seven_networks)
+function labels = read_parcellation_from_targz(filename, template, atlas, n_regions, seven_networks)
 % Reads the requested file from a .tar.gz file. 
-data_dir = fileparts(filename);
 
-gunzip(filename)
-untar(filename(1:end-3), data_dir)
+% Get filenames
+temp_dir = tempname;
+[~, tar_name] = fileparts(filename);
+tar_file = temp_dir + string(filesep) + tar_name;
+[target_files, all_files, sub_dir] = get_label_file_names(temp_dir, template, atlas, n_regions, seven_networks);
 
+% Setup a cleanup step. 
+mkdir(temp_dir);
+cleaner = onCleanup(@()clean_temp_dir(temp_dir, all_files, tar_file, sub_dir, template));
+
+% Read data
+gunzip(filename, temp_dir)
+untar(tar_file, temp_dir)
+labels = read_surface_data(target_files);
+
+% Bring to output format.
+if iscell(labels)
+    labels = cell2mat(labels(:));
+end
+
+if endsWith(target_files{1}, '.annot')
+    labels = labels - 1;
+    if startsWith(atlas, 'schaefer')
+        labels(end/2+1:end) = labels(end/2+1:end) + n_regions / 2;
+    end
+end
+end
+
+function [target_files, all_files, sub_dir] = get_label_file_names(temp_dir, template, parcellation, n_regions, seven_networks)
 if template == "fslr32k"
     if parcellation == "schaefer"
         extension = ".dlabel.nii";
@@ -67,36 +92,48 @@ else
     n_networks = 17;
 end
 
+if parcellation == "schaefer"
+    all_roi = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000];
+elseif parcellation == "cammoun"
+    all_roi = [33, 60, 125, 250, 500];
+end
+
 switch parcellation
     case {'schaefer', 'schaefer2018'}    
         if extension == ".dlabel.nii"
             hemi = "_hemi-LR_desc-";
         else
-            hemi = "_hemi-" + ["L", "R"] + "_desc-";
+            hemi = "_hemi-" + ["L"; "R"] + "_desc-";
         end
-        files = string(data_dir) + filesep + "atl-schaefer2018" + filesep + ...
-            template + filesep + "atl-Schaefer2018_space-" + template + ...
+        sub_dir = "atl-schaefer2018";
+        file_dir = string(temp_dir) + filesep + sub_dir + filesep + template;
+        target_files = file_dir + filesep + "atl-Schaefer2018_space-" + template + ...
             hemi + n_regions + "Parcels" + n_networks + ...
             "Networks_deterministic" + extension;
+        all_files = file_dir + filesep + "atl-Schaefer2018_space-" + template + ...
+            hemi + all_roi + "Parcels" + cat(3, 7, 17) + ...
+            "Networks_deterministic" + extension;
     case {'cammoun', 'cammoun2012'}
-        files = string(data_dir) + filesep + "atl-cammoun2012" + filesep + template + ...
-            filesep + "atl-Cammoun2012_space-" + template + "_res-" + sprintf('%03d', n_regions) + ...
-            "_hemi-" + ["L", "R"] + "_deterministic" + extension;
+        sub_dir = "atl-cammoun2012";
+        file_dir = string(temp_dir) + filesep + sub_dir + filesep + template;
+        target_files = file_dir +  filesep + "atl-Cammoun2012_space-" + template + "_res-" + ...
+            sprintf('%03d', n_regions) + "_hemi-" + ["L", "R"] + "_deterministic" + extension;
+        all_files = file_dir +  filesep + "atl-Cammoun2012_space-" + template + "_res-" + ...
+            cellfun(@(x)sprintf("%0.3d", x), num2cell(all_roi)) + "_hemi-" + ["L"; "R"] + ...
+            "_deterministic" + extension;
     otherwise
         error('Unknown parcellation %s.', parcellation);
 end
 
-labels = read_surface_data(files);
-if iscell(labels)
-    labels = cell2mat(labels(:));
+
 end
 
-if endsWith(files{1}, '.annot')
-    labels = labels - 1;
-    if startsWith(parcellation, 'schaefer')
-        labels(end/2+1:end) = labels(end/2+1:end) + n_regions / 2;
-    end
-end
+function clean_temp_dir(temp_dir, all_files, tar_file, sub_dir, template)
+cellfun(@delete, all_files);
+delete(tar_file)
+rmdir(string(temp_dir) + filesep + sub_dir + filesep + template)
+rmdir(string(temp_dir) + filesep + sub_dir);
+rmdir(temp_dir);
 end
 
 

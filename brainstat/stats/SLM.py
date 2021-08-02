@@ -2,7 +2,8 @@
 """ Standard Linear regression models. """
 import warnings
 from cmath import sqrt
-from typing import List, Optional, Tuple, Union
+from pprint import pformat
+from typing import Any, List, Optional, Sequence, Tuple, Union
 
 import numpy as np
 from brainspace.mesh.mesh_elements import get_cells, get_points
@@ -10,18 +11,17 @@ from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 
 from brainstat._typing import ArrayLike
 from brainstat.mesh.utils import _mask_edges, mesh_edges
-
-from .terms import FixedEffect, MixedEffect
-from .utils import apply_mask, undo_mask
+from brainstat.stats.terms import FixedEffect, MixedEffect
+from brainstat.stats.utils import apply_mask, deprecated, undo_mask
 
 
 class SLM:
     """Core Class for running BrainStat linear models"""
 
     # Import class methods
-    from ._linear_model import linear_model
-    from ._multiple_comparisons import fdr, random_field_theory
-    from ._t_test import t_test
+    from ._linear_model import _linear_model
+    from ._multiple_comparisons import _fdr, _random_field_theory
+    from ._t_test import _t_test
 
     def __init__(
         self,
@@ -30,7 +30,7 @@ class SLM:
         surf: Optional[Union[dict, BSPolyData]] = None,
         mask: Optional[ArrayLike] = None,
         *,
-        correction: Optional[Union[str, List[str], Tuple[str, ...]]] = None,
+        correction: Optional[Union[str, Sequence[str]]] = None,
         niter: int = 1,
         thetalim: float = 0.01,
         drlim: float = 0.1,
@@ -52,8 +52,8 @@ class SLM:
         mask : array-like, optional
             A mask containing True for vertices to include in the analysis, by
             default None.
-        correction : str, list, tuple, optional
-            String or list of strings. If it contains "rft" a random field
+        correction : str, Sequence, optional
+            String or sequence of strings. If it contains "rft" a random field
             theory multiple comparisons correction will be run. If it contains
             "fdr" a false discovery rate multiple comparisons correction will be
             run. Both may be provided. By default None.
@@ -124,8 +124,8 @@ class SLM:
             Y_masked = apply_mask(Y, self.mask, axis=1)
         else:
             Y_masked = Y
-        self.linear_model(Y_masked)
-        self.t_test()
+        self._linear_model(Y_masked)
+        self._t_test()
         if self.mask is not None:
             self._unmask()
         if self.correction is not None:
@@ -160,9 +160,9 @@ class SLM:
         Q = None
         if "rft" in self.correction:
             P = {}
-            P["pval"], P["peak"], P["clus"], P["clusid"] = self.random_field_theory()
+            P["pval"], P["peak"], P["clus"], P["clusid"] = self._random_field_theory()
         if "fdr" in self.correction:
-            Q = self.fdr()
+            Q = self._fdr()
         return P, Q
 
     def _reset_fit_parameters(self) -> None:
@@ -202,6 +202,12 @@ class SLM:
             edges = mesh_edges(self.surf)
             _, idx = _mask_edges(edges, self.mask)
             self.resl = undo_mask(self.resl, idx, axis=0)
+
+    def __str__(self) -> str:
+        """Returns a string representation of the model."""
+        return pformat(
+            {key: value for key, value in self.__dict__.items() if not callable(value)}
+        )
 
     """ Property specifications. """
 
@@ -253,6 +259,30 @@ class SLM:
     @lat.deleter
     def lat(self):
         del self._lat
+
+    @deprecated(
+        "Direct usage of this method is deprecated. Please use the `fit()` method instead."
+    )
+    def t_test(self) -> None:
+        raise NotImplementedError
+
+    @deprecated(
+        "Direct usage of this method is deprecated. Please use the `fit()` method instead."
+    )
+    def linear_model(self, Y: Any) -> None:
+        raise NotImplementedError
+
+    @deprecated(
+        "Direct usage of this method is deprecated. Please use the `fit()` method instead."
+    )
+    def fdr(self) -> None:
+        raise NotImplementedError
+
+    @deprecated(
+        "Direct usage of this method is deprecated. Please use the `fit()` method instead."
+    )
+    def random_field_theory(self) -> None:
+        raise NotImplementedError
 
 
 def _merge_rft(P1: dict, P2: dict) -> dict:
