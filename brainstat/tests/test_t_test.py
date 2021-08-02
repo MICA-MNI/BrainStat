@@ -20,8 +20,8 @@ def dummy_test(infile, expfile):
 
     # run _t_test
     slm = SLM(model, contrast, idic["surf"])
-    slm.linear_model(idic["Y"])
-    slm.t_test()
+    slm._linear_model(idic["Y"])
+    slm._t_test()
 
     # load expected outout data
     efile = open(expfile, "br")

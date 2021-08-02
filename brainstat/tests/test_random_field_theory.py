@@ -4,7 +4,7 @@ import pickle
 import numpy as np
 import pytest
 
-from brainstat.stats._multiple_comparisons import random_field_theory
+from brainstat.stats._multiple_comparisons import _random_field_theory
 from brainstat.stats.SLM import SLM
 from brainstat.stats.terms import FixedEffect
 from brainstat.tests.testutil import datadir
@@ -24,7 +24,7 @@ def dummy_test(infile, expfile):
         else:
             setattr(slm, key, idic[key])
 
-    empirical_output = random_field_theory(slm)
+    empirical_output = _random_field_theory(slm)
 
     # load expected outout data
     efile = open(expfile, "br")

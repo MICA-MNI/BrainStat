@@ -11,7 +11,7 @@ from brainstat.mesh.utils import mesh_edges
 from brainstat.stats.terms import FixedEffect, MixedEffect
 
 
-def linear_model(self, Y: Union[np.ndarray, FixedEffect]) -> None:
+def _linear_model(self, Y: Union[np.ndarray, FixedEffect]) -> None:
     """Fits linear mixed effects models to surface data and estimates resels.
 
     Parameters

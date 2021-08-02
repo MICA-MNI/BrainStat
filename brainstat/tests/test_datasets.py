@@ -33,11 +33,11 @@ def test_load_surfaces(template):
 def test_load_parcels(atlas, template):
     """Test loading surface parcels."""
     for n_regions in valid_n_regions[atlas]:
-        parcels = fetch_parcellation(atlas, n_regions, template=template, join=True)
+        parcels = fetch_parcellation(template, atlas, n_regions, join=True)
         assert isinstance(parcels, np.ndarray)
 
         parcels_lh, parcels_rh = fetch_parcellation(
-            atlas, n_regions, template=template, join=False
+            template, atlas, n_regions, join=False
         )
         assert isinstance(parcels_lh, np.ndarray)
         assert isinstance(parcels_rh, np.ndarray)
@@ -46,6 +46,6 @@ def test_load_parcels(atlas, template):
 
         if atlas == "schaefer":
             parcels = fetch_parcellation(
-                atlas, n_regions, template=template, join=True, seven_networks=False
+                template, atlas, n_regions, join=True, seven_networks=False
             )
             assert isinstance(parcels, np.ndarray)

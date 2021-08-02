@@ -16,7 +16,7 @@ from brainstat.mesh.utils import mesh_edges
 from brainstat.stats.utils import colon, interp1, ismember, row_ismember
 
 
-def fdr(self) -> np.ndarray:
+def _fdr(self) -> np.ndarray:
     """Q-values for False Discovey Rate of resels.
 
     Parameters
@@ -79,7 +79,7 @@ valid_rft_output = Union[
 ]
 
 
-def random_field_theory(self) -> valid_rft_output:
+def _random_field_theory(self) -> valid_rft_output:
     """Corrected P-values for vertices and clusters.
     Parameters
     ----------
