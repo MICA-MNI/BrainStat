@@ -68,6 +68,9 @@ def fetch_parcellation(
         else:
             parcellations = [read_annot(file)[0] for file in bunch[key]]
 
+    else:
+        raise ValueError(f"Invalid atlas: {atlas}")
+
     if join:
         return np.concatenate((parcellations[0], parcellations[1]), axis=0)
     else:
@@ -103,17 +106,63 @@ def fetch_template_surface(
         Output surface(s). If a tuple, then the first element is the left hemisphere.
     """
 
+    surface_files = _fetch_template_surface_files(template, layer, data_dir)
     if template == "fslr32k":
-        layer = layer if layer else "midthickness"
-        bunch = nnt_datasets.fetch_conte69(data_dir=data_dir)
-        surfaces = [read_surface(file) for file in bunch[layer]]
+        surfaces = [read_surface(file) for file in surface_files]
     else:
-        layer = layer if layer else "pial"
-        bunch = nnt_datasets.fetch_fsaverage(data_dir=data_dir)
-        surfaces_fs = [read_geometry(file) for file in bunch[layer]]
+        surfaces_fs = [read_geometry(file) for file in surface_files]
         surfaces = [build_polydata(surface[0], surface[1]) for surface in surfaces_fs]
 
     if join:
         return combine_surfaces(surfaces[0], surfaces[1])
     else:
         return surfaces[0], surfaces[1]
+
+
+def _fetch_template_surface_files(
+    template: str,
+    layer: Optional[str] = None,
+    data_dir: Optional[str] = None,
+) -> Tuple[str, str]:
+    """Fetches surface files.
+
+    Parameters
+    ----------
+    template : str
+        Name of the surface template. Valid values are "fslr32k", "fsaverage",
+        "fsaverage3", "fsaverage4", "fsaverage5", "fsaverage6".
+      layer : str, optional
+        Name of the cortical surface of interest. Valid values are "white",
+        "smoothwm", "pial", "inflated", "sphere" for fsaverage surfaces and
+        "midthickness", "inflated", "vinflated" for "fslr32k". If None,
+        defaults to "pial" or "midthickness", by default None.
+    data_dir : str, optional
+        Directory to save the data, by default None.
+
+    Returns
+    -------
+    Tuple of str
+        Surface files.
+    """
+
+    if template == "fslr32k":
+        layer = layer if layer else "midthickness"
+        bunch = nnt_datasets.fetch_conte69(data_dir=data_dir)
+    else:
+        layer = layer if layer else "pial"
+        bunch = nnt_datasets.fetch_fsaverage(version=template, data_dir=data_dir)
+    return bunch[layer]
+
+
+def _valid_parcellations() -> dict:
+    """Returns a dictionary of valid parcellations."""
+    return {
+        "schaefer": {
+            "n_regions": (100, 200, 300, 400, 500, 600, 800, 1000),
+            "surfaces": ("fsaverage5", "fsaverage6", "fsaverage", "fslr32k"),
+        },
+        "cammoun": {
+            "n_regions": [33, 60, 125, 250, 500],
+            "surfaces": ("fsaverage5", "fsaverage6", "fsaverage", "fslr32k"),
+        },
+    }
