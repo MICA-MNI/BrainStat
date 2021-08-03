@@ -160,7 +160,7 @@ def __create_precomputed(
             __freesurfer_to_surfgii(surface_files[i], surf.name)
         surface_paths = [surf_lh.name, surf_rh.name]
 
-        expression = surface_genetic_expression(labels, surface_paths, space=space) #type: ignore
+        expression = surface_genetic_expression(labels, surface_paths, space=space)  # type: ignore
 
         if params["atlas"] == "schaefer":
             network_tag = "7Networks" if params["seven_networks"] else "17Networks"
@@ -177,7 +177,7 @@ def __create_precomputed(
             ),
         )
         filename = "_".join(filename_components) + ".csv.gz"
-        expression.to_csv(Path(output_dir, filename)) #type: ignore
+        expression.to_csv(Path(output_dir, filename))  # type: ignore
 
 
 def __freesurfer_to_surfgii(freesurfer_file: str, gifti_file: str) -> None:
