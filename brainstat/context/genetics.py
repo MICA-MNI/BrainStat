@@ -116,7 +116,7 @@ def surface_genetic_expression(
 
 
 def __create_precomputed(
-    data_dir: Optional[str] = None, output_dir: Optional[str] = None
+    data_dir: Optional[str] = None, output_dir: Optional[Union[str, Path]] = None
 ) -> None:
     """Creates precomputed matrices of genetic expression for standard atlases. These are
     used for the MATLAB implementation."""
@@ -160,7 +160,7 @@ def __create_precomputed(
             __freesurfer_to_surfgii(surface_files[i], surf.name)
         surface_paths = [surf_lh.name, surf_rh.name]
 
-        expression = surface_genetic_expression(labels, surface_paths, space=space)
+        expression = surface_genetic_expression(labels, surface_paths, space=space) #type: ignore
 
         if params["atlas"] == "schaefer":
             network_tag = "7Networks" if params["seven_networks"] else "17Networks"
@@ -177,7 +177,7 @@ def __create_precomputed(
             ),
         )
         filename = "_".join(filename_components) + ".csv.gz"
-        expression.to_csv(Path(output_dir, filename))
+        expression.to_csv(Path(output_dir, filename)) #type: ignore
 
 
 def __freesurfer_to_surfgii(freesurfer_file: str, gifti_file: str) -> None:
