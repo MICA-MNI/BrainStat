@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 from neurosynth.base.dataset import Dataset, download
-from nibabel.nifti1 import NiftiImage
+from nibabel.nifti1 import Nifti1Image
 from nilearn.datasets import load_mni152_brain_mask
 from nilearn.input_data import NiftiMasker
 
@@ -104,7 +104,7 @@ def surface_decode_nimare(
 
 def fetch_nimare_dataset(
     data_dir: str,
-    mask: Optional[Union[str, NiftiImage, NiftiMasker]] = None,
+    mask: Optional[Union[str, Nifti1Image, NiftiMasker]] = None,
     keep_neurosynth: bool = True,
 ) -> str:
     """Downloads the nimare dataset and fetches its path.

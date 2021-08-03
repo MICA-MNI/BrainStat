@@ -123,7 +123,7 @@ class SLM:
         if self.mask is not None:
             Y_masked = apply_mask(Y, self.mask, axis=1)
         else:
-            Y_masked = Y
+            Y_masked = Y.copy()
         self._linear_model(Y_masked)
         self._t_test()
         if self.mask is not None:

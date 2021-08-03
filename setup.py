@@ -6,6 +6,7 @@ https://packaging.python.org/guides/distributing-packages-using-setuptools/
 """
 
 import setuptools
+
 from brainstat import __version__ as brainstat_version
 
 with open("README.rst", "r", encoding="utf-8") as fh:
