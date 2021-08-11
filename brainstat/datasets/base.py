@@ -33,7 +33,7 @@ def fetch_parcellation(
     n_regions : int
         Number of regions of the requested atlas. Valid values for the "schaefer" atlas are
         100, 200, 300, 400, 500, 600, 800, 1000. Valid values for the cammoun atlas are 33,
-        60, 125, 250, 500. Valid values for the glasser atlas are 360. 
+        60, 125, 250, 500. Valid values for the glasser atlas are 360.
     join : bool, optional
         If true, returns parcellation as a single array, if false, returns an
         array per hemisphere, by default True.
