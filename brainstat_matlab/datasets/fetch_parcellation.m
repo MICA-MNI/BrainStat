@@ -8,7 +8,9 @@ function parcellation = fetch_parcellation(template, atlas, n_regions, options)
 %
 %   Supported number of regions for the Schaefer atlas are: 100, 200, 300,
 %   400, 500, 600, 800, 1000. Supported number of regions for the Cammoun
-%   atlas are: 33, 60, 125, 250, 500.
+%   atlas are: 33, 60, 125, 250, 500. Supported number of regions for the
+%   Glasser atlas is 360. Note that fsaverage6 is not supported for the
+%   Glasser parcellation.
 %
 %   Valid name-value pairs are:
 %       'data_dir': a char containing the path to the location to store the

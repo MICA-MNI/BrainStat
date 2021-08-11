@@ -35,16 +35,20 @@ classdef test_datasets < matlab.unittest.TestCase
             for atlas = ["cammoun", "schaefer", "glasser"]
                 if atlas == "schaefer"
                     n_roi = [100, 200, 300, 400, 500, 600, 800, 1000];
+                    templates = ["fsaverage5", "fsaverage6", "fsaverage", "fslr32k"];
                     seven_networks = [true, false];
                 elseif atlas == "cammoun"
                     n_roi = [33, 60, 125, 250, 500];
                     seven_networks = true;
+                    templates = ["fsaverage5", "fsaverage6", "fsaverage", "fslr32k"];
                 elseif atlas == "glasser"
                     n_roi = 360;
                     seven_networks = true;
+                    templates = ["fsaverage5", "fsaverage", "fslr32k"];
                 end
+                
                 for n = n_roi
-                    for template = ["fsaverage5", "fsaverage6", "fsaverage", "fslr32k"]
+                    for template = templates
                         for networks = seven_networks
                             try
                                 parcellation = fetch_parcellation(template, atlas, n, 'seven_networks', networks);
