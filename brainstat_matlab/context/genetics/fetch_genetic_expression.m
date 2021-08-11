@@ -1,13 +1,16 @@
-function expression = fetch_genetic_expression(atlas, n_regions, options)
+function [expression, gene_names] = fetch_genetic_expression(atlas, n_regions, options)
 % FETCH_GENETIC_EXPRESSION    fetches genetic expression data
-%    expression = FETCH_GENETIC_EXPRESSION(atlas, n_regions, varargin)
-%    returns the genetic expression for the given atlas at the resolution
-%    n_regions. Genetic expression was computed using the Python package
-%    abagen with default parameters on the fsaverage surface.
+%    [expression, gene_names] = FETCH_GENETIC_EXPRESSION(atlas, n_regions,
+%    varargin) returns the genetic expression for the given atlas at the
+%    resolution n_regions. gene_names contains the name of the gene
+%    associated with each collumn. Genetic expression was computed using
+%    the Python package abagen with default parameters on the fsaverage
+%    surface.
 %
 %   Valid atlas / n_region pairs:
 %       'schaefer': 100, 200, 300, 400, 500, 600, 800, 1000
 %       'cammoun': 33, 60, 125, 250, 500
+%       'glasser': 360
 %   
 %   Valid name-value pairs:
 %       data_dir: the directory to store the expression matrices. Defaults
@@ -43,16 +46,16 @@ filename = options.data_dir + filesep + strjoin(filename_parts, '_') + '.csv.gz'
 
 url = get_url(atlas, n_regions, options.seven_networks);
 if ~exist(filename, 'file') || options.overwrite
-    if verbose
-        disp(['Downloading atlas to ' filename '.'])
+    if options.verbose
+        disp(['Downloading atlas to ' filename{1} '.'])
     end
     websave(filename, url);
 end
 
-if verbose
+if options.verbose
     disp('Reading atlas from file.')
 end
-expression = read_csv_gz(filename);
+[expression, gene_names] = read_csv_gz(filename);
 end
 
 
@@ -80,7 +83,8 @@ urls = struct( ...
     'cammoun_60', 'https://box.bic.mni.mcgill.ca/s/DyEBiYvApUiC0LV/download', ...
     'cammoun_125', 'https://box.bic.mni.mcgill.ca/s/Q8Lu7tGzuYnm2QE/download', ...
     'cammoun_250', 'https://box.bic.mni.mcgill.ca/s/d5Iz55j46BU1hYm/download', ...
-    'cammoun_500', 'https://box.bic.mni.mcgill.ca/s/hdg3cWZ3p41f6z5/download' ...
+    'cammoun_500', 'https://box.bic.mni.mcgill.ca/s/hdg3cWZ3p41f6z5/download', ...
+    'glasser_360', 'https://box.bic.mni.mcgill.ca/s/QCrvc44xS8dCnel/download' ...
 );
 
 if atlas == "schaefer"
