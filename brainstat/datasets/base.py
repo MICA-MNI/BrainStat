@@ -1,5 +1,7 @@
 """ Load external datasets. """
-from typing import Optional, Tuple, Union
+from pathlib import Path
+from typing import List, Optional, Tuple, Union
+from urllib.request import urlretrieve
 
 import numpy as np
 from brainspace.mesh.mesh_creation import build_polydata
@@ -17,7 +19,7 @@ def fetch_parcellation(
     n_regions: int,
     join: bool = True,
     seven_networks: bool = True,
-    data_dir: Optional[str] = None,
+    data_dir: Optional[Union[str, Path]] = None,
 ) -> Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]:
     """Loads the surface parcellation of a given atlas.
 
@@ -27,19 +29,19 @@ def fetch_parcellation(
         The surface template. Valid values are "fsaverage", "fsaverage5",
         "fsaverage6", "fslr32k", by default "fsaverage5".
     atlas : str
-        Name of the atlas. Valid names are "schaefer", "cammoun".
+        Name of the atlas. Valid names are "schaefer", "cammoun", "glasser".
     n_regions : int
-        Number of regions of the requested atlas. Valid values for the "schaefer " atlas are
+        Number of regions of the requested atlas. Valid values for the "schaefer" atlas are
         100, 200, 300, 400, 500, 600, 800, 1000. Valid values for the cammoun atlas are 33,
-        60, 125, 250, 500.
+        60, 125, 250, 500. Valid values for the glasser atlas are 360. 
     join : bool, optional
         If true, returns parcellation as a single array, if false, returns an
         array per hemisphere, by default True.
     seven_networks : bool, optional
         If true, uses the 7 networks parcellation. Only used for the Schaefer
         atlas, by default True.
-    data_dir : str, optional
-        Directory to save the data, by default None.
+    data_dir : str, pathlib.Path, optional
+        Directory to save the data, defaults to $HOME_DIR/brainstat_data/parcellations.
 
     Returns
     -------
@@ -47,10 +49,18 @@ def fetch_parcellation(
         Surface parcellation. If a tuple, then the first element is the left hemisphere.
     """
 
+    if data_dir is None:
+        data_dir = Path.home() / "brainstat_data" / "parcellations"
+    else:
+        data_dir = Path(data_dir)
+    data_dir.mkdir(parents=True, exist_ok=True)
+
     if atlas == "schaefer":
         n_networks = 7 if seven_networks else 17
         key = f"{n_regions}Parcels{n_networks}Networks"
-        bunch = nnt_datasets.fetch_schaefer2018(version=template, data_dir=data_dir)
+        bunch = nnt_datasets.fetch_schaefer2018(
+            version=template, data_dir=str(data_dir)
+        )
         if template == "fslr32k":
             cifti = nib_load(bunch[key])
             parcellation_full = np.squeeze(cifti.get_fdata())
@@ -61,12 +71,15 @@ def fetch_parcellation(
 
     elif atlas == "cammoun":
         key = f"scale{n_regions:03}"
-        bunch = nnt_datasets.fetch_cammoun2012(version=template, data_dir=data_dir)
+        bunch = nnt_datasets.fetch_cammoun2012(version=template, data_dir=str(data_dir))
         if template == "fslr32k":
             gifti = [nib_load(file) for file in bunch[key]]
             parcellations = [x.darrays[0].data for x in gifti]
         else:
             parcellations = [read_annot(file)[0] for file in bunch[key]]
+
+    elif atlas == "glasser":
+        parcellations = _fetch_glasser_parcellation(template, data_dir)
 
     else:
         raise ValueError(f"Invalid atlas: {atlas}")
@@ -162,7 +175,38 @@ def _valid_parcellations() -> dict:
             "surfaces": ("fsaverage5", "fsaverage6", "fsaverage", "fslr32k"),
         },
         "cammoun": {
-            "n_regions": [33, 60, 125, 250, 500],
+            "n_regions": (33, 60, 125, 250, 500),
             "surfaces": ("fsaverage5", "fsaverage6", "fsaverage", "fslr32k"),
         },
+        "glasser": {
+            "n_regions": (360,),
+            "surfaces": ("fsaverage5", "fsaverage", "fslr32k"),
+        },
     }
+
+
+def _fetch_glasser_parcellation(template: str, data_dir: Path) -> List[np.ndarray]:
+    """Fetches glasser parcellation."""
+    urls = {
+        "fslr32k": (
+            "https://box.bic.mni.mcgill.ca/s/y2NMHXr47WOCtpp/download",
+            "https://box.bic.mni.mcgill.ca/s/Y0Fmd2tIF69Mqpt/download",
+        ),
+        "fsaverage": (
+            "https://box.bic.mni.mcgill.ca/s/j4nfMA4D7jSx3QZ/download",
+            "https://box.bic.mni.mcgill.ca/s/qZTplkH4A4exOnF/download",
+        ),
+        "fsaverage5": (
+            "https://box.bic.mni.mcgill.ca/s/Kg4VdWRt4NHvr3B/download",
+            "https://box.bic.mni.mcgill.ca/s/9sEXgVKi3VJ9pXV/download",
+        ),
+    }
+    filepaths = []
+    for i, hemi in enumerate(("lh", "rh")):
+        filename = "_".join(("glasser", "360", template, hemi)) + "label.gii"
+        filepaths.append(data_dir / filename)
+        urlretrieve(urls[template][i], filepaths[i])
+    gifti = [nib_load(file) for file in filepaths]
+    parcellations = [x.darrays[0].data for x in gifti]
+    parcellations[1] = (parcellations[1] + 180) * (parcellations[1] > 0)
+    return parcellations

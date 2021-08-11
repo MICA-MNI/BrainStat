@@ -32,13 +32,16 @@ classdef test_datasets < matlab.unittest.TestCase
         end
         
         function test_fetch_parcellation(testCase)
-            for atlas = ["cammoun", "schaefer"]
+            for atlas = ["cammoun", "schaefer", "glasser"]
                 if atlas == "schaefer"
                     n_roi = [100, 200, 300, 400, 500, 600, 800, 1000];
                     seven_networks = [true, false];
                 elseif atlas == "cammoun"
                     n_roi = [33, 60, 125, 250, 500];
-                    seven_networks = [true];
+                    seven_networks = true;
+                elseif atlas == "glasser"
+                    n_roi = 360;
+                    seven_networks = true;
                 end
                 for n = n_roi
                     for template = ["fsaverage5", "fsaverage6", "fsaverage", "fslr32k"]
