@@ -11,6 +11,7 @@ from brainspace.gradient.gradient import GradientMaps
 from brainspace.utils.parcellation import reduce_by_labels
 
 from brainstat._typing import ArrayLike
+from brainstat._utils import data_directories, read_data_fetcher_json
 
 
 def compute_histology_gradients(
@@ -118,7 +119,7 @@ def read_histology_profile(
         Path to the data directory. If data is not found here then data will be
         downloaded. If None, data_dir is set to the home directory, by default None.
     template : str, optional
-        Surface template. Currently allowed options are 'fsaverage' and 'fs_LR', by
+        Surface template. Currently allowed options are 'fsaverage' and 'fslr32k', by
         default 'fsaverage'.
     overwrite : bool, optional
         If true, existing data will be overwrriten, by default False.
@@ -129,10 +130,7 @@ def read_histology_profile(
         Depth-by-vertex array of BigBrain intensities.
     """
 
-    if data_dir is None:
-        data_dir = Path.home() / "histology_data"
-    else:
-        data_dir = Path(data_dir)
+    data_dir = Path(data_dir) if data_dir else data_directories["BIGBRAIN_DATA_DIR"]
     histology_file = data_dir / ("histology_" + template + ".h5")
 
     if not histology_file.exists() or overwrite:
@@ -160,7 +158,7 @@ def download_histology_profiles(
         Path to the directory to store the data. If None, defaults to the home
         directory, by default None.
     template : str, optional
-        Surface template. Currently allowed options are 'fsaverage' and 'fs_LR', by
+        Surface template. Currently allowed options are 'fsaverage' and 'fslr32k', by
         default 'fsaverage'.
     overwrite : bool, optional
         If true, existing data will be overwrriten, by default False.
@@ -171,20 +169,17 @@ def download_histology_profiles(
         Thrown if an invalid template is requested.
     """
 
-    if data_dir is None:
-        data_dir = Path.home() / "histology_data"
-    else:
-        data_dir = Path(data_dir)
+    data_dir = Path(data_dir) if data_dir else data_directories["BIGBRAIN_DATA_DIR"]
     data_dir.mkdir(parents=True, exist_ok=True)
     output_file = data_dir / ("histology_" + template + ".h5")
 
-    urls = _get_urls()
+    url = read_data_fetcher_json()["bigbrain_profiles"][template]
 
     try:
-        _download_file(urls[template], output_file, overwrite)
+        _download_file(url, output_file, overwrite)
     except KeyError:
         raise KeyError(
-            "Could not find the requested template. Valid templates are: 'fs_LR_64k', 'fsaverage', 'fsaverage5'."
+            "Could not find the requested template. Valid templates are: 'fslr32k', 'fsaverage', 'fsaverage5'."
         )
 
 
@@ -209,21 +204,6 @@ def partial_correlation(X: ArrayLike, covar: np.ndarray) -> np.ndarray:
     r_xz = pearson_correlation[0:-1, -1][:, None]
 
     return (r_xy - r_xz @ r_xz.T) / (np.sqrt(1 - r_xz ** 2) * np.sqrt(1 - r_xz.T ** 2))
-
-
-def _get_urls() -> dict:
-    """Stores the URLs for histology file downloads.
-
-    Returns
-    -------
-    dict
-        Dictionary with template names as keys and urls to the files as values.
-    """
-    return {
-        "fsaverage": "https://box.bic.mni.mcgill.ca/s/znBp7Emls0mMW1a/download",
-        "fsaverage5": "https://box.bic.mni.mcgill.ca/s/N8zstvuRb4sNcSe/download",
-        "fs_LR_64k": "https://box.bic.mni.mcgill.ca/s/6zKHcg9xXu5inPR/download",
-    }
 
 
 def _download_file(url: str, output_file: Path, overwrite: bool) -> None:

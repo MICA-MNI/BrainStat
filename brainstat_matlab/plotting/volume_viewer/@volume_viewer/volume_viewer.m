@@ -52,7 +52,7 @@ classdef volume_viewer < handle
                 obj.image = R.image;
             elseif ischar(R.image)
                 % If a 3D volume file is provided. 
-                obj.image = load_volume(R.image);             
+                obj.image = read_volume(R.image);             
             end
             
             % Build the overlay.

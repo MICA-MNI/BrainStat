@@ -1,33 +1,33 @@
 """ Meta-analytic decoding based on NiMARE """
 import logging
-import os
+import re
 import tempfile
+import urllib
+import zipfile
 from pathlib import Path
-from typing import Optional, Sequence, Tuple, Union
+from typing import Generator, Optional, Sequence, Union
 
-import nimare
+import nibabel as nib
 import numpy as np
 import pandas as pd
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
-from neurosynth.base.dataset import Dataset, download
-from nibabel.nifti1 import Nifti1Image
 from nilearn.datasets import load_mni152_brain_mask
-from nilearn.input_data import NiftiMasker
+from scipy.stats.stats import pearsonr
 
-from .utils import multi_surface_to_volume
+from brainstat._utils import data_directories, read_data_fetcher_json
+from brainstat.mesh.interpolate import multi_surface_to_volume
 
 
-def surface_decode_nimare(
+def surface_decoder(
     pial: Union[str, BSPolyData, Sequence[Union[str, BSPolyData]]],
     white: Union[str, BSPolyData, Sequence[Union[str, BSPolyData]]],
     stat_labels: Union[str, np.ndarray, Sequence[Union[str, np.ndarray]]],
-    mask_labels: Union[str, np.ndarray, Sequence[Union[str, np.ndarray]]],
+    *,
     interpolation: str = "linear",
-    data_dir: str = None,
-    feature_group: str = None,
-    features: Sequence[str] = None,
+    data_dir: Optional[Union[str, Path]] = None,
+    database: str = "neurosynth",
 ) -> pd.DataFrame:
-    """Meta-analytic decoding of surface maps using NeuroSynth or Brainmap.
+    """Meta-analytic decoding of surface maps using NeuroSynth or NeuroQuery.
 
     Parameters
     ----------
@@ -48,29 +48,28 @@ def surface_decode_nimare(
         Either 'nearest' for nearest neighbor interpolation, or 'linear'
         for trilinear interpolation, by default 'linear'.
     data_dir : str, optional
-        The directory of the nimare dataset. If none exists, a new dataset will
+        The directory of the dataset. If none exists, a new dataset will
         be downloaded and saved to this path. If None, the directory defaults to
         your home directory, by default None.
-    correction : str, optional
-        Multiple comparison correction. Valid options are None and 'fdr_bh',
-        by default 'fdr_bh'.
+
 
     Returns
     -------
     pandas.DataFrame
-        Table with each label and the following values associated with each
-        label: ‘pForward’, ‘zForward’, ‘likelihoodForward’,‘pReverse’,
-        ‘zReverse’, and ‘probReverse’.
+        Table with correlation values for each feature.
     """
 
-    if data_dir is None:
-        data_dir = os.path.join(str(Path.home()), "nimare_data")
+    data_dir = Path(data_dir) if data_dir else data_directories["NEUROSYNTH_DATA_DIR"]
+    data_dir.mkdir(exist_ok=True, parents=True)
+
+    logging.info(
+        "Fetching Neurosynth feature files. This may take several minutes if you haven't downloaded them yet."
+    )
+    feature_files = tuple(_fetch_precomputed(data_dir, database=database))
 
     mni152 = load_mni152_brain_mask()
 
     stat_image = tempfile.NamedTemporaryFile(suffix=".nii.gz")
-    mask_image = tempfile.NamedTemporaryFile(suffix=".nii.gz")
-
     multi_surface_to_volume(
         pial=pial,
         white=white,
@@ -79,113 +78,77 @@ def surface_decode_nimare(
         labels=stat_labels,
         interpolation=interpolation,
     )
-    multi_surface_to_volume(
-        pial=pial,
-        white=white,
-        volume_template=mni152,
-        output_file=mask_image.name,
-        labels=mask_labels,
-        interpolation=interpolation,
-    )
 
-    dataset = fetch_nimare_dataset(data_dir, mask=mask_image.name, keep_neurosynth=True)
+    stat_volume = nib.load(stat_image.name)
+    mask = (stat_volume.get_fdata() != 0) & (mni152.get_fdata() != 0)
+    stat_vector = stat_volume.get_fdata()[mask]
 
-    logging.info(
-        "If you use BrainStat's surface decoder, "
-        + "please cite NiMARE (https://zenodo.org/record/4408504#.YBBPAZNKjzU))."
-    )
+    feature_names = []
+    correlations = np.zeros(len(feature_files))
 
-    decoder = nimare.decode.continuous.CorrelationDecoder(
-        feature_group=feature_group, features=features
-    )
-    decoder.fit(dataset)
-    return decoder.transform(stat_image.name)
+    logging.info("Running correlations with all Neurosynth features.")
+    for i in range(len(feature_files)):
+        feature_names.append(re.search("__[A-Za-z0-9]+", feature_files[i].stem)[0][2:])  # type: ignore
+        feature_data = nib.load(feature_files[i]).get_fdata()[mask]
+        keep = np.logical_not(
+            np.isnan(feature_data)
+            | np.isinf(feature_data)
+            | np.isnan(stat_vector)
+            | np.isinf(stat_vector)
+        )
+        correlations[i], _ = pearsonr(stat_vector[keep], feature_data[keep])
+
+    df = pd.DataFrame(correlations, index=feature_names, columns=["Pearson's r"])
+    return df.sort_values(by="Pearson's r", ascending=False)
 
 
-def fetch_nimare_dataset(
-    data_dir: str,
-    mask: Optional[Union[str, Nifti1Image, NiftiMasker]] = None,
-    keep_neurosynth: bool = True,
-) -> str:
-    """Downloads the nimare dataset and fetches its path.
+def _fetch_precomputed(data_dir: Path, database: str) -> Generator[Path, None, None]:
+    """Wrapper for any future data fetcher.
 
     Parameters
     ----------
-    data_dir : str
-        Path to the directory where the dataset will be saved.
-    mask : str, nibabel.nifti1.Nifti1Image, nilearn.input_data.NiftiMasker or similar, or None, optional
-        Mask(er) to use. If None, uses the target space image, with all non-zero
-        voxels included in the mask.
-    keep_neurosynth : bool, optional
-        If true, then the neurosynth data files are kept, by default False.
-        Note that this will not delete existing neurosynth files.
+    data_dir : Path
+        Directory where the data is stored.
+    database : str
+        Name of the database, valid arguments are 'neurosynth'.
 
     Returns
     -------
-    str
-        Path to the nimare dataset.
+    generator
+        Generator of paths to the precomputed files.
+
+    Raises
+    ------
+    NotImplementedError
+        Returned when requesting the Neuroquery data fetcher.
+    ValueError
+        Returned when requesting an unknown database.
     """
-
-    if not os.path.isdir(data_dir):
-        os.mkdir(data_dir)
-
-    neurosynth_exist = os.path.isfile(os.path.join(data_dir, "database.txt"))
-    if keep_neurosynth or neurosynth_exist:
-        ns_dir = data_dir
+    if database == "neurosynth":
+        return _fetch_precomputed_neurosynth(data_dir)
+    elif database == "neuroquery":
+        raise NotImplementedError("Neuroquery has not been implemented yet.")
     else:
-        D = tempfile.TemporaryDirectory()
-        ns_dir = D.name
+        raise ValueError(f"Unknown database {database}.")
 
-    ns_data_file, ns_feature_file = fetch_neurosynth_dataset(ns_dir, return_pkl=False)  # type: ignore
 
-    ns_dict = nimare.io.convert_neurosynth_to_dict(
-        ns_data_file, annotations_file=ns_feature_file
+def _fetch_precomputed_neurosynth(data_dir: Path) -> Generator[Path, None, None]:
+    """Downloads precomputed Neurosynth features and returns the filepaths."""
+
+    json = read_data_fetcher_json()["neurosynth_precomputed"]
+    url = json["url"]
+
+    existing_files = (data_dir / "upload").glob(
+        "Neurosynth_TFIDF__*z_desc-consistency.nii.gz"
     )
-    dset = nimare.dataset.Dataset(ns_dict, mask=mask)
-    dset = nimare.extract.download_abstracts(dset, "tsalo006@fiu.edu")
-    dset.update_path(data_dir)
+    if len(list(existing_files)) != json["n_files"]:
+        response = urllib.request.urlopen(url)
 
-    return dset
+        zip_file = tempfile.NamedTemporaryFile(prefix=str(data_dir), suffix=".zip")
+        with open(zip_file.name, "wb") as fw:
+            fw.write(response.read())
 
+        with zipfile.ZipFile(zip_file.name, "r") as fr:
+            fr.extractall(data_dir)
 
-def fetch_neurosynth_dataset(
-    data_dir: str, return_pkl: bool = True
-) -> Union[Tuple[str, str], str]:
-    """Downloads the Neurosynth dataset
-
-    Parameters
-    ----------
-    data_dir : str
-        Directory in which to download the dataset.
-    return_pkl : bool
-        If true, creates and returns the .pkl file. Otherwise returns
-        the dataset and features files.
-
-    Returns
-    -------
-    tuple, str
-        If save_pkl is false, returns a tuple containing the path to the
-        database.txt and the features.txt file. Otherwise returns the path
-        to the .pkl file.
-
-    """
-    if not os.path.isdir(data_dir):
-        os.mkdir(data_dir)
-
-    dataset_file = os.path.join(data_dir, "database.txt")
-    if not os.path.isfile(dataset_file):
-        logging.info("Downloading the Neurosynth dataset.")
-        download(data_dir, unpack=True)
-    feature_file = os.path.join(data_dir, "features.txt")
-
-    if return_pkl:
-        pkl_file = os.path.join(data_dir, "dataset.pkl")
-        if not os.path.isfile(pkl_file):
-            logging.info(
-                "Converting Neurosynth data to a .pkl file. This may take a while."
-            )
-            dataset = Dataset(dataset_file, feature_file)
-            dataset.save(pkl_file)
-        return pkl_file
-
-    return (dataset_file, feature_file)
+    return data_dir.glob("Neurosynth_TFIDF__*z_desc-consistency.nii.gz")

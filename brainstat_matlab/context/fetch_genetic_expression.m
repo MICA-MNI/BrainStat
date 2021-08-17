@@ -28,7 +28,7 @@ function [expression, gene_names] = fetch_genetic_expression(atlas, n_regions, o
 arguments
     atlas (1,:) char
     n_regions (1,1) double
-    options.data_dir (1,1) string = brainstat_utils.get_data_dir('subdirectory', 'genetics', 'mkdir', true)
+    options.data_dir (1,1) string = brainstat_utils.get_brainstat_directories('genetic_data_dir');
     options.seven_networks (1,1) logical = true
     options.overwrite (1,1) logical = false
     options.verbose (1,1) logical = true

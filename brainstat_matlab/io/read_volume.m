@@ -6,6 +6,10 @@ function [volume,header] = read_volume(file)
 %
 % ADD LINK TO BRAINSTAT DOCUMENTATION. 
 
+arguments
+    file (1,:) char {mustBeFile}
+end
+
 % Niftiread is part of the image processing toolbox 
 if endsWith(file,{'.nii.gz','.nii'})
     nii = io_utils.nifti_toolbox.load_nii(file);

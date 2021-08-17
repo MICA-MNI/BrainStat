@@ -9,6 +9,7 @@ from abagen import check_atlas, get_expression_data
 from brainspace.mesh.mesh_io import read_surface, write_surface
 from sklearn.model_selection import ParameterGrid
 
+from brainstat._utils import data_directories
 from brainstat.datasets.base import (
     _fetch_template_surface_files,
     _valid_parcellations,
@@ -116,13 +117,16 @@ def surface_genetic_expression(
 
 
 def __create_precomputed(
-    data_dir: Optional[str] = None, output_dir: Optional[Union[str, Path]] = None
+    data_dir: Optional[Union[str, Path]] = None,
+    output_dir: Optional[Union[str, Path]] = None,
 ) -> None:
     """Creates precomputed matrices of genetic expression for standard atlases. These are
     used for the MATLAB implementation."""
 
     if output_dir is None:
-        output_dir = Path.home() / "brainstat_data"
+        output_dir = data_dir = (
+            Path(data_dir) if data_dir else data_directories["BRAINSTAT_DATA_DIR"]
+        )
 
     # Get all parcellations in a format compatible with ParameterGrid.
     parcellations = _valid_parcellations()

@@ -3,10 +3,12 @@ function filename = download_OSF_files(template, options)
 
 arguments
     template (1,:) char
-    options.data_dir (1,:) char {mustBeFolder} = brainstat_utils.get_data_dir( ...
-        'subdirectory', 'surfaces', 'mkdir', true);
+    options.data_dir (1,1) string {mustBeFolder} = brainstat_utils.get_brainstat_directories('surface_data_dir');
     options.parcellation char = ''
 end
+
+% Backwards compatibility
+options.data_dir = char(options.data_dir);
 
 [url, md5] = dataset_utils.get_OSF_url(template, options.parcellation);
 filename = [options.data_dir, filesep, template, '_', options.parcellation, '.tar.gz'];

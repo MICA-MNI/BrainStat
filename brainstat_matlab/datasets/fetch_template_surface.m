@@ -17,8 +17,7 @@ function [surf_lh, surf_rh] = fetch_template_surface(template, options)
 
 arguments
     template (1,:) char
-    options.data_dir (1,:) string {mustBeFolder} = brainstat_utils.get_data_dir( ...
-        'subdirectory', 'surfaces', 'mkdir', true);
+    options.data_dir (1,:) string {mustBeFolder} = brainstat_utils.get_brainstat_directories('surface_data_dir')
     options.layer char = ''
 end
 
