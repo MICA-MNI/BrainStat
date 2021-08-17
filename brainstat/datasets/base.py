@@ -189,11 +189,3 @@ def _fetch_glasser_parcellation(template: str, data_dir: Path) -> List[np.ndarra
     """Fetches glasser parcellation."""
     urls = read_data_fetcher_json["parcellations"]["glasser"][template]
     filepaths = []
-    for i, hemi in enumerate(("lh", "rh")):
-        filename = "_".join(("glasser", "360", template, hemi)) + "label.gii"
-        filepaths.append(data_dir / filename)
-        urlretrieve(urls[i], filepaths[i])
-    gifti = [nib_load(file) for file in filepaths]
-    parcellations = [x.darrays[0].data for x in gifti]
-    parcellations[1] = (parcellations[1] + 180) * (parcellations[1] > 0)
-    return parcellations
