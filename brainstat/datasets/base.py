@@ -187,5 +187,5 @@ def _valid_parcellations() -> dict:
 
 def _fetch_glasser_parcellation(template: str, data_dir: Path) -> List[np.ndarray]:
     """Fetches glasser parcellation."""
-    urls = read_data_fetcher_json["parcellations"]["glasser"][template]
+    urls = read_data_fetcher_json()["parcellations"]["glasser"][template]
     filepaths = []
