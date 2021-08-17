@@ -15,23 +15,25 @@
         "url": "https://box.bic.mni.mcgill.ca/s/GvislmLffbCIZoI/download"
     },
     "parcellations": {
-        "fsaverage": {
-            "url": [
-                "https://box.bic.mni.mcgill.ca/s/y2NMHXr47WOCtpp/download",
-                "https://box.bic.mni.mcgill.ca/s/Y0Fmd2tIF69Mqpt/download"
-            ]
-        },
-        "fsaverage5": {
-            "url": [
-                "https://box.bic.mni.mcgill.ca/s/Kg4VdWRt4NHvr3B/download",
-                "https://box.bic.mni.mcgill.ca/s/9sEXgVKi3VJ9pXV/download"
-            ]
-        },
-        "fslr32k": {
-            "url": [
-                "https://box.bic.mni.mcgill.ca/s/y2NMHXr47WOCtpp/download",
-                "https://box.bic.mni.mcgill.ca/s/Y0Fmd2tIF69Mqpt/download"
-            ]
+        "glasser": {
+            "fsaverage": {
+                "url": [
+                    "https://box.bic.mni.mcgill.ca/s/y2NMHXr47WOCtpp/download",
+                    "https://box.bic.mni.mcgill.ca/s/Y0Fmd2tIF69Mqpt/download"
+                ]
+            },
+            "fsaverage5": {
+                "url": [
+                    "https://box.bic.mni.mcgill.ca/s/Kg4VdWRt4NHvr3B/download",
+                    "https://box.bic.mni.mcgill.ca/s/9sEXgVKi3VJ9pXV/download"
+                ]
+            },
+            "fslr32k": {
+                "url": [
+                    "https://box.bic.mni.mcgill.ca/s/y2NMHXr47WOCtpp/download",
+                    "https://box.bic.mni.mcgill.ca/s/Y0Fmd2tIF69Mqpt/download"
+                ]
+            }
         }
     }
 }
