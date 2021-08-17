@@ -88,7 +88,7 @@ def surface_decoder(
 
     logging.info("Running correlations with all Neurosynth features.")
     for i in range(len(feature_files)):
-        feature_names.append(re.search("__[a-z0-9]+", feature_files[i].stem)[0][2:])
+        feature_names.append(re.search("__[A-Za-z0-9]+", feature_files[i].stem)[0][2:])
         feature_data = nib.load(feature_files[i]).get_fdata()[mask]
         keep = np.logical_not(
             np.isnan(feature_data)
@@ -151,4 +151,4 @@ def _fetch_precomputed_neurosynth(data_dir: Path) -> Generator[str, None, None]:
         with zipfile.ZipFile(zip_file.name, "r") as f:
             f.extractall(data_dir)
 
-    return (data_dir / "upload").glob("Neurosynth_TFIDF__*z_desc-consistency.nii.gz")
+    return data_dir.glob("Neurosynth_TFIDF__*z_desc-consistency.nii.gz")
