@@ -169,7 +169,7 @@ function nii = load_nii(filename, img_idx, dim5_idx, dim6_idx, dim7_idx, ...
 
    %  Read the dataset header
    %
-   [nii.hdr,nii.filetype,nii.fileprefix,nii.machine] = load_nii_hdr(filename);
+   [nii.hdr,nii.filetype,nii.fileprefix,nii.machine] = io_utils.nifti_toolbox.load_nii_hdr(filename);
 
    %  Read the header extension
    %
@@ -177,12 +177,12 @@ function nii = load_nii(filename, img_idx, dim5_idx, dim6_idx, dim7_idx, ...
 
    %  Read the dataset body
    %
-   [nii.img,nii.hdr] = load_nii_img(nii.hdr,nii.filetype,nii.fileprefix, ...
+   [nii.img,nii.hdr] = io_utils.nifti_toolbox.load_nii_img(nii.hdr,nii.filetype,nii.fileprefix, ...
 		nii.machine,img_idx,dim5_idx,dim6_idx,dim7_idx,old_RGB);
 
    %  Perform some of sform/qform transform
    %
-   nii = xform_nii(nii, tolerance, preferredForm);
+   nii = io_utils.nifti_toolbox.xform_nii(nii, tolerance, preferredForm);
 
    %  Clean up after gunzip
    %

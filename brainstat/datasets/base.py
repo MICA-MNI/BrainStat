@@ -12,7 +12,7 @@ from netneurotools import datasets as nnt_datasets
 from nibabel import load as nib_load
 from nibabel.freesurfer.io import read_annot, read_geometry
 
-from brainstat._utils import read_data_fetcher_json
+from brainstat._utils import data_directories, read_data_fetcher_json
 
 
 def fetch_parcellation(
@@ -43,7 +43,7 @@ def fetch_parcellation(
         If true, uses the 7 networks parcellation. Only used for the Schaefer
         atlas, by default True.
     data_dir : str, pathlib.Path, optional
-        Directory to save the data, defaults to $HOME_DIR/brainstat_data/parcellations.
+        Directory to save the data, defaults to $HOME_DIR/brainstat_data/parcellation_data.
 
     Returns
     -------
@@ -51,10 +51,7 @@ def fetch_parcellation(
         Surface parcellation. If a tuple, then the first element is the left hemisphere.
     """
 
-    if data_dir is None:
-        data_dir = Path.home() / "brainstat_data" / "parcellations"
-    else:
-        data_dir = Path(data_dir)
+    data_dir = Path(data_dir) if data_dir else data_directories["PARCELLATION_DATA_DIR"]
     data_dir.mkdir(parents=True, exist_ok=True)
 
     if atlas == "schaefer":
@@ -96,7 +93,7 @@ def fetch_template_surface(
     template: str,
     join: bool = True,
     layer: Optional[str] = None,
-    data_dir: Optional[str] = None,
+    data_dir: Optional[Union[str, Path]] = None,
 ) -> Union[BSPolyData, Tuple[BSPolyData, BSPolyData]]:
     """Loads surface templates.
 
@@ -112,7 +109,7 @@ def fetch_template_surface(
         "smoothwm", "pial", "inflated", "sphere" for fsaverage surfaces and
         "midthickness", "inflated", "vinflated" for "fslr32k". If None,
         defaults to "pial" or "midthickness", by default None.
-    data_dir : str, optional
+    data_dir : str, Path, optional
         Directory to save the data, by default None.
 
     Returns
@@ -121,6 +118,7 @@ def fetch_template_surface(
         Output surface(s). If a tuple, then the first element is the left hemisphere.
     """
 
+    data_dir = Path(data_dir) if data_dir else data_directories['SURFACE_DATA_DIR']
     surface_files = _fetch_template_surface_files(template, layer, data_dir)
     if template == "fslr32k":
         surfaces = [read_surface(file) for file in surface_files]
@@ -189,7 +187,7 @@ def _valid_parcellations() -> dict:
 
 def _fetch_glasser_parcellation(template: str, data_dir: Path) -> List[np.ndarray]:
     """Fetches glasser parcellation."""
-    urls = read_data_fetcher_json["parcellations"][template]
+    urls = read_data_fetcher_json["parcellations"]["glasser"][template]
     filepaths = []
     for i, hemi in enumerate(("lh", "rh")):
         filename = "_".join(("glasser", "360", template, hemi)) + "label.gii"

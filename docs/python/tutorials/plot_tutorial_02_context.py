@@ -58,7 +58,7 @@ import os
 import nibabel as nib
 
 import brainstat
-from brainstat.context.meta_analysis import surface_decode_nimare
+from brainstat.context.meta_analysis import surface_decoder
 from brainstat.tutorial.utils import fetch_tutorial_data
 
 ## Load white matter surfaces.
@@ -90,12 +90,10 @@ mask = np.all(subject_thickness != 0, axis=0)
 # provided seperately for each hemisphere.
 
 if run_analysis:
-    meta_analysis = surface_decode_nimare(
+    meta_analysis = surface_decoder(
         surfaces_pial,
         surfaces_white,
         [thickness[:10242], thickness[10242:]],
-        [mask[:10242], mask[10242:]],
-        features=["Neurosynth_TFIDF__visuospatial", "Neurosynth_TFIDF__motor"],
     )
 
 ########################################################################

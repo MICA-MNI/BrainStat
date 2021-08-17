@@ -11,7 +11,7 @@ from brainspace.gradient.gradient import GradientMaps
 from brainspace.utils.parcellation import reduce_by_labels
 
 from brainstat._typing import ArrayLike
-from brainstat._utils import read_data_fetcher_json
+from brainstat._utils import data_directories, read_data_fetcher_json
 
 
 def compute_histology_gradients(
@@ -130,10 +130,6 @@ def read_histology_profile(
         Depth-by-vertex array of BigBrain intensities.
     """
 
-    if data_dir is None:
-        data_dir = Path.home() / "histology_data"
-    else:
-        data_dir = Path(data_dir)
     histology_file = data_dir / ("histology_" + template + ".h5")
 
     if not histology_file.exists() or overwrite:
@@ -172,10 +168,7 @@ def download_histology_profiles(
         Thrown if an invalid template is requested.
     """
 
-    if data_dir is None:
-        data_dir = Path.home() / "histology_data"
-    else:
-        data_dir = Path(data_dir)
+    data_dir = Path(data_dir) if data_dir else data_directories["BIGBRAIN_DATA_DIR"]
     data_dir.mkdir(parents=True, exist_ok=True)
     output_file = data_dir / ("histology_" + template + ".h5")
 

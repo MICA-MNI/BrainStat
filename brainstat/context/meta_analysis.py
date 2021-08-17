@@ -14,8 +14,8 @@ from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 from nilearn.datasets import load_mni152_brain_mask
 from scipy.stats.stats import pearsonr
 
-from brainstat.context.utils import multi_surface_to_volume
-from brainstat._utils import read_data_fetcher_json
+from brainstat._utils import data_directories, read_data_fetcher_json
+from brainstat.mesh.interpolate import multi_surface_to_volume
 
 
 def surface_decoder(
@@ -59,10 +59,12 @@ def surface_decoder(
         Table with correlation values for each feature.
     """
 
-    data_dir = Path(data_dir) if data_dir else Path.home() / "brainstat_data" / "nimare"
+    data_dir = Path(data_dir) if data_dir else data_directories["NEUROSYNTH_DATA_DIR"]
     data_dir.mkdir(exist_ok=True, parents=True)
 
-    logging.info("Fetching Neurosynth feature files. This may take several minutes if you haven't downloaded them yet.")
+    logging.info(
+        "Fetching Neurosynth feature files. This may take several minutes if you haven't downloaded them yet."
+    )
     feature_files = tuple(_fetch_precomputed(data_dir, database=database))
 
     mni152 = load_mni152_brain_mask()
@@ -83,7 +85,7 @@ def surface_decoder(
 
     feature_names = []
     correlations = np.zeros(len(feature_files))
-    
+
     logging.info("Running correlations with all Neurosynth features.")
     for i in range(len(feature_files)):
         feature_names.append(re.search("__[a-z0-9]+", feature_files[i].stem)[0][2:])
@@ -101,6 +103,27 @@ def surface_decoder(
 
 
 def _fetch_precomputed(data_dir: Path, database: str) -> Generator[str, None, None]:
+    """Wrapper for any future data fetcher.
+
+    Parameters
+    ----------
+    data_dir : Path
+        Directory where the data is stored.
+    database : str
+        Name of the database, valid arguments are 'neurosynth'.
+
+    Returns
+    -------
+    generator
+        Generator of paths to the precomputed files.
+
+    Raises
+    ------
+    NotImplementedError
+        Returned when requesting the Neuroquery data fetcher.
+    ValueError
+        Returned when requesting an unknown database.
+    """
     if database == "neurosynth":
         return _fetch_precomputed_neurosynth(data_dir)
     elif database == "neuroquery":
