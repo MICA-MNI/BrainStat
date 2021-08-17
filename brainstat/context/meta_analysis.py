@@ -88,7 +88,7 @@ def surface_decoder(
 
     logging.info("Running correlations with all Neurosynth features.")
     for i in range(len(feature_files)):
-        feature_names.append(re.search("__[A-Za-z0-9]+", feature_files[i].stem)[0][2:])
+        feature_names.append(re.search("__[A-Za-z0-9]+", feature_files[i].stem)[0][2:]) #type: ignore
         feature_data = nib.load(feature_files[i]).get_fdata()[mask]
         keep = np.logical_not(
             np.isnan(feature_data)
@@ -102,7 +102,7 @@ def surface_decoder(
     return df.sort_values(by="Pearson's r", ascending=False)
 
 
-def _fetch_precomputed(data_dir: Path, database: str) -> Generator[str, None, None]:
+def _fetch_precomputed(data_dir: Path, database: str) -> Generator[Path, None, None]:
     """Wrapper for any future data fetcher.
 
     Parameters
@@ -132,7 +132,7 @@ def _fetch_precomputed(data_dir: Path, database: str) -> Generator[str, None, No
         raise ValueError(f"Unknown database {database}.")
 
 
-def _fetch_precomputed_neurosynth(data_dir: Path) -> Generator[str, None, None]:
+def _fetch_precomputed_neurosynth(data_dir: Path) -> Generator[Path, None, None]:
     """Downloads precomputed Neurosynth features and returns the filepaths."""
 
     json = read_data_fetcher_json()["neurosynth_precomputed"]
@@ -145,10 +145,10 @@ def _fetch_precomputed_neurosynth(data_dir: Path) -> Generator[str, None, None]:
         response = urllib.request.urlopen(url)
 
         zip_file = tempfile.NamedTemporaryFile(prefix=str(data_dir), suffix=".zip")
-        with open(zip_file.name, "wb") as f:
-            f.write(response.read())
+        with open(zip_file.name, "wb") as fw:
+            fw.write(response.read())
 
-        with zipfile.ZipFile(zip_file.name, "r") as f:
-            f.extractall(data_dir)
+        with zipfile.ZipFile(zip_file.name, "r") as fr:
+            fr.extractall(data_dir)
 
     return data_dir.glob("Neurosynth_TFIDF__*z_desc-consistency.nii.gz")

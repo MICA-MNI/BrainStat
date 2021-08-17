@@ -117,7 +117,7 @@ def surface_genetic_expression(
 
 
 def __create_precomputed(
-    data_dir: Optional[str] = None, output_dir: Optional[Union[str, Path]] = None
+    data_dir: Optional[Union[str, Path]] = None, output_dir: Optional[Union[str, Path]] = None
 ) -> None:
     """Creates precomputed matrices of genetic expression for standard atlases. These are
     used for the MATLAB implementation."""

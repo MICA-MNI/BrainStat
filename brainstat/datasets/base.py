@@ -135,7 +135,7 @@ def fetch_template_surface(
 def _fetch_template_surface_files(
     template: str,
     layer: Optional[str] = None,
-    data_dir: Optional[str] = None,
+    data_dir: Optional[Union[str, Path]] = None,
 ) -> Tuple[str, str]:
     """Fetches surface files.
 
@@ -157,13 +157,13 @@ def _fetch_template_surface_files(
     Tuple of str
         Surface files.
     """
-
+    
     if template == "fslr32k":
         layer = layer if layer else "midthickness"
-        bunch = nnt_datasets.fetch_conte69(data_dir=data_dir)
+        bunch = nnt_datasets.fetch_conte69(data_dir=str(data_dir))
     else:
         layer = layer if layer else "pial"
-        bunch = nnt_datasets.fetch_fsaverage(version=template, data_dir=data_dir)
+        bunch = nnt_datasets.fetch_fsaverage(version=template, data_dir=str(data_dir))
     return bunch[layer]
 
 

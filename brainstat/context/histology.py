@@ -130,6 +130,7 @@ def read_histology_profile(
         Depth-by-vertex array of BigBrain intensities.
     """
 
+    data_dir = Path(data_dir) if data_dir else data_directories["BIGBRAIN_DATA_DIR"]
     histology_file = data_dir / ("histology_" + template + ".h5")
 
     if not histology_file.exists() or overwrite:

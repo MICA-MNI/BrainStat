@@ -330,7 +330,7 @@ def ribbon_interpolation(
     return interp(ribbon_coord)
 
 
-def __create_precomputed(data_dir: Optional[str] = None) -> None:
+def __create_precomputed(data_dir: Optional[Union[str, Path]] = None) -> None:
     """Create nearest neighbor interpolation niftis for MATLAB."""
     data_dir = Path(data_dir) if data_dir else data_directories["BRAINSTAT_DATA_DIR"]
     for template in ("fsaverage5", "fsaverage"):
