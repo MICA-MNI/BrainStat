@@ -157,7 +157,7 @@ def _fetch_template_surface_files(
     Tuple of str
         Surface files.
     """
-    
+
     if template == "fslr32k":
         layer = layer if layer else "midthickness"
         bunch = nnt_datasets.fetch_conte69(data_dir=str(data_dir))

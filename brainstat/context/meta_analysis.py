@@ -88,7 +88,7 @@ def surface_decoder(
 
     logging.info("Running correlations with all Neurosynth features.")
     for i in range(len(feature_files)):
-        feature_names.append(re.search("__[A-Za-z0-9]+", feature_files[i].stem)[0][2:]) #type: ignore
+        feature_names.append(re.search("__[A-Za-z0-9]+", feature_files[i].stem)[0][2:])  # type: ignore
         feature_data = nib.load(feature_files[i]).get_fdata()[mask]
         keep = np.logical_not(
             np.isnan(feature_data)
