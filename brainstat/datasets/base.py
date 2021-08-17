@@ -118,7 +118,7 @@ def fetch_template_surface(
         Output surface(s). If a tuple, then the first element is the left hemisphere.
     """
 
-    data_dir = Path(data_dir) if data_dir else data_directories['SURFACE_DATA_DIR']
+    data_dir = Path(data_dir) if data_dir else data_directories["SURFACE_DATA_DIR"]
     surface_files = _fetch_template_surface_files(template, layer, data_dir)
     if template == "fslr32k":
         surfaces = [read_surface(file) for file in surface_files]

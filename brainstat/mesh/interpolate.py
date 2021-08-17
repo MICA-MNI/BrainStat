@@ -1,11 +1,11 @@
 """Interpolations on a mesh."""
-import logging
-from pathlib import Path
-from typing import Optional, List, Sequence, Union
-import tempfile
-import shutil
-import os
 import gzip
+import logging
+import os
+import shutil
+import tempfile
+from pathlib import Path
+from typing import List, Optional, Sequence, Union
 
 import nibabel as nib
 import numpy as np
@@ -89,6 +89,7 @@ valid_surfaces = Union[
     BSPolyData,
     Sequence[Union[str, BSPolyData]],
 ]
+
 
 def _input_to_list(x: valid_surfaces) -> List[Union[str, BSPolyData]]:
     if isinstance(x, str):
@@ -429,4 +430,3 @@ def read_surface_gz(filename: str) -> BSPolyData:
             return read_surface(f_tmp.name)
     else:
         return read_surface(filename)
-
