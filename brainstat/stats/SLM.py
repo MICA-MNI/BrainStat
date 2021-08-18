@@ -12,7 +12,8 @@ from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 from brainstat._typing import ArrayLike
 from brainstat.mesh.utils import _mask_edges, mesh_edges
 from brainstat.stats.terms import FixedEffect, MixedEffect
-from brainstat.stats.utils import apply_mask, deprecated, undo_mask
+from brainstat.stats.utils import apply_mask, undo_mask
+from brainstat._utils import deprecated
 
 
 class SLM:

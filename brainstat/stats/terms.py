@@ -7,7 +7,7 @@ import pandas as pd
 
 from brainstat._typing import ArrayLike
 
-from .utils import deprecated
+from brainstat._utils import deprecated
 
 
 def check_names(

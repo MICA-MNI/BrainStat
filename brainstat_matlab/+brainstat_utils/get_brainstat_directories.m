@@ -18,6 +18,9 @@ switch lower(name)
     case 'genetic_data_dir'
         directory = brainstat_utils.get_brainstat_directories('brainstat_data_dir') ...
             + filesep + "genetic_data";
+    case 'mics_data_dir'
+        directory = brainstat_utils.get_brainstat_directories('brainstat_data_dir') ...
+            + filesep + "mics_data";
     case 'neurosynth_data_dir'
         directory = brainstat_utils.get_brainstat_directories('brainstat_data_dir') ...
             + filesep + "neurosynth_data";

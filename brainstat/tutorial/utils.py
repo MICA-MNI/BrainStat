@@ -1,11 +1,54 @@
 import warnings
 from pathlib import Path
+from typing import Optional, Union, Tuple
+import shutil
 
 import pandas as pd
+import numpy as np
+import h5py
 from nilearn.datasets.utils import _fetch_files, _get_dataset_dir
 from sklearn.utils import Bunch
+from brainstat._utils import deprecated, read_data_fetcher_json, data_directories
+from urllib.request import urlopen
 
 
+def fetch_mics_data(
+    data_dir: Optional[Union[str, Path]] = None
+) -> Tuple[np.ndarray, pd.DataFrame]:
+    """Download and load the MICs tutorial dataset
+
+    Parameters
+    ----------
+    data_dir : str, pathlib.Path, optional
+        Path of the data directory. If None, data will be downloaded to
+        $HOME_DIR/brainstat_data/MICs_data, by default None.
+
+    Returns
+    -------
+    numpy.ndarray
+        Subjects-by-vertex array of cortical thickness on fsaverage5.
+    pandas.DataFrame
+        Age, sex, and handedness of the subjects.
+    """
+    data_dir = Path(data_dir) if data_dir else data_directories["MICS_DATA_DIR"]
+    data_dir.mkdir(exist_ok=True, parents=True)
+
+    thickness_file = data_dir / "mics_tutorial_thickness.h5"
+    subjects_file = data_dir / "mics_tutorial_participants.csv"
+
+    json = read_data_fetcher_json()["mics_tutorial"]
+    if not thickness_file.is_file():
+        with urlopen(json["thickness"]["url"]) as r, open(thickness_file, "wb") as tf:
+            shutil.copyfileobj(r, tf)
+    if not subjects_file.is_file():
+        with urlopen(json["participants"]["url"]) as r, open(subjects_file, "wb") as pf:
+            shutil.copyfileobj(r, pf)
+
+    thickness = h5py.File(thickness_file, "r")["thickness"][:]
+    demographics = pd.read_csv(subjects_file)
+    return thickness, demographics
+
+@deprecated("This dataset has been deprecated in favor of the MICs dataset.")
 def fetch_tutorial_data(n_subjects=20, data_dir=None, resume=True, verbose=1):
 
     """Download and load the surfstat tutorial dataset.

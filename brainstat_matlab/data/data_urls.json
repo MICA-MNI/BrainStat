@@ -10,6 +10,14 @@
             "url": "https://box.bic.mni.mcgill.ca/s/6zKHcg9xXu5inPR/download"
         }
     },
+    "mics_tutorial": {
+        "participants": {
+            "url": "https://box.bic.mni.mcgill.ca/s/ckxsB6qtJ7iClzV/download"
+        },
+        "thickness": {
+            "url": "https://box.bic.mni.mcgill.ca/s/wDZzy3SVBELphfB/download"
+        }
+    },
     "neurosynth_precomputed": {
         "n_files": 3228,
         "url": "https://box.bic.mni.mcgill.ca/s/GvislmLffbCIZoI/download"
