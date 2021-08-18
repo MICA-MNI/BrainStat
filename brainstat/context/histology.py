@@ -96,7 +96,7 @@ def compute_mpc(profile: np.ndarray, labels: np.ndarray) -> np.ndarray:
         # Remove 0's in the labels.
         roi_profile = roi_profile[:, 1:]
 
-    p_corr = partial_correlation(roi_profile, np.mean(roi_profile, axis=1))
+    p_corr = partial_correlation(roi_profile, np.mean(profile, axis=1))
 
     mpc = 0.5 * np.log((1 + p_corr) / (1 - p_corr))
     mpc[p_corr > 0.99999] = 0  # Deals with floating point issues where p_corr==1

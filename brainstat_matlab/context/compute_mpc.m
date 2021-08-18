@@ -12,7 +12,7 @@ arguments
 end
 
 roi_profile = labelmean(profile', labels(:)');
-partial_r = partialcorr(roi_profile, mean(roi_profile, 2));
+partial_r = partialcorr(roi_profile, mean(profile, 1)');
 mpc = 0.5 * log((1 + partial_r) ./ (1 - partial_r)); 
 mpc(isnan(mpc)) = 0;
 mpc(isinf(mpc)) = 0;
