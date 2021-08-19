@@ -48,6 +48,7 @@ def fetch_mics_data(
     demographics = pd.read_csv(subjects_file)
     return thickness, demographics
 
+
 @deprecated("This dataset has been deprecated in favor of the MICs dataset.")
 def fetch_tutorial_data(n_subjects=20, data_dir=None, resume=True, verbose=1):
 
