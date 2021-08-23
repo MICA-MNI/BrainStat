@@ -1,8 +1,9 @@
 """Utilities for BrainStat developers."""
 import json
+import warnings
 from pathlib import Path
 from typing import Callable
-import warnings
+
 import brainstat
 
 json_file = Path(brainstat.__file__).parent / "data_urls.json"

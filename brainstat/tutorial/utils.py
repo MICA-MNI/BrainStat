@@ -1,15 +1,16 @@
+import shutil
 import warnings
 from pathlib import Path
-from typing import Optional, Union, Tuple
-import shutil
+from typing import Optional, Tuple, Union
+from urllib.request import urlopen
 
-import pandas as pd
-import numpy as np
 import h5py
+import numpy as np
+import pandas as pd
 from nilearn.datasets.utils import _fetch_files, _get_dataset_dir
 from sklearn.utils import Bunch
-from brainstat._utils import deprecated, read_data_fetcher_json, data_directories
-from urllib.request import urlopen
+
+from brainstat._utils import data_directories, deprecated, read_data_fetcher_json
 
 
 def fetch_mics_data(

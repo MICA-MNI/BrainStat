@@ -333,7 +333,11 @@ def ribbon_interpolation(
 def __create_precomputed(data_dir: Optional[Union[str, Path]] = None) -> None:
     """Create nearest neighbor interpolation niftis for MATLAB."""
     data_dir = Path(data_dir) if data_dir else data_directories["BRAINSTAT_DATA_DIR"]
+    mni152 = load_mni152_brain_mask()
     for template in ("fsaverage5", "fsaverage"):
+        output_file = data_dir / f"nn_interp_{template}.nii.gz"
+        if output_file.exists():
+            continue
         pial = fetch_template_surface(template, layer="pial", join=False)
         white = fetch_template_surface(template, layer="white", join=False)
         labels = (
@@ -342,13 +346,28 @@ def __create_precomputed(data_dir: Optional[Union[str, Path]] = None) -> None:
                 get_points(pial[0]).shape[0] + 1, get_points(pial[0]).shape[0] * 2 + 1
             ),
         )
-        mni152 = load_mni152_brain_mask()
         multi_surface_to_volume(
             pial=pial,
             white=white,
             volume_template=mni152,
             labels=labels,
-            output_file=str(data_dir / f"nn_interp_{template}.nii.gz"),
+            output_file=str(output_file),
+            interpolation="nearest",
+        )
+
+    if not (data_dir / "nn_interp_hcp.nii.gz").exists():
+        import hcp_utils as hcp
+        from brainspace.mesh.mesh_creation import build_polydata
+
+        pial = (build_polydata(hcp.mesh.pial[0], hcp.mesh.pial[1]),)
+        white = (build_polydata(hcp.mesh.white[0], hcp.mesh.white[1]),)
+        labels = (np.arange(1, get_points(pial[0]).shape[0] + 1),)
+        multi_surface_to_volume(
+            pial=pial,
+            white=white,
+            volume_template=mni152,
+            labels=labels,
+            output_file=str(data_dir / "nn_interp_fslr32k.nii.gz"),
             interpolation="nearest",
         )
 

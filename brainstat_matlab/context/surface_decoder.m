@@ -12,7 +12,7 @@ function [pearsons_r_sort, feature_names_sort] = surface_decoder(stat_data, opti
 %   Valid name-value pairs are:
 %       template
 %           The template surface to use, either 'fsaverage5' or
-%           'fsaverage', defaults to 'fsaverage5'.
+%           'fsaverage', or 'fslr32k', defaults to 'fsaverage5'.
 %       interpolation
 %           The type of surface to volume interpolation. Currently only
 %           'nearest' (nearest neighbor interpolation) is allowed.

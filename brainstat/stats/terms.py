@@ -6,7 +6,6 @@ import numpy as np
 import pandas as pd
 
 from brainstat._typing import ArrayLike
-
 from brainstat._utils import deprecated
 
 
