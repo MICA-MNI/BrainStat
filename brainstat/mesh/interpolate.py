@@ -359,14 +359,14 @@ def __create_precomputed(data_dir: Optional[Union[str, Path]] = None) -> None:
         import hcp_utils as hcp
         from brainspace.mesh.mesh_creation import build_polydata
 
-        pial = (build_polydata(hcp.mesh.pial[0], hcp.mesh.pial[1]),)
-        white = (build_polydata(hcp.mesh.white[0], hcp.mesh.white[1]),)
-        labels = (np.arange(1, get_points(pial[0]).shape[0] + 1),)
+        pial_fslr32k = (build_polydata(hcp.mesh.pial[0], hcp.mesh.pial[1]),)
+        white_fslr32k = (build_polydata(hcp.mesh.white[0], hcp.mesh.white[1]),)
+        labels_fslr32k = (np.arange(1, get_points(pial[0]).shape[0] + 1),)
         multi_surface_to_volume(
             pial=pial,
             white=white,
             volume_template=mni152,
-            labels=labels,
+            labels=labels_fslr32k,
             output_file=str(data_dir / "nn_interp_fslr32k.nii.gz"),
             interpolation="nearest",
         )
