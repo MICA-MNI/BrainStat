@@ -12,6 +12,7 @@ json_file = Path(brainstat.__file__).parent / "data_urls.json"
 BRAINSTAT_DATA_DIR = Path.home() / "brainstat_data"
 data_directories = {
     "BRAINSTAT_DATA_DIR": BRAINSTAT_DATA_DIR,
+    "ABIDE_DATA_DIR": BRAINSTAT_DATA_DIR / "abide_data",
     "BIGBRAIN_DATA_DIR": BRAINSTAT_DATA_DIR / "bigbrain_data",
     "MICS_DATA_DIR": BRAINSTAT_DATA_DIR / "mics_data",
     "NEUROSYNTH_DATA_DIR": BRAINSTAT_DATA_DIR / "neurosynth_data",
@@ -66,6 +67,11 @@ def generate_data_fetcher_json() -> None:
             },
             "participants": {
                 "url": "https://box.bic.mni.mcgill.ca/s/ckxsB6qtJ7iClzV/download",
+            },
+        },
+        "abide_tutorial": {
+            "summary_spreadsheet": {
+                "url": "https://s3.amazonaws.com/fcp-indi/data/Projects/ABIDE_Initiative/Phenotypic_V1_0b_preprocessed1.csv"
             },
         },
     }
