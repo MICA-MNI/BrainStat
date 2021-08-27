@@ -57,8 +57,8 @@ import os
 import brainstat
 import nibabel as nib
 from brainstat.context.meta_analysis import surface_decoder
-from brainstat.tutorial.utils import fetch_tutorial_data
-
+"""from brainstat.tutorial.utils import fetch_tutorial_data
+ -- DISABLED UNTIL FIXED ON READTHEDOCS
 ## Load white matter surfaces.
 surfaces_white = [fsaverage["white_left"], fsaverage["white_right"]]
 
@@ -82,7 +82,7 @@ for i in range(n):
 
 thickness = np.mean(subject_thickness, axis=0)
 mask = np.all(subject_thickness != 0, axis=0)
-
+"""
 ########################################################################
 # Next we can run the analysis. Note that the data and mask has to be
 # provided seperately for each hemisphere.
@@ -111,7 +111,7 @@ from brainstat.context.histology import (
     compute_mpc,
     read_histology_profile,
 )
-
+""" DISABLED 
 # Load the Schaefer 400 atlas
 schaefer_400 = load_parcellation("schaefer", scale=400, join=True)
 
@@ -119,13 +119,13 @@ schaefer_400 = load_parcellation("schaefer", scale=400, join=True)
 histology_profiles = read_histology_profile(template="fs_LR_64k")
 mpc = compute_mpc(histology_profiles, labels=schaefer_400)
 gradient_map = compute_histology_gradients(mpc)
-
+"""
 ########################################################################
 # Lets plot the first gradient of histology to see what it looks like.
 # We will use BrainSpace to create our plots. For full details on how
 # BrainSpace's plotting functionality works, please consult the BrainSpace
 # ReadTheDocs. (NOTE: Temporarily disabled due to build errors)
-
+"""
 from brainspace.datasets import load_conte69
 from brainspace.plotting.surface_plotting import plot_hemispheres
 from brainspace.utils.parcellation import map_to_labels
@@ -142,3 +142,4 @@ for i in range(0, 2):
         )
     )
 # plot_hemispheres(left_surface, right_surface, vertexwise_data, embed_nb=True)
+"""

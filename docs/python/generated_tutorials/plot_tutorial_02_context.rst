@@ -93,8 +93,8 @@ the white matter surface (recall that we've already loaded the pial surface).
     import brainstat
     import nibabel as nib
     from brainstat.context.meta_analysis import surface_decoder
-    from brainstat.tutorial.utils import fetch_tutorial_data
-
+    """from brainstat.tutorial.utils import fetch_tutorial_data
+     -- DISABLED UNTIL FIXED ON READTHEDOCS
     ## Load white matter surfaces.
     surfaces_white = [fsaverage["white_left"], fsaverage["white_right"]]
 
@@ -118,18 +118,19 @@ the white matter surface (recall that we've already loaded the pial surface).
 
     thickness = np.mean(subject_thickness, axis=0)
     mask = np.all(subject_thickness != 0, axis=0)
+    """
+
 
 
 
 .. rst-class:: sphx-glr-script-out
 
-.. code-block:: pytb
+ Out:
 
-    Traceback (most recent call last):
-      File "/Users/reinder/GitHub/BrainStat/docs/python/tutorials/plot_tutorial_02_context.py", line 60, in <module>
-        from brainstat.tutorial.utils import fetch_tutorial_data
-    ImportError: cannot import name 'fetch_tutorial_data' from 'brainstat.tutorial.utils' (/Users/reinder/GitHub/BrainStat/brainstat/tutorial/utils.py)
+ .. code-block:: none
 
+
+    'from brainstat.tutorial.utils import fetch_tutorial_data\n -- DISABLED UNTIL FIXED ON READTHEDOCS\n## Load white matter surfaces.\nsurfaces_white = [fsaverage["white_left"], fsaverage["white_right"]]\n\n## Load cortical thickness data.\n# Note: you can change the data_dir to wherever you\'d like to save the data.\nbrainstat_dir = os.path.dirname(brainstat.__file__)\ndata_dir = os.path.join(brainstat_dir, "tutorial")\n\nn = 20\ntutorial_data = fetch_tutorial_data(n_subjects=n, data_dir=data_dir)\n\n# Reshape the thickness files such that left and right hemispheres are in the same row.\nfiles = np.reshape(np.array(tutorial_data["image_files"]), (-1, 2))\n\n# We\'ll use only the left hemisphere in this tutorial.\nsubject_thickness = np.zeros((n, 20484))\nfor i in range(n):\n    left_thickness = np.squeeze(nib.load(files[i, 0]).get_fdata())\n    right_thickness = np.squeeze(nib.load(files[i, 1]).get_fdata())\n    subject_thickness[i, :] = np.concatenate((left_thickness, right_thickness))\n\nthickness = np.mean(subject_thickness, axis=0)\nmask = np.all(subject_thickness != 0, axis=0)\n'
 
 
 
@@ -149,6 +150,12 @@ provided seperately for each hemisphere.
             surfaces_white,
             [thickness[:10242], thickness[10242:]],
         )
+
+
+
+
+
+
 
 
 .. GENERATED FROM PYTHON SOURCE LINES 98-107
@@ -174,7 +181,7 @@ very intesnive, we can actually run this on ReadTheDocs!
         compute_mpc,
         read_histology_profile,
     )
-
+    """ DISABLED 
     # Load the Schaefer 400 atlas
     schaefer_400 = load_parcellation("schaefer", scale=400, join=True)
 
@@ -182,6 +189,20 @@ very intesnive, we can actually run this on ReadTheDocs!
     histology_profiles = read_histology_profile(template="fs_LR_64k")
     mpc = compute_mpc(histology_profiles, labels=schaefer_400)
     gradient_map = compute_histology_gradients(mpc)
+    """
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+
+    ' DISABLED \n# Load the Schaefer 400 atlas\nschaefer_400 = load_parcellation("schaefer", scale=400, join=True)\n\n# Run the analysis\nhistology_profiles = read_histology_profile(template="fs_LR_64k")\nmpc = compute_mpc(histology_profiles, labels=schaefer_400)\ngradient_map = compute_histology_gradients(mpc)\n'
+
 
 
 .. GENERATED FROM PYTHON SOURCE LINES 124-128
@@ -191,11 +212,11 @@ We will use BrainSpace to create our plots. For full details on how
 BrainSpace's plotting functionality works, please consult the BrainSpace
 ReadTheDocs. (NOTE: Temporarily disabled due to build errors)
 
-.. GENERATED FROM PYTHON SOURCE LINES 128-145
+.. GENERATED FROM PYTHON SOURCE LINES 128-146
 
 .. code-block:: default
 
-
+    """
     from brainspace.datasets import load_conte69
     from brainspace.plotting.surface_plotting import plot_hemispheres
     from brainspace.utils.parcellation import map_to_labels
@@ -212,11 +233,26 @@ ReadTheDocs. (NOTE: Temporarily disabled due to build errors)
             )
         )
     # plot_hemispheres(left_surface, right_surface, vertexwise_data, embed_nb=True)
+    """
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+
+    '\nfrom brainspace.datasets import load_conte69\nfrom brainspace.plotting.surface_plotting import plot_hemispheres\nfrom brainspace.utils.parcellation import map_to_labels\n\nleft_surface, right_surface = load_conte69()\nvertexwise_data = []\nfor i in range(0, 2):\n    vertexwise_data.append(\n        map_to_labels(\n            gradient_map.gradients_[:, i],\n            schaefer_400,\n            mask=schaefer_400 != 0,\n            fill=np.nan,\n        )\n    )\n# plot_hemispheres(left_surface, right_surface, vertexwise_data, embed_nb=True)\n'
+
+
 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  0.022 seconds)
+   **Total running time of the script:** ( 0 minutes  0.019 seconds)
 
 
 .. _sphx_glr_download_python_generated_tutorials_plot_tutorial_02_context.py:
