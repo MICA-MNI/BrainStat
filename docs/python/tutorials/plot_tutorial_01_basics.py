@@ -20,8 +20,9 @@ pial_left, pial_right = fetch_template_surface("civet41k", join=False)
 pial_combined = fetch_template_surface("civet41k", join=True)
 
 ###################################################################
-# Lets have a look at the data that we have loaded. For this, we'll use the
-# surface plotter included with BrainSpace.
+# Lets have a look at the cortical thickness data. To do this,
+# we will use the surface plotter included with BrainSpace. Lets plot
+# mean thickness. 
 from brainspace.plotting import plot_hemispheres
 
 plot_hemispheres(
@@ -38,28 +39,30 @@ plot_hemispheres(
 )
 
 ###################################################################
-# So, next, lets see whether cortical thickness is related to age in our sample
-# data. To this end we can create a BrainStat linear model. First we declare the
-# behavioral variables as FixedEffects. The FixedEffect class requires two
-# things: 1) an array or scalar, and 2) a variable name for each column. Once,
-# that's done we can create the model by simply adding the terms together.
-# Lets set up a model with age and IQ as fixed effects.
+# Next, lets see whether cortical thickness is related to age in our sample
+# data. To this end we can create a linear model with BrainStat. First we
+# declare the behavioral variables as FixedEffects. The FixedEffect class can be
+# created in two ways: either we provide the data with pandas, as we do here, or
+# we provide a numpy array and a name for the fixed effect. Once, that's done we
+# can create the model by simply adding the terms together. Lets set up a model
+# with age and patient status as fixed effects.
 
 from brainstat.stats.terms import FixedEffect
 
 term_age = FixedEffect(demographics.AGE_AT_SCAN)
-term_patient = FixedEffect(
-    demographics.DX_GROUP - 1
-)  # Subtract 1 so patient==0, control==1
+# Subtract 1 from DX_GROUP so patient == 0 and healthy == 1.
+term_patient = FixedEffect(demographics.DX_GROUP - 1) 
 model = term_age + term_patient
 
-# Note: if your data is not in a pandas DataFrame (e.g. numpy), you'll have
-# to provide the name of the effect as an additional parameter as follows:
+###################################################################
+# As said before, if your data is not in a pandas DataFrame (e.g. numpy), you'll
+# have to provide the name of the effect as an additional parameter as follows:
 term_age_2 = FixedEffect(demographics.AGE_AT_SCAN.to_numpy(), "AGE_AT_SCAN")
 
 ###################################################################
-# We can also add interaction effects to the model by multiplying terms. Lets
-# add an interaction between age and sex.
+# Beside simple fixed effects, we may also be interested in interaction
+# effects. We can add these to the model by multiplying terms. Lets
+# create a model with an interaction between age and patient status.
 
 model_interaction = term_age + term_patient + term_age * term_patient
 
@@ -71,14 +74,13 @@ model_interaction = term_age + term_patient + term_age * term_patient
 
 print(model)
 
-# The interaction model also contains the interaction term:
-
-print(model_interaction)
-
 ###################################################################
 # Now, imagine we have some cortical marker (e.g. cortical thickness) for
 # each subject, and we want to evaluate whether this marker changes with age
-# whilst correcting for effects of healthy / patient status.
+# whilst correcting for effects of patient status. To do this, we can use
+# the model we defined before, and a contrast in observations (here: age).
+# Then we simply initialize an SLM model and fit it to the cortical thickness
+# data.
 
 from brainstat.stats.SLM import SLM
 
@@ -191,10 +193,9 @@ plot_hemispheres(
 # between cortical thickness and patient status.
 #
 # Now, imagine that instead of using a fixed effects model, you would prefer a
-# mixed effects model wherein site is a random variable. This is simple to
-# set up. All you need to do is initialize the site term with the MixedEffect
-# class instead, all other code remains identical. As site is a categorical
-# variable, we'll have to transform it into a dummy variable first.
+# mixed effects model wherein the scanning site is a random variable. This is
+# simple to set up. All you need to do is initialize the site term with the
+# MixedEffect class, all other code remains identical. 
 
 from brainstat.stats.terms import MixedEffect
 
