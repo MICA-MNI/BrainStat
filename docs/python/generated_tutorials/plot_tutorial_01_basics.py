@@ -32,6 +32,9 @@ plot_hemispheres(
     color_range=(1.5, 3.5),
     label_text=["Cortical Thickness"],
     embed_nb=True,
+    size=(1400, 200),
+    zoom=1.45,
+    cb__labelTextProperty = {'fontSize': 12},
 )
 
 ###################################################################
@@ -91,6 +94,9 @@ plot_hemispheres(
     color_bar=True,
     color_range=(-4, 4),
     embed_nb=True,
+    size=(1400, 200),
+    zoom=1.45,
+    cb__labelTextProperty = {'fontSize': 12},
 )
 plot_hemispheres(
     pial_left,
@@ -100,6 +106,9 @@ plot_hemispheres(
     color_bar=True,
     color_range=(0, 0.05),
     embed_nb=True,
+    size=(1400, 200),
+    zoom=1.45,
+    cb__labelTextProperty = {'fontSize': 12},
 )
 
 
@@ -125,6 +134,9 @@ plot_hemispheres(
     color_bar=True,
     color_range=(-4, 4),
     embed_nb=True,
+    size=(1400, 200),
+    zoom=1.45,
+    cb__labelTextProperty = {'fontSize': 12},
 )
 plot_hemispheres(
     pial_left,
@@ -134,6 +146,9 @@ plot_hemispheres(
     color_bar=True,
     color_range=(0, 0.05),
     embed_nb=True,
+    size=(1400, 200),
+    zoom=1.45,
+    cb__labelTextProperty = {'fontSize': 12},
 )
 
 
@@ -153,6 +168,9 @@ plot_hemispheres(
     color_bar=True,
     color_range=(-4, 4),
     embed_nb=True,
+    size=(1400, 200),
+    zoom=1.45,
+    cb__labelTextProperty = {'fontSize': 12},
 )
 plot_hemispheres(
     pial_left,
@@ -162,6 +180,9 @@ plot_hemispheres(
     color_bar=True,
     color_range=(0, 0.05),
     embed_nb=True,
+    size=(1400, 200),
+    zoom=1.45,
+    cb__labelTextProperty = {'fontSize': 12},
 )
 
 
