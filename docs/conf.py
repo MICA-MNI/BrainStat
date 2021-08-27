@@ -41,10 +41,17 @@ extensions = [
     "sphinx_gallery.gen_gallery",  # Example gallery
 ]
 
+from sphinx_gallery.sorting import FileNameSortKey
+from brainspace.plotting.sphinx_gallery_scrapper import _get_sg_image_scraper
 
 sphinx_gallery_conf = {
     "examples_dirs": "python/tutorials",
     "gallery_dirs": "python/generated_tutorials",
+    'thumbnail_size': (250, 250),
+    'image_scrapers': ('matplotlib', _get_sg_image_scraper()),
+    'within_subsection_order': FileNameSortKey,
+    'download_all_examples': False,
+    'remove_config_comments': True,
 }
 
 # Napoleon settings

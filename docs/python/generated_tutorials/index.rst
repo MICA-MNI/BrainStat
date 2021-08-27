@@ -16,27 +16,6 @@ Tutorials
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="In this tutorial you will learn about the context decoding tools included with BrainStat. The c...">
-
-.. only:: html
-
- .. figure:: /python/generated_tutorials/images/thumb/sphx_glr_plot_tutorial_02_context_thumb.png
-     :alt: Tutorial 02: Context Decoding
-
-     :ref:`sphx_glr_python_generated_tutorials_plot_tutorial_02_context.py`
-
-.. raw:: html
-
-    </div>
-
-
-.. toctree::
-   :hidden:
-
-   /python/generated_tutorials/plot_tutorial_02_context
-
-.. raw:: html
-
     <div class="sphx-glr-thumbcontainer" tooltip="Tutorial 01: Linear Models">
 
 .. only:: html
@@ -55,27 +34,31 @@ Tutorials
    :hidden:
 
    /python/generated_tutorials/plot_tutorial_01_basics
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="In this tutorial you will learn about the context decoding tools included with BrainStat. The c...">
+
+.. only:: html
+
+ .. figure:: /python/generated_tutorials/images/thumb/sphx_glr_plot_tutorial_02_context_thumb.png
+     :alt: Tutorial 02: Context Decoding
+
+     :ref:`sphx_glr_python_generated_tutorials_plot_tutorial_02_context.py`
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /python/generated_tutorials/plot_tutorial_02_context
 .. raw:: html
 
     <div class="sphx-glr-clear"></div>
 
-
-
-.. only :: html
-
- .. container:: sphx-glr-footer
-    :class: sphx-glr-footer-gallery
-
-
-  .. container:: sphx-glr-download sphx-glr-download-python
-
-    :download:`Download all examples in Python source code: generated_tutorials_python.zip </python/generated_tutorials/generated_tutorials_python.zip>`
-
-
-
-  .. container:: sphx-glr-download sphx-glr-download-jupyter
-
-    :download:`Download all examples in Jupyter notebooks: generated_tutorials_jupyter.zip </python/generated_tutorials/generated_tutorials_jupyter.zip>`
 
 
 .. only:: html
