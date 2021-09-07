@@ -61,13 +61,8 @@ def generate_data_fetcher_json() -> None:
                 },
             },
         },
-        "mics_tutorial": {
-            "thickness": {
-                "url": "https://box.bic.mni.mcgill.ca/s/wDZzy3SVBELphfB/download",
-            },
-            "participants": {
-                "url": "https://box.bic.mni.mcgill.ca/s/ckxsB6qtJ7iClzV/download",
-            },
+        "civet_mask": {
+            "url": "https://box.bic.mni.mcgill.ca/s/7W1tBOqmMlNfMw2/download"
         },
         "abide_tutorial": {
             "summary_spreadsheet": {

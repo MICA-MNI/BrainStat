@@ -1,10 +1,10 @@
 function [surf_lh, surf_rh] = fetch_template_surface(template, options)
 % FETCH_TEMPLATE_SURFACE    loads a fsaverage or conte69 surface template
-%   [surf_lh, surf_rh] = FETCH_TEMPLATE_SURFACE(template, varargin)
-%   downloads and loads a 'fsaverage3', 'fsaverage4', 'fsaverage5',
-%   'fsaverage6', 'fsaverage', or 'conte69' (a.k.a. 'fslr32k') surface
-%   template. By default, a pial surface is loaded for fsaverage templates
-%   and a midthickness surface is loaded for conte69.
+%   [surf_lh, surf_rh] = FETCH_TEMPLATE_SURFACE(template, varargin) downloads
+%   and loads a 'fsaverage3', 'fsaverage4', 'fsaverage5', 'fsaverage6',
+%   'fsaverage', 'conte69' (a.k.a. 'fslr32k'), 'civet41k', or 'civet164k'
+%   surface template. By default, a pial surface is loaded for fsaverage
+%   templates and a midthickness surface is loaded for conte69.
 %
 %   Valid name-value pairs are:
 %       'data_dir': a char containing the path to the location to store the

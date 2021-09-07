@@ -5,19 +5,21 @@ In this tutorial you will set up your first linear model with BrainStat.
 To this end, we will load some sample data from the ABIDE dataset. Note that,
 contrary to the results shown in our manuscript, we are only using a few sites
 to reduce computation time in this tutorial. As such the results shown here
-differ from those reported in our manuscript.
+differ from those reported in our manuscript. To get identical results,
+simply set `sites` to `None`. 
 """
 
 
 import numpy as np
 from brainstat.datasets import fetch_template_surface
-from brainstat.tutorial.utils import fetch_abide_data
+from brainstat.tutorial.utils import fetch_abide_data, fetch_civet_mask
 
 # Load behavioral markers
 sites = ("PITT", "OLIN", "OHSU")
 thickness, demographics = fetch_abide_data(sites=sites)
 pial_left, pial_right = fetch_template_surface("civet41k", join=False)
 pial_combined = fetch_template_surface("civet41k", join=True)
+mask = fetch_civet_mask()
 
 ###################################################################
 # Lets have a look at the cortical thickness data. To do this,
@@ -85,7 +87,7 @@ print(model)
 from brainstat.stats.SLM import SLM
 
 contrast_age = model.AGE_AT_SCAN
-slm_age = SLM(model, contrast_age, surf=pial_combined, correction="rft")
+slm_age = SLM(model, contrast_age, surf=pial_combined, mask = mask, correction="rft")
 slm_age.fit(thickness)
 
 plot_hemispheres(
@@ -124,7 +126,7 @@ plot_hemispheres(
 
 # Note the minus in front of contrast_age to test for decreasing thickness with age.
 slm_age_onetailed = SLM(
-    model, -contrast_age, surf=pial_combined, correction="rft", two_tailed=False
+    model, -contrast_age, surf=pial_combined, correction="rft", mask=mask, two_tailed=False
 )
 slm_age_onetailed.fit(thickness)
 
@@ -159,7 +161,7 @@ plot_hemispheres(
 # differences across healthy and patient groups whilst correcting for age.
 
 contrast_patient = model.DX_GROUP
-slm_patient = SLM(model, contrast_patient, surf=pial_combined, correction="rft")
+slm_patient = SLM(model, contrast_patient, surf=pial_combined, mask = mask, correction="rft")
 slm_patient.fit(thickness)
 
 plot_hemispheres(
@@ -202,7 +204,7 @@ from brainstat.stats.terms import MixedEffect
 random_site = MixedEffect(demographics.SITE_ID, name_ran="Site")
 
 model_random = term_age + term_patient + random_site
-slm_random = SLM(model_random, contrast_age, surf=pial_left, correction="rft")
+slm_random = SLM(model_random, contrast_age, surf=pial_combined, mask = mask, correction="rft")
 slm_random.fit(thickness)
 
 ###############################################################################

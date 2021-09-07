@@ -41,7 +41,9 @@ def fetch_abide_data(
     remove_rows = []
     progress_bar = tqdm(df.itertuples())
     for i, row in enumerate(progress_bar):
-        progress_bar.set_description(f"Fetching thickness data for subject {i+1} out of {df.shape[0]}")
+        progress_bar.set_description(
+            f"Fetching thickness data for subject {i+1} out of {df.shape[0]}"
+        )
         for j, hemi in enumerate(["left", "right"]):
             filename = data_dir / f"{row.SUB_ID}_{hemi}_thickness.txt"
             if not filename.is_file() or overwrite:
@@ -50,19 +52,35 @@ def fetch_abide_data(
                 )
                 try:
                     _download_file(filename, thickness_url)
-                except HTTPError: 
+                except HTTPError:
                     warnings.warn(f"Could not download file for {row.SUB_ID}.")
                     remove_rows.append(i)
                     continue
 
             thickness_data[i, j * 40962 : (j + 1) * 40962] = np.loadtxt(filename)
-    
+
     if remove_rows:
         thickness_data = np.delete(thickness_data, remove_rows, axis=0)
         df.drop(np.unique(remove_rows), inplace=True)
         df.reset_index(inplace=True)
 
     return thickness_data, df
+
+
+def fetch_civet_mask(data_dir: Optional[Path] = None, join: bool = True) -> np.ndarray:
+    data_dir = Path(data_dir) if data_dir else data_directories["BRAINSTAT_DATA_DIR"]
+    data_dir.mkdir(exist_ok=True, parents=True)
+    mask_file = data_dir / "civet_41k_mask.txt"
+
+    if not mask_file.is_file():
+        mask_url = read_data_fetcher_json()["civet_mask"]["url"]
+        _download_file(mask_file, mask_url)
+
+    mask = np.genfromtxt(mask_file) == 1
+    if not join:
+        return (mask[:40962], mask[40962:])
+    else:
+        return mask
 
 
 def _download_file(filename: Path, url: str) -> None:
