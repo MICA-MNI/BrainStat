@@ -66,7 +66,9 @@ def fetch_abide_data(
     return thickness_data, df
 
 
-def fetch_civet_mask(data_dir: Optional[Path] = None, join: bool = True) -> np.ndarray:
+def fetch_civet_mask(
+    data_dir: Optional[Path] = None, join: bool = True
+) -> Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]:
     data_dir = Path(data_dir) if data_dir else data_directories["BRAINSTAT_DATA_DIR"]
     data_dir.mkdir(exist_ok=True, parents=True)
     mask_file = data_dir / "civet_41k_mask.txt"
@@ -89,7 +91,10 @@ def _download_file(filename: Path, url: str) -> None:
 
 
 def _select_subjects(
-    df: pd.DataFrame, sites: Sequence[str], keep_patient: bool, keep_control: bool
+    df: pd.DataFrame,
+    sites: Optional[Sequence[str]],
+    keep_patient: bool,
+    keep_control: bool,
 ) -> None:
     df.drop(df[df.FILE_ID == "no_filename"].index, inplace=True)
     if not keep_patient:
