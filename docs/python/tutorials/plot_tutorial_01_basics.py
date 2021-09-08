@@ -96,6 +96,7 @@ slm_age.fit(thickness)
 # Next, we will plot the t-values and p-values on the surface. We'll do this a
 # few times throughout the tutorial so lets define a function to do this.
 
+
 def plot_slm_results(slm):
     # Plot t-values.
     plot_hemispheres(
@@ -106,7 +107,7 @@ def plot_slm_results(slm):
         color_bar=True,
         color_range=(-4, 4),
         embed_nb=True,
-        cmap='bwr',
+        cmap="bwr",
         size=(1400, 200),
         zoom=1.45,
         cb__labelTextProperty={"fontSize": 12},
@@ -124,12 +125,14 @@ def plot_slm_results(slm):
         color_bar=True,
         color_range=(0, 0.05),
         embed_nb=True,
-        cmap='hot_r',
+        cmap="hot_r",
         size=(1400, 200),
         zoom=1.45,
-        nan_color = (.7, .7, .7, 1),
+        nan_color=(0.7, 0.7, 0.7, 1),
         cb__labelTextProperty={"fontSize": 12},
     )
+
+
 plot_slm_results(slm_age)
 
 

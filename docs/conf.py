@@ -18,7 +18,9 @@ sys.path.insert(0, os.path.abspath(".."))
 # Run a custom scraper instead of using brainspace.plotting._get_sg_image_scraper
 from brainspace.plotting.base import Plotter
 from brainspace.vtk_interface.wrappers import BSScalarBarActor
+
 import brainstat
+
 
 def _get_sg_image_scraper():
     return Scraper()
