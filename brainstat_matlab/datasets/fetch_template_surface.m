@@ -12,7 +12,8 @@ function [surf_lh, surf_rh] = fetch_template_surface(template, options)
 %       'layer': the specific surface to load. Valid values for fsaverage
 %           are 'pial' (default), 'white', 'sphere', 'smoothwm',
 %           'inflated'. Valid values for conte69 are: 'midthickness'
-%           (default), 'inflated', 'vinflated'.
+%           (default), 'inflated', 'vinflated'. Valid values for civet are:
+%           'mid' (default), and 'white'.
 
 
 arguments
@@ -26,10 +27,16 @@ switch lower(template)
         if isempty(options.layer)
             options.layer = 'midthickness';
         end
-    otherwise
+    case {'fsaverage3', 'fsaverage4', 'fsaverage5', 'fsaverage6', 'fsaverage'}
         if isempty(options.layer)
             options.layer = 'pial';
         end
+    case {'civet41k', 'civet164k'}
+        if isempty(options.layer)
+            options.layer = 'mid';
+        end
+    otherwise
+        error('Unknown template ''%s''.', template);
 end
 filename = dataset_utils.download_OSF_files(template, 'data_dir', options.data_dir);
 [surf_lh, surf_rh] = read_surface_from_targz(filename, template, options.layer);
@@ -49,9 +56,15 @@ switch template
         files = string(data_dir) + filesep + "tpl-conte69" + filesep + ...
             "tpl-conte69_space-MNI305_variant-fsLR32k_" + layer + "." + ["L", "R"] + ...
             ".surf.gii";
-    otherwise
+    case {'fsaverage3', 'fsaverage4', 'fsaverage5', 'fsaverage6', 'fsaverage'}
         files = string(data_dir) + filesep + "tpl-fsaverage" + filesep + template + ...
             filesep + "surf" + filesep + ["lh.", "rh."] + layer; 
+    case {'civet41k', 'civet164k'}
+        files = string(data_dir) + filesep + "tpl-civet" + filesep + "v2" + ...
+            filesep + template + filesep + "tpl-civet_space-ICBM152_hemi-" + ...
+            ["L", "R"] + "_den-" + template(6:end) + "_" + layer + ".obj";
+    otherwise
+        error('Unknown template ''%s''.', template);
 end
 surf_lh = read_surface(files{1});
 surf_rh = read_surface(files{2});

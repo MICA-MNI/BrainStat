@@ -1,5 +1,8 @@
 """Utilities for BrainStat developers."""
 import json
+import logging
+import shutil
+import urllib.request
 import warnings
 from pathlib import Path
 from typing import Callable
@@ -61,8 +64,13 @@ def generate_data_fetcher_json() -> None:
                 },
             },
         },
-        "civet_mask": {
-            "url": "https://box.bic.mni.mcgill.ca/s/7W1tBOqmMlNfMw2/download"
+        "masks": {
+            "civet41k": {
+                "url": "https://box.bic.mni.mcgill.ca/s/9kzBetBCZkkqN6w/download"
+            },
+            "civet164k": {
+                "url": "https://box.bic.mni.mcgill.ca/s/rei5HtTDvexlEPA/download"
+            },
         },
         "abide_tutorial": {
             "summary_spreadsheet": {
@@ -104,6 +112,28 @@ def deprecated(message: str) -> Callable:
         return deprecated_func
 
     return deprecated_decorator
+
+
+def _download_file(url: str, output_file: Path, overwrite: bool) -> None:
+    """Downloads a file.
+
+    Parameters
+    ----------
+    url : str
+        URL of the download.
+    output_file : pathlib.Path
+        Path object of the output file.
+    overwrite : bool
+        If true, overwrite existing files.
+    """
+
+    if output_file.exists() and not overwrite:
+        logging.debug(str(output_file) + " already exists and will not be overwritten.")
+        return
+
+    logging.debug("Downloading " + str(output_file))
+    with urllib.request.urlopen(url) as response, open(output_file, "wb") as out_file:
+        shutil.copyfileobj(response, out_file)
 
 
 if __name__ == "__main__":

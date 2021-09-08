@@ -19,8 +19,9 @@ analysis can take several minutes. As such, we will not run the analysis here.
 """
 
 import numpy as np
-from brainstat.context.genetics import surface_genetic_expression
 from nilearn import datasets
+
+from brainstat.context.genetics import surface_genetic_expression
 
 run_analysis = False  # Too resource intensive to run on ReadTheDocs
 
@@ -54,9 +55,11 @@ if run_analysis:
 
 import os
 
-import brainstat
 import nibabel as nib
+
+import brainstat
 from brainstat.context.meta_analysis import surface_decoder
+
 """from brainstat.tutorial.utils import fetch_tutorial_data
  -- DISABLED UNTIL FIXED ON READTHEDOCS
 ## Load white matter surfaces.
@@ -106,11 +109,13 @@ if run_analysis:
 # very intesnive, we can actually run this on ReadTheDocs!
 
 from brainspace.datasets import load_parcellation
+
 from brainstat.context.histology import (
     compute_histology_gradients,
     compute_mpc,
     read_histology_profile,
 )
+
 """ DISABLED 
 # Load the Schaefer 400 atlas
 schaefer_400 = load_parcellation("schaefer", scale=400, join=True)

@@ -36,14 +36,15 @@ example of how we use abagen to get the genetic expression of the regions of the
 Destrieux atlas. Please note that downloading the dataset and running this
 analysis can take several minutes. As such, we will not run the analysis here.
 
-.. GENERATED FROM PYTHON SOURCE LINES 20-35
+.. GENERATED FROM PYTHON SOURCE LINES 20-36
 
 .. code-block:: default
 
 
     import numpy as np
-    from brainstat.context.genetics import surface_genetic_expression
     from nilearn import datasets
+
+    from brainstat.context.genetics import surface_genetic_expression
 
     run_analysis = False  # Too resource intensive to run on ReadTheDocs
 
@@ -62,7 +63,7 @@ analysis can take several minutes. As such, we will not run the analysis here.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 36-54
+.. GENERATED FROM PYTHON SOURCE LINES 37-55
 
 Expression is a pandas DataFrame which shows the genetic expression of genes
 within each region of the atlas. By default, the values will fall in the range
@@ -83,16 +84,18 @@ test which terms are most associated with a map of cortical thickness. A simple 
 analysis can be run as follows. First, we will load some cortical thickness data and
 the white matter surface (recall that we've already loaded the pial surface).
 
-.. GENERATED FROM PYTHON SOURCE LINES 54-86
+.. GENERATED FROM PYTHON SOURCE LINES 55-89
 
 .. code-block:: default
 
 
     import os
 
-    import brainstat
     import nibabel as nib
+
+    import brainstat
     from brainstat.context.meta_analysis import surface_decoder
+
     """from brainstat.tutorial.utils import fetch_tutorial_data
      -- DISABLED UNTIL FIXED ON READTHEDOCS
     ## Load white matter surfaces.
@@ -134,12 +137,12 @@ the white matter surface (recall that we've already loaded the pial surface).
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 87-89
+.. GENERATED FROM PYTHON SOURCE LINES 90-92
 
 Next we can run the analysis. Note that the data and mask has to be
 provided seperately for each hemisphere.
 
-.. GENERATED FROM PYTHON SOURCE LINES 89-97
+.. GENERATED FROM PYTHON SOURCE LINES 92-100
 
 .. code-block:: default
 
@@ -158,7 +161,7 @@ provided seperately for each hemisphere.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 98-107
+.. GENERATED FROM PYTHON SOURCE LINES 101-110
 
 meta_analysis now contains a pandas.dataFrame with the correlation values
 for each requested feature.
@@ -170,17 +173,19 @@ computed from the BigBrain dataset. (TODO: Add more background). Firstly, lets
 download the MPC data and compute its gradients. As the computations for this aren't
 very intesnive, we can actually run this on ReadTheDocs!
 
-.. GENERATED FROM PYTHON SOURCE LINES 107-123
+.. GENERATED FROM PYTHON SOURCE LINES 110-128
 
 .. code-block:: default
 
 
     from brainspace.datasets import load_parcellation
+
     from brainstat.context.histology import (
         compute_histology_gradients,
         compute_mpc,
         read_histology_profile,
     )
+
     """ DISABLED 
     # Load the Schaefer 400 atlas
     schaefer_400 = load_parcellation("schaefer", scale=400, join=True)
@@ -205,14 +210,14 @@ very intesnive, we can actually run this on ReadTheDocs!
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 124-128
+.. GENERATED FROM PYTHON SOURCE LINES 129-133
 
 Lets plot the first gradient of histology to see what it looks like.
 We will use BrainSpace to create our plots. For full details on how
 BrainSpace's plotting functionality works, please consult the BrainSpace
 ReadTheDocs. (NOTE: Temporarily disabled due to build errors)
 
-.. GENERATED FROM PYTHON SOURCE LINES 128-146
+.. GENERATED FROM PYTHON SOURCE LINES 133-151
 
 .. code-block:: default
 
@@ -252,7 +257,7 @@ ReadTheDocs. (NOTE: Temporarily disabled due to build errors)
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  0.024 seconds)
+   **Total running time of the script:** ( 0 minutes  0.023 seconds)
 
 
 .. _sphx_glr_download_python_generated_tutorials_plot_tutorial_02_context.py:

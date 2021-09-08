@@ -19,10 +19,12 @@ sys.path.insert(0, os.path.abspath(".."))
 from brainspace.plotting.base import Plotter
 from brainspace.vtk_interface.wrappers import BSScalarBarActor
 
+
 def _get_sg_image_scraper():
     return Scraper()
-class Scraper(object):
 
+
+class Scraper(object):
     def __call__(self, block, block_vars, gallery_conf):
         """
         Called by sphinx-gallery to save the figures generated after running
@@ -31,7 +33,7 @@ class Scraper(object):
         try:
             from sphinx_gallery.scrapers import figure_rst
         except ImportError:
-            raise ImportError('You must install `sphinx_gallery`')
+            raise ImportError("You must install `sphinx_gallery`")
         image_names = list()
         image_path_iterator = block_vars["image_path_iterator"]
         for k, p in Plotter.DICT_PLOTTERS.items():
@@ -81,15 +83,14 @@ extensions = [
 
 from sphinx_gallery.sorting import FileNameSortKey
 
-
 sphinx_gallery_conf = {
     "examples_dirs": "python/tutorials",
     "gallery_dirs": "python/generated_tutorials",
-    'thumbnail_size': (250, 250),
-    'image_scrapers': ('matplotlib', _get_sg_image_scraper()),
-    'within_subsection_order': FileNameSortKey,
-    'download_all_examples': False,
-    'remove_config_comments': True,
+    "thumbnail_size": (250, 250),
+    "image_scrapers": ("matplotlib", _get_sg_image_scraper()),
+    "within_subsection_order": FileNameSortKey,
+    "download_all_examples": False,
+    "remove_config_comments": True,
 }
 
 # Napoleon settings

@@ -1,15 +1,14 @@
 import shutil
+import warnings
 from pathlib import Path
 from typing import Optional, Sequence, Tuple, Union
-from urllib.request import urlopen
 from urllib.error import HTTPError
-import warnings
-from tqdm import tqdm
-
+from urllib.request import urlopen
 
 import numpy as np
 import pandas as pd
 from sklearn.utils import Bunch
+from tqdm import tqdm
 
 from brainstat._utils import data_directories, read_data_fetcher_json
 

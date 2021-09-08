@@ -15,8 +15,13 @@
             "url": "https://box.bic.mni.mcgill.ca/s/6zKHcg9xXu5inPR/download"
         }
     },
-    "civet_mask": {
-        "url": "https://box.bic.mni.mcgill.ca/s/7W1tBOqmMlNfMw2/download"
+    "masks": {
+        "civet164k": {
+            "url": "https://box.bic.mni.mcgill.ca/s/rei5HtTDvexlEPA/download"
+        },
+        "civet41k": {
+            "url": "https://box.bic.mni.mcgill.ca/s/9kzBetBCZkkqN6w/download"
+        }
     },
     "neurosynth_precomputed": {
         "n_files": 3228,

@@ -11,20 +11,21 @@ simply set `sites` to `None`.
 
 
 import numpy as np
-from brainstat.datasets import fetch_template_surface
-from brainstat.tutorial.utils import fetch_abide_data, fetch_civet_mask
+
+from brainstat.datasets import fetch_mask, fetch_template_surface
+from brainstat.tutorial.utils import fetch_abide_data
 
 # Load behavioral markers
 sites = ("PITT", "OLIN", "OHSU")
 thickness, demographics = fetch_abide_data(sites=sites)
 pial_left, pial_right = fetch_template_surface("civet41k", join=False)
 pial_combined = fetch_template_surface("civet41k", join=True)
-mask = fetch_civet_mask()
+mask = fetch_mask("civet41k")
 
 ###################################################################
 # Lets have a look at the cortical thickness data. To do this,
 # we will use the surface plotter included with BrainSpace. Lets plot
-# mean thickness. 
+# mean thickness.
 from brainspace.plotting import plot_hemispheres
 
 plot_hemispheres(
@@ -37,7 +38,7 @@ plot_hemispheres(
     embed_nb=True,
     size=(1400, 200),
     zoom=1.45,
-    cb__labelTextProperty = {'fontSize': 12},
+    cb__labelTextProperty={"fontSize": 12},
 )
 
 ###################################################################
@@ -53,7 +54,7 @@ from brainstat.stats.terms import FixedEffect
 
 term_age = FixedEffect(demographics.AGE_AT_SCAN)
 # Subtract 1 from DX_GROUP so patient == 0 and healthy == 1.
-term_patient = FixedEffect(demographics.DX_GROUP - 1) 
+term_patient = FixedEffect(demographics.DX_GROUP - 1)
 model = term_age + term_patient
 
 ###################################################################
@@ -87,7 +88,7 @@ print(model)
 from brainstat.stats.SLM import SLM
 
 contrast_age = model.AGE_AT_SCAN
-slm_age = SLM(model, contrast_age, surf=pial_combined, mask = mask, correction="rft")
+slm_age = SLM(model, contrast_age, surf=pial_combined, mask=mask, correction="rft")
 slm_age.fit(thickness)
 
 plot_hemispheres(
@@ -100,7 +101,7 @@ plot_hemispheres(
     embed_nb=True,
     size=(1400, 200),
     zoom=1.45,
-    cb__labelTextProperty = {'fontSize': 12},
+    cb__labelTextProperty={"fontSize": 12},
 )
 plot_hemispheres(
     pial_left,
@@ -112,7 +113,7 @@ plot_hemispheres(
     embed_nb=True,
     size=(1400, 200),
     zoom=1.45,
-    cb__labelTextProperty = {'fontSize': 12},
+    cb__labelTextProperty={"fontSize": 12},
 )
 
 
@@ -126,7 +127,12 @@ plot_hemispheres(
 
 # Note the minus in front of contrast_age to test for decreasing thickness with age.
 slm_age_onetailed = SLM(
-    model, -contrast_age, surf=pial_combined, correction="rft", mask=mask, two_tailed=False
+    model,
+    -contrast_age,
+    surf=pial_combined,
+    correction="rft",
+    mask=mask,
+    two_tailed=False,
 )
 slm_age_onetailed.fit(thickness)
 
@@ -140,7 +146,7 @@ plot_hemispheres(
     embed_nb=True,
     size=(1400, 200),
     zoom=1.45,
-    cb__labelTextProperty = {'fontSize': 12},
+    cb__labelTextProperty={"fontSize": 12},
 )
 plot_hemispheres(
     pial_left,
@@ -152,7 +158,7 @@ plot_hemispheres(
     embed_nb=True,
     size=(1400, 200),
     zoom=1.45,
-    cb__labelTextProperty = {'fontSize': 12},
+    cb__labelTextProperty={"fontSize": 12},
 )
 
 
@@ -161,7 +167,9 @@ plot_hemispheres(
 # differences across healthy and patient groups whilst correcting for age.
 
 contrast_patient = model.DX_GROUP
-slm_patient = SLM(model, contrast_patient, surf=pial_combined, mask = mask, correction="rft")
+slm_patient = SLM(
+    model, contrast_patient, surf=pial_combined, mask=mask, correction="rft"
+)
 slm_patient.fit(thickness)
 
 plot_hemispheres(
@@ -174,7 +182,7 @@ plot_hemispheres(
     embed_nb=True,
     size=(1400, 200),
     zoom=1.45,
-    cb__labelTextProperty = {'fontSize': 12},
+    cb__labelTextProperty={"fontSize": 12},
 )
 plot_hemispheres(
     pial_left,
@@ -186,7 +194,7 @@ plot_hemispheres(
     embed_nb=True,
     size=(1400, 200),
     zoom=1.45,
-    cb__labelTextProperty = {'fontSize': 12},
+    cb__labelTextProperty={"fontSize": 12},
 )
 
 
@@ -197,14 +205,16 @@ plot_hemispheres(
 # Now, imagine that instead of using a fixed effects model, you would prefer a
 # mixed effects model wherein the scanning site is a random variable. This is
 # simple to set up. All you need to do is initialize the site term with the
-# MixedEffect class, all other code remains identical. 
+# MixedEffect class, all other code remains identical.
 
 from brainstat.stats.terms import MixedEffect
 
 random_site = MixedEffect(demographics.SITE_ID, name_ran="Site")
 
 model_random = term_age + term_patient + random_site
-slm_random = SLM(model_random, contrast_age, surf=pial_combined, mask = mask, correction="rft")
+slm_random = SLM(
+    model_random, contrast_age, surf=pial_combined, mask=mask, correction="rft"
+)
 slm_random.fit(thickness)
 
 ###############################################################################
@@ -215,5 +225,4 @@ slm_random.fit(thickness)
 # well as the identity term, similar to the intercept in FixedEffects. The identity term
 # is added by default.
 
-print(random_site.mean)
 print(random_site.variance)
