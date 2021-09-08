@@ -15,6 +15,48 @@ import sys
 
 sys.path.insert(0, os.path.abspath(".."))
 
+# Run a custom scraper instead of using brainspace.plotting._get_sg_image_scraper
+from brainspace.plotting.base import Plotter
+from brainspace.vtk_interface.wrappers import BSScalarBarActor
+
+import brainstat
+
+
+def _get_sg_image_scraper():
+    return Scraper()
+
+
+class Scraper(object):
+    def __call__(self, block, block_vars, gallery_conf):
+        """
+        Called by sphinx-gallery to save the figures generated after running
+        example code.
+        """
+        try:
+            from sphinx_gallery.scrapers import figure_rst
+        except ImportError:
+            raise ImportError("You must install `sphinx_gallery`")
+        image_names = list()
+        image_path_iterator = block_vars["image_path_iterator"]
+        for k, p in Plotter.DICT_PLOTTERS.items():
+            fname = next(image_path_iterator)
+
+            for _, lren in p.renderers.items():
+                for r in lren:
+                    for i in range(r.actors2D.n_items):
+                        a = r.actors2D[i]
+                        if not isinstance(a, BSScalarBarActor):
+                            continue
+                        a.labelTextProperty.fontsize = a.labelTextProperty.fontsize * 3
+
+            p.screenshot(fname, scale=1)
+            # p.screenshot(fname)
+            image_names.append(fname)
+
+        Plotter.close_all()  # close and clear all plotters
+        return figure_rst(image_names, gallery_conf["src_dir"])
+
+
 # -- Project information -----------------------------------------------------
 
 project = "BrainStat"
@@ -22,7 +64,7 @@ copyright = "2021, MICA Lab, CNG Lab"
 author = "MICA Lab, CNG Lab"
 
 # The full version, including alpha/beta/rc tags
-release = "0.0.1"
+release = str(brainstat.__version__)
 
 
 # -- General configuration ---------------------------------------------------
@@ -41,10 +83,16 @@ extensions = [
     "sphinx_gallery.gen_gallery",  # Example gallery
 ]
 
+from sphinx_gallery.sorting import FileNameSortKey
 
 sphinx_gallery_conf = {
     "examples_dirs": "python/tutorials",
     "gallery_dirs": "python/generated_tutorials",
+    "thumbnail_size": (250, 250),
+    "image_scrapers": ("matplotlib", _get_sg_image_scraper()),
+    "within_subsection_order": FileNameSortKey,
+    "download_all_examples": False,
+    "remove_config_comments": True,
 }
 
 # Napoleon settings
