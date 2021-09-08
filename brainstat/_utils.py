@@ -114,7 +114,7 @@ def deprecated(message: str) -> Callable:
     return deprecated_decorator
 
 
-def _download_file(url: str, output_file: Path, overwrite: bool) -> None:
+def _download_file(url: str, output_file: Path, overwrite: bool = False) -> None:
     """Downloads a file.
 
     Parameters
@@ -124,7 +124,7 @@ def _download_file(url: str, output_file: Path, overwrite: bool) -> None:
     output_file : pathlib.Path
         Path object of the output file.
     overwrite : bool
-        If true, overwrite existing files.
+        If true, overwrite existing files, defaults to False.
     """
 
     if output_file.exists() and not overwrite:
