@@ -90,7 +90,7 @@ from brainstat.stats.SLM import SLM
 contrast_age = model.AGE_AT_SCAN
 slm_age = SLM(model, contrast_age, surf=pial_combined, mask=mask, correction="rft")
 slm_age.fit(thickness)
-print(slm_age)
+
 
 ###################################################################
 # Next, we will plot the t-values and p-values on the surface. We'll do this a

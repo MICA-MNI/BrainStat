@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.abspath(".."))
 # Run a custom scraper instead of using brainspace.plotting._get_sg_image_scraper
 from brainspace.plotting.base import Plotter
 from brainspace.vtk_interface.wrappers import BSScalarBarActor
-
+import brainstat
 
 def _get_sg_image_scraper():
     return Scraper()
@@ -62,7 +62,7 @@ copyright = "2021, MICA Lab, CNG Lab"
 author = "MICA Lab, CNG Lab"
 
 # The full version, including alpha/beta/rc tags
-release = "0.0.1"
+release = str(brainstat.__version__)
 
 
 # -- General configuration ---------------------------------------------------
