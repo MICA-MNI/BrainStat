@@ -55,7 +55,7 @@ simply set `sites` to `None`.
 
  .. code-block:: none
 
-    0it [00:00, ?it/s]    Fetching thickness data for subject 1 out of 116: : 0it [00:00, ?it/s]    Fetching thickness data for subject 1 out of 116: : 1it [00:00,  3.01it/s]    Fetching thickness data for subject 2 out of 116: : 1it [00:00,  3.01it/s]    Fetching thickness data for subject 2 out of 116: : 2it [00:00,  3.58it/s]    Fetching thickness data for subject 3 out of 116: : 2it [00:00,  3.58it/s]    Fetching thickness data for subject 3 out of 116: : 3it [00:00,  4.03it/s]    Fetching thickness data for subject 4 out of 116: : 3it [00:00,  4.03it/s]    Fetching thickness data for subject 4 out of 116: : 4it [00:01,  4.24it/s]    Fetching thickness data for subject 5 out of 116: : 4it [00:01,  4.24it/s]    Fetching thickness data for subject 5 out of 116: : 5it [00:01,  4.33it/s]    Fetching thickness data for subject 6 out of 116: : 5it [00:01,  4.33it/s]    Fetching thickness data for subject 6 out of 116: : 6it [00:01,  4.43it/s]    Fetching thickness data for subject 7 out of 116: : 6it [00:01,  4.43it/s]    Fetching thickness data for subject 7 out of 116: : 7it [00:01,  3.58it/s]    Fetching thickness data for subject 8 out of 116: : 7it [00:01,  3.58it/s]    Fetching thickness data for subject 8 out of 116: : 8it [00:02,  2.84it/s]    Fetching thickness data for subject 9 out of 116: : 8it [00:02,  2.84it/s]    Fetching thickness data for subject 9 out of 116: : 9it [00:02,  2.68it/s]    Fetching thickness data for subject 10 out of 116: : 9it [00:02,  2.68it/s]    Fetching thickness data for subject 10 out of 116: : 10it [00:03,  2.97it/s]    Fetching thickness data for subject 11 out of 116: : 10it [00:03,  2.97it/s]    Fetching thickness data for subject 11 out of 116: : 11it [00:03,  3.30it/s]    Fetching thickness data for subject 12 out of 116: : 11it [00:03,  3.30it/s]    Fetching thickness data for subject 12 out of 116: : 12it [00:03,  3.63it/s]    Fetching thickness data for subject 13 out of 116: : 12it [00:03,  3.63it/s]    Fetching thickness data for subject 13 out of 116: : 13it [00:03,  3.88it/s]    Fetching thickness data for subject 14 out of 116: : 13it [00:03,  3.88it/s]    Fetching thickness data for subject 14 out of 116: : 14it [00:03,  4.06it/s]    Fetching thickness data for subject 15 out of 116: : 14it [00:03,  4.06it/s]    Fetching thickness data for subject 15 out of 116: : 15it [00:04,  4.15it/s]    Fetching thickness data for subject 16 out of 116: : 15it [00:04,  4.15it/s]    Fetching thickness data for subject 16 out of 116: : 16it [00:04,  2.92it/s]    Fetching thickness data for subject 17 out of 116: : 16it [00:04,  2.92it/s]    Fetching thickness data for subject 17 out of 116: : 17it [00:04,  3.11it/s]    Fetching thickness data for subject 18 out of 116: : 17it [00:04,  3.11it/s]    Fetching thickness data for subject 18 out of 116: : 18it [00:05,  3.45it/s]    Fetching thickness data for subject 19 out of 116: : 18it [00:05,  3.45it/s]    Fetching thickness data for subject 19 out of 116: : 19it [00:05,  3.73it/s]    Fetching thickness data for subject 20 out of 116: : 19it [00:05,  3.73it/s]    Fetching thickness data for subject 20 out of 116: : 20it [00:05,  3.94it/s]    Fetching thickness data for subject 21 out of 116: : 20it [00:05,  3.94it/s]    Fetching thickness data for subject 21 out of 116: : 21it [00:05,  4.13it/s]    Fetching thickness data for subject 22 out of 116: : 21it [00:05,  4.13it/s]    Fetching thickness data for subject 22 out of 116: : 22it [00:06,  4.23it/s]    Fetching thickness data for subject 23 out of 116: : 22it [00:06,  4.23it/s]    Fetching thickness data for subject 23 out of 116: : 23it [00:06,  4.34it/s]    Fetching thickness data for subject 24 out of 116: : 23it [00:06,  4.34it/s]    Fetching thickness data for subject 24 out of 116: : 24it [00:06,  4.47it/s]    Fetching thickness data for subject 25 out of 116: : 24it [00:06,  4.47it/s]    Fetching thickness data for subject 25 out of 116: : 25it [00:06,  4.51it/s]    Fetching thickness data for subject 26 out of 116: : 25it [00:06,  4.51it/s]    Fetching thickness data for subject 26 out of 116: : 26it [00:06,  4.52it/s]    Fetching thickness data for subject 27 out of 116: : 26it [00:06,  4.52it/s]    Fetching thickness data for subject 27 out of 116: : 27it [00:07,  3.70it/s]    Fetching thickness data for subject 28 out of 116: : 27it [00:07,  3.70it/s]    Fetching thickness data for subject 28 out of 116: : 28it [00:07,  3.68it/s]    Fetching thickness data for subject 29 out of 116: : 28it [00:07,  3.68it/s]    Fetching thickness data for subject 29 out of 116: : 29it [00:07,  3.89it/s]    Fetching thickness data for subject 30 out of 116: : 29it [00:07,  3.89it/s]    Fetching thickness data for subject 30 out of 116: : 30it [00:08,  4.06it/s]    Fetching thickness data for subject 31 out of 116: : 30it [00:08,  4.06it/s]    Fetching thickness data for subject 31 out of 116: : 31it [00:08,  4.17it/s]    Fetching thickness data for subject 32 out of 116: : 31it [00:08,  4.17it/s]    Fetching thickness data for subject 32 out of 116: : 32it [00:08,  4.29it/s]    Fetching thickness data for subject 33 out of 116: : 32it [00:08,  4.29it/s]    Fetching thickness data for subject 33 out of 116: : 33it [00:08,  4.34it/s]    Fetching thickness data for subject 34 out of 116: : 33it [00:08,  4.34it/s]    Fetching thickness data for subject 34 out of 116: : 34it [00:08,  4.44it/s]    Fetching thickness data for subject 35 out of 116: : 34it [00:08,  4.44it/s]    Fetching thickness data for subject 35 out of 116: : 35it [00:09,  4.52it/s]    Fetching thickness data for subject 36 out of 116: : 35it [00:09,  4.52it/s]    Fetching thickness data for subject 36 out of 116: : 36it [00:09,  4.54it/s]    Fetching thickness data for subject 37 out of 116: : 36it [00:09,  4.54it/s]    Fetching thickness data for subject 37 out of 116: : 37it [00:09,  4.58it/s]    Fetching thickness data for subject 38 out of 116: : 37it [00:09,  4.58it/s]    Fetching thickness data for subject 38 out of 116: : 38it [00:09,  4.63it/s]    Fetching thickness data for subject 39 out of 116: : 38it [00:09,  4.63it/s]    Fetching thickness data for subject 39 out of 116: : 39it [00:09,  4.70it/s]    Fetching thickness data for subject 40 out of 116: : 39it [00:09,  4.70it/s]    Fetching thickness data for subject 40 out of 116: : 40it [00:10,  4.68it/s]    Fetching thickness data for subject 41 out of 116: : 40it [00:10,  4.68it/s]    Fetching thickness data for subject 41 out of 116: : 41it [00:10,  4.53it/s]    Fetching thickness data for subject 42 out of 116: : 41it [00:10,  4.53it/s]    Fetching thickness data for subject 42 out of 116: : 42it [00:10,  3.65it/s]    Fetching thickness data for subject 43 out of 116: : 42it [00:10,  3.65it/s]    Fetching thickness data for subject 43 out of 116: : 43it [00:11,  3.29it/s]    Fetching thickness data for subject 44 out of 116: : 43it [00:11,  3.29it/s]    Fetching thickness data for subject 44 out of 116: : 44it [00:11,  3.59it/s]    Fetching thickness data for subject 45 out of 116: : 44it [00:11,  3.59it/s]    Fetching thickness data for subject 45 out of 116: : 45it [00:11,  3.85it/s]    Fetching thickness data for subject 46 out of 116: : 45it [00:11,  3.85it/s]    Fetching thickness data for subject 46 out of 116: : 46it [00:11,  4.06it/s]    Fetching thickness data for subject 47 out of 116: : 46it [00:11,  4.06it/s]    Fetching thickness data for subject 47 out of 116: : 47it [00:12,  4.21it/s]    Fetching thickness data for subject 48 out of 116: : 47it [00:12,  4.21it/s]    Fetching thickness data for subject 48 out of 116: : 48it [00:12,  4.31it/s]    Fetching thickness data for subject 49 out of 116: : 48it [00:12,  4.31it/s]    Fetching thickness data for subject 49 out of 116: : 49it [00:12,  4.40it/s]    Fetching thickness data for subject 50 out of 116: : 49it [00:12,  4.40it/s]    Fetching thickness data for subject 50 out of 116: : 50it [00:12,  4.45it/s]    Fetching thickness data for subject 51 out of 116: : 50it [00:12,  4.45it/s]    Fetching thickness data for subject 51 out of 116: : 51it [00:12,  4.53it/s]    Fetching thickness data for subject 52 out of 116: : 51it [00:12,  4.53it/s]    Fetching thickness data for subject 52 out of 116: : 52it [00:13,  4.05it/s]    Fetching thickness data for subject 53 out of 116: : 52it [00:13,  4.05it/s]    Fetching thickness data for subject 53 out of 116: : 53it [00:13,  3.67it/s]    Fetching thickness data for subject 54 out of 116: : 53it [00:13,  3.67it/s]    Fetching thickness data for subject 54 out of 116: : 54it [00:13,  3.91it/s]    Fetching thickness data for subject 55 out of 116: : 54it [00:13,  3.91it/s]    Fetching thickness data for subject 55 out of 116: : 55it [00:14,  4.08it/s]    Fetching thickness data for subject 56 out of 116: : 55it [00:14,  4.08it/s]    Fetching thickness data for subject 56 out of 116: : 56it [00:14,  4.20it/s]    Fetching thickness data for subject 57 out of 116: : 56it [00:14,  4.20it/s]    Fetching thickness data for subject 57 out of 116: : 57it [00:14,  4.32it/s]    Fetching thickness data for subject 58 out of 116: : 57it [00:14,  4.32it/s]    Fetching thickness data for subject 58 out of 116: : 58it [00:14,  4.27it/s]    Fetching thickness data for subject 59 out of 116: : 58it [00:14,  4.27it/s]    Fetching thickness data for subject 59 out of 116: : 59it [00:14,  4.24it/s]    Fetching thickness data for subject 60 out of 116: : 59it [00:14,  4.24it/s]    Fetching thickness data for subject 60 out of 116: : 60it [00:15,  4.23it/s]    Fetching thickness data for subject 61 out of 116: : 60it [00:15,  4.23it/s]    Fetching thickness data for subject 61 out of 116: : 61it [00:15,  3.21it/s]    Fetching thickness data for subject 62 out of 116: : 61it [00:15,  3.21it/s]    Fetching thickness data for subject 62 out of 116: : 62it [00:15,  3.08it/s]    Fetching thickness data for subject 63 out of 116: : 62it [00:15,  3.08it/s]    Fetching thickness data for subject 63 out of 116: : 63it [00:16,  3.37it/s]    Fetching thickness data for subject 64 out of 116: : 63it [00:16,  3.37it/s]    Fetching thickness data for subject 64 out of 116: : 64it [00:16,  3.65it/s]    Fetching thickness data for subject 65 out of 116: : 64it [00:16,  3.65it/s]    Fetching thickness data for subject 65 out of 116: : 65it [00:16,  3.83it/s]    Fetching thickness data for subject 66 out of 116: : 65it [00:16,  3.83it/s]    Fetching thickness data for subject 66 out of 116: : 66it [00:16,  4.06it/s]    Fetching thickness data for subject 67 out of 116: : 66it [00:16,  4.06it/s]    Fetching thickness data for subject 67 out of 116: : 67it [00:17,  4.24it/s]    Fetching thickness data for subject 68 out of 116: : 67it [00:17,  4.24it/s]    Fetching thickness data for subject 68 out of 116: : 68it [00:17,  4.32it/s]    Fetching thickness data for subject 69 out of 116: : 68it [00:17,  4.32it/s]    Fetching thickness data for subject 69 out of 116: : 69it [00:17,  4.45it/s]    Fetching thickness data for subject 70 out of 116: : 69it [00:17,  4.45it/s]    Fetching thickness data for subject 70 out of 116: : 70it [00:17,  4.54it/s]    Fetching thickness data for subject 71 out of 116: : 70it [00:17,  4.54it/s]    Fetching thickness data for subject 71 out of 116: : 71it [00:17,  4.58it/s]    Fetching thickness data for subject 72 out of 116: : 71it [00:17,  4.58it/s]    Fetching thickness data for subject 72 out of 116: : 72it [00:18,  4.57it/s]    Fetching thickness data for subject 73 out of 116: : 72it [00:18,  4.57it/s]    Fetching thickness data for subject 73 out of 116: : 73it [00:18,  4.59it/s]    Fetching thickness data for subject 74 out of 116: : 73it [00:18,  4.59it/s]    Fetching thickness data for subject 74 out of 116: : 74it [00:18,  4.62it/s]    Fetching thickness data for subject 75 out of 116: : 74it [00:18,  4.62it/s]    Fetching thickness data for subject 75 out of 116: : 75it [00:18,  4.66it/s]    Fetching thickness data for subject 76 out of 116: : 75it [00:18,  4.66it/s]    Fetching thickness data for subject 76 out of 116: : 76it [00:19,  4.67it/s]    Fetching thickness data for subject 77 out of 116: : 76it [00:19,  4.67it/s]    Fetching thickness data for subject 77 out of 116: : 77it [00:19,  4.63it/s]    Fetching thickness data for subject 78 out of 116: : 77it [00:19,  4.63it/s]    Fetching thickness data for subject 78 out of 116: : 78it [00:19,  4.64it/s]    Fetching thickness data for subject 79 out of 116: : 78it [00:19,  4.64it/s]    Fetching thickness data for subject 79 out of 116: : 79it [00:19,  3.98it/s]    Fetching thickness data for subject 80 out of 116: : 79it [00:19,  3.98it/s]    Fetching thickness data for subject 80 out of 116: : 80it [00:20,  3.88it/s]    Fetching thickness data for subject 81 out of 116: : 80it [00:20,  3.88it/s]    Fetching thickness data for subject 81 out of 116: : 81it [00:20,  4.05it/s]    Fetching thickness data for subject 82 out of 116: : 81it [00:20,  4.05it/s]    Fetching thickness data for subject 82 out of 116: : 82it [00:20,  4.21it/s]    Fetching thickness data for subject 83 out of 116: : 82it [00:20,  4.21it/s]    Fetching thickness data for subject 83 out of 116: : 83it [00:20,  4.30it/s]    Fetching thickness data for subject 84 out of 116: : 83it [00:20,  4.30it/s]    Fetching thickness data for subject 84 out of 116: : 84it [00:20,  4.40it/s]    Fetching thickness data for subject 85 out of 116: : 84it [00:20,  4.40it/s]    Fetching thickness data for subject 85 out of 116: : 85it [00:21,  4.45it/s]    Fetching thickness data for subject 86 out of 116: : 85it [00:21,  4.45it/s]    Fetching thickness data for subject 86 out of 116: : 86it [00:21,  4.50it/s]    Fetching thickness data for subject 87 out of 116: : 86it [00:21,  4.50it/s]    Fetching thickness data for subject 87 out of 116: : 87it [00:21,  4.55it/s]    Fetching thickness data for subject 88 out of 116: : 87it [00:21,  4.55it/s]    Fetching thickness data for subject 88 out of 116: : 88it [00:21,  4.61it/s]    Fetching thickness data for subject 89 out of 116: : 88it [00:21,  4.61it/s]    Fetching thickness data for subject 89 out of 116: : 89it [00:22,  4.65it/s]    Fetching thickness data for subject 90 out of 116: : 89it [00:22,  4.65it/s]    Fetching thickness data for subject 90 out of 116: : 90it [00:22,  4.70it/s]    Fetching thickness data for subject 91 out of 116: : 90it [00:22,  4.70it/s]    Fetching thickness data for subject 91 out of 116: : 91it [00:22,  4.72it/s]    Fetching thickness data for subject 92 out of 116: : 91it [00:22,  4.72it/s]    Fetching thickness data for subject 92 out of 116: : 92it [00:22,  4.67it/s]    Fetching thickness data for subject 93 out of 116: : 92it [00:22,  4.67it/s]    Fetching thickness data for subject 93 out of 116: : 93it [00:22,  4.61it/s]    Fetching thickness data for subject 94 out of 116: : 93it [00:22,  4.61it/s]    Fetching thickness data for subject 94 out of 116: : 94it [00:23,  4.63it/s]    Fetching thickness data for subject 95 out of 116: : 94it [00:23,  4.63it/s]    Fetching thickness data for subject 95 out of 116: : 95it [00:23,  4.60it/s]    Fetching thickness data for subject 96 out of 116: : 95it [00:23,  4.60it/s]    Fetching thickness data for subject 96 out of 116: : 96it [00:23,  4.03it/s]    Fetching thickness data for subject 97 out of 116: : 96it [00:23,  4.03it/s]    Fetching thickness data for subject 97 out of 116: : 97it [00:23,  3.76it/s]    Fetching thickness data for subject 98 out of 116: : 97it [00:23,  3.76it/s]    Fetching thickness data for subject 98 out of 116: : 98it [00:24,  3.87it/s]    Fetching thickness data for subject 99 out of 116: : 98it [00:24,  3.87it/s]    Fetching thickness data for subject 99 out of 116: : 99it [00:24,  4.07it/s]    Fetching thickness data for subject 100 out of 116: : 99it [00:24,  4.07it/s]    Fetching thickness data for subject 100 out of 116: : 100it [00:24,  4.20it/s]    Fetching thickness data for subject 101 out of 116: : 100it [00:24,  4.20it/s]    Fetching thickness data for subject 101 out of 116: : 101it [00:24,  4.15it/s]    Fetching thickness data for subject 102 out of 116: : 101it [00:24,  4.15it/s]    Fetching thickness data for subject 102 out of 116: : 102it [00:25,  4.28it/s]    Fetching thickness data for subject 103 out of 116: : 102it [00:25,  4.28it/s]    Fetching thickness data for subject 103 out of 116: : 103it [00:25,  4.36it/s]    Fetching thickness data for subject 104 out of 116: : 103it [00:25,  4.36it/s]    Fetching thickness data for subject 104 out of 116: : 104it [00:25,  4.42it/s]    Fetching thickness data for subject 105 out of 116: : 104it [00:25,  4.42it/s]    Fetching thickness data for subject 105 out of 116: : 105it [00:25,  4.13it/s]    Fetching thickness data for subject 106 out of 116: : 105it [00:25,  4.13it/s]    Fetching thickness data for subject 106 out of 116: : 106it [00:26,  4.11it/s]    Fetching thickness data for subject 107 out of 116: : 106it [00:26,  4.11it/s]    Fetching thickness data for subject 107 out of 116: : 107it [00:26,  4.18it/s]    Fetching thickness data for subject 108 out of 116: : 107it [00:26,  4.18it/s]    Fetching thickness data for subject 108 out of 116: : 108it [00:26,  4.34it/s]    Fetching thickness data for subject 109 out of 116: : 108it [00:26,  4.34it/s]    Fetching thickness data for subject 109 out of 116: : 109it [00:26,  4.40it/s]    Fetching thickness data for subject 110 out of 116: : 109it [00:26,  4.40it/s]    Fetching thickness data for subject 110 out of 116: : 110it [00:26,  4.57it/s]    Fetching thickness data for subject 111 out of 116: : 110it [00:26,  4.57it/s]    Fetching thickness data for subject 111 out of 116: : 111it [00:27,  4.69it/s]    Fetching thickness data for subject 112 out of 116: : 111it [00:27,  4.69it/s]    Fetching thickness data for subject 112 out of 116: : 112it [00:27,  4.62it/s]    Fetching thickness data for subject 113 out of 116: : 112it [00:27,  4.62it/s]    Fetching thickness data for subject 113 out of 116: : 113it [00:27,  4.63it/s]    Fetching thickness data for subject 114 out of 116: : 113it [00:27,  4.63it/s]    Fetching thickness data for subject 114 out of 116: : 114it [00:27,  4.63it/s]    Fetching thickness data for subject 115 out of 116: : 114it [00:27,  4.63it/s]    Fetching thickness data for subject 115 out of 116: : 115it [00:27,  4.62it/s]    Fetching thickness data for subject 116 out of 116: : 115it [00:27,  4.62it/s]    Fetching thickness data for subject 116 out of 116: : 116it [00:28,  4.63it/s]    Fetching thickness data for subject 116 out of 116: : 116it [00:28,  4.12it/s]
+    0it [00:00, ?it/s]    Fetching thickness data for subject 1 out of 116: : 0it [00:00, ?it/s]    Fetching thickness data for subject 1 out of 116: : 1it [00:00,  3.54it/s]    Fetching thickness data for subject 2 out of 116: : 1it [00:00,  3.54it/s]    Fetching thickness data for subject 2 out of 116: : 2it [00:00,  3.77it/s]    Fetching thickness data for subject 3 out of 116: : 2it [00:00,  3.77it/s]    Fetching thickness data for subject 3 out of 116: : 3it [00:00,  3.51it/s]    Fetching thickness data for subject 4 out of 116: : 3it [00:00,  3.51it/s]    Fetching thickness data for subject 4 out of 116: : 4it [00:01,  3.50it/s]    Fetching thickness data for subject 5 out of 116: : 4it [00:01,  3.50it/s]    Fetching thickness data for subject 5 out of 116: : 5it [00:01,  3.54it/s]    Fetching thickness data for subject 6 out of 116: : 5it [00:01,  3.54it/s]    Fetching thickness data for subject 6 out of 116: : 6it [00:01,  3.53it/s]    Fetching thickness data for subject 7 out of 116: : 6it [00:01,  3.53it/s]    Fetching thickness data for subject 7 out of 116: : 7it [00:01,  3.52it/s]    Fetching thickness data for subject 8 out of 116: : 7it [00:01,  3.52it/s]    Fetching thickness data for subject 8 out of 116: : 8it [00:02,  3.67it/s]    Fetching thickness data for subject 9 out of 116: : 8it [00:02,  3.67it/s]    Fetching thickness data for subject 9 out of 116: : 9it [00:02,  3.73it/s]    Fetching thickness data for subject 10 out of 116: : 9it [00:02,  3.73it/s]    Fetching thickness data for subject 10 out of 116: : 10it [00:02,  3.79it/s]    Fetching thickness data for subject 11 out of 116: : 10it [00:02,  3.79it/s]    Fetching thickness data for subject 11 out of 116: : 11it [00:03,  3.62it/s]    Fetching thickness data for subject 12 out of 116: : 11it [00:03,  3.62it/s]    Fetching thickness data for subject 12 out of 116: : 12it [00:03,  3.54it/s]    Fetching thickness data for subject 13 out of 116: : 12it [00:03,  3.54it/s]    Fetching thickness data for subject 13 out of 116: : 13it [00:03,  3.60it/s]    Fetching thickness data for subject 14 out of 116: : 13it [00:03,  3.60it/s]    Fetching thickness data for subject 14 out of 116: : 14it [00:03,  3.28it/s]    Fetching thickness data for subject 15 out of 116: : 14it [00:03,  3.28it/s]    Fetching thickness data for subject 15 out of 116: : 15it [00:04,  3.35it/s]    Fetching thickness data for subject 16 out of 116: : 15it [00:04,  3.35it/s]    Fetching thickness data for subject 16 out of 116: : 16it [00:04,  3.50it/s]    Fetching thickness data for subject 17 out of 116: : 16it [00:04,  3.50it/s]    Fetching thickness data for subject 17 out of 116: : 17it [00:04,  3.65it/s]    Fetching thickness data for subject 18 out of 116: : 17it [00:04,  3.65it/s]    Fetching thickness data for subject 18 out of 116: : 18it [00:05,  3.71it/s]    Fetching thickness data for subject 19 out of 116: : 18it [00:05,  3.71it/s]    Fetching thickness data for subject 19 out of 116: : 19it [00:05,  3.75it/s]    Fetching thickness data for subject 20 out of 116: : 19it [00:05,  3.75it/s]    Fetching thickness data for subject 20 out of 116: : 20it [00:05,  3.81it/s]    Fetching thickness data for subject 21 out of 116: : 20it [00:05,  3.81it/s]    Fetching thickness data for subject 21 out of 116: : 21it [00:05,  3.77it/s]    Fetching thickness data for subject 22 out of 116: : 21it [00:05,  3.77it/s]    Fetching thickness data for subject 22 out of 116: : 22it [00:06,  3.88it/s]    Fetching thickness data for subject 23 out of 116: : 22it [00:06,  3.88it/s]    Fetching thickness data for subject 23 out of 116: : 23it [00:06,  3.98it/s]    Fetching thickness data for subject 24 out of 116: : 23it [00:06,  3.98it/s]    Fetching thickness data for subject 24 out of 116: : 24it [00:06,  3.97it/s]    Fetching thickness data for subject 25 out of 116: : 24it [00:06,  3.97it/s]    Fetching thickness data for subject 25 out of 116: : 25it [00:06,  3.88it/s]    Fetching thickness data for subject 26 out of 116: : 25it [00:06,  3.88it/s]    Fetching thickness data for subject 26 out of 116: : 26it [00:07,  3.88it/s]    Fetching thickness data for subject 27 out of 116: : 26it [00:07,  3.88it/s]    Fetching thickness data for subject 27 out of 116: : 27it [00:07,  3.77it/s]    Fetching thickness data for subject 28 out of 116: : 27it [00:07,  3.77it/s]    Fetching thickness data for subject 28 out of 116: : 28it [00:07,  3.79it/s]    Fetching thickness data for subject 29 out of 116: : 28it [00:07,  3.79it/s]    Fetching thickness data for subject 29 out of 116: : 29it [00:07,  3.88it/s]    Fetching thickness data for subject 30 out of 116: : 29it [00:07,  3.88it/s]    Fetching thickness data for subject 30 out of 116: : 30it [00:08,  4.01it/s]    Fetching thickness data for subject 31 out of 116: : 30it [00:08,  4.01it/s]    Fetching thickness data for subject 31 out of 116: : 31it [00:08,  4.01it/s]    Fetching thickness data for subject 32 out of 116: : 31it [00:08,  4.01it/s]    Fetching thickness data for subject 32 out of 116: : 32it [00:08,  4.00it/s]    Fetching thickness data for subject 33 out of 116: : 32it [00:08,  4.00it/s]    Fetching thickness data for subject 33 out of 116: : 33it [00:08,  4.00it/s]    Fetching thickness data for subject 34 out of 116: : 33it [00:08,  4.00it/s]    Fetching thickness data for subject 34 out of 116: : 34it [00:09,  4.05it/s]    Fetching thickness data for subject 35 out of 116: : 34it [00:09,  4.05it/s]    Fetching thickness data for subject 35 out of 116: : 35it [00:09,  4.08it/s]    Fetching thickness data for subject 36 out of 116: : 35it [00:09,  4.08it/s]    Fetching thickness data for subject 36 out of 116: : 36it [00:09,  4.14it/s]    Fetching thickness data for subject 37 out of 116: : 36it [00:09,  4.14it/s]    Fetching thickness data for subject 37 out of 116: : 37it [00:09,  4.07it/s]    Fetching thickness data for subject 38 out of 116: : 37it [00:09,  4.07it/s]    Fetching thickness data for subject 38 out of 116: : 38it [00:10,  3.98it/s]    Fetching thickness data for subject 39 out of 116: : 38it [00:10,  3.98it/s]    Fetching thickness data for subject 39 out of 116: : 39it [00:10,  3.91it/s]    Fetching thickness data for subject 40 out of 116: : 39it [00:10,  3.91it/s]    Fetching thickness data for subject 40 out of 116: : 40it [00:10,  3.91it/s]    Fetching thickness data for subject 41 out of 116: : 40it [00:10,  3.91it/s]    Fetching thickness data for subject 41 out of 116: : 41it [00:10,  3.92it/s]    Fetching thickness data for subject 42 out of 116: : 41it [00:10,  3.92it/s]    Fetching thickness data for subject 42 out of 116: : 42it [00:11,  4.04it/s]    Fetching thickness data for subject 43 out of 116: : 42it [00:11,  4.04it/s]    Fetching thickness data for subject 43 out of 116: : 43it [00:11,  4.02it/s]    Fetching thickness data for subject 44 out of 116: : 43it [00:11,  4.02it/s]    Fetching thickness data for subject 44 out of 116: : 44it [00:11,  4.00it/s]    Fetching thickness data for subject 45 out of 116: : 44it [00:11,  4.00it/s]    Fetching thickness data for subject 45 out of 116: : 45it [00:11,  3.96it/s]    Fetching thickness data for subject 46 out of 116: : 45it [00:11,  3.96it/s]    Fetching thickness data for subject 46 out of 116: : 46it [00:12,  3.96it/s]    Fetching thickness data for subject 47 out of 116: : 46it [00:12,  3.96it/s]    Fetching thickness data for subject 47 out of 116: : 47it [00:12,  3.89it/s]    Fetching thickness data for subject 48 out of 116: : 47it [00:12,  3.89it/s]    Fetching thickness data for subject 48 out of 116: : 48it [00:12,  3.94it/s]    Fetching thickness data for subject 49 out of 116: : 48it [00:12,  3.94it/s]    Fetching thickness data for subject 49 out of 116: : 49it [00:12,  3.89it/s]    Fetching thickness data for subject 50 out of 116: : 49it [00:12,  3.89it/s]    Fetching thickness data for subject 50 out of 116: : 50it [00:13,  3.74it/s]    Fetching thickness data for subject 51 out of 116: : 50it [00:13,  3.74it/s]    Fetching thickness data for subject 51 out of 116: : 51it [00:13,  3.62it/s]    Fetching thickness data for subject 52 out of 116: : 51it [00:13,  3.62it/s]    Fetching thickness data for subject 52 out of 116: : 52it [00:13,  3.60it/s]    Fetching thickness data for subject 53 out of 116: : 52it [00:13,  3.60it/s]    Fetching thickness data for subject 53 out of 116: : 53it [00:14,  3.63it/s]    Fetching thickness data for subject 54 out of 116: : 53it [00:14,  3.63it/s]    Fetching thickness data for subject 54 out of 116: : 54it [00:14,  3.70it/s]    Fetching thickness data for subject 55 out of 116: : 54it [00:14,  3.70it/s]    Fetching thickness data for subject 55 out of 116: : 55it [00:14,  3.63it/s]    Fetching thickness data for subject 56 out of 116: : 55it [00:14,  3.63it/s]    Fetching thickness data for subject 56 out of 116: : 56it [00:14,  3.59it/s]    Fetching thickness data for subject 57 out of 116: : 56it [00:14,  3.59it/s]    Fetching thickness data for subject 57 out of 116: : 57it [00:15,  3.53it/s]    Fetching thickness data for subject 58 out of 116: : 57it [00:15,  3.53it/s]    Fetching thickness data for subject 58 out of 116: : 58it [00:15,  3.50it/s]    Fetching thickness data for subject 59 out of 116: : 58it [00:15,  3.50it/s]    Fetching thickness data for subject 59 out of 116: : 59it [00:15,  3.28it/s]    Fetching thickness data for subject 60 out of 116: : 59it [00:15,  3.28it/s]    Fetching thickness data for subject 60 out of 116: : 60it [00:16,  3.22it/s]    Fetching thickness data for subject 61 out of 116: : 60it [00:16,  3.22it/s]    Fetching thickness data for subject 61 out of 116: : 61it [00:16,  3.32it/s]    Fetching thickness data for subject 62 out of 116: : 61it [00:16,  3.32it/s]    Fetching thickness data for subject 62 out of 116: : 62it [00:16,  3.39it/s]    Fetching thickness data for subject 63 out of 116: : 62it [00:16,  3.39it/s]    Fetching thickness data for subject 63 out of 116: : 63it [00:16,  3.40it/s]    Fetching thickness data for subject 64 out of 116: : 63it [00:16,  3.40it/s]    Fetching thickness data for subject 64 out of 116: : 64it [00:17,  3.58it/s]    Fetching thickness data for subject 65 out of 116: : 64it [00:17,  3.58it/s]    Fetching thickness data for subject 65 out of 116: : 65it [00:17,  3.64it/s]    Fetching thickness data for subject 66 out of 116: : 65it [00:17,  3.64it/s]    Fetching thickness data for subject 66 out of 116: : 66it [00:17,  3.54it/s]    Fetching thickness data for subject 67 out of 116: : 66it [00:17,  3.54it/s]    Fetching thickness data for subject 67 out of 116: : 67it [00:18,  3.46it/s]    Fetching thickness data for subject 68 out of 116: : 67it [00:18,  3.46it/s]    Fetching thickness data for subject 68 out of 116: : 68it [00:18,  3.32it/s]    Fetching thickness data for subject 69 out of 116: : 68it [00:18,  3.32it/s]    Fetching thickness data for subject 69 out of 116: : 69it [00:18,  3.46it/s]    Fetching thickness data for subject 70 out of 116: : 69it [00:18,  3.46it/s]    Fetching thickness data for subject 70 out of 116: : 70it [00:18,  3.59it/s]    Fetching thickness data for subject 71 out of 116: : 70it [00:18,  3.59it/s]    Fetching thickness data for subject 71 out of 116: : 71it [00:19,  3.61it/s]    Fetching thickness data for subject 72 out of 116: : 71it [00:19,  3.61it/s]    Fetching thickness data for subject 72 out of 116: : 72it [00:19,  3.69it/s]    Fetching thickness data for subject 73 out of 116: : 72it [00:19,  3.69it/s]    Fetching thickness data for subject 73 out of 116: : 73it [00:19,  3.79it/s]    Fetching thickness data for subject 74 out of 116: : 73it [00:19,  3.79it/s]    Fetching thickness data for subject 74 out of 116: : 74it [00:19,  3.82it/s]    Fetching thickness data for subject 75 out of 116: : 74it [00:19,  3.82it/s]    Fetching thickness data for subject 75 out of 116: : 75it [00:20,  3.82it/s]    Fetching thickness data for subject 76 out of 116: : 75it [00:20,  3.82it/s]    Fetching thickness data for subject 76 out of 116: : 76it [00:20,  3.84it/s]    Fetching thickness data for subject 77 out of 116: : 76it [00:20,  3.84it/s]    Fetching thickness data for subject 77 out of 116: : 77it [00:20,  3.70it/s]    Fetching thickness data for subject 78 out of 116: : 77it [00:20,  3.70it/s]    Fetching thickness data for subject 78 out of 116: : 78it [00:21,  3.74it/s]    Fetching thickness data for subject 79 out of 116: : 78it [00:21,  3.74it/s]    Fetching thickness data for subject 79 out of 116: : 79it [00:21,  3.76it/s]    Fetching thickness data for subject 80 out of 116: : 79it [00:21,  3.76it/s]    Fetching thickness data for subject 80 out of 116: : 80it [00:21,  3.78it/s]    Fetching thickness data for subject 81 out of 116: : 80it [00:21,  3.78it/s]    Fetching thickness data for subject 81 out of 116: : 81it [00:21,  3.85it/s]    Fetching thickness data for subject 82 out of 116: : 81it [00:21,  3.85it/s]    Fetching thickness data for subject 82 out of 116: : 82it [00:22,  3.89it/s]    Fetching thickness data for subject 83 out of 116: : 82it [00:22,  3.89it/s]    Fetching thickness data for subject 83 out of 116: : 83it [00:22,  3.83it/s]    Fetching thickness data for subject 84 out of 116: : 83it [00:22,  3.83it/s]    Fetching thickness data for subject 84 out of 116: : 84it [00:22,  3.86it/s]    Fetching thickness data for subject 85 out of 116: : 84it [00:22,  3.86it/s]    Fetching thickness data for subject 85 out of 116: : 85it [00:22,  3.87it/s]    Fetching thickness data for subject 86 out of 116: : 85it [00:22,  3.87it/s]    Fetching thickness data for subject 86 out of 116: : 86it [00:23,  3.89it/s]    Fetching thickness data for subject 87 out of 116: : 86it [00:23,  3.89it/s]    Fetching thickness data for subject 87 out of 116: : 87it [00:23,  3.92it/s]    Fetching thickness data for subject 88 out of 116: : 87it [00:23,  3.92it/s]    Fetching thickness data for subject 88 out of 116: : 88it [00:23,  3.96it/s]    Fetching thickness data for subject 89 out of 116: : 88it [00:23,  3.96it/s]    Fetching thickness data for subject 89 out of 116: : 89it [00:23,  3.97it/s]    Fetching thickness data for subject 90 out of 116: : 89it [00:23,  3.97it/s]    Fetching thickness data for subject 90 out of 116: : 90it [00:24,  4.01it/s]    Fetching thickness data for subject 91 out of 116: : 90it [00:24,  4.01it/s]    Fetching thickness data for subject 91 out of 116: : 91it [00:24,  4.06it/s]    Fetching thickness data for subject 92 out of 116: : 91it [00:24,  4.06it/s]    Fetching thickness data for subject 92 out of 116: : 92it [00:24,  4.05it/s]    Fetching thickness data for subject 93 out of 116: : 92it [00:24,  4.05it/s]    Fetching thickness data for subject 93 out of 116: : 93it [00:24,  4.04it/s]    Fetching thickness data for subject 94 out of 116: : 93it [00:24,  4.04it/s]    Fetching thickness data for subject 94 out of 116: : 94it [00:25,  4.14it/s]    Fetching thickness data for subject 95 out of 116: : 94it [00:25,  4.14it/s]    Fetching thickness data for subject 95 out of 116: : 95it [00:25,  4.03it/s]    Fetching thickness data for subject 96 out of 116: : 95it [00:25,  4.03it/s]    Fetching thickness data for subject 96 out of 116: : 96it [00:25,  4.00it/s]    Fetching thickness data for subject 97 out of 116: : 96it [00:25,  4.00it/s]    Fetching thickness data for subject 97 out of 116: : 97it [00:25,  3.94it/s]    Fetching thickness data for subject 98 out of 116: : 97it [00:25,  3.94it/s]    Fetching thickness data for subject 98 out of 116: : 98it [00:26,  3.96it/s]    Fetching thickness data for subject 99 out of 116: : 98it [00:26,  3.96it/s]    Fetching thickness data for subject 99 out of 116: : 99it [00:26,  3.95it/s]    Fetching thickness data for subject 100 out of 116: : 99it [00:26,  3.95it/s]    Fetching thickness data for subject 100 out of 116: : 100it [00:26,  3.86it/s]    Fetching thickness data for subject 101 out of 116: : 100it [00:26,  3.86it/s]    Fetching thickness data for subject 101 out of 116: : 101it [00:26,  3.75it/s]    Fetching thickness data for subject 102 out of 116: : 101it [00:26,  3.75it/s]    Fetching thickness data for subject 102 out of 116: : 102it [00:27,  3.73it/s]    Fetching thickness data for subject 103 out of 116: : 102it [00:27,  3.73it/s]    Fetching thickness data for subject 103 out of 116: : 103it [00:27,  3.70it/s]    Fetching thickness data for subject 104 out of 116: : 103it [00:27,  3.70it/s]    Fetching thickness data for subject 104 out of 116: : 104it [00:27,  3.59it/s]    Fetching thickness data for subject 105 out of 116: : 104it [00:27,  3.59it/s]    Fetching thickness data for subject 105 out of 116: : 105it [00:27,  3.65it/s]    Fetching thickness data for subject 106 out of 116: : 105it [00:27,  3.65it/s]    Fetching thickness data for subject 106 out of 116: : 106it [00:28,  3.73it/s]    Fetching thickness data for subject 107 out of 116: : 106it [00:28,  3.73it/s]    Fetching thickness data for subject 107 out of 116: : 107it [00:28,  3.67it/s]    Fetching thickness data for subject 108 out of 116: : 107it [00:28,  3.67it/s]    Fetching thickness data for subject 108 out of 116: : 108it [00:28,  3.57it/s]    Fetching thickness data for subject 109 out of 116: : 108it [00:28,  3.57it/s]    Fetching thickness data for subject 109 out of 116: : 109it [00:29,  3.56it/s]    Fetching thickness data for subject 110 out of 116: : 109it [00:29,  3.56it/s]    Fetching thickness data for subject 110 out of 116: : 110it [00:29,  3.55it/s]    Fetching thickness data for subject 111 out of 116: : 110it [00:29,  3.55it/s]    Fetching thickness data for subject 111 out of 116: : 111it [00:29,  3.65it/s]    Fetching thickness data for subject 112 out of 116: : 111it [00:29,  3.65it/s]    Fetching thickness data for subject 112 out of 116: : 112it [00:29,  3.63it/s]    Fetching thickness data for subject 113 out of 116: : 112it [00:29,  3.63it/s]    Fetching thickness data for subject 113 out of 116: : 113it [00:30,  3.72it/s]    Fetching thickness data for subject 114 out of 116: : 113it [00:30,  3.72it/s]    Fetching thickness data for subject 114 out of 116: : 114it [00:30,  3.69it/s]    Fetching thickness data for subject 115 out of 116: : 114it [00:30,  3.69it/s]    Fetching thickness data for subject 115 out of 116: : 115it [00:30,  3.72it/s]    Fetching thickness data for subject 116 out of 116: : 115it [00:30,  3.72it/s]    Fetching thickness data for subject 116 out of 116: : 116it [00:30,  3.67it/s]    Fetching thickness data for subject 116 out of 116: : 116it [00:30,  3.74it/s]
 
 
 
@@ -224,7 +224,7 @@ the model we defined before, and a contrast in observations (here: age).
 Then we simply initialize an SLM model and fit it to the cortical thickness
 data.
 
-.. GENERATED FROM PYTHON SOURCE LINES 87-120
+.. GENERATED FROM PYTHON SOURCE LINES 87-95
 
 .. code-block:: default
 
@@ -234,31 +234,1683 @@ data.
     contrast_age = model.AGE_AT_SCAN
     slm_age = SLM(model, contrast_age, surf=pial_combined, mask=mask, correction="rft")
     slm_age.fit(thickness)
+    print(slm_age)
 
-    plot_hemispheres(
-        pial_left,
-        pial_right,
-        slm_age.t,
-        label_text=["t-values"],
-        color_bar=True,
-        color_range=(-4, 4),
-        embed_nb=True,
-        size=(1400, 200),
-        zoom=1.45,
-        cb__labelTextProperty={"fontSize": 12},
-    )
-    plot_hemispheres(
-        pial_left,
-        pial_right,
-        slm_age.P["pval"]["P"],
-        label_text=["p-values"],
-        color_bar=True,
-        color_range=(0, 0.05),
-        embed_nb=True,
-        size=(1400, 200),
-        zoom=1.45,
-        cb__labelTextProperty={"fontSize": 12},
-    )
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+    {'P': {'clus': {'P': [None,
+                          array([[7.45021423e-08],
+           [6.19970273e-04],
+           [3.33699609e-02],
+           [5.01647802e-02],
+           [2.16319948e-01],
+           [2.79149353e-01],
+           [3.00795949e-01],
+           [3.24528309e-01],
+           [3.28672922e-01],
+           [3.68001477e-01],
+           [4.31191828e-01],
+           [4.33867851e-01],
+           [4.53673691e-01],
+           [4.59493516e-01],
+           [4.61930614e-01],
+           [4.64917562e-01],
+           [4.70638430e-01],
+           [4.71142876e-01],
+           [4.71962938e-01],
+           [4.73233299e-01],
+           [4.75138163e-01],
+           [4.78139284e-01],
+           [4.79165358e-01],
+           [4.86568685e-01],
+           [4.89010464e-01],
+           [4.89246315e-01],
+           [4.90731330e-01],
+           [4.92283074e-01],
+           [4.93971821e-01],
+           [4.95807342e-01],
+           [4.96253495e-01],
+           [4.96723277e-01]])],
+                    'clusid': [None,
+                               array([[ 1.],
+           [ 2.],
+           [ 3.],
+           [ 4.],
+           [ 5.],
+           [ 6.],
+           [ 7.],
+           [ 8.],
+           [ 9.],
+           [10.],
+           [11.],
+           [12.],
+           [13.],
+           [14.],
+           [15.],
+           [16.],
+           [17.],
+           [18.],
+           [19.],
+           [20.],
+           [21.],
+           [22.],
+           [23.],
+           [24.],
+           [25.],
+           [26.],
+           [27.],
+           [28.],
+           [29.],
+           [30.],
+           [31.],
+           [32.]])],
+                    'nverts': [None,
+                               array([[8.738e+03],
+           [1.088e+03],
+           [4.920e+02],
+           [4.310e+02],
+           [6.400e+01],
+           [2.400e+01],
+           [9.800e+01],
+           [4.300e+01],
+           [9.000e+00],
+           [2.100e+01],
+           [2.000e+00],
+           [2.000e+00],
+           [1.300e+01],
+           [1.000e+00],
+           [1.000e+00],
+           [1.000e+00],
+           [1.000e+00],
+           [1.000e+00],
+           [1.000e+00],
+           [1.000e+00],
+           [3.000e+00],
+           [1.000e+00],
+           [1.000e+00],
+           [3.000e+00],
+           [3.000e+00],
+           [2.000e+00],
+           [2.000e+00],
+           [3.000e+00],
+           [1.000e+00],
+           [1.000e+00],
+           [1.000e+00],
+           [1.000e+00]])],
+                    'resels': [None,
+                               array([[2.09603593e+01],
+           [1.59703528e+00],
+           [6.40760138e-01],
+           [5.48287513e-01],
+           [2.14293446e-01],
+           [1.53003869e-01],
+           [1.34612783e-01],
+           [1.15649403e-01],
+           [1.12451696e-01],
+           [8.35539007e-02],
+           [4.14789072e-02],
+           [3.97908402e-02],
+           [2.74935423e-02],
+           [2.39416623e-02],
+           [2.24621000e-02],
+           [2.06549279e-02],
+           [1.72118010e-02],
+           [1.69093351e-02],
+           [1.64180153e-02],
+           [1.56578552e-02],
+           [1.45201197e-02],
+           [1.27326900e-02],
+           [1.21229748e-02],
+           [7.74439225e-03],
+           [6.30797293e-03],
+           [6.16944104e-03],
+           [5.29788405e-03],
+           [4.38862782e-03],
+           [3.40076779e-03],
+           [2.32899937e-03],
+           [2.06879747e-03],
+           [1.79492924e-03]])]},
+           'clusid': [None, array([[0., 2., 0., ..., 1., 1., 1.]])],
+           'peak': {'P': [None,
+                          array([[7.30457430e-06],
+           [1.02917746e-05],
+           [5.08319592e-05],
+           [5.10037592e-05],
+           [5.15446131e-05],
+           [6.07263526e-05],
+           [7.68833861e-05],
+           [8.68914048e-05],
+           [2.52896378e-04],
+           [2.91905153e-04],
+           [3.22447989e-04],
+           [3.42648825e-04],
+           [4.46375349e-04],
+           [4.50322271e-04],
+           [5.26905657e-04],
+           [5.32666366e-04],
+           [5.55232896e-04],
+           [6.19862093e-04],
+           [6.35015419e-04],
+           [6.81520103e-04],
+           [8.18352273e-04],
+           [8.55258819e-04],
+           [9.87227768e-04],
+           [1.07900025e-03],
+           [1.17356092e-03],
+           [1.24586276e-03],
+           [1.27133573e-03],
+           [1.28171588e-03],
+           [1.55014288e-03],
+           [2.93735014e-03],
+           [3.30115200e-03],
+           [3.87201843e-03],
+           [3.93142640e-03],
+           [3.99696965e-03],
+           [4.02289370e-03],
+           [4.64917319e-03],
+           [4.87924445e-03],
+           [7.00637686e-03],
+           [8.26874637e-03],
+           [1.03621910e-02],
+           [1.04171031e-02],
+           [1.06158395e-02],
+           [1.08851022e-02],
+           [1.46726522e-02],
+           [1.49103031e-02],
+           [1.56010673e-02],
+           [1.63634278e-02],
+           [1.65791039e-02],
+           [1.70118741e-02],
+           [1.71330000e-02],
+           [1.75702593e-02],
+           [1.79074748e-02],
+           [1.81766029e-02],
+           [1.84066386e-02],
+           [1.90816246e-02],
+           [1.92080894e-02],
+           [1.94954187e-02],
+           [2.00935067e-02],
+           [2.06222012e-02],
+           [2.17415009e-02],
+           [2.17477097e-02],
+           [2.21064761e-02],
+           [2.23291018e-02],
+           [2.26449008e-02],
+           [2.33305226e-02],
+           [2.39275205e-02],
+           [2.47783904e-02],
+           [2.48887256e-02],
+           [2.54088886e-02],
+           [2.59233824e-02],
+           [2.62819183e-02],
+           [2.64532451e-02],
+           [2.95821529e-02],
+           [2.99207942e-02],
+           [3.06273843e-02],
+           [3.12162076e-02],
+           [3.15915759e-02],
+           [3.18463446e-02],
+           [3.31051382e-02],
+           [3.37488614e-02],
+           [3.52298569e-02],
+           [3.56001953e-02],
+           [3.58964776e-02],
+           [3.60868063e-02],
+           [3.62771878e-02],
+           [3.70506613e-02],
+           [3.75938365e-02],
+           [4.01785143e-02],
+           [4.14515368e-02],
+           [4.17846870e-02],
+           [4.18047346e-02],
+           [4.34319200e-02],
+           [4.36128959e-02],
+           [4.42727179e-02],
+           [4.60058916e-02],
+           [4.73418286e-02],
+           [4.75617495e-02],
+           [4.91952961e-02],
+           [4.95868792e-02],
+           [5.05655015e-02],
+           [5.29054826e-02],
+           [5.30059979e-02],
+           [5.32690081e-02],
+           [5.46372542e-02],
+           [5.51914336e-02],
+           [5.56692507e-02],
+           [5.76302023e-02],
+           [5.82679587e-02],
+           [5.92231243e-02],
+           [5.97214217e-02],
+           [6.06998707e-02],
+           [6.07451168e-02],
+           [6.09376130e-02],
+           [6.11681714e-02],
+           [6.17829581e-02],
+           [6.31001849e-02],
+           [6.32174431e-02],
+           [6.69229687e-02],
+           [6.79668340e-02],
+           [6.97055487e-02],
+           [7.52195817e-02],
+           [7.73603387e-02],
+           [7.74900075e-02],
+           [7.84981408e-02],
+           [7.93906221e-02],
+           [8.09938426e-02],
+           [8.18712323e-02],
+           [8.35538600e-02],
+           [8.69980952e-02],
+           [8.79994052e-02],
+           [9.05456707e-02],
+           [9.16494662e-02],
+           [9.37241323e-02],
+           [9.38737596e-02],
+           [9.46412416e-02],
+           [9.53841446e-02],
+           [9.65622680e-02],
+           [9.84048813e-02],
+           [9.86323750e-02],
+           [1.01228823e-01],
+           [1.01430165e-01],
+           [1.01445634e-01],
+           [1.01992413e-01],
+           [1.02827637e-01],
+           [1.05541772e-01],
+           [1.07113957e-01],
+           [1.07774029e-01],
+           [1.09340598e-01],
+           [1.17629158e-01],
+           [1.20398351e-01],
+           [1.21981344e-01],
+           [1.22094730e-01],
+           [1.22200343e-01],
+           [1.25201942e-01],
+           [1.29650007e-01],
+           [1.29887780e-01],
+           [1.37793625e-01],
+           [1.45913960e-01],
+           [1.52695245e-01],
+           [1.54511016e-01],
+           [1.55208007e-01],
+           [1.55945018e-01],
+           [1.59497888e-01],
+           [1.59974300e-01],
+           [1.61305577e-01],
+           [1.63007703e-01],
+           [1.64110505e-01],
+           [1.70482031e-01],
+           [1.71855807e-01],
+           [1.74571627e-01],
+           [1.74732972e-01],
+           [1.77790310e-01],
+           [1.77981013e-01],
+           [1.79471853e-01],
+           [1.81820543e-01],
+           [1.84409647e-01],
+           [1.85213003e-01],
+           [1.90588598e-01],
+           [1.91612953e-01],
+           [1.93694383e-01],
+           [1.94232112e-01],
+           [1.94494687e-01],
+           [1.97511852e-01],
+           [1.98028096e-01],
+           [2.02089956e-01],
+           [2.16369083e-01],
+           [2.16703519e-01],
+           [2.19074332e-01],
+           [2.28844478e-01],
+           [2.32044263e-01],
+           [2.36159688e-01],
+           [2.37969496e-01],
+           [2.40925737e-01],
+           [2.45155486e-01],
+           [2.50114935e-01],
+           [2.53700512e-01],
+           [2.55764391e-01],
+           [2.65515406e-01],
+           [2.74117349e-01],
+           [2.83567196e-01],
+           [2.95301828e-01],
+           [2.97423981e-01],
+           [2.97870935e-01],
+           [2.99512673e-01],
+           [3.00345623e-01],
+           [3.06691693e-01],
+           [3.08851434e-01],
+           [3.09845002e-01],
+           [3.10021208e-01],
+           [3.16330569e-01],
+           [3.18876662e-01],
+           [3.26150419e-01],
+           [3.27575179e-01],
+           [3.33393223e-01],
+           [3.46823093e-01],
+           [3.48641679e-01],
+           [3.52026732e-01],
+           [3.52833221e-01],
+           [3.65682687e-01],
+           [3.70347368e-01],
+           [3.78164061e-01],
+           [3.81360459e-01],
+           [3.84833794e-01],
+           [3.84865742e-01],
+           [3.87673641e-01],
+           [3.95016251e-01],
+           [3.95498436e-01],
+           [4.07729627e-01],
+           [4.09413201e-01],
+           [4.17654800e-01],
+           [4.19662075e-01],
+           [4.31898534e-01],
+           [4.31945878e-01],
+           [4.43865655e-01],
+           [4.47682591e-01],
+           [4.48236952e-01],
+           [4.55647287e-01],
+           [4.59454808e-01],
+           [4.59763676e-01],
+           [4.59841130e-01],
+           [4.68124595e-01],
+           [4.75434457e-01],
+           [4.78193296e-01],
+           [4.81188441e-01],
+           [4.83963555e-01],
+           [4.84701982e-01],
+           [4.86955722e-01],
+           [4.88907369e-01],
+           [4.89778031e-01],
+           [4.90533202e-01],
+           [4.91620220e-01],
+           [4.94133841e-01],
+           [4.98542680e-01],
+           [5.01477457e-01],
+           [5.02525262e-01],
+           [5.24013484e-01],
+           [5.24548524e-01],
+           [5.27883437e-01],
+           [5.31559037e-01],
+           [5.37219762e-01],
+           [5.47312810e-01],
+           [5.50153825e-01],
+           [5.51107423e-01],
+           [5.54861139e-01],
+           [5.56685697e-01],
+           [5.66183927e-01],
+           [5.68375143e-01],
+           [5.68478174e-01],
+           [5.68711927e-01],
+           [5.73822456e-01],
+           [5.77253405e-01],
+           [5.83158522e-01],
+           [5.88933779e-01],
+           [5.93834272e-01],
+           [6.00365850e-01],
+           [6.03978087e-01],
+           [6.19615170e-01],
+           [6.20039458e-01],
+           [6.39766150e-01],
+           [6.60288334e-01],
+           [6.71950797e-01],
+           [6.72630559e-01],
+           [6.78316363e-01],
+           [6.82148048e-01],
+           [6.82694700e-01],
+           [6.85657878e-01],
+           [6.87766400e-01],
+           [6.88626139e-01],
+           [6.89073773e-01],
+           [6.92415369e-01],
+           [6.96333614e-01],
+           [7.01205467e-01],
+           [7.04244325e-01],
+           [7.17851040e-01]])],
+                    'clusid': [None,
+                               array([[ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 2.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 2.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 4.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 2.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 3.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 3.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 3.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 9.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 3.],
+           [ 1.],
+           [ 1.],
+           [ 2.],
+           [ 1.],
+           [ 7.],
+           [ 3.],
+           [ 1.],
+           [ 3.],
+           [ 1.],
+           [ 5.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 5.],
+           [ 1.],
+           [ 3.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [10.],
+           [ 3.],
+           [ 3.],
+           [ 1.],
+           [ 2.],
+           [ 1.],
+           [ 3.],
+           [ 1.],
+           [ 1.],
+           [ 3.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 6.],
+           [ 3.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 5.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 6.],
+           [12.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 6.],
+           [ 8.],
+           [ 8.],
+           [22.],
+           [ 1.],
+           [ 3.],
+           [16.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 3.],
+           [15.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 3.],
+           [ 1.],
+           [ 6.],
+           [ 1.],
+           [ 1.],
+           [19.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [13.],
+           [ 1.],
+           [ 1.],
+           [ 8.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [ 1.],
+           [20.],
+           [ 1.],
+           [14.],
+           [ 3.],
+           [ 5.],
+           [18.],
+           [ 1.],
+           [ 1.],
+           [17.],
+           [21.],
+           [ 8.],
+           [28.],
+           [24.],
+           [ 1.],
+           [27.],
+           [25.],
+           [ 3.],
+           [30.],
+           [26.],
+           [31.],
+           [29.],
+           [ 3.],
+           [11.],
+           [32.],
+           [23.]])],
+                    't': [None,
+                          array([[6.31545305],
+           [6.23838109],
+           [5.87284847],
+           [5.87203259],
+           [5.86946409],
+           [5.83145862],
+           [5.77593727],
+           [5.74702562],
+           [5.49133537],
+           [5.45652585],
+           [5.43137026],
+           [5.41712341],
+           [5.35217461],
+           [5.34992403],
+           [5.31119397],
+           [5.30845272],
+           [5.29771434],
+           [5.27073477],
+           [5.26470531],
+           [5.24620125],
+           [5.20024498],
+           [5.18962029],
+           [5.15272161],
+           [5.13111849],
+           [5.10885903],
+           [5.09431682],
+           [5.08926311],
+           [5.08720375],
+           [5.03838981],
+           [4.87161935],
+           [4.84000546],
+           [4.79769771],
+           [4.79370307],
+           [4.78955235],
+           [4.78791063],
+           [4.74884645],
+           [4.73637173],
+           [4.63802846],
+           [4.59240433],
+           [4.52958754],
+           [4.52817673],
+           [4.52307075],
+           [4.51615279],
+           [4.43200026],
+           [4.42740899],
+           [4.41406384],
+           [4.40072522],
+           [4.39710146],
+           [4.38983013],
+           [4.38779499],
+           [4.38044824],
+           [4.3747824 ],
+           [4.37026055],
+           [4.36661477],
+           [4.35673248],
+           [4.35488095],
+           [4.35067424],
+           [4.3419178 ],
+           [4.33417733],
+           [4.31888288],
+           [4.31880351],
+           [4.31421765],
+           [4.31137198],
+           [4.30733533],
+           [4.2985715 ],
+           [4.29094049],
+           [4.28067003],
+           [4.27943633],
+           [4.27362019],
+           [4.26786743],
+           [4.2638585 ],
+           [4.26194283],
+           [4.2290136 ],
+           [4.22569496],
+           [4.21877047],
+           [4.21300009],
+           [4.20932153],
+           [4.20682483],
+           [4.19546514],
+           [4.18992553],
+           [4.17718072],
+           [4.17399375],
+           [4.17144407],
+           [4.16980618],
+           [4.16816784],
+           [4.16152228],
+           [4.15740971],
+           [4.13784021],
+           [4.12820171],
+           [4.12567931],
+           [4.12552752],
+           [4.11411904],
+           [4.11291118],
+           [4.1085074 ],
+           [4.09693986],
+           [4.08802356],
+           [4.08655576],
+           [4.07620763],
+           [4.0738994 ],
+           [4.06813082],
+           [4.05433758],
+           [4.05374508],
+           [4.05219474],
+           [4.04412948],
+           [4.04086282],
+           [4.03828271],
+           [4.0280544 ],
+           [4.02472787],
+           [4.01974573],
+           [4.01714662],
+           [4.01204303],
+           [4.01180703],
+           [4.01080297],
+           [4.00960038],
+           [4.00639366],
+           [3.99957712],
+           [3.99903489],
+           [3.98189945],
+           [3.97707232],
+           [3.96903199],
+           [3.94538492],
+           [3.93659178],
+           [3.93605916],
+           [3.93191826],
+           [3.9282524 ],
+           [3.92166719],
+           [3.91832053],
+           [3.91216994],
+           [3.89958004],
+           [3.8959199 ],
+           [3.88661241],
+           [3.88257765],
+           [3.87563421],
+           [3.87514656],
+           [3.87264525],
+           [3.87022404],
+           [3.8663844 ],
+           [3.8603791 ],
+           [3.85963767],
+           [3.85117555],
+           [3.85051935],
+           [3.85046893],
+           [3.84868692],
+           [3.84596482],
+           [3.83759734],
+           [3.83302024],
+           [3.83109858],
+           [3.82653782],
+           [3.80241708],
+           [3.79520201],
+           [3.79107756],
+           [3.79078214],
+           [3.79050696],
+           [3.78268637],
+           [3.77109704],
+           [3.77047753],
+           [3.75129742],
+           [3.7323272 ],
+           [3.717341  ],
+           [3.71353052],
+           [3.71206786],
+           [3.71052121],
+           [3.70306535],
+           [3.70206558],
+           [3.69927184],
+           [3.69569985],
+           [3.69338557],
+           [3.6806534 ],
+           [3.67805887],
+           [3.67292973],
+           [3.67262501],
+           [3.66685088],
+           [3.66649071],
+           [3.66367509],
+           [3.65923932],
+           [3.6543495 ],
+           [3.65283226],
+           [3.64321302],
+           [3.64146871],
+           [3.63792439],
+           [3.63700872],
+           [3.6365616 ],
+           [3.63142388],
+           [3.6305448 ],
+           [3.62362813],
+           [3.60034667],
+           [3.59983226],
+           [3.59618557],
+           [3.58115756],
+           [3.5762358 ],
+           [3.5701142 ],
+           [3.56759502],
+           [3.56348005],
+           [3.55759241],
+           [3.55068906],
+           [3.54569809],
+           [3.54282525],
+           [3.52973299],
+           [3.51887764],
+           [3.50695227],
+           [3.49257991],
+           [3.4901475 ],
+           [3.4896352 ],
+           [3.48775345],
+           [3.48679872],
+           [3.47952487],
+           [3.47704938],
+           [3.47591055],
+           [3.47570859],
+           [3.46847681],
+           [3.46555848],
+           [3.4574356 ],
+           [3.45594965],
+           [3.44988176],
+           [3.43587516],
+           [3.43397848],
+           [3.43044805],
+           [3.42960693],
+           [3.4167623 ],
+           [3.41232754],
+           [3.40489613],
+           [3.40185728],
+           [3.39855515],
+           [3.39852477],
+           [3.39585527],
+           [3.38887458],
+           [3.38841616],
+           [3.37755265],
+           [3.37609098],
+           [3.36893564],
+           [3.36719293],
+           [3.35656926],
+           [3.35652816],
+           [3.34641109],
+           [3.34337941],
+           [3.34293909],
+           [3.33705328],
+           [3.33402907],
+           [3.33378375],
+           [3.33372223],
+           [3.32714291],
+           [3.32133689],
+           [3.31914562],
+           [3.31676667],
+           [3.31456247],
+           [3.31397596],
+           [3.31220376],
+           [3.31078308],
+           [3.31014928],
+           [3.30959956],
+           [3.30880828],
+           [3.30697851],
+           [3.30376913],
+           [3.30163279],
+           [3.30087005],
+           [3.28522788],
+           [3.2848384 ],
+           [3.28241078],
+           [3.27973516],
+           [3.27565424],
+           [3.26890864],
+           [3.26700988],
+           [3.26637255],
+           [3.26386379],
+           [3.26264436],
+           [3.25629631],
+           [3.25483183],
+           [3.25476297],
+           [3.25460674],
+           [3.25119117],
+           [3.24889813],
+           [3.2449515 ],
+           [3.24109166],
+           [3.23799167],
+           [3.23397665],
+           [3.23175617],
+           [3.22214389],
+           [3.22188308],
+           [3.20975688],
+           [3.19768872],
+           [3.19108329],
+           [3.19069829],
+           [3.18747794],
+           [3.18530773],
+           [3.18499812],
+           [3.18331982],
+           [3.18212559],
+           [3.18163865],
+           [3.18138511],
+           [3.17949249],
+           [3.17727326],
+           [3.17451392],
+           [3.17279276],
+           [3.16534127]])],
+                    'vertid': [None,
+                               array([[72883.],
+           [72887.],
+           [79402.],
+           [79524.],
+           [79387.],
+           [41573.],
+           [79361.],
+           [79346.],
+           [43386.],
+           [79553.],
+           [50635.],
+           [71146.],
+           [71160.],
+           [71166.],
+           [71173.],
+           [72093.],
+           [71177.],
+           [72100.],
+           [41447.],
+           [72090.],
+           [71615.],
+           [48786.],
+           [71612.],
+           [79449.],
+           [71151.],
+           [70985.],
+           [70979.],
+           [71610.],
+           [79421.],
+           [72246.],
+           [71463.],
+           [48604.],
+           [41454.],
+           [51186.],
+           [71400.],
+           [71129.],
+           [43521.],
+           [70802.],
+           [70816.],
+           [81596.],
+           [41604.],
+           [70817.],
+           [81381.],
+           [81915.],
+           [48916.],
+           [46968.],
+           [81863.],
+           [70825.],
+           [50154.],
+           [64874.],
+           [77678.],
+           [79704.],
+           [31914.],
+           [51052.],
+           [50670.],
+           [77671.],
+           [70956.],
+           [70614.],
+           [50160.],
+           [77649.],
+           [51039.],
+           [32769.],
+           [50146.],
+           [80078.],
+           [81901.],
+           [79285.],
+           [65013.],
+           [81905.],
+           [79262.],
+           [71914.],
+           [71796.],
+           [50566.],
+           [70846.],
+           [81770.],
+           [79253.],
+           [79252.],
+           [77865.],
+           [29494.],
+           [50206.],
+           [50239.],
+           [51041.],
+           [71905.],
+           [77648.],
+           [48682.],
+           [71949.],
+           [81411.],
+           [81591.],
+           [50144.],
+           [78349.],
+           [78032.],
+           [77872.],
+           [70452.],
+           [81276.],
+           [43315.],
+           [81610.],
+           [50323.],
+           [70477.],
+           [81409.],
+           [72781.],
+           [81388.],
+           [72477.],
+           [50764.],
+           [78434.],
+           [48942.],
+           [78208.],
+           [78422.],
+           [50252.],
+           [50920.],
+           [78416.],
+           [42825.],
+           [50340.],
+           [50922.],
+           [71711.],
+           [70463.],
+           [70447.],
+           [78215.],
+           [81760.],
+           [81262.],
+           [81775.],
+           [78195.],
+           [81390.],
+           [48652.],
+           [50345.],
+           [81244.],
+           [51042.],
+           [75205.],
+           [71994.],
+           [81254.],
+           [65676.],
+           [43296.],
+           [41602.],
+           [65678.],
+           [32471.],
+           [71501.],
+           [47013.],
+           [72002.],
+           [81249.],
+           [52514.],
+           [65067.],
+           [66500.],
+           [65095.],
+           [49635.],
+           [49558.],
+           [72694.],
+           [52512.],
+           [47031.],
+           [65666.],
+           [65120.],
+           [65117.],
+           [64935.],
+           [65094.],
+           [66484.],
+           [75089.],
+           [66450.],
+           [75091.],
+           [75042.],
+           [64946.],
+           [75177.],
+           [74964.],
+           [75137.],
+           [49514.],
+           [75102.],
+           [74961.],
+           [47370.],
+           [73333.],
+           [52353.],
+           [42584.],
+           [42982.],
+           [75071.],
+           [66580.],
+           [66586.],
+           [43447.],
+           [73211.],
+           [49680.],
+           [75056.],
+           [75048.],
+           [73307.],
+           [80712.],
+           [47369.],
+           [48987.],
+           [52531.],
+           [75034.],
+           [49490.],
+           [32362.],
+           [75039.],
+           [23404.],
+           [40976.],
+           [49612.],
+           [77040.],
+           [75152.],
+           [66087.],
+           [75393.],
+           [78147.],
+           [75104.],
+           [73365.],
+           [66083.],
+           [72045.],
+           [76716.],
+           [43134.],
+           [49684.],
+           [78695.],
+           [75418.],
+           [40308.],
+           [43738.],
+           [76258.],
+           [78128.],
+           [33926.],
+           [66464.],
+           [76673.],
+           [72034.],
+           [49587.],
+           [76678.],
+           [72010.],
+           [49618.],
+           [78100.],
+           [57165.],
+           [49813.],
+           [75014.],
+           [80768.],
+           [49585.],
+           [80709.],
+           [47268.],
+           [70355.],
+           [79130.],
+           [75430.],
+           [45074.],
+           [57429.],
+           [55860.],
+           [70382.],
+           [70369.],
+           [57177.],
+           [75680.],
+           [49670.],
+           [57276.],
+           [55864.],
+           [77088.],
+           [45100.],
+           [44700.],
+           [76015.],
+           [80703.],
+           [55852.],
+           [55827.],
+           [41906.],
+           [77095.],
+           [50929.],
+           [55721.],
+           [42957.],
+           [49430.],
+           [43133.],
+           [77109.],
+           [41909.],
+           [57103.],
+           [45066.],
+           [66428.],
+           [80662.],
+           [76022.],
+           [55820.],
+           [76029.],
+           [50492.],
+           [42809.],
+           [55976.],
+           [70367.],
+           [66634.],
+           [75688.],
+           [78120.],
+           [65824.],
+           [74923.],
+           [73375.],
+           [76795.],
+           [50846.],
+           [70208.],
+           [80788.],
+           [77104.],
+           [47076.],
+           [57367.],
+           [70246.],
+           [66415.],
+           [80470.],
+           [66234.],
+           [64359.],
+           [76202.],
+           [46673.],
+           [49663.],
+           [56994.],
+           [56102.],
+           [41540.],
+           [56984.],
+           [66535.],
+           [64367.],
+           [53761.],
+           [52592.],
+           [80787.],
+           [55988.],
+           [57026.]])]},
+           'pval': {'C': [None,
+                          array([[1.00000000e+00, 6.19970273e-04, 1.00000000e+00, ...,
+            7.45021423e-08, 7.45021423e-08, 7.45021423e-08]])],
+                    'P': array([1.        , 1.        , 1.        , ..., 0.01675777, 0.03093985,
+           0.01821528])}},
+     'Q': None,
+     'SSE': array([[8.59433403, 4.26158941, 6.38885891, ..., 4.90321502, 5.10517124,
+            4.81647657]]),
+     'V': None,
+     'X': array([[ 1.  , 24.45,  0.  ],
+           [ 1.  , 19.09,  0.  ],
+           [ 1.  , 13.73,  0.  ],
+           [ 1.  , 13.37,  0.  ],
+           [ 1.  , 17.78,  0.  ],
+           [ 1.  , 32.45,  0.  ],
+           [ 1.  , 33.86,  0.  ],
+           [ 1.  , 35.2 ,  0.  ],
+           [ 1.  , 16.93,  0.  ],
+           [ 1.  , 21.48,  0.  ],
+           [ 1.  ,  9.33,  0.  ],
+           [ 1.  , 14.2 ,  0.  ],
+           [ 1.  , 14.2 ,  0.  ],
+           [ 1.  , 21.82,  0.  ],
+           [ 1.  , 22.7 ,  0.  ],
+           [ 1.  , 27.81,  0.  ],
+           [ 1.  , 20.83,  0.  ],
+           [ 1.  , 16.99,  0.  ],
+           [ 1.  , 12.64,  0.  ],
+           [ 1.  , 22.64,  0.  ],
+           [ 1.  , 31.72,  0.  ],
+           [ 1.  , 16.28,  0.  ],
+           [ 1.  , 12.24,  0.  ],
+           [ 1.  , 12.74,  0.  ],
+           [ 1.  , 11.4 ,  0.  ],
+           [ 1.  , 25.12,  1.  ],
+           [ 1.  , 12.92,  1.  ],
+           [ 1.  , 19.8 ,  1.  ],
+           [ 1.  , 12.15,  1.  ],
+           [ 1.  , 14.77,  1.  ],
+           [ 1.  , 17.36,  1.  ],
+           [ 1.  , 13.28,  1.  ],
+           [ 1.  , 19.16,  1.  ],
+           [ 1.  , 13.95,  1.  ],
+           [ 1.  , 30.66,  1.  ],
+           [ 1.  , 24.6 ,  1.  ],
+           [ 1.  , 27.92,  1.  ],
+           [ 1.  , 33.17,  1.  ],
+           [ 1.  , 13.78,  1.  ],
+           [ 1.  , 17.13,  1.  ],
+           [ 1.  , 15.7 ,  1.  ],
+           [ 1.  , 20.65,  1.  ],
+           [ 1.  , 15.35,  1.  ],
+           [ 1.  , 11.81,  1.  ],
+           [ 1.  , 15.82,  1.  ],
+           [ 1.  , 14.37,  1.  ],
+           [ 1.  , 12.83,  1.  ],
+           [ 1.  , 33.24,  1.  ],
+           [ 1.  , 12.03,  0.  ],
+           [ 1.  ,  9.44,  1.  ],
+           [ 1.  , 16.99,  0.  ],
+           [ 1.  , 13.59,  0.  ],
+           [ 1.  , 12.62,  0.  ],
+           [ 1.  , 23.1 ,  1.  ],
+           [ 1.  , 21.22,  1.  ],
+           [ 1.  , 20.34,  1.  ],
+           [ 1.  , 14.  ,  1.  ],
+           [ 1.  , 14.  ,  1.  ],
+           [ 1.  , 16.  ,  1.  ],
+           [ 1.  , 17.  ,  1.  ],
+           [ 1.  , 10.  ,  1.  ],
+           [ 1.  , 21.  ,  1.  ],
+           [ 1.  , 20.  ,  1.  ],
+           [ 1.  , 13.  ,  1.  ],
+           [ 1.  , 14.  ,  1.  ],
+           [ 1.  , 17.  ,  1.  ],
+           [ 1.  , 15.  ,  1.  ],
+           [ 1.  , 20.  ,  1.  ],
+           [ 1.  , 23.  ,  1.  ],
+           [ 1.  , 15.  ,  1.  ],
+           [ 1.  , 21.  ,  1.  ],
+           [ 1.  , 15.  ,  0.  ],
+           [ 1.  , 19.  ,  0.  ],
+           [ 1.  , 15.  ,  0.  ],
+           [ 1.  , 20.  ,  0.  ],
+           [ 1.  , 12.  ,  0.  ],
+           [ 1.  , 17.  ,  0.  ],
+           [ 1.  , 18.  ,  0.  ],
+           [ 1.  , 24.  ,  0.  ],
+           [ 1.  , 17.  ,  0.  ],
+           [ 1.  , 14.  ,  0.  ],
+           [ 1.  , 16.  ,  0.  ],
+           [ 1.  , 12.  ,  0.  ],
+           [ 1.  , 18.  ,  0.  ],
+           [ 1.  , 21.  ,  0.  ],
+           [ 1.  , 16.  ,  0.  ],
+           [ 1.  , 11.  ,  0.  ],
+           [ 1.  , 18.  ,  0.  ],
+           [ 1.  , 12.  ,  0.  ],
+           [ 1.  , 19.  ,  0.  ],
+           [ 1.  , 13.99,  0.  ],
+           [ 1.  , 13.79,  0.  ],
+           [ 1.  , 10.22,  0.  ],
+           [ 1.  , 10.75,  0.  ],
+           [ 1.  ,  8.  ,  0.  ],
+           [ 1.  , 11.35,  0.  ],
+           [ 1.  , 12.65,  0.  ],
+           [ 1.  , 12.32,  0.  ],
+           [ 1.  ,  9.42,  0.  ],
+           [ 1.  ,  9.73,  0.  ],
+           [ 1.  ,  9.72,  0.  ],
+           [ 1.  , 15.23,  0.  ],
+           [ 1.  , 10.5 ,  1.  ],
+           [ 1.  , 11.55,  1.  ],
+           [ 1.  , 10.29,  1.  ],
+           [ 1.  , 11.45,  1.  ],
+           [ 1.  ,  9.15,  1.  ],
+           [ 1.  ,  8.94,  1.  ],
+           [ 1.  ,  9.4 ,  1.  ],
+           [ 1.  ,  8.86,  1.  ],
+           [ 1.  ,  8.2 ,  1.  ],
+           [ 1.  , 10.08,  1.  ],
+           [ 1.  ,  9.69,  1.  ],
+           [ 1.  , 11.99,  1.  ],
+           [ 1.  , 10.53,  1.  ],
+           [ 1.  , 10.64,  1.  ]]),
+     '_lat': None,
+     '_surf': <BSPolyData object at 0x132287820 [Wrapping a vtkmodules.vtkCommonDataModel.vtkPolyData]>,
+     '_tri': array([[    3, 10243, 10245],
+           [10243,  2563, 10244],
+           [10245, 10243, 10244],
+           ...,
+           [71284, 48572, 81924],
+           [71284, 81924, 79459],
+           [40964, 71284, 79459]]),
+     'c': array([[ 7.99360578e-15,  1.00000000e+00, -2.22044605e-15]]),
+     'cluster_threshold': 0.001,
+     'coef': array([[ 3.28088591e+00,  3.44586526e+00,  3.48576243e+00, ...,
+             3.62578908e+00,  3.63779438e+00,  3.61670347e+00],
+           [ 2.27312294e-03, -9.68561214e-03, -3.88919288e-04, ...,
+            -1.45507792e-02, -1.42908295e-02, -1.43495612e-02],
+           [-1.80960697e-02, -6.29721336e-02, -2.12643752e-02, ...,
+            -2.57992171e-02, -2.44316765e-02, -2.43525203e-02]]),
+     'contrast': array([[24.45],
+           [19.09],
+           [13.73],
+           [13.37],
+           [17.78],
+           [32.45],
+           [33.86],
+           [35.2 ],
+           [16.93],
+           [21.48],
+           [ 9.33],
+           [14.2 ],
+           [14.2 ],
+           [21.82],
+           [22.7 ],
+           [27.81],
+           [20.83],
+           [16.99],
+           [12.64],
+           [22.64],
+           [31.72],
+           [16.28],
+           [12.24],
+           [12.74],
+           [11.4 ],
+           [25.12],
+           [12.92],
+           [19.8 ],
+           [12.15],
+           [14.77],
+           [17.36],
+           [13.28],
+           [19.16],
+           [13.95],
+           [30.66],
+           [24.6 ],
+           [27.92],
+           [33.17],
+           [13.78],
+           [17.13],
+           [15.7 ],
+           [20.65],
+           [15.35],
+           [11.81],
+           [15.82],
+           [14.37],
+           [12.83],
+           [33.24],
+           [12.03],
+           [ 9.44],
+           [16.99],
+           [13.59],
+           [12.62],
+           [23.1 ],
+           [21.22],
+           [20.34],
+           [14.  ],
+           [14.  ],
+           [16.  ],
+           [17.  ],
+           [10.  ],
+           [21.  ],
+           [20.  ],
+           [13.  ],
+           [14.  ],
+           [17.  ],
+           [15.  ],
+           [20.  ],
+           [23.  ],
+           [15.  ],
+           [21.  ],
+           [15.  ],
+           [19.  ],
+           [15.  ],
+           [20.  ],
+           [12.  ],
+           [17.  ],
+           [18.  ],
+           [24.  ],
+           [17.  ],
+           [14.  ],
+           [16.  ],
+           [12.  ],
+           [18.  ],
+           [21.  ],
+           [16.  ],
+           [11.  ],
+           [18.  ],
+           [12.  ],
+           [19.  ],
+           [13.99],
+           [13.79],
+           [10.22],
+           [10.75],
+           [ 8.  ],
+           [11.35],
+           [12.65],
+           [12.32],
+           [ 9.42],
+           [ 9.73],
+           [ 9.72],
+           [15.23],
+           [10.5 ],
+           [11.55],
+           [10.29],
+           [11.45],
+           [ 9.15],
+           [ 8.94],
+           [ 9.4 ],
+           [ 8.86],
+           [ 8.2 ],
+           [10.08],
+           [ 9.69],
+           [11.99],
+           [10.53],
+           [10.64]]),
+     'coord': array([[ -4.03771, -18.836  , -47.0494 , ...,  17.2475 ,  16.3913 ,
+             17.6232 ],
+           [ 40.0262 , -56.0411 ,   2.62527, ..., -56.1898 , -55.5331 ,
+            -55.8542 ],
+           [ 15.9554 ,  16.8517 ,   8.28734, ...,  15.131  ,  15.9409 ,
+             16.115  ]]),
+     'correction': ['rft'],
+     'df': 113,
+     'dfs': None,
+     'dr': None,
+     'drlim': 0.1,
+     'du': None,
+     'ef': array([[ 0.00227312, -0.00968561, -0.00038892, ..., -0.01455078,
+            -0.01429083, -0.01434956]]),
+     'k': 1,
+     'mask': array([ True,  True,  True, ...,  True,  True,  True]),
+     'model':      intercept  AGE_AT_SCAN  DX_GROUP
+    0            1        24.45         0
+    1            1        19.09         0
+    2            1        13.73         0
+    3            1        13.37         0
+    4            1        17.78         0
+    ..         ...          ...       ...
+    111          1        10.08         1
+    112          1         9.69         1
+    113          1        11.99         1
+    114          1        10.53         1
+    115          1        10.64         1
+
+    [116 rows x 3 columns],
+     'niter': 1,
+     'r': None,
+     'resl': array([[0.00224059],
+           [0.00245467],
+           [0.00485205],
+           ...,
+           [0.00445832],
+           [0.00289882],
+           [0.00496803]]),
+     'sd': array([[0.00419827, 0.00295631, 0.00361973, ..., 0.00317106, 0.00323571,
+            0.00314289]]),
+     't': array([[ 0.5414425 , -3.27624828, -0.1074443 , ..., -4.58861177,
+            -4.41659744, -4.56572163]]),
+     'thetalim': 0.01,
+     'two_tailed': True}
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 96-98
+
+Next, we will plot the t-values and p-values on the surface. We'll do this a
+few times throughout the tutorial so lets define a function to do this.
+
+.. GENERATED FROM PYTHON SOURCE LINES 98-136
+
+.. code-block:: default
+
+
+    def plot_slm_results(slm):
+        # Plot t-values.
+        plot_hemispheres(
+            pial_left,
+            pial_right,
+            slm.t,
+            label_text=["t-values"],
+            color_bar=True,
+            color_range=(-4, 4),
+            embed_nb=True,
+            cmap='bwr',
+            size=(1400, 200),
+            zoom=1.45,
+            cb__labelTextProperty={"fontSize": 12},
+        )
+
+        # Plot p-values.
+        pval = slm.P["pval"]["P"]
+        pval[pval > 0.05] = np.nan
+        pval[~mask] = np.nan
+        plot_hemispheres(
+            pial_left,
+            pial_right,
+            pval,
+            label_text=["p-values"],
+            color_bar=True,
+            color_range=(0, 0.05),
+            embed_nb=True,
+            cmap='hot_r',
+            size=(1400, 200),
+            zoom=1.45,
+            nan_color = (.7, .7, .7, 1),
+            cb__labelTextProperty={"fontSize": 12},
+        )
+    plot_slm_results(slm_age)
 
 
 
@@ -289,11 +1941,10 @@ data.
     /Users/reinder/opt/miniconda3/envs/python3.9/lib/python3.9/site-packages/brainspace/plotting/base.py:287: UserWarning: Interactive mode requires 'panel'. Setting 'interactive=False'
       warnings.warn("Interactive mode requires 'panel'. "
 
-    <IPython.core.display.Image object>
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 121-127
+.. GENERATED FROM PYTHON SOURCE LINES 137-143
 
 By default BrainStat uses a two-tailed test. If you want to get a one-tailed
 test, simply specify it in the SLM model initialization with
@@ -302,7 +1953,7 @@ t-values. If you want to test for negative t-values, simply invert the
 contrast. We may hypothesize based on prior research that cortical thickness
 decreases with age, so we could specify this as follows:
 
-.. GENERATED FROM PYTHON SOURCE LINES 127-165
+.. GENERATED FROM PYTHON SOURCE LINES 143-157
 
 .. code-block:: default
 
@@ -318,31 +1969,7 @@ decreases with age, so we could specify this as follows:
     )
     slm_age_onetailed.fit(thickness)
 
-    plot_hemispheres(
-        pial_left,
-        pial_right,
-        slm_age_onetailed.t,
-        label_text=["t-values"],
-        color_bar=True,
-        color_range=(-4, 4),
-        embed_nb=True,
-        size=(1400, 200),
-        zoom=1.45,
-        cb__labelTextProperty={"fontSize": 12},
-    )
-    plot_hemispheres(
-        pial_left,
-        pial_right,
-        slm_age_onetailed.P["pval"]["P"],
-        label_text=["p-values"],
-        color_bar=True,
-        color_range=(0, 0.05),
-        embed_nb=True,
-        size=(1400, 200),
-        zoom=1.45,
-        cb__labelTextProperty={"fontSize": 12},
-    )
-
+    plot_slm_results(slm_age_onetailed)
 
 
 
@@ -372,16 +1999,15 @@ decreases with age, so we could specify this as follows:
     /Users/reinder/opt/miniconda3/envs/python3.9/lib/python3.9/site-packages/brainspace/plotting/base.py:287: UserWarning: Interactive mode requires 'panel'. Setting 'interactive=False'
       warnings.warn("Interactive mode requires 'panel'. "
 
-    <IPython.core.display.Image object>
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 166-168
+.. GENERATED FROM PYTHON SOURCE LINES 158-160
 
 Similarly, we could perform an analysis to assess cortical thickness
 differences across healthy and patient groups whilst correcting for age.
 
-.. GENERATED FROM PYTHON SOURCE LINES 168-201
+.. GENERATED FROM PYTHON SOURCE LINES 160-170
 
 .. code-block:: default
 
@@ -392,30 +2018,7 @@ differences across healthy and patient groups whilst correcting for age.
     )
     slm_patient.fit(thickness)
 
-    plot_hemispheres(
-        pial_left,
-        pial_right,
-        slm_patient.t,
-        label_text=["t-values"],
-        color_bar=True,
-        color_range=(-4, 4),
-        embed_nb=True,
-        size=(1400, 200),
-        zoom=1.45,
-        cb__labelTextProperty={"fontSize": 12},
-    )
-    plot_hemispheres(
-        pial_left,
-        pial_right,
-        slm_patient.P["pval"]["P"],
-        label_text=["p-values"],
-        color_bar=True,
-        color_range=(0, 0.05),
-        embed_nb=True,
-        size=(1400, 200),
-        zoom=1.45,
-        cb__labelTextProperty={"fontSize": 12},
-    )
+    plot_slm_results(slm_patient)
 
 
 
@@ -446,11 +2049,10 @@ differences across healthy and patient groups whilst correcting for age.
     /Users/reinder/opt/miniconda3/envs/python3.9/lib/python3.9/site-packages/brainspace/plotting/base.py:287: UserWarning: Interactive mode requires 'panel'. Setting 'interactive=False'
       warnings.warn("Interactive mode requires 'panel'. "
 
-    <IPython.core.display.Image object>
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 202-209
+.. GENERATED FROM PYTHON SOURCE LINES 171-178
 
 It appears we do not find statistically significant results for a relationship
 between cortical thickness and patient status.
@@ -460,7 +2062,7 @@ mixed effects model wherein the scanning site is a random variable. This is
 simple to set up. All you need to do is initialize the site term with the
 MixedEffect class, all other code remains identical.
 
-.. GENERATED FROM PYTHON SOURCE LINES 209-220
+.. GENERATED FROM PYTHON SOURCE LINES 178-189
 
 .. code-block:: default
 
@@ -482,7 +2084,7 @@ MixedEffect class, all other code remains identical.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 221-227
+.. GENERATED FROM PYTHON SOURCE LINES 190-196
 
 Lets have a closer look at the mixed effect. The variable random_site contains
 two important properties: "mean", and "variance". "mean" contains any fixed effects,
@@ -491,7 +2093,7 @@ effects, the "mean" term is empty. The "variance" term contains the random effec
 well as the identity term, similar to the intercept in FixedEffects. The identity term
 is added by default.
 
-.. GENERATED FROM PYTHON SOURCE LINES 227-229
+.. GENERATED FROM PYTHON SOURCE LINES 196-198
 
 .. code-block:: default
 
@@ -528,7 +2130,7 @@ is added by default.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 5 minutes  53.863 seconds)
+   **Total running time of the script:** ( 6 minutes  20.139 seconds)
 
 
 .. _sphx_glr_download_python_generated_tutorials_plot_tutorial_01_basics.py:

@@ -90,31 +90,47 @@ from brainstat.stats.SLM import SLM
 contrast_age = model.AGE_AT_SCAN
 slm_age = SLM(model, contrast_age, surf=pial_combined, mask=mask, correction="rft")
 slm_age.fit(thickness)
+print(slm_age)
 
-plot_hemispheres(
-    pial_left,
-    pial_right,
-    slm_age.t,
-    label_text=["t-values"],
-    color_bar=True,
-    color_range=(-4, 4),
-    embed_nb=True,
-    size=(1400, 200),
-    zoom=1.45,
-    cb__labelTextProperty={"fontSize": 12},
-)
-plot_hemispheres(
-    pial_left,
-    pial_right,
-    slm_age.P["pval"]["P"],
-    label_text=["p-values"],
-    color_bar=True,
-    color_range=(0, 0.05),
-    embed_nb=True,
-    size=(1400, 200),
-    zoom=1.45,
-    cb__labelTextProperty={"fontSize": 12},
-)
+###################################################################
+# Next, we will plot the t-values and p-values on the surface. We'll do this a
+# few times throughout the tutorial so lets define a function to do this.
+
+def plot_slm_results(slm):
+    # Plot t-values.
+    plot_hemispheres(
+        pial_left,
+        pial_right,
+        slm.t,
+        label_text=["t-values"],
+        color_bar=True,
+        color_range=(-4, 4),
+        embed_nb=True,
+        cmap='bwr',
+        size=(1400, 200),
+        zoom=1.45,
+        cb__labelTextProperty={"fontSize": 12},
+    )
+
+    # Plot p-values.
+    pval = slm.P["pval"]["P"]
+    pval[pval > 0.05] = np.nan
+    pval[~mask] = np.nan
+    plot_hemispheres(
+        pial_left,
+        pial_right,
+        pval,
+        label_text=["p-values"],
+        color_bar=True,
+        color_range=(0, 0.05),
+        embed_nb=True,
+        cmap='hot_r',
+        size=(1400, 200),
+        zoom=1.45,
+        nan_color = (.7, .7, .7, 1),
+        cb__labelTextProperty={"fontSize": 12},
+    )
+plot_slm_results(slm_age)
 
 
 ###################################################################
@@ -136,31 +152,7 @@ slm_age_onetailed = SLM(
 )
 slm_age_onetailed.fit(thickness)
 
-plot_hemispheres(
-    pial_left,
-    pial_right,
-    slm_age_onetailed.t,
-    label_text=["t-values"],
-    color_bar=True,
-    color_range=(-4, 4),
-    embed_nb=True,
-    size=(1400, 200),
-    zoom=1.45,
-    cb__labelTextProperty={"fontSize": 12},
-)
-plot_hemispheres(
-    pial_left,
-    pial_right,
-    slm_age_onetailed.P["pval"]["P"],
-    label_text=["p-values"],
-    color_bar=True,
-    color_range=(0, 0.05),
-    embed_nb=True,
-    size=(1400, 200),
-    zoom=1.45,
-    cb__labelTextProperty={"fontSize": 12},
-)
-
+plot_slm_results(slm_age_onetailed)
 
 ###################################################################
 # Similarly, we could perform an analysis to assess cortical thickness
@@ -172,30 +164,7 @@ slm_patient = SLM(
 )
 slm_patient.fit(thickness)
 
-plot_hemispheres(
-    pial_left,
-    pial_right,
-    slm_patient.t,
-    label_text=["t-values"],
-    color_bar=True,
-    color_range=(-4, 4),
-    embed_nb=True,
-    size=(1400, 200),
-    zoom=1.45,
-    cb__labelTextProperty={"fontSize": 12},
-)
-plot_hemispheres(
-    pial_left,
-    pial_right,
-    slm_patient.P["pval"]["P"],
-    label_text=["p-values"],
-    color_bar=True,
-    color_range=(0, 0.05),
-    embed_nb=True,
-    size=(1400, 200),
-    zoom=1.45,
-    cb__labelTextProperty={"fontSize": 12},
-)
+plot_slm_results(slm_patient)
 
 
 ###################################################################
