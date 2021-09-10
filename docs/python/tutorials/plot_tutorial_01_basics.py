@@ -139,7 +139,7 @@ plot_slm_results(slm_age)
 ###################################################################
 # By default BrainStat uses a two-tailed test. If you want to get a one-tailed
 # test, simply specify it in the SLM model initialization with
-# `two_tailed=True`. Note that the one-tailed test will test for positive
+# `two_tailed=False`. Note that the one-tailed test will test for positive
 # t-values. If you want to test for negative t-values, simply invert the
 # contrast. We may hypothesize based on prior research that cortical thickness
 # decreases with age, so we could specify this as follows:

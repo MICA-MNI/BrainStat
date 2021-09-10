@@ -66,24 +66,6 @@ def fetch_abide_data(
     return thickness_data, df
 
 
-def fetch_civet_mask(
-    data_dir: Optional[Path] = None, join: bool = True
-) -> Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]:
-    data_dir = Path(data_dir) if data_dir else data_directories["BRAINSTAT_DATA_DIR"]
-    data_dir.mkdir(exist_ok=True, parents=True)
-    mask_file = data_dir / "civet_41k_mask.txt"
-
-    if not mask_file.is_file():
-        mask_url = read_data_fetcher_json()["civet_mask"]["url"]
-        _download_file(mask_file, mask_url)
-
-    mask = np.genfromtxt(mask_file) == 1
-    if not join:
-        return (mask[:40962], mask[40962:])
-    else:
-        return mask
-
-
 def _download_file(filename: Path, url: str) -> None:
     if not filename.is_file():
         with urlopen(url) as u, open(filename, "wb") as f:

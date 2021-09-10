@@ -83,8 +83,8 @@ classdef SLM < matlab.mixin.Copyable
             arguments
                 model
                 contrast {mustBeVector}
-                options.surf (1,1) {brainstat_utils.validators.mustBeBrainStatSurface} = struct()
-                options.mask logical {mustBeVector} = ones(size(contrast,1),1);
+                options.surf = struct()
+                options.mask logical {mustBeVector} = 1;
                 options.correction string {mustBeValidCorrection} = []
                 options.niter (1,1) double {mustBeInteger, mustBePositive} = 1
                 options.thetalim (1,1) double {mustBePositive} = 0.01
@@ -94,7 +94,12 @@ classdef SLM < matlab.mixin.Copyable
             end
             
             obj.model = model;
-            obj.contrast = contrast;    
+            obj.contrast = contrast;
+            if numel(options.surf) > 1
+                options.surf = io_utils.combine_surfaces(options.surf{1}, options.surf{2}, 'SurfStat');
+            else
+                options.surf = io_utils.convert_surface(options.surf, 'format', 'SurfStat');
+            end
             for field = fieldnames(options)'
                 obj.(field{1}) = options.(field{1});
             end
@@ -107,6 +112,10 @@ classdef SLM < matlab.mixin.Copyable
             % fit(obj, Y) runs the model defined in the object. Y is a
             % (observation, region, variate) data matrix. 
 
+            if numel(obj.mask) == 1
+                obj.mask = ones(size(Y,2), 1, 'logical');
+            end
+            
             if ndims(Y) > 2 %#ok<ISMAT>
                 if ~obj.two_tailed && size(Y,3) > 1
                     error('One-tailed tests are not implemented for multivariate data.');
