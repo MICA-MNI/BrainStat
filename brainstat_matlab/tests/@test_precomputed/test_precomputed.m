@@ -208,32 +208,6 @@ classdef test_precomputed < matlab.unittest.TestCase
             end
         end
         
-        function test_norm(testCase)
-            % Test mesh_normalize
-            norm_files = get_test_files('statnor');
-            for pair = norm_files
-                input = load_pkl(pair{1});
-                output = load_pkl(pair{2});
-                Y = input.Y;
-                subdiv = 's';
-                if ismember('mask', fieldnames(input))
-                    mask = logical(input.mask);
-                else
-                    mask = [];
-                end
-                if isvector(output.Python_Yav)
-                    % Dimension of 1D vector needs to be transposed.
-                    output.Python_Yav = output.Python_Yav';
-                end
-                
-                [Yout, Yav] = mesh_normalize(Y, mask, subdiv);
-                verifyEqual(testCase, Yout, output.Python_Y, 'abstol', 1e-5, ...
-                    ['Testing failed on input file: ', pair{1}]);
-                verifyEqual(testCase, Yav, output.Python_Yav, 'abstol', 1e-5, ...
-                    ['Testing failed on input file: ', pair{1}])
-            end     
-        end
-        
         function test_smooth(testCase)
             % Test mesh_smooth
             smo_files = get_test_files('statsmo');
