@@ -2,7 +2,7 @@
 import sys
 import warnings
 
-__version__ = "0.2.3"
+__version__ = "0.2.4"
 
 if sys.version_info[1] == 6:
     warnings.simplefilter("always", DeprecationWarning)
