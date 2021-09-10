@@ -11,7 +11,7 @@ function profiles = read_histology_profile(options)
 %   See also COMPUTE_MPC.
 
 arguments
-    options.data_dir (1,1) string = brainstat_utils.get_home_dir('s') + filesep + "histology_data";
+    options.data_dir (1,1) string = brainstat_utils.get_brainstat_directories('bigbrain_data_dir');
     options.template (1,1) string = "fsaverage"
     options.overwrite (1,1) logical = false
 end

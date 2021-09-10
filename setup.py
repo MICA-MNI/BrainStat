@@ -6,6 +6,7 @@ https://packaging.python.org/guides/distributing-packages-using-setuptools/
 """
 
 import setuptools
+
 from brainstat import __version__ as brainstat_version
 
 with open("README.rst", "r", encoding="utf-8") as fh:
@@ -47,7 +48,7 @@ setuptools.setup(
         "scipy>=1.3.3",
         "trimesh",
     ],
-    extras_require={"dev": ["gitpython", "mypy", "pytest"]},
+    extras_require={"dev": ["gitpython", "hcp-utils", "mypy", "pytest"]},
     project_urls={  # Optional
         "Documentation": "https://brainstat.readthedocs.io",
         "Bug Reports": "https://github.com/MICA-LAB/BrainStat/issues",

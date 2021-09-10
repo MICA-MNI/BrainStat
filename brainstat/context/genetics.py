@@ -1,9 +1,20 @@
 """Genetic decoding using abagen."""
+import tempfile
+from pathlib import Path
 from typing import List, Optional, Sequence, Union
 
 import numpy as np
 import pandas as pd
 from abagen import check_atlas, get_expression_data
+from brainspace.mesh.mesh_io import read_surface, write_surface
+from sklearn.model_selection import ParameterGrid
+
+from brainstat._utils import data_directories
+from brainstat.datasets.base import (
+    _fetch_template_surface_files,
+    _valid_parcellations,
+    fetch_parcellation,
+)
 
 
 def surface_genetic_expression(
@@ -103,3 +114,76 @@ def surface_genetic_expression(
     )
 
     return expression
+
+
+def __create_precomputed(
+    data_dir: Optional[Union[str, Path]] = None,
+    output_dir: Optional[Union[str, Path]] = None,
+) -> None:
+    """Creates precomputed matrices of genetic expression for standard atlases. These are
+    used for the MATLAB implementation."""
+
+    if output_dir is None:
+        output_dir = data_dir = (
+            Path(data_dir) if data_dir else data_directories["BRAINSTAT_DATA_DIR"]
+        )
+
+    # Get all parcellations in a format compatible with ParameterGrid.
+    parcellations = _valid_parcellations()
+    for key in parcellations:
+        parcellations[key].update({"atlas": [key]})
+        if key == "schaefer":
+            parcellations[key].update({"seven_networks": (True, False)})
+        else:
+            parcellations[key].update({"seven_networks": (True,)})
+
+        # We only really need to compute this for one template surface.
+        # We'll use fsaverage for all.
+        parcellations[key].update({"surfaces": ["fsaverage"]})
+
+    param_grid = ParameterGrid(list(parcellations.values()))
+
+    # Compute expression for all parcellations.
+    for params in param_grid:
+        surface_files = _fetch_template_surface_files(
+            params["surfaces"], data_dir=data_dir
+        )
+        space = "fslr" if params["surfaces"] == "fslr32k" else "fsaverage"
+
+        labels = fetch_parcellation(
+            params["surfaces"],
+            params["atlas"],
+            params["n_regions"],
+            seven_networks=params["seven_networks"],
+            data_dir=data_dir,
+        )
+
+        surf_lh = tempfile.NamedTemporaryFile(suffix=".surf.gii")
+        surf_rh = tempfile.NamedTemporaryFile(suffix=".surf.gii")
+        for i, surf in enumerate((surf_lh, surf_rh)):
+            __freesurfer_to_surfgii(surface_files[i], surf.name)
+        surface_paths = [surf_lh.name, surf_rh.name]
+
+        expression = surface_genetic_expression(labels, surface_paths, space=space)  # type: ignore
+
+        if params["atlas"] == "schaefer":
+            network_tag = "7Networks" if params["seven_networks"] else "17Networks"
+        else:
+            network_tag = ""
+
+        filename_components = filter(
+            None,
+            (
+                "expression",
+                params["atlas"],
+                str(params["n_regions"]),
+                network_tag,
+            ),
+        )
+        filename = "_".join(filename_components) + ".csv.gz"
+        expression.to_csv(Path(output_dir, filename))  # type: ignore
+
+
+def __freesurfer_to_surfgii(freesurfer_file: str, gifti_file: str) -> None:
+    surf = read_surface(freesurfer_file, itype="fs")
+    write_surface(surf, gifti_file, otype="gii")

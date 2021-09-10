@@ -10,9 +10,10 @@ from brainspace.mesh.mesh_elements import get_cells, get_points
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 
 from brainstat._typing import ArrayLike
+from brainstat._utils import deprecated
 from brainstat.mesh.utils import _mask_edges, mesh_edges
 from brainstat.stats.terms import FixedEffect, MixedEffect
-from brainstat.stats.utils import apply_mask, deprecated, undo_mask
+from brainstat.stats.utils import apply_mask, undo_mask
 
 
 class SLM:
@@ -123,7 +124,7 @@ class SLM:
         if self.mask is not None:
             Y_masked = apply_mask(Y, self.mask, axis=1)
         else:
-            Y_masked = Y
+            Y_masked = Y.copy()
         self._linear_model(Y_masked)
         self._t_test()
         if self.mask is not None:

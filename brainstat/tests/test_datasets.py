@@ -3,13 +3,13 @@ import numpy as np
 import pytest
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 
-from brainstat.datasets import fetch_parcellation, fetch_template_surface
+from brainstat.datasets.base import (
+    _valid_parcellations,
+    fetch_parcellation,
+    fetch_template_surface,
+)
 
 parametrize = pytest.mark.parametrize
-valid_n_regions = {
-    "schaefer": (100, 200, 300, 400, 600, 800, 1000),
-    "cammoun": (33, 60, 125, 250, 500),
-}
 
 
 @parametrize(
@@ -28,12 +28,21 @@ def test_load_surfaces(template):
     assert isinstance(surface_rh, BSPolyData)
 
 
+valid_n_regions = {k: v["n_regions"] for k, v in _valid_parcellations().items()}
+valid_surfaces = {k: v["surfaces"] for k, v in _valid_parcellations().items()}
+
+
 @parametrize("atlas", valid_n_regions.keys())
 @parametrize("template", ["fsaverage", "fsaverage5", "fsaverage6", "fslr32k"])
 def test_load_parcels(atlas, template):
     """Test loading surface parcels."""
+    if template not in valid_surfaces[atlas]:
+        pytest.skip(f"{atlas} does not exist on {template}")
+
     for n_regions in valid_n_regions[atlas]:
-        parcels = fetch_parcellation(template, atlas, n_regions, join=True)
+        parcels = fetch_parcellation(
+            template, atlas, n_regions, join=True, seven_networks=True
+        )
         assert isinstance(parcels, np.ndarray)
 
         parcels_lh, parcels_rh = fetch_parcellation(

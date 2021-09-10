@@ -68,15 +68,21 @@ classdef FixedEffect
             if nargin == 0
                 obj.names = [];
                 obj.matrix = []; 
+                return
+            end
+            
+            if islogical(x)
+                x = double(x);
+            end
             
             % If input is already a term.
-            elseif isa(x,'FixedEffect')
+            if isa(x,'FixedEffect')
                 obj = x;
             
             % If input is a cell array of char arrays, or a string array. 
             elseif iscellstr(x) || isstring(x)
                 obj.names = string(unique(x))';
-                obj.matrix = obj.names' == x;
+                obj.matrix = obj.names == x(:);
             
             % If input is a character array of two dimensions. Could
             % perhaps be merged with the previous if-statement if the
@@ -122,7 +128,7 @@ classdef FixedEffect
                 obj.matrix = [];
                 for ii = 1:length(obj.names)
                     obj.matrix = [obj.matrix double(x.(obj.names{ii}))];
-                end                    
+                end                   
             end
             
             % Add an intercept if none exists.

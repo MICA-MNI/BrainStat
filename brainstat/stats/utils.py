@@ -194,29 +194,3 @@ def undo_mask(
     Y2 = Y2.swapaxes(0, axis)
 
     return Y2
-
-
-def deprecated(message: str) -> Callable:
-    """Decorator for deprecated functions.
-
-    Parameters
-    ----------
-    message : str
-        Message to return to the user.
-    """
-
-    def deprecated_decorator(func):
-        def deprecated_func(*args, **kwargs):
-            warnings.warn(
-                "{} is a deprecated function and will be removed in a future version. {}".format(
-                    func.__name__, message
-                ),
-                category=DeprecationWarning,
-                stacklevel=2,
-            )
-            warnings.simplefilter("default", DeprecationWarning)
-            return func(*args, **kwargs)
-
-        return deprecated_func
-
-    return deprecated_decorator

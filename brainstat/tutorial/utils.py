@@ -1,95 +1,91 @@
+import shutil
 import warnings
 from pathlib import Path
+from typing import Optional, Sequence, Tuple, Union
+from urllib.error import HTTPError
+from urllib.request import urlopen
 
+import numpy as np
 import pandas as pd
-from nilearn.datasets.utils import _fetch_files, _get_dataset_dir
 from sklearn.utils import Bunch
+from tqdm import tqdm
+
+from brainstat._utils import data_directories, read_data_fetcher_json
 
 
-def fetch_tutorial_data(n_subjects=20, data_dir=None, resume=True, verbose=1):
+def fetch_abide_data(
+    data_dir: Optional[Union[str, Path]] = None,
+    sites: Sequence[str] = None,
+    keep_control: bool = True,
+    keep_patient: bool = True,
+    overwrite: bool = False,
+) -> Tuple[Bunch, Bunch]:
 
-    """Download and load the surfstat tutorial dataset.
+    data_dir = Path(data_dir) if data_dir else data_directories["ABIDE_DATA_DIR"]
+    data_dir.mkdir(exist_ok=True, parents=True)
+    summary_spreadsheet = data_dir / "summary_spreadsheet.csv"
 
-    Parameters
-    ----------
-    n_subjects: int, optional
-        The number of subjects to load from maximum of 100 subjects.
-        By default, 20 subjects will be loaded. If None is given,
-        all 100 subjects will be loaded.
-    data_dir: string, optional
-        Path of the data directory. Used to force data storage in a specified
-        location. If None, data will be download to ~ (home directory).
-        Default: None
-    resume: bool, optional
-        If true, try resuming download if possible
+    if not summary_spreadsheet.is_file():
+        summary_url = read_data_fetcher_json()["abide_tutorial"]["summary_spreadsheet"]
+        _download_file(summary_spreadsheet, summary_url["url"])
 
-    Returns
-    -------
-    data: sklearn.datasets.base.Bunch
-        Dictionary-like object, the interest attributes are :
-         - 'image_files': Paths to image files in mgh format
-         - 'demographics': Path to CSV file containing demographic information
+    df = pd.read_csv(summary_spreadsheet)
+    _select_subjects(df, sites, keep_patient, keep_control)
 
-    References
-    ----------
+    # Download subject thickeness data
+    def _thickness_url(derivative, identifier):
+        return f"https://s3.amazonaws.com/fcp-indi/data/Projects/ABIDE_Initiative/Outputs/civet/thickness_{derivative}/{identifier}_{derivative}.txt"
 
-    :Download: https://box.bic.mni.mcgill.ca/s/wMPF2vj7EoYWELV
-
-    """
-
-    # set dataset url
-    url = "https://box.bic.mni.mcgill.ca/s/wMPF2vj7EoYWELV"
-
-    # set data_dir, if not directly set use ~ as default
-    if data_dir is None:
-        data_dir = str(Path.home())
-
-    # set dataset name and get its corresponding directory
-    dataset_name = "brainstat_tutorial"
-    data_dir = _get_dataset_dir(dataset_name, data_dir=data_dir, verbose=verbose)
-
-    # set download information for demographic file
-    files = [
-        (
-            "brainstat_tutorial_df.csv",
-            url + "/download?path=%2FSurfStat_tutorial_data&files=myStudy.csv",
-            {"move": "brainstat_tutorial_df.csv"},
+    thickness_data = np.zeros((df.shape[0], 81924))
+    remove_rows = []
+    progress_bar = tqdm(df.itertuples())
+    for i, row in enumerate(progress_bar):
+        progress_bar.set_description(
+            f"Fetching thickness data for subject {i+1} out of {df.shape[0]}"
         )
-    ]
+        for j, hemi in enumerate(["left", "right"]):
+            filename = data_dir / f"{row.SUB_ID}_{hemi}_thickness.txt"
+            if not filename.is_file() or overwrite:
+                thickness_url = _thickness_url(
+                    f"native_rms_rsl_tlink_30mm_{hemi}", row.FILE_ID
+                )
+                try:
+                    _download_file(filename, thickness_url)
+                except HTTPError:
+                    warnings.warn(f"Could not download file for {row.SUB_ID}.")
+                    remove_rows.append(i)
+                    continue
 
-    # download demographic file
-    path_to_demographics = _fetch_files(data_dir, files, verbose=verbose)[0]
+            thickness_data[i, j * 40962 : (j + 1) * 40962] = np.loadtxt(filename)
 
-    # set ids based on complete dataset from demographic file
-    ids = pd.read_csv(path_to_demographics)["ID2"].tolist()
+    if remove_rows:
+        thickness_data = np.delete(thickness_data, remove_rows, axis=0)
+        df.drop(np.unique(remove_rows), inplace=True)
+        df.reset_index(inplace=True)
 
-    # set and check subjects, in total and subset
-    max_subjects = len(ids)
-    if n_subjects is None:
-        n_subjects = max_subjects
-    if n_subjects > max_subjects:
-        warnings.warn("Warning: there are only %d subjects" % max_subjects)
-        n_subjects = max_subjects
-    ids = ids[:n_subjects]
+    return thickness_data, df
 
-    # restrict demographic information to subset of subjects
-    df_tmp = pd.read_csv(path_to_demographics)
-    df_tmp = df_tmp[df_tmp["ID2"].isin(ids)]
 
-    # set download information for image files and download them
-    # for hemi in ['lh', 'rh']:
-    image_files = _fetch_files(
-        data_dir,
-        [
-            (
-                "thickness/{}_{}2fsaverage5_20.mgh".format(subj, hemi),
-                url + "/download?path=%2F&files=brainstat_tutorial.zip",
-                {"uncompress": True, "move": "brainstat_tutorial.zip"},
-            )
-            for subj in ids
-            for hemi in ["lh", "rh"]
-        ],
-    )
+def _download_file(filename: Path, url: str) -> None:
+    if not filename.is_file():
+        with urlopen(url) as u, open(filename, "wb") as f:
+            shutil.copyfileobj(u, f)
 
-    # pack everything in a scikit-learn bunch and return it
-    return Bunch(demographics=df_tmp, image_files=image_files)
+
+def _select_subjects(
+    df: pd.DataFrame,
+    sites: Optional[Sequence[str]],
+    keep_patient: bool,
+    keep_control: bool,
+) -> None:
+    df.drop(df[df.FILE_ID == "no_filename"].index, inplace=True)
+    if not keep_patient:
+        df.drop(df[df.DX_GROUP == 1].index, inplace=True)
+
+    if not keep_control:
+        df.drop(df[df.DX_GROUP == 2].index, inplace=True)
+
+    if sites is not None:
+        df.drop(df[~df.SITE_ID.isin(sites)].index, inplace=True)
+
+    df.reset_index(inplace=True)
