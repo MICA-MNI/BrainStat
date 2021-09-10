@@ -94,10 +94,10 @@ classdef SLM < matlab.mixin.Copyable
             end
             
             obj.model = model;
-            obj.contrast = contrast;
+            obj.contrast = contrast;                
             if numel(options.surf) > 1
                 options.surf = io_utils.combine_surfaces(options.surf{1}, options.surf{2}, 'SurfStat');
-            else
+            elseif ~isempty(fieldnames(struct))
                 options.surf = io_utils.convert_surface(options.surf, 'format', 'SurfStat');
             end
             for field = fieldnames(options)'
