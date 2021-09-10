@@ -1,5 +1,5 @@
 function filename = download_OSF_files(template, options)
-% Downloads files from OSF.
+% Downloads files from OSF using the JSON included with netneurotools.
 
 arguments
     template (1,:) char

@@ -1,7 +1,5 @@
 """ Histology context decoder """
 import logging
-import shutil
-import urllib.request
 from pathlib import Path
 from typing import Callable, Optional, Union
 
@@ -11,7 +9,7 @@ from brainspace.gradient.gradient import GradientMaps
 from brainspace.utils.parcellation import reduce_by_labels
 
 from brainstat._typing import ArrayLike
-from brainstat._utils import data_directories, read_data_fetcher_json
+from brainstat._utils import _download_file, data_directories, read_data_fetcher_json
 
 
 def compute_histology_gradients(
@@ -204,25 +202,3 @@ def partial_correlation(X: ArrayLike, covar: np.ndarray) -> np.ndarray:
     r_xz = pearson_correlation[0:-1, -1][:, None]
 
     return (r_xy - r_xz @ r_xz.T) / (np.sqrt(1 - r_xz ** 2) * np.sqrt(1 - r_xz.T ** 2))
-
-
-def _download_file(url: str, output_file: Path, overwrite: bool) -> None:
-    """Downloads a file.
-
-    Parameters
-    ----------
-    url : str
-        URL of the download.
-    output_file : pathlib.Path
-        Path object of the output file.
-    overwrite : bool
-        If true, overwrite existing files.
-    """
-
-    if output_file.exists() and not overwrite:
-        logging.debug(str(output_file) + " already exists and will not be overwritten.")
-        return
-
-    logging.debug("Downloading " + str(output_file))
-    with urllib.request.urlopen(url) as response, open(output_file, "wb") as out_file:
-        shutil.copyfileobj(response, out_file)

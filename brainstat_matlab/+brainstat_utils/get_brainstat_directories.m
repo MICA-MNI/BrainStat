@@ -12,15 +12,15 @@ switch lower(name)
             + filesep + "data";
     case 'brainstat_data_dir' 
         directory = brainstat_utils.get_home_dir('s') + filesep + "brainstat_data";
+    case 'abide_data_dir'
+        directory = brainstat_utils.get_brainstat_directories('brainstat_data_dir') ...
+            + filesep + "abide_data";
     case 'bigbrain_data_dir'
         directory = brainstat_utils.get_brainstat_directories('brainstat_data_dir') ...
             + filesep + "bigbrain_data";
     case 'genetic_data_dir'
         directory = brainstat_utils.get_brainstat_directories('brainstat_data_dir') ...
             + filesep + "genetic_data";
-    case 'mics_data_dir'
-        directory = brainstat_utils.get_brainstat_directories('brainstat_data_dir') ...
-            + filesep + "mics_data";
     case 'neurosynth_data_dir'
         directory = brainstat_utils.get_brainstat_directories('brainstat_data_dir') ...
             + filesep + "neurosynth_data";

@@ -66,6 +66,8 @@ if isempty(parcellation)
             json_field = json_contents.tpl_conte69;
         case {'fsaverage3', 'fsaverage4', 'fsaverage5', 'fsaverage6', 'fsaverage'}
             json_field = json_contents.tpl_fsaverage.(template);
+        case {'civet41k', 'civet164k'}
+            json_field = json_contents.tpl_civet.v2.(template);
         otherwise
             error('Unknown template %s.', template);
     end

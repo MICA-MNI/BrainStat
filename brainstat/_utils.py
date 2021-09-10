@@ -1,5 +1,8 @@
 """Utilities for BrainStat developers."""
 import json
+import logging
+import shutil
+import urllib.request
 import warnings
 from pathlib import Path
 from typing import Callable
@@ -12,6 +15,7 @@ json_file = Path(brainstat.__file__).parent / "data_urls.json"
 BRAINSTAT_DATA_DIR = Path.home() / "brainstat_data"
 data_directories = {
     "BRAINSTAT_DATA_DIR": BRAINSTAT_DATA_DIR,
+    "ABIDE_DATA_DIR": BRAINSTAT_DATA_DIR / "abide_data",
     "BIGBRAIN_DATA_DIR": BRAINSTAT_DATA_DIR / "bigbrain_data",
     "MICS_DATA_DIR": BRAINSTAT_DATA_DIR / "mics_data",
     "NEUROSYNTH_DATA_DIR": BRAINSTAT_DATA_DIR / "neurosynth_data",
@@ -60,12 +64,17 @@ def generate_data_fetcher_json() -> None:
                 },
             },
         },
-        "mics_tutorial": {
-            "thickness": {
-                "url": "https://box.bic.mni.mcgill.ca/s/wDZzy3SVBELphfB/download",
+        "masks": {
+            "civet41k": {
+                "url": "https://box.bic.mni.mcgill.ca/s/9kzBetBCZkkqN6w/download"
             },
-            "participants": {
-                "url": "https://box.bic.mni.mcgill.ca/s/ckxsB6qtJ7iClzV/download",
+            "civet164k": {
+                "url": "https://box.bic.mni.mcgill.ca/s/rei5HtTDvexlEPA/download"
+            },
+        },
+        "abide_tutorial": {
+            "summary_spreadsheet": {
+                "url": "https://s3.amazonaws.com/fcp-indi/data/Projects/ABIDE_Initiative/Phenotypic_V1_0b_preprocessed1.csv"
             },
         },
     }
@@ -103,6 +112,28 @@ def deprecated(message: str) -> Callable:
         return deprecated_func
 
     return deprecated_decorator
+
+
+def _download_file(url: str, output_file: Path, overwrite: bool = False) -> None:
+    """Downloads a file.
+
+    Parameters
+    ----------
+    url : str
+        URL of the download.
+    output_file : pathlib.Path
+        Path object of the output file.
+    overwrite : bool
+        If true, overwrite existing files, defaults to False.
+    """
+
+    if output_file.exists() and not overwrite:
+        logging.debug(str(output_file) + " already exists and will not be overwritten.")
+        return
+
+    logging.debug("Downloading " + str(output_file))
+    with urllib.request.urlopen(url) as response, open(output_file, "wb") as out_file:
+        shutil.copyfileobj(response, out_file)
 
 
 if __name__ == "__main__":

@@ -131,15 +131,18 @@ classdef (InferiorClasses = {?FixedEffect}) MixedEffect
             obj.mean = FixedEffect(); % Initialize in case it isn't set. 
             obj.variance = FixedEffect(); % Initialize in case it isn't set.
             if ~isempty(ran)
+                if ~isa(ran, 'FixedEffect')
+                    ran = FixedEffect(ran, R.name_ran, false);
+                end
                 if R.ranisvar
                     % If the random term is already a variance term, simply set
                     % the variance. 
                     obj.variance = FixedEffect(ran, R.name_ran, false);
                 else
-                    if numel(ran) == 1
+                    if numel(double(ran)) == 1
                         % If the random term is a scalar, set the name to
                         % I.
-                        if ran == 1
+                        if double(ran) == 1
                             R.name_ran = 'I';
                         else
                             R.name_ran = "I" + ran + "^2";
