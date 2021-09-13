@@ -1,6 +1,7 @@
 """Utilities for BrainStat developers."""
 import json
 import logging
+import logging.config
 import shutil
 import urllib.request
 import warnings
@@ -10,6 +11,9 @@ from typing import Callable
 import brainstat
 
 json_file = Path(brainstat.__file__).parent / "data_urls.json"
+
+logging.config.fileConfig(Path(brainstat.__file__).parent / "logging.conf")
+logger = logging.getLogger("brainstat")
 
 
 BRAINSTAT_DATA_DIR = Path.home() / "brainstat_data"
@@ -128,10 +132,9 @@ def _download_file(url: str, output_file: Path, overwrite: bool = False) -> None
     """
 
     if output_file.exists() and not overwrite:
-        logging.debug(str(output_file) + " already exists and will not be overwritten.")
         return
 
-    logging.debug("Downloading " + str(output_file))
+    logger.info("Downloading " + str(output_file) + " from " + url + ".")
     with urllib.request.urlopen(url) as response, open(output_file, "wb") as out_file:
         shutil.copyfileobj(response, out_file)
 

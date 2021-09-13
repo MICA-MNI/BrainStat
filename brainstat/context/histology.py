@@ -1,5 +1,4 @@
 """ Histology context decoder """
-import logging
 from pathlib import Path
 from typing import Callable, Optional, Union
 
@@ -9,7 +8,12 @@ from brainspace.gradient.gradient import GradientMaps
 from brainspace.utils.parcellation import reduce_by_labels
 
 from brainstat._typing import ArrayLike
-from brainstat._utils import _download_file, data_directories, read_data_fetcher_json
+from brainstat._utils import (
+    _download_file,
+    data_directories,
+    logger,
+    read_data_fetcher_json,
+)
 
 
 def compute_histology_gradients(
@@ -132,7 +136,7 @@ def read_histology_profile(
     histology_file = data_dir / ("histology_" + template + ".h5")
 
     if not histology_file.exists() or overwrite:
-        logging.info(
+        logger.info(
             "Could not find a histological profile or an overwrite was requested. Downloading..."
         )
         download_histology_profiles(
@@ -171,7 +175,7 @@ def download_histology_profiles(
     data_dir.mkdir(parents=True, exist_ok=True)
     output_file = data_dir / ("histology_" + template + ".h5")
 
-    url = read_data_fetcher_json()["bigbrain_profiles"][template]
+    url = read_data_fetcher_json()["bigbrain_profiles"][template]["url"]
 
     try:
         _download_file(url, output_file, overwrite)

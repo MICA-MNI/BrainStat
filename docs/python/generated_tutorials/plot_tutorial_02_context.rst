@@ -34,94 +34,26 @@ For genetic decoding we use the Allen Human Brain Atlas through the abagen
 toolbox. Note that abagen only accepts parcellated data. Here is a minimal
 example of how we use abagen to get the genetic expression of the regions of the
 Destrieux atlas. Please note that downloading the dataset and running this
-analysis can take several minutes. As such, we will not run the analysis here.
+analysis can take several minutes.
 
-.. GENERATED FROM PYTHON SOURCE LINES 20-36
+.. GENERATED FROM PYTHON SOURCE LINES 20-34
 
 .. code-block:: default
 
 
     import numpy as np
-    from nilearn import datasets
+    from nilearn import datasets as nil_datasets
 
     from brainstat.context.genetics import surface_genetic_expression
+    from brainstat.datasets import fetch_template_surface
 
-    run_analysis = False  # Too resource intensive to run on ReadTheDocs
-
-    destrieux = datasets.fetch_atlas_surf_destrieux()
+    destrieux = nil_datasets.fetch_atlas_surf_destrieux()
     labels = np.hstack((destrieux["map_left"], destrieux["map_right"]))
-    fsaverage = datasets.fetch_surf_fsaverage()
-    surfaces_pial = [fsaverage["pial_left"], fsaverage["pial_right"]]
+    surfaces = fetch_template_surface("fsaverage5", join=False)
 
-    if run_analysis:
-        expression = surface_genetic_expression(labels, surfaces_pial, space="fsaverage")
+    expression = surface_genetic_expression(labels, surfaces, space="fsaverage")
+    print(expression)
 
-
-
-
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 37-55
-
-Expression is a pandas DataFrame which shows the genetic expression of genes
-within each region of the atlas. By default, the values will fall in the range
-[0, 1] where higher values represent higher expression. However, if you change
-the normalization function then this may change. Some regions may return NaN
-values for all modules. This occurs when there are no samples within this region
-across all donors.
-
-By default, BrainStat uses all the default abagen parameters. If you wish to
-customize these parameters then the keyword arguments can be passed directly to
-`surface_genetic_expression`. For a full list of these arguments and their
-function please consult the abagen documentation.
-
-Meta-Analytic
--------------
-To perform meta-analytic decoding, BrainStat interfaces with NiMare. Here we
-test which terms are most associated with a map of cortical thickness. A simple example
-analysis can be run as follows. First, we will load some cortical thickness data and
-the white matter surface (recall that we've already loaded the pial surface).
-
-.. GENERATED FROM PYTHON SOURCE LINES 55-89
-
-.. code-block:: default
-
-
-    import os
-
-    import nibabel as nib
-
-    import brainstat
-    from brainstat.context.meta_analysis import surface_decoder
-
-    """from brainstat.tutorial.utils import fetch_tutorial_data
-     -- DISABLED UNTIL FIXED ON READTHEDOCS
-    ## Load white matter surfaces.
-    surfaces_white = [fsaverage["white_left"], fsaverage["white_right"]]
-
-    ## Load cortical thickness data.
-    # Note: you can change the data_dir to wherever you'd like to save the data.
-    brainstat_dir = os.path.dirname(brainstat.__file__)
-    data_dir = os.path.join(brainstat_dir, "tutorial")
-
-    n = 20
-    tutorial_data = fetch_tutorial_data(n_subjects=n, data_dir=data_dir)
-
-    # Reshape the thickness files such that left and right hemispheres are in the same row.
-    files = np.reshape(np.array(tutorial_data["image_files"]), (-1, 2))
-
-    # We'll use only the left hemisphere in this tutorial.
-    subject_thickness = np.zeros((n, 20484))
-    for i in range(n):
-        left_thickness = np.squeeze(nib.load(files[i, 0]).get_fdata())
-        right_thickness = np.squeeze(nib.load(files[i, 1]).get_fdata())
-        subject_thickness[i, :] = np.concatenate((left_thickness, right_thickness))
-
-    thickness = np.mean(subject_thickness, axis=0)
-    mask = np.all(subject_thickness != 0, axis=0)
-    """
 
 
 
@@ -132,69 +64,160 @@ the white matter surface (recall that we've already loaded the pial surface).
 
  .. code-block:: none
 
+    If you use BrainStat's genetics functionality, please cite abagen (https://abagen.readthedocs.io/en/stable/citing.html).
+    gene_symbol      A1BG  A1BG-AS1       A2M     A2ML1   A3GALT2    A4GALT      AAAS      AACS   AADACL3     AADAT     AAED1  ...    ZSWIM9      ZW10    ZWILCH     ZWINT      ZXDA      ZXDB      ZXDC    ZYG11B       ZYX     ZZEF1      ZZZ3
+    label                                                                                                                      ...                                                                                                              
+    1            0.659019  0.455394  0.405535  0.540179  0.506277  0.500203  0.481146  0.360173  0.594542  0.351808  0.504591  ...  0.400798  0.221223  0.505624  0.289199  0.703424  0.386155  0.656125  0.319229  0.439412  0.320246  0.644227
+    2            0.416258  0.451675  0.593037  0.418110  0.413960  0.542695  0.590994  0.571031  0.400004  0.514004  0.414930  ...  0.436711  0.525152  0.608238  0.487039  0.522421  0.468846  0.534756  0.519956  0.700535  0.676801  0.484395
+    3            0.297575  0.358743  0.486532  0.695873  0.580258  0.403040  0.630240  0.574940  0.623143  0.560504  0.431646  ...  0.500141  0.547445  0.327408  0.354372  0.465880  0.578543  0.406632  0.569652  0.675495  0.614855  0.336463
+    4            0.473493  0.526013  0.468747  0.621808  0.462509  0.447407  0.519345  0.510273  0.417949  0.574415  0.404480  ...  0.487434  0.544567  0.487996  0.561638  0.507563  0.571129  0.405900  0.608899  0.632568  0.531246  0.357999
+    5            0.410338  0.421356  0.407708  0.638415  0.389888  0.466966  0.449027  0.438750  0.503906  0.406409  0.402866  ...  0.383801  0.408226  0.526365  0.370509  0.781760  0.436095  0.581789  0.426785  0.491957  0.373440  0.611457
+    ...               ...       ...       ...       ...       ...       ...       ...       ...       ...       ...       ...  ...       ...       ...       ...       ...       ...       ...       ...       ...       ...       ...       ...
+    71           0.695353  0.625834  0.526947  0.325738  0.369419  0.558482  0.522242  0.680845  0.359052  0.647950  0.580554  ...  0.695296  0.619792  0.658071  0.637957  0.659911  0.327510  0.659706  0.636526  0.402717  0.492447  0.602752
+    72           0.505443  0.519130  0.603428  0.452061  0.452634  0.673879  0.686197  0.561486  0.409785  0.391677  0.532237  ...  0.646148  0.469290  0.379282  0.329660  0.468960  0.424531  0.520214  0.468674  0.602977  0.463002  0.464424
+    73           0.674847  0.593737  0.465151  0.556598  0.483082  0.397504  0.430286  0.406422  0.572474  0.504785  0.533886  ...  0.566501  0.473172  0.478773  0.555202  0.625434  0.525364  0.576871  0.476485  0.377415  0.507512  0.583124
+    74           0.616940  0.603719  0.459872  0.472189  0.448432  0.462751  0.582785  0.518286  0.371935  0.504305  0.507040  ...  0.535596  0.486872  0.516799  0.487641  0.548865  0.502324  0.487241  0.503064  0.529637  0.512156  0.572543
+    75           0.867116  0.570870  0.736150  0.296880  0.535830  0.650297  0.670934  0.172312  0.455872  0.380518  0.681258  ...  0.393010  0.333012  0.741089  0.196672  0.435387  0.250051  0.804414  0.239891  0.683287  0.533504  0.688234
 
-    'from brainstat.tutorial.utils import fetch_tutorial_data\n -- DISABLED UNTIL FIXED ON READTHEDOCS\n## Load white matter surfaces.\nsurfaces_white = [fsaverage["white_left"], fsaverage["white_right"]]\n\n## Load cortical thickness data.\n# Note: you can change the data_dir to wherever you\'d like to save the data.\nbrainstat_dir = os.path.dirname(brainstat.__file__)\ndata_dir = os.path.join(brainstat_dir, "tutorial")\n\nn = 20\ntutorial_data = fetch_tutorial_data(n_subjects=n, data_dir=data_dir)\n\n# Reshape the thickness files such that left and right hemispheres are in the same row.\nfiles = np.reshape(np.array(tutorial_data["image_files"]), (-1, 2))\n\n# We\'ll use only the left hemisphere in this tutorial.\nsubject_thickness = np.zeros((n, 20484))\nfor i in range(n):\n    left_thickness = np.squeeze(nib.load(files[i, 0]).get_fdata())\n    right_thickness = np.squeeze(nib.load(files[i, 1]).get_fdata())\n    subject_thickness[i, :] = np.concatenate((left_thickness, right_thickness))\n\nthickness = np.mean(subject_thickness, axis=0)\nmask = np.all(subject_thickness != 0, axis=0)\n'
+    [75 rows x 15633 columns]
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 90-92
 
-Next we can run the analysis. Note that the data and mask has to be
-provided seperately for each hemisphere.
+.. GENERATED FROM PYTHON SOURCE LINES 35-56
 
-.. GENERATED FROM PYTHON SOURCE LINES 92-100
+Expression is a pandas DataFrame which shows the genetic expression of genes
+within each region of the atlas. By default, the values will fall in the range
+[0, 1] where higher values represent higher expression. However, if you change
+the normalization function then this may change. Some regions may return NaN
+values for all modules. This occurs when there are no samples within this
+region across all donors.
+
+By default, BrainStat uses all the default abagen parameters. If you wish to
+customize these parameters then the keyword arguments can be passed directly
+to `surface_genetic_expression`. For a full list of these arguments and their
+function please consult the abagen documentation.
+
+Meta-Analytic
+-------------
+To perform meta-analytic decoding, BrainStat uses precomputed Neurosynth maps.
+Here we test which terms are most associated with a map of cortical thickness.
+A simple example analysis can be run as follows. First, we will load some
+cortical thickness data and two cortical surfaces. The ABIDE dataset provides
+this data on the CIVET surface, so we will also load those surfaces. The
+surface decoder interpolates the data from the surface to the voxels in the
+volume that are in between the two input surfaces.
+
+.. GENERATED FROM PYTHON SOURCE LINES 56-68
 
 .. code-block:: default
 
 
-    if run_analysis:
-        meta_analysis = surface_decoder(
-            surfaces_pial,
-            surfaces_white,
-            [thickness[:10242], thickness[10242:]],
-        )
+
+    from brainstat.context.meta_analysis import surface_decoder
+    from brainstat.datasets import fetch_mask
+    from brainstat.tutorial.utils import fetch_abide_data
+
+    civet_mask = fetch_mask("civet41k")
+    civet_surface_mid = fetch_template_surface("civet41k", layer="mid", join=False)
+    civet_surface_white = fetch_template_surface("civet41k", layer="white", join=False)
+    subject_thickness, demographics = fetch_abide_data(sites=["PITT"])
+    thickness = subject_thickness.mean(axis=0)
 
 
 
 
 
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+    0it [00:00, ?it/s]    Fetching thickness data for subject 1 out of 56: : 0it [00:00, ?it/s]    Fetching thickness data for subject 1 out of 56: : 1it [00:00,  3.61it/s]    Fetching thickness data for subject 2 out of 56: : 1it [00:00,  3.61it/s]    Fetching thickness data for subject 2 out of 56: : 2it [00:00,  4.08it/s]    Fetching thickness data for subject 3 out of 56: : 2it [00:00,  4.08it/s]    Fetching thickness data for subject 3 out of 56: : 3it [00:00,  4.28it/s]    Fetching thickness data for subject 4 out of 56: : 3it [00:00,  4.28it/s]    Fetching thickness data for subject 4 out of 56: : 4it [00:00,  4.41it/s]    Fetching thickness data for subject 5 out of 56: : 4it [00:00,  4.41it/s]    Fetching thickness data for subject 5 out of 56: : 5it [00:01,  4.46it/s]    Fetching thickness data for subject 6 out of 56: : 5it [00:01,  4.46it/s]    Fetching thickness data for subject 6 out of 56: : 6it [00:01,  4.38it/s]    Fetching thickness data for subject 7 out of 56: : 6it [00:01,  4.38it/s]    Fetching thickness data for subject 7 out of 56: : 7it [00:01,  4.45it/s]    Fetching thickness data for subject 8 out of 56: : 7it [00:01,  4.45it/s]    Fetching thickness data for subject 8 out of 56: : 8it [00:01,  4.45it/s]    Fetching thickness data for subject 9 out of 56: : 8it [00:01,  4.45it/s]    Fetching thickness data for subject 9 out of 56: : 9it [00:02,  4.46it/s]    Fetching thickness data for subject 10 out of 56: : 9it [00:02,  4.46it/s]    Fetching thickness data for subject 10 out of 56: : 10it [00:02,  4.49it/s]    Fetching thickness data for subject 11 out of 56: : 10it [00:02,  4.49it/s]    Fetching thickness data for subject 11 out of 56: : 11it [00:02,  4.52it/s]    Fetching thickness data for subject 12 out of 56: : 11it [00:02,  4.52it/s]    Fetching thickness data for subject 12 out of 56: : 12it [00:02,  4.52it/s]    Fetching thickness data for subject 13 out of 56: : 12it [00:02,  4.52it/s]    Fetching thickness data for subject 13 out of 56: : 13it [00:02,  4.24it/s]    Fetching thickness data for subject 14 out of 56: : 13it [00:02,  4.24it/s]    Fetching thickness data for subject 14 out of 56: : 14it [00:03,  4.20it/s]    Fetching thickness data for subject 15 out of 56: : 14it [00:03,  4.20it/s]    Fetching thickness data for subject 15 out of 56: : 15it [00:03,  4.09it/s]    Fetching thickness data for subject 16 out of 56: : 15it [00:03,  4.09it/s]    Fetching thickness data for subject 16 out of 56: : 16it [00:03,  4.23it/s]    Fetching thickness data for subject 17 out of 56: : 16it [00:03,  4.23it/s]    Fetching thickness data for subject 17 out of 56: : 17it [00:03,  4.33it/s]    Fetching thickness data for subject 18 out of 56: : 17it [00:03,  4.33it/s]    Fetching thickness data for subject 18 out of 56: : 18it [00:04,  4.37it/s]    Fetching thickness data for subject 19 out of 56: : 18it [00:04,  4.37it/s]    Fetching thickness data for subject 19 out of 56: : 19it [00:04,  4.44it/s]    Fetching thickness data for subject 20 out of 56: : 19it [00:04,  4.44it/s]    Fetching thickness data for subject 20 out of 56: : 20it [00:04,  4.48it/s]    Fetching thickness data for subject 21 out of 56: : 20it [00:04,  4.48it/s]    Fetching thickness data for subject 21 out of 56: : 21it [00:04,  4.40it/s]    Fetching thickness data for subject 22 out of 56: : 21it [00:04,  4.40it/s]    Fetching thickness data for subject 22 out of 56: : 22it [00:05,  4.28it/s]    Fetching thickness data for subject 23 out of 56: : 22it [00:05,  4.28it/s]    Fetching thickness data for subject 23 out of 56: : 23it [00:05,  4.27it/s]    Fetching thickness data for subject 24 out of 56: : 23it [00:05,  4.27it/s]    Fetching thickness data for subject 24 out of 56: : 24it [00:05,  4.22it/s]    Fetching thickness data for subject 25 out of 56: : 24it [00:05,  4.22it/s]    Fetching thickness data for subject 25 out of 56: : 25it [00:05,  4.28it/s]    Fetching thickness data for subject 26 out of 56: : 25it [00:05,  4.28it/s]    Fetching thickness data for subject 26 out of 56: : 26it [00:06,  4.26it/s]    Fetching thickness data for subject 27 out of 56: : 26it [00:06,  4.26it/s]    Fetching thickness data for subject 27 out of 56: : 27it [00:06,  4.11it/s]    Fetching thickness data for subject 28 out of 56: : 27it [00:06,  4.11it/s]    Fetching thickness data for subject 28 out of 56: : 28it [00:06,  4.11it/s]    Fetching thickness data for subject 29 out of 56: : 28it [00:06,  4.11it/s]    Fetching thickness data for subject 29 out of 56: : 29it [00:06,  3.96it/s]    Fetching thickness data for subject 30 out of 56: : 29it [00:06,  3.96it/s]    Fetching thickness data for subject 30 out of 56: : 30it [00:07,  3.27it/s]    Fetching thickness data for subject 31 out of 56: : 30it [00:07,  3.27it/s]    Fetching thickness data for subject 31 out of 56: : 31it [00:07,  3.54it/s]    Fetching thickness data for subject 32 out of 56: : 31it [00:07,  3.54it/s]    Fetching thickness data for subject 32 out of 56: : 32it [00:07,  3.78it/s]    Fetching thickness data for subject 33 out of 56: : 32it [00:07,  3.78it/s]    Fetching thickness data for subject 33 out of 56: : 33it [00:07,  3.99it/s]    Fetching thickness data for subject 34 out of 56: : 33it [00:07,  3.99it/s]    Fetching thickness data for subject 34 out of 56: : 34it [00:08,  4.04it/s]    Fetching thickness data for subject 35 out of 56: : 34it [00:08,  4.04it/s]    Fetching thickness data for subject 35 out of 56: : 35it [00:08,  4.10it/s]    Fetching thickness data for subject 36 out of 56: : 35it [00:08,  4.10it/s]    Fetching thickness data for subject 36 out of 56: : 36it [00:08,  4.24it/s]    Fetching thickness data for subject 37 out of 56: : 36it [00:08,  4.24it/s]    Fetching thickness data for subject 37 out of 56: : 37it [00:08,  4.32it/s]    Fetching thickness data for subject 38 out of 56: : 37it [00:08,  4.32it/s]    Fetching thickness data for subject 38 out of 56: : 38it [00:09,  4.41it/s]    Fetching thickness data for subject 39 out of 56: : 38it [00:09,  4.41it/s]    Fetching thickness data for subject 39 out of 56: : 39it [00:09,  4.42it/s]    Fetching thickness data for subject 40 out of 56: : 39it [00:09,  4.42it/s]    Fetching thickness data for subject 40 out of 56: : 40it [00:09,  4.34it/s]    Fetching thickness data for subject 41 out of 56: : 40it [00:09,  4.34it/s]    Fetching thickness data for subject 41 out of 56: : 41it [00:09,  4.34it/s]    Fetching thickness data for subject 42 out of 56: : 41it [00:09,  4.34it/s]    Fetching thickness data for subject 42 out of 56: : 42it [00:09,  4.35it/s]    Fetching thickness data for subject 43 out of 56: : 42it [00:09,  4.35it/s]    Fetching thickness data for subject 43 out of 56: : 43it [00:10,  4.30it/s]    Fetching thickness data for subject 44 out of 56: : 43it [00:10,  4.30it/s]    Fetching thickness data for subject 44 out of 56: : 44it [00:10,  4.09it/s]    Fetching thickness data for subject 45 out of 56: : 44it [00:10,  4.09it/s]    Fetching thickness data for subject 45 out of 56: : 45it [00:10,  4.21it/s]    Fetching thickness data for subject 46 out of 56: : 45it [00:10,  4.21it/s]    Fetching thickness data for subject 46 out of 56: : 46it [00:10,  4.33it/s]    Fetching thickness data for subject 47 out of 56: : 46it [00:10,  4.33it/s]    Fetching thickness data for subject 47 out of 56: : 47it [00:11,  4.38it/s]    Fetching thickness data for subject 48 out of 56: : 47it [00:11,  4.38it/s]    Fetching thickness data for subject 48 out of 56: : 48it [00:11,  4.45it/s]    Fetching thickness data for subject 49 out of 56: : 48it [00:11,  4.45it/s]    Fetching thickness data for subject 49 out of 56: : 49it [00:11,  4.49it/s]    Fetching thickness data for subject 50 out of 56: : 49it [00:11,  4.49it/s]    Fetching thickness data for subject 50 out of 56: : 50it [00:11,  4.54it/s]    Fetching thickness data for subject 51 out of 56: : 50it [00:11,  4.54it/s]    Fetching thickness data for subject 51 out of 56: : 51it [00:11,  4.55it/s]    Fetching thickness data for subject 52 out of 56: : 51it [00:11,  4.55it/s]    Fetching thickness data for subject 52 out of 56: : 52it [00:12,  4.56it/s]    Fetching thickness data for subject 53 out of 56: : 52it [00:12,  4.56it/s]    Fetching thickness data for subject 53 out of 56: : 53it [00:12,  4.55it/s]    Fetching thickness data for subject 54 out of 56: : 53it [00:12,  4.55it/s]    Fetching thickness data for subject 54 out of 56: : 54it [00:12,  4.50it/s]    Fetching thickness data for subject 55 out of 56: : 54it [00:12,  4.50it/s]    Fetching thickness data for subject 55 out of 56: : 55it [00:12,  4.40it/s]    Fetching thickness data for subject 56 out of 56: : 55it [00:12,  4.40it/s]    Fetching thickness data for subject 56 out of 56: : 56it [00:13,  4.45it/s]    Fetching thickness data for subject 56 out of 56: : 56it [00:13,  4.27it/s]
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 101-110
+
+.. GENERATED FROM PYTHON SOURCE LINES 69-72
+
+Next we can run the analysis. Note that the data, surfaces, and mask have to
+be provided seperately for each hemisphere. Also note that downloading the
+dataset and running this analysis can take several minutes.
+
+.. GENERATED FROM PYTHON SOURCE LINES 72-80
+
+.. code-block:: default
+
+
+    meta_analysis = surface_decoder(
+        civet_surface_mid,
+        civet_surface_white,
+        [thickness[: len(thickness) // 2], thickness[len(thickness) // 2 :]],
+    )
+    print(meta_analysis)
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+                    Pearson's r
+    temporal           0.389848
+    frontotemporal     0.380911
+    pole               0.363274
+    dementia           0.346121
+    empathic           0.314577
+    ...                     ...
+    visual            -0.282101
+    parieto           -0.282910
+    sighted           -0.290581
+    primary           -0.306724
+    v1                -0.371165
+
+    [3228 rows x 1 columns]
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 81-91
 
 meta_analysis now contains a pandas.dataFrame with the correlation values
-for each requested feature.
+for each requested feature. If no feature was requested (like here) then
+the analysis is run across all features.
+
 
 Histological decoding
 ---------------------
 For histological decoding we use microstructural profile covariance gradients
 computed from the BigBrain dataset. (TODO: Add more background). Firstly, lets
-download the MPC data and compute its gradients. As the computations for this aren't
-very intesnive, we can actually run this on ReadTheDocs!
+download the MPC data and compute its gradients.
 
-.. GENERATED FROM PYTHON SOURCE LINES 110-128
+.. GENERATED FROM PYTHON SOURCE LINES 91-107
 
 .. code-block:: default
 
-
-    from brainspace.datasets import load_parcellation
 
     from brainstat.context.histology import (
         compute_histology_gradients,
         compute_mpc,
         read_histology_profile,
     )
+    from brainstat.datasets import fetch_parcellation
 
-    """ DISABLED 
     # Load the Schaefer 400 atlas
-    schaefer_400 = load_parcellation("schaefer", scale=400, join=True)
+    schaefer_400 = fetch_parcellation("fsaverage5", "schaefer", 400)
 
     # Run the analysis
-    histology_profiles = read_histology_profile(template="fs_LR_64k")
+    histology_profiles = read_histology_profile(template="fsaverage5")
     mpc = compute_mpc(histology_profiles, labels=schaefer_400)
     gradient_map = compute_histology_gradients(mpc)
-    """
+
 
 
 
@@ -205,28 +228,31 @@ very intesnive, we can actually run this on ReadTheDocs!
 
  .. code-block:: none
 
+    /Users/reinder/GitHub/BrainStat/brainstat/context/histology.py:103: RuntimeWarning: divide by zero encountered in true_divide
+      mpc = 0.5 * np.log((1 + p_corr) / (1 - p_corr))
+    /Users/reinder/GitHub/BrainStat/brainstat/context/histology.py:103: RuntimeWarning: invalid value encountered in log
+      mpc = 0.5 * np.log((1 + p_corr) / (1 - p_corr))
 
-    ' DISABLED \n# Load the Schaefer 400 atlas\nschaefer_400 = load_parcellation("schaefer", scale=400, join=True)\n\n# Run the analysis\nhistology_profiles = read_histology_profile(template="fs_LR_64k")\nmpc = compute_mpc(histology_profiles, labels=schaefer_400)\ngradient_map = compute_histology_gradients(mpc)\n'
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 129-133
+.. GENERATED FROM PYTHON SOURCE LINES 108-112
 
 Lets plot the first gradient of histology to see what it looks like.
 We will use BrainSpace to create our plots. For full details on how
 BrainSpace's plotting functionality works, please consult the BrainSpace
-ReadTheDocs. (NOTE: Temporarily disabled due to build errors)
+ReadTheDocs.
 
-.. GENERATED FROM PYTHON SOURCE LINES 133-151
+.. GENERATED FROM PYTHON SOURCE LINES 112-136
 
 .. code-block:: default
 
-    """
-    from brainspace.datasets import load_conte69
+
     from brainspace.plotting.surface_plotting import plot_hemispheres
     from brainspace.utils.parcellation import map_to_labels
 
-    left_surface, right_surface = load_conte69()
+    surfaces = fetch_template_surface("fsaverage5", join=False)
+
     vertexwise_data = []
     for i in range(0, 2):
         vertexwise_data.append(
@@ -237,10 +263,20 @@ ReadTheDocs. (NOTE: Temporarily disabled due to build errors)
                 fill=np.nan,
             )
         )
-    # plot_hemispheres(left_surface, right_surface, vertexwise_data, embed_nb=True)
-    """
+
+    plot_hemispheres(
+        surfaces[0],
+        surfaces[1],
+        vertexwise_data,
+        embed_nb=True,
+        label_text=["Gradient 1", "Gradient 2"],
+    )
 
 
+
+.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_001.png
+    :alt: plot tutorial 02 context
+    :class: sphx-glr-single-img
 
 
 .. rst-class:: sphx-glr-script-out
@@ -249,15 +285,17 @@ ReadTheDocs. (NOTE: Temporarily disabled due to build errors)
 
  .. code-block:: none
 
+    /Users/reinder/opt/miniconda3/envs/python3.8/lib/python3.8/site-packages/brainspace/plotting/base.py:287: UserWarning: Interactive mode requires 'panel'. Setting 'interactive=False'
+      warnings.warn("Interactive mode requires 'panel'. "
 
-    '\nfrom brainspace.datasets import load_conte69\nfrom brainspace.plotting.surface_plotting import plot_hemispheres\nfrom brainspace.utils.parcellation import map_to_labels\n\nleft_surface, right_surface = load_conte69()\nvertexwise_data = []\nfor i in range(0, 2):\n    vertexwise_data.append(\n        map_to_labels(\n            gradient_map.gradients_[:, i],\n            schaefer_400,\n            mask=schaefer_400 != 0,\n            fill=np.nan,\n        )\n    )\n# plot_hemispheres(left_surface, right_surface, vertexwise_data, embed_nb=True)\n'
+    <IPython.core.display.Image object>
 
 
 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  0.023 seconds)
+   **Total running time of the script:** ( 3 minutes  45.533 seconds)
 
 
 .. _sphx_glr_download_python_generated_tutorials_plot_tutorial_02_context.py:
