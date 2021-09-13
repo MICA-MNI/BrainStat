@@ -1,5 +1,4 @@
 """ Meta-analytic decoding based on NiMARE """
-import logging
 import re
 import tempfile
 import urllib
@@ -14,7 +13,7 @@ from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 from nilearn.datasets import load_mni152_brain_mask
 from scipy.stats.stats import pearsonr
 
-from brainstat._utils import data_directories, read_data_fetcher_json
+from brainstat._utils import data_directories, logger, read_data_fetcher_json
 from brainstat.mesh.interpolate import multi_surface_to_volume
 
 
@@ -62,7 +61,7 @@ def surface_decoder(
     data_dir = Path(data_dir) if data_dir else data_directories["NEUROSYNTH_DATA_DIR"]
     data_dir.mkdir(exist_ok=True, parents=True)
 
-    logging.info(
+    logger.info(
         "Fetching Neurosynth feature files. This may take several minutes if you haven't downloaded them yet."
     )
     feature_files = tuple(_fetch_precomputed(data_dir, database=database))
@@ -86,7 +85,7 @@ def surface_decoder(
     feature_names = []
     correlations = np.zeros(len(feature_files))
 
-    logging.info("Running correlations with all Neurosynth features.")
+    logger.info("Running correlations with all Neurosynth features.")
     for i in range(len(feature_files)):
         feature_names.append(re.search("__[A-Za-z0-9]+", feature_files[i].stem)[0][2:])  # type: ignore
         feature_data = nib.load(feature_files[i]).get_fdata()[mask]
@@ -138,10 +137,10 @@ def _fetch_precomputed_neurosynth(data_dir: Path) -> Generator[Path, None, None]
     json = read_data_fetcher_json()["neurosynth_precomputed"]
     url = json["url"]
 
-    existing_files = (data_dir / "upload").glob(
-        "Neurosynth_TFIDF__*z_desc-consistency.nii.gz"
-    )
+    existing_files = data_dir.glob("Neurosynth_TFIDF__*z_desc-consistency.nii.gz")
+
     if len(list(existing_files)) != json["n_files"]:
+        logger.info("Downloading Neurosynth data files.")
         response = urllib.request.urlopen(url)
 
         zip_file = tempfile.NamedTemporaryFile(prefix=str(data_dir), suffix=".zip")
