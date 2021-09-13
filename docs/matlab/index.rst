@@ -1,11 +1,9 @@
 .. _matlab_index:
 
+
 MATLAB Index
 =============
 
-.. toctree::
-    :maxdepth: 1
-    :caption: Table of Contents:
+For MATLAB tutorials, please consult the Examples tab on our FileExchange_ page.
 
-    volume_viewer
-    tutorials/tutorial_1
+.. _FileExchange: https://www.mathworks.com/matlabcentral/fileexchange/89827-brainstat

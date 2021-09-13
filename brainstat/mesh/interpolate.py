@@ -17,7 +17,7 @@ from nilearn.datasets import load_mni152_brain_mask
 from scipy.interpolate.ndgriddata import LinearNDInterpolator, NearestNDInterpolator
 from scipy.spatial import cKDTree
 
-from brainstat._utils import data_directories
+from brainstat._utils import data_directories, logger
 from brainstat.datasets import fetch_template_surface
 
 
@@ -57,10 +57,10 @@ def surface_to_volume(
     if not isinstance(volume_template, nib.nifti1.Nifti1Image):
         volume_template = nib.load(volume_template)
 
-    logging.debug("Computing voxels inside the cortical ribbon.")
+    logger.debug("Computing voxels inside the cortical ribbon.")
     ribbon_points = cortical_ribbon(pial_mesh, wm_mesh, volume_template)
 
-    logging.debug("Computing labels for cortical ribbon voxels.")
+    logger.debug("Computing labels for cortical ribbon voxels.")
     ribbon_labels = ribbon_interpolation(
         pial_mesh,
         wm_mesh,
@@ -70,7 +70,7 @@ def surface_to_volume(
         interpolation=interpolation,
     )
 
-    logging.debug("Constructing new nifti image.")
+    logger.debug("Constructing new nifti image.")
     new_data = np.zeros(volume_template.shape)
     ribbon_points = np.rint(
         ribbon_points, np.ones(ribbon_points.shape, dtype=int), casting="unsafe"
@@ -225,7 +225,7 @@ def cortical_ribbon(
     points = np.reshape(np.concatenate((x, y, z), axis=3), (-1, 3), order="F")
     world_coord = nib.affines.apply_affine(nii.affine, points)
 
-    logging.debug("Discarding points that exceed the minima/maxima of the pial mesh.")
+    logger.debug("Discarding points that exceed the minima/maxima of the pial mesh.")
     # Discard points that exceed any of the maxima/minima
     pial_points = np.array(get_points(pial_mesh))
     discard = np.any(
@@ -238,7 +238,7 @@ def cortical_ribbon(
     world_coord = world_coord[np.logical_not(discard), :]
 
     # Discard points that are more than mesh_distance from the pial and wm mesh.
-    logging.debug("Discarding points that are too far from the meshes.")
+    logger.debug("Discarding points that are too far from the meshes.")
     tree = cKDTree(pial_points)
     mindist_pial, _ = tree.query(world_coord)
 
@@ -251,7 +251,7 @@ def cortical_ribbon(
     ]
 
     # Check which points are inside pial but not inside WM (i.e. ribbon)
-    logging.debug("Retaining only points that are inside the pial but not the WM mesh.")
+    logger.debug("Retaining only points that are inside the pial but not the WM mesh.")
     pial_trimesh = trimesh.ray.ray_pyembree.RayMeshIntersector(
         trimesh.Trimesh(
             vertices=np.array(get_points(pial_mesh)),

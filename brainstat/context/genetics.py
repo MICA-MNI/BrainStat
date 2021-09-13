@@ -53,8 +53,8 @@ def surface_genetic_expression(
         List of paths to label files for the parcellation, or numpy array
         containing the pre-loaded labels
     surfaces : list-of-image, optional
-        List of paths to surface files. If not specified assumes that `labels`
-        are on the `fsaverage5` surface. Default: None
+        List of paths to surface files or preloaded surfaces. If not specified
+        assumes that `labels` are on the `fsaverage5` surface. Default: None
     space : {'fsaverage', 'fslr'}
         What template space `surfaces` are aligned to. If not specified assumes
         that `labels` are on the `fsaverage5` surface. Default: None
@@ -81,6 +81,21 @@ def surface_genetic_expression(
     >>> expression = surface_genetic_expression(labels, surfaces,
     ...                                         space='fsaverage')
     """
+
+    # Deal with the input parameters.
+    if isinstance(surfaces, str):
+        surfaces = [surfaces]
+    elif surfaces is None:
+        surfaces = []
+
+    temp_surfaces: List[Path] = []
+    for i, surface in enumerate(surfaces):
+        if not isinstance(surface, str) and not isinstance(surface, Path):
+            temp_surfaces.append(tempfile.NamedTemporaryFile(suffix=".gii"))
+            write_surface(surface, temp_surfaces[i].name, otype="gii")
+
+    if temp_surfaces:
+        surfaces = [x.name for x in temp_surfaces]
 
     # Use abagen to grab expression data.
     print(
