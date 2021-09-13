@@ -1,7 +1,7 @@
 """Genetic decoding using abagen."""
 import tempfile
 from pathlib import Path
-from typing import Optional, Sequence, Union
+from typing import List, Optional, Sequence, Union
 
 import numpy as np
 import pandas as pd
@@ -83,7 +83,12 @@ def surface_genetic_expression(
     """
 
     # Deal with the input parameters.
-    temp_surfaces = []
+    if isinstance(surfaces, str):
+        surfaces = [surfaces]
+    elif surfaces is None:
+        surfaces = []
+
+    temp_surfaces: List[Path] = []
     for i, surface in enumerate(surfaces):
         if not isinstance(surface, str) and not isinstance(surface, Path):
             temp_surfaces.append(tempfile.NamedTemporaryFile(suffix=".gii"))
