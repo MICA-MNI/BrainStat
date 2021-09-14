@@ -74,7 +74,7 @@ end
 if endsWith(target_files{1}, '.annot')
     labels = labels - 1;
     if startsWith(atlas, 'schaefer')
-        labels(end/2+1:end) = labels(end/2+1:end) + n_regions / 2;
+        labels(end/2+1:end) = (labels(end/2+1:end) + n_regions / 2) .* (labels(end/2+1:end)>0);
     end
 end
 end
@@ -156,7 +156,7 @@ function parcellation = fetch_glasser_parcellation(template, data_dir)
     for ii = 1:numel(filepaths)
         websave(filepaths{ii}, urls.(template){ii});
     end
-    [left_parcellation, right_parcellation] = read_surface_data(filepaths);
-    parcellation = [double(left_parcellation); double(right_parcellation) + 180*(right_parcellation>0)];   
+    parcellations = read_surface_data(filepaths);
+    parcellation = [double(parcellations{1}); double(parcellations{2}) + 180*(parcellations{2}>0)];   
 end
 
