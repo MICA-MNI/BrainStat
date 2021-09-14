@@ -74,7 +74,7 @@ end
 if endsWith(target_files{1}, '.annot')
     labels = labels - 1;
     if startsWith(atlas, 'schaefer')
-        labels(end/2+1:end) = labels(end/2+1:end) + n_regions / 2;
+        labels(end/2+1:end) = (labels(end/2+1:end) + n_regions / 2) .* (labels(end/2+1:end)>0);
     end
 end
 end

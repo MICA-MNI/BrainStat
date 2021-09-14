@@ -11,7 +11,6 @@ simply set `sites` to `None`.
 
 
 import numpy as np
-
 from brainstat.datasets import fetch_mask, fetch_template_surface
 from brainstat.tutorial.utils import fetch_abide_data
 
