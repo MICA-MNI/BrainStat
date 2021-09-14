@@ -62,19 +62,19 @@ analysis can take several minutes.
  .. code-block:: none
 
     If you use BrainStat's genetics functionality, please cite abagen (https://abagen.readthedocs.io/en/stable/citing.html).
-    gene_symbol      A1BG  A1BG-AS1       A2M  ...       ZYX     ZZEF1      ZZZ3
-    label                                      ...                              
-    1            0.616241  0.663905  0.346942  ...  0.379364  0.557027  0.416022
-    2            0.695402  0.552844  0.438033  ...  0.293495  0.392343  0.601068
-    3            0.505258  0.561028  0.534480  ...  0.656205  0.573194  0.564922
-    4            0.405253  0.393486  0.494290  ...  0.525360  0.667703  0.418323
-    5            0.264929  0.120622  0.494322  ...  0.815647  0.812410  0.364021
-    ...               ...       ...       ...  ...       ...       ...       ...
-    396               NaN       NaN       NaN  ...       NaN       NaN       NaN
-    397          0.499900  0.259409  0.405187  ...  0.390599  0.443900  0.330393
-    398          0.635517  0.701399  0.528614  ...  0.602474  0.233541  0.478760
-    399          0.476907  0.322261  0.361887  ...  0.666588  0.284690  0.362532
-    400               NaN       NaN       NaN  ...       NaN       NaN       NaN
+    gene_symbol      A1BG  A1BG-AS1       A2M     A2ML1   A3GALT2    A4GALT      AAAS      AACS   AADACL3  ...    ZWILCH     ZWINT      ZXDA      ZXDB      ZXDC    ZYG11B       ZYX     ZZEF1      ZZZ3
+    label                                                                                                  ...                                                                                          
+    1            0.616241  0.663905  0.346942  0.442031  0.528662  0.385995  0.450701  0.610946  0.700893  ...  0.677480  0.670887  0.735968  0.393920  0.530751  0.654544  0.379364  0.557027  0.416022
+    2            0.695402  0.552844  0.438033  0.454978  0.495349  0.426254  0.313420  0.677285  0.482006  ...  0.709731  0.693832  0.622805  0.544404  0.500129  0.554081  0.293495  0.392343  0.601068
+    3            0.505258  0.561028  0.534480  0.517866  0.451078  0.377681  0.635056  0.646470  0.506606  ...  0.477834  0.506369  0.543594  0.559509  0.445725  0.528291  0.656205  0.573194  0.564922
+    4            0.405253  0.393486  0.494290  0.672039  0.562577  0.462485  0.426054  0.581588  0.671947  ...  0.421138  0.418171  0.514962  0.620589  0.505453  0.518247  0.525360  0.667703  0.418323
+    5            0.264929  0.120622  0.494322  0.766259  0.917175  0.179186  0.413368  0.388243  0.637066  ...  0.554290  0.299879  0.473553  0.829499  0.775317  0.519083  0.815647  0.812410  0.364021
+    ...               ...       ...       ...       ...       ...       ...       ...       ...       ...  ...       ...       ...       ...       ...       ...       ...       ...       ...       ...
+    396               NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN  ...       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN
+    397          0.499900  0.259409  0.405187  0.844304  0.600706  0.775612  0.505645  0.312653  0.450115  ...  0.409626  0.142667  0.414844  0.941867  0.747326  0.485406  0.390599  0.443900  0.330393
+    398          0.635517  0.701399  0.528614  0.323811  0.622531  0.564279  0.602727  0.708670  0.341587  ...  0.383145  0.317572  0.383137  0.208097  0.355344  0.632177  0.602474  0.233541  0.478760
+    399          0.476907  0.322261  0.361887  0.351364  0.173268  0.866365  0.384485  0.466906  0.067823  ...  0.537216  0.104176  0.655510  0.497964  0.809990  0.408175  0.666588  0.284690  0.362532
+    400               NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN  ...       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN
 
     [400 rows x 15631 columns]
 
@@ -131,121 +131,7 @@ volume that are in between the two input surfaces.
 
  .. code-block:: none
 
-
-    0it [00:00, ?it/s]
-    Fetching thickness data for subject 1 out of 56: : 0it [00:00, ?it/s]
-    Fetching thickness data for subject 1 out of 56: : 1it [00:00,  4.88it/s]
-    Fetching thickness data for subject 2 out of 56: : 1it [00:00,  4.88it/s]
-    Fetching thickness data for subject 2 out of 56: : 2it [00:00,  4.90it/s]
-    Fetching thickness data for subject 3 out of 56: : 2it [00:00,  4.90it/s]
-    Fetching thickness data for subject 3 out of 56: : 3it [00:00,  4.90it/s]
-    Fetching thickness data for subject 4 out of 56: : 3it [00:00,  4.90it/s]
-    Fetching thickness data for subject 4 out of 56: : 4it [00:00,  4.74it/s]
-    Fetching thickness data for subject 5 out of 56: : 4it [00:00,  4.74it/s]
-    Fetching thickness data for subject 5 out of 56: : 5it [00:01,  4.69it/s]
-    Fetching thickness data for subject 6 out of 56: : 5it [00:01,  4.69it/s]
-    Fetching thickness data for subject 6 out of 56: : 6it [00:01,  4.68it/s]
-    Fetching thickness data for subject 7 out of 56: : 6it [00:01,  4.68it/s]
-    Fetching thickness data for subject 7 out of 56: : 7it [00:01,  4.62it/s]
-    Fetching thickness data for subject 8 out of 56: : 7it [00:01,  4.62it/s]
-    Fetching thickness data for subject 8 out of 56: : 8it [00:01,  4.68it/s]
-    Fetching thickness data for subject 9 out of 56: : 8it [00:01,  4.68it/s]
-    Fetching thickness data for subject 9 out of 56: : 9it [00:01,  4.69it/s]
-    Fetching thickness data for subject 10 out of 56: : 9it [00:01,  4.69it/s]
-    Fetching thickness data for subject 10 out of 56: : 10it [00:02,  4.72it/s]
-    Fetching thickness data for subject 11 out of 56: : 10it [00:02,  4.72it/s]
-    Fetching thickness data for subject 11 out of 56: : 11it [00:02,  4.74it/s]
-    Fetching thickness data for subject 12 out of 56: : 11it [00:02,  4.74it/s]
-    Fetching thickness data for subject 12 out of 56: : 12it [00:02,  4.74it/s]
-    Fetching thickness data for subject 13 out of 56: : 12it [00:02,  4.74it/s]
-    Fetching thickness data for subject 13 out of 56: : 13it [00:02,  4.79it/s]
-    Fetching thickness data for subject 14 out of 56: : 13it [00:02,  4.79it/s]
-    Fetching thickness data for subject 14 out of 56: : 14it [00:02,  4.80it/s]
-    Fetching thickness data for subject 15 out of 56: : 14it [00:02,  4.80it/s]
-    Fetching thickness data for subject 15 out of 56: : 15it [00:03,  4.80it/s]
-    Fetching thickness data for subject 16 out of 56: : 15it [00:03,  4.80it/s]
-    Fetching thickness data for subject 16 out of 56: : 16it [00:03,  4.71it/s]
-    Fetching thickness data for subject 17 out of 56: : 16it [00:03,  4.71it/s]
-    Fetching thickness data for subject 17 out of 56: : 17it [00:03,  4.70it/s]
-    Fetching thickness data for subject 18 out of 56: : 17it [00:03,  4.70it/s]
-    Fetching thickness data for subject 18 out of 56: : 18it [00:03,  4.74it/s]
-    Fetching thickness data for subject 19 out of 56: : 18it [00:03,  4.74it/s]
-    Fetching thickness data for subject 19 out of 56: : 19it [00:04,  4.74it/s]
-    Fetching thickness data for subject 20 out of 56: : 19it [00:04,  4.74it/s]
-    Fetching thickness data for subject 20 out of 56: : 20it [00:04,  4.75it/s]
-    Fetching thickness data for subject 21 out of 56: : 20it [00:04,  4.75it/s]
-    Fetching thickness data for subject 21 out of 56: : 21it [00:04,  4.54it/s]
-    Fetching thickness data for subject 22 out of 56: : 21it [00:04,  4.54it/s]
-    Fetching thickness data for subject 22 out of 56: : 22it [00:04,  4.54it/s]
-    Fetching thickness data for subject 23 out of 56: : 22it [00:04,  4.54it/s]
-    Fetching thickness data for subject 23 out of 56: : 23it [00:04,  4.34it/s]
-    Fetching thickness data for subject 24 out of 56: : 23it [00:04,  4.34it/s]
-    Fetching thickness data for subject 24 out of 56: : 24it [00:05,  4.44it/s]
-    Fetching thickness data for subject 25 out of 56: : 24it [00:05,  4.44it/s]
-    Fetching thickness data for subject 25 out of 56: : 25it [00:05,  4.52it/s]
-    Fetching thickness data for subject 26 out of 56: : 25it [00:05,  4.52it/s]
-    Fetching thickness data for subject 26 out of 56: : 26it [00:05,  4.59it/s]
-    Fetching thickness data for subject 27 out of 56: : 26it [00:05,  4.59it/s]
-    Fetching thickness data for subject 27 out of 56: : 27it [00:05,  4.65it/s]
-    Fetching thickness data for subject 28 out of 56: : 27it [00:05,  4.65it/s]
-    Fetching thickness data for subject 28 out of 56: : 28it [00:05,  4.67it/s]
-    Fetching thickness data for subject 29 out of 56: : 28it [00:05,  4.67it/s]
-    Fetching thickness data for subject 29 out of 56: : 29it [00:06,  4.70it/s]
-    Fetching thickness data for subject 30 out of 56: : 29it [00:06,  4.70it/s]
-    Fetching thickness data for subject 30 out of 56: : 30it [00:06,  4.75it/s]
-    Fetching thickness data for subject 31 out of 56: : 30it [00:06,  4.75it/s]
-    Fetching thickness data for subject 31 out of 56: : 31it [00:06,  4.69it/s]
-    Fetching thickness data for subject 32 out of 56: : 31it [00:06,  4.69it/s]
-    Fetching thickness data for subject 32 out of 56: : 32it [00:06,  4.50it/s]
-    Fetching thickness data for subject 33 out of 56: : 32it [00:06,  4.50it/s]
-    Fetching thickness data for subject 33 out of 56: : 33it [00:07,  4.44it/s]
-    Fetching thickness data for subject 34 out of 56: : 33it [00:07,  4.44it/s]
-    Fetching thickness data for subject 34 out of 56: : 34it [00:07,  4.44it/s]
-    Fetching thickness data for subject 35 out of 56: : 34it [00:07,  4.44it/s]
-    Fetching thickness data for subject 35 out of 56: : 35it [00:07,  4.45it/s]
-    Fetching thickness data for subject 36 out of 56: : 35it [00:07,  4.45it/s]
-    Fetching thickness data for subject 36 out of 56: : 36it [00:07,  4.48it/s]
-    Fetching thickness data for subject 37 out of 56: : 36it [00:07,  4.48it/s]
-    Fetching thickness data for subject 37 out of 56: : 37it [00:07,  4.56it/s]
-    Fetching thickness data for subject 38 out of 56: : 37it [00:07,  4.56it/s]
-    Fetching thickness data for subject 38 out of 56: : 38it [00:08,  4.53it/s]
-    Fetching thickness data for subject 39 out of 56: : 38it [00:08,  4.53it/s]
-    Fetching thickness data for subject 39 out of 56: : 39it [00:08,  4.61it/s]
-    Fetching thickness data for subject 40 out of 56: : 39it [00:08,  4.61it/s]
-    Fetching thickness data for subject 40 out of 56: : 40it [00:08,  4.69it/s]
-    Fetching thickness data for subject 41 out of 56: : 40it [00:08,  4.69it/s]
-    Fetching thickness data for subject 41 out of 56: : 41it [00:08,  4.75it/s]
-    Fetching thickness data for subject 42 out of 56: : 41it [00:08,  4.75it/s]
-    Fetching thickness data for subject 42 out of 56: : 42it [00:09,  4.74it/s]
-    Fetching thickness data for subject 43 out of 56: : 42it [00:09,  4.74it/s]
-    Fetching thickness data for subject 43 out of 56: : 43it [00:09,  4.75it/s]
-    Fetching thickness data for subject 44 out of 56: : 43it [00:09,  4.75it/s]
-    Fetching thickness data for subject 44 out of 56: : 44it [00:09,  4.05it/s]
-    Fetching thickness data for subject 45 out of 56: : 44it [00:09,  4.05it/s]
-    Fetching thickness data for subject 45 out of 56: : 45it [00:09,  3.85it/s]
-    Fetching thickness data for subject 46 out of 56: : 45it [00:09,  3.85it/s]
-    Fetching thickness data for subject 46 out of 56: : 46it [00:10,  3.91it/s]
-    Fetching thickness data for subject 47 out of 56: : 46it [00:10,  3.91it/s]
-    Fetching thickness data for subject 47 out of 56: : 47it [00:10,  4.01it/s]
-    Fetching thickness data for subject 48 out of 56: : 47it [00:10,  4.01it/s]
-    Fetching thickness data for subject 48 out of 56: : 48it [00:10,  3.95it/s]
-    Fetching thickness data for subject 49 out of 56: : 48it [00:10,  3.95it/s]
-    Fetching thickness data for subject 49 out of 56: : 49it [00:10,  4.02it/s]
-    Fetching thickness data for subject 50 out of 56: : 49it [00:10,  4.02it/s]
-    Fetching thickness data for subject 50 out of 56: : 50it [00:11,  4.18it/s]
-    Fetching thickness data for subject 51 out of 56: : 50it [00:11,  4.18it/s]
-    Fetching thickness data for subject 51 out of 56: : 51it [00:11,  4.32it/s]
-    Fetching thickness data for subject 52 out of 56: : 51it [00:11,  4.32it/s]
-    Fetching thickness data for subject 52 out of 56: : 52it [00:11,  4.43it/s]
-    Fetching thickness data for subject 53 out of 56: : 52it [00:11,  4.43it/s]
-    Fetching thickness data for subject 53 out of 56: : 53it [00:11,  4.50it/s]
-    Fetching thickness data for subject 54 out of 56: : 53it [00:11,  4.50it/s]
-    Fetching thickness data for subject 54 out of 56: : 54it [00:11,  4.50it/s]
-    Fetching thickness data for subject 55 out of 56: : 54it [00:11,  4.50it/s]
-    Fetching thickness data for subject 55 out of 56: : 55it [00:12,  4.54it/s]
-    Fetching thickness data for subject 56 out of 56: : 55it [00:12,  4.54it/s]
-    Fetching thickness data for subject 56 out of 56: : 56it [00:12,  4.61it/s]
-    Fetching thickness data for subject 56 out of 56: : 56it [00:12,  4.53it/s]
+    0it [00:00, ?it/s]    Fetching thickness data for subject 1 out of 56: : 0it [00:00, ?it/s]    Fetching thickness data for subject 1 out of 56: : 1it [00:00,  4.69it/s]    Fetching thickness data for subject 2 out of 56: : 1it [00:00,  4.69it/s]    Fetching thickness data for subject 2 out of 56: : 2it [00:00,  4.79it/s]    Fetching thickness data for subject 3 out of 56: : 2it [00:00,  4.79it/s]    Fetching thickness data for subject 3 out of 56: : 3it [00:00,  4.85it/s]    Fetching thickness data for subject 4 out of 56: : 3it [00:00,  4.85it/s]    Fetching thickness data for subject 4 out of 56: : 4it [00:00,  4.87it/s]    Fetching thickness data for subject 5 out of 56: : 4it [00:00,  4.87it/s]    Fetching thickness data for subject 5 out of 56: : 5it [00:01,  4.90it/s]    Fetching thickness data for subject 6 out of 56: : 5it [00:01,  4.90it/s]    Fetching thickness data for subject 6 out of 56: : 6it [00:01,  4.91it/s]    Fetching thickness data for subject 7 out of 56: : 6it [00:01,  4.91it/s]    Fetching thickness data for subject 7 out of 56: : 7it [00:01,  4.90it/s]    Fetching thickness data for subject 8 out of 56: : 7it [00:01,  4.90it/s]    Fetching thickness data for subject 8 out of 56: : 8it [00:01,  4.92it/s]    Fetching thickness data for subject 9 out of 56: : 8it [00:01,  4.92it/s]    Fetching thickness data for subject 9 out of 56: : 9it [00:01,  4.92it/s]    Fetching thickness data for subject 10 out of 56: : 9it [00:01,  4.92it/s]    Fetching thickness data for subject 10 out of 56: : 10it [00:02,  4.89it/s]    Fetching thickness data for subject 11 out of 56: : 10it [00:02,  4.89it/s]    Fetching thickness data for subject 11 out of 56: : 11it [00:02,  4.93it/s]    Fetching thickness data for subject 12 out of 56: : 11it [00:02,  4.93it/s]    Fetching thickness data for subject 12 out of 56: : 12it [00:02,  4.88it/s]    Fetching thickness data for subject 13 out of 56: : 12it [00:02,  4.88it/s]    Fetching thickness data for subject 13 out of 56: : 13it [00:02,  4.89it/s]    Fetching thickness data for subject 14 out of 56: : 13it [00:02,  4.89it/s]    Fetching thickness data for subject 14 out of 56: : 14it [00:02,  4.89it/s]    Fetching thickness data for subject 15 out of 56: : 14it [00:02,  4.89it/s]    Fetching thickness data for subject 15 out of 56: : 15it [00:03,  4.91it/s]    Fetching thickness data for subject 16 out of 56: : 15it [00:03,  4.91it/s]    Fetching thickness data for subject 16 out of 56: : 16it [00:03,  4.89it/s]    Fetching thickness data for subject 17 out of 56: : 16it [00:03,  4.89it/s]    Fetching thickness data for subject 17 out of 56: : 17it [00:03,  4.91it/s]    Fetching thickness data for subject 18 out of 56: : 17it [00:03,  4.91it/s]    Fetching thickness data for subject 18 out of 56: : 18it [00:03,  4.92it/s]    Fetching thickness data for subject 19 out of 56: : 18it [00:03,  4.92it/s]    Fetching thickness data for subject 19 out of 56: : 19it [00:03,  4.89it/s]    Fetching thickness data for subject 20 out of 56: : 19it [00:03,  4.89it/s]    Fetching thickness data for subject 20 out of 56: : 20it [00:04,  4.91it/s]    Fetching thickness data for subject 21 out of 56: : 20it [00:04,  4.91it/s]    Fetching thickness data for subject 21 out of 56: : 21it [00:04,  4.90it/s]    Fetching thickness data for subject 22 out of 56: : 21it [00:04,  4.90it/s]    Fetching thickness data for subject 22 out of 56: : 22it [00:04,  4.88it/s]    Fetching thickness data for subject 23 out of 56: : 22it [00:04,  4.88it/s]    Fetching thickness data for subject 23 out of 56: : 23it [00:04,  4.91it/s]    Fetching thickness data for subject 24 out of 56: : 23it [00:04,  4.91it/s]    Fetching thickness data for subject 24 out of 56: : 24it [00:04,  4.91it/s]    Fetching thickness data for subject 25 out of 56: : 24it [00:04,  4.91it/s]    Fetching thickness data for subject 25 out of 56: : 25it [00:05,  4.89it/s]    Fetching thickness data for subject 26 out of 56: : 25it [00:05,  4.89it/s]    Fetching thickness data for subject 26 out of 56: : 26it [00:05,  4.91it/s]    Fetching thickness data for subject 27 out of 56: : 26it [00:05,  4.91it/s]    Fetching thickness data for subject 27 out of 56: : 27it [00:05,  4.87it/s]    Fetching thickness data for subject 28 out of 56: : 27it [00:05,  4.87it/s]    Fetching thickness data for subject 28 out of 56: : 28it [00:05,  4.90it/s]    Fetching thickness data for subject 29 out of 56: : 28it [00:05,  4.90it/s]    Fetching thickness data for subject 29 out of 56: : 29it [00:05,  4.88it/s]    Fetching thickness data for subject 30 out of 56: : 29it [00:05,  4.88it/s]    Fetching thickness data for subject 30 out of 56: : 30it [00:06,  4.90it/s]    Fetching thickness data for subject 31 out of 56: : 30it [00:06,  4.90it/s]    Fetching thickness data for subject 31 out of 56: : 31it [00:06,  4.93it/s]    Fetching thickness data for subject 32 out of 56: : 31it [00:06,  4.93it/s]    Fetching thickness data for subject 32 out of 56: : 32it [00:06,  4.91it/s]    Fetching thickness data for subject 33 out of 56: : 32it [00:06,  4.91it/s]    Fetching thickness data for subject 33 out of 56: : 33it [00:06,  4.93it/s]    Fetching thickness data for subject 34 out of 56: : 33it [00:06,  4.93it/s]    Fetching thickness data for subject 34 out of 56: : 34it [00:06,  4.92it/s]    Fetching thickness data for subject 35 out of 56: : 34it [00:06,  4.92it/s]    Fetching thickness data for subject 35 out of 56: : 35it [00:07,  4.91it/s]    Fetching thickness data for subject 36 out of 56: : 35it [00:07,  4.91it/s]    Fetching thickness data for subject 36 out of 56: : 36it [00:07,  4.91it/s]    Fetching thickness data for subject 37 out of 56: : 36it [00:07,  4.91it/s]    Fetching thickness data for subject 37 out of 56: : 37it [00:07,  4.87it/s]    Fetching thickness data for subject 38 out of 56: : 37it [00:07,  4.87it/s]    Fetching thickness data for subject 38 out of 56: : 38it [00:07,  4.84it/s]    Fetching thickness data for subject 39 out of 56: : 38it [00:07,  4.84it/s]    Fetching thickness data for subject 39 out of 56: : 39it [00:07,  4.86it/s]    Fetching thickness data for subject 40 out of 56: : 39it [00:07,  4.86it/s]    Fetching thickness data for subject 40 out of 56: : 40it [00:08,  4.84it/s]    Fetching thickness data for subject 41 out of 56: : 40it [00:08,  4.84it/s]    Fetching thickness data for subject 41 out of 56: : 41it [00:08,  4.84it/s]    Fetching thickness data for subject 42 out of 56: : 41it [00:08,  4.84it/s]    Fetching thickness data for subject 42 out of 56: : 42it [00:08,  4.86it/s]    Fetching thickness data for subject 43 out of 56: : 42it [00:08,  4.86it/s]    Fetching thickness data for subject 43 out of 56: : 43it [00:08,  4.86it/s]    Fetching thickness data for subject 44 out of 56: : 43it [00:08,  4.86it/s]    Fetching thickness data for subject 44 out of 56: : 44it [00:08,  4.90it/s]    Fetching thickness data for subject 45 out of 56: : 44it [00:08,  4.90it/s]    Fetching thickness data for subject 45 out of 56: : 45it [00:09,  4.90it/s]    Fetching thickness data for subject 46 out of 56: : 45it [00:09,  4.90it/s]    Fetching thickness data for subject 46 out of 56: : 46it [00:09,  4.87it/s]    Fetching thickness data for subject 47 out of 56: : 46it [00:09,  4.87it/s]    Fetching thickness data for subject 47 out of 56: : 47it [00:09,  4.89it/s]    Fetching thickness data for subject 48 out of 56: : 47it [00:09,  4.89it/s]    Fetching thickness data for subject 48 out of 56: : 48it [00:09,  4.89it/s]    Fetching thickness data for subject 49 out of 56: : 48it [00:09,  4.89it/s]    Fetching thickness data for subject 49 out of 56: : 49it [00:10,  4.91it/s]    Fetching thickness data for subject 50 out of 56: : 49it [00:10,  4.91it/s]    Fetching thickness data for subject 50 out of 56: : 50it [00:10,  4.93it/s]    Fetching thickness data for subject 51 out of 56: : 50it [00:10,  4.93it/s]    Fetching thickness data for subject 51 out of 56: : 51it [00:10,  4.90it/s]    Fetching thickness data for subject 52 out of 56: : 51it [00:10,  4.90it/s]    Fetching thickness data for subject 52 out of 56: : 52it [00:10,  4.92it/s]    Fetching thickness data for subject 53 out of 56: : 52it [00:10,  4.92it/s]    Fetching thickness data for subject 53 out of 56: : 53it [00:10,  4.91it/s]    Fetching thickness data for subject 54 out of 56: : 53it [00:10,  4.91it/s]    Fetching thickness data for subject 54 out of 56: : 54it [00:11,  4.87it/s]    Fetching thickness data for subject 55 out of 56: : 54it [00:11,  4.87it/s]    Fetching thickness data for subject 55 out of 56: : 55it [00:11,  4.90it/s]    Fetching thickness data for subject 56 out of 56: : 55it [00:11,  4.90it/s]    Fetching thickness data for subject 56 out of 56: : 56it [00:11,  4.90it/s]    Fetching thickness data for subject 56 out of 56: : 56it [00:11,  4.89it/s]
 
 
 
@@ -279,17 +165,17 @@ dataset and running this analysis can take several minutes.
  .. code-block:: none
 
                     Pearson's r
-    temporal           0.389844
-    frontotemporal     0.380891
-    pole               0.363266
-    dementia           0.346117
-    empathic           0.314559
+    temporal           0.389824
+    frontotemporal     0.380859
+    pole               0.363267
+    dementia           0.346098
+    empathic           0.314584
     ...                     ...
-    visual            -0.282103
-    parieto           -0.282927
-    sighted           -0.290596
-    primary           -0.306735
-    v1                -0.371181
+    visual            -0.282120
+    parieto           -0.282926
+    sighted           -0.290601
+    primary           -0.306733
+    v1                -0.371183
 
     [3228 rows x 1 columns]
 
@@ -386,6 +272,7 @@ BrainSpace documentation.
 
 
 
+
 .. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_001.png
     :alt: plot tutorial 02 context
     :class: sphx-glr-single-img
@@ -404,21 +291,21 @@ BrainSpace documentation.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 136-143
+.. GENERATED FROM PYTHON SOURCE LINES 136-144
 
 Note that we no longer use the y-axis regression used in (Paquola et al, 2019,
 Plos Biology), as such the first gradient becomes an anterior-posterior-
 gradient.
 
 That concludes the tutorials of BrainStat. If anything is unclear, or if you
-think you've found a bug, please post it to the Issues page of our Github. 
+think you've found a bug, please post it to the Issues page of our Github.
 
 Happy BrainStating!
 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 3 minutes  34.554 seconds)
+   **Total running time of the script:** ( 3 minutes  15.649 seconds)
 
 
 .. _sphx_glr_download_python_generated_tutorials_plot_tutorial_02_context.py:
