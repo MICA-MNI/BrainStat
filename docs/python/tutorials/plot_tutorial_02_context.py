@@ -13,22 +13,19 @@ Genetics
 
 For genetic decoding we use the Allen Human Brain Atlas through the abagen
 toolbox. Note that abagen only accepts parcellated data. Here is a minimal
-example of how we use abagen to get the genetic expression of the regions of the
-Destrieux atlas. Please note that downloading the dataset and running this
+example of how we use abagen to get the genetic expression of the 400 regions
+of the Schaefer atlas. Please note that downloading the dataset and running this
 analysis can take several minutes.
 """
 
 import numpy as np
-from nilearn import datasets as nil_datasets
-
 from brainstat.context.genetics import surface_genetic_expression
-from brainstat.datasets import fetch_template_surface
+from brainstat.datasets import fetch_parcellation, fetch_template_surface
 
-destrieux = nil_datasets.fetch_atlas_surf_destrieux()
-labels = np.hstack((destrieux["map_left"], destrieux["map_right"]))
+schaefer_400 = fetch_parcellation("fsaverage5", "schaefer", 400)
 surfaces = fetch_template_surface("fsaverage5", join=False)
 
-expression = surface_genetic_expression(labels, surfaces, space="fsaverage")
+expression = surface_genetic_expression(schaefer_400, surfaces, space="fsaverage")
 print(expression)
 
 ########################################################################
@@ -36,7 +33,7 @@ print(expression)
 # within each region of the atlas. By default, the values will fall in the range
 # [0, 1] where higher values represent higher expression. However, if you change
 # the normalization function then this may change. Some regions may return NaN
-# values for all modules. This occurs when there are no samples within this
+# values for all genes. This occurs when there are no samples within this
 # region across all donors.
 #
 # By default, BrainStat uses all the default abagen parameters. If you wish to
@@ -85,9 +82,10 @@ print(meta_analysis)
 #
 # Histological decoding
 # ---------------------
-# For histological decoding we use microstructural profile covariance gradients
-# computed from the BigBrain dataset. (TODO: Add more background). Firstly, lets
-# download the MPC data and compute its gradients.
+# For histological decoding we use microstructural profile covariance gradients,
+# as first shown by (Paquola et al, 2019, Plos Biology), computed from the
+# BigBrain dataset. Firstly, lets download the MPC data and compute its
+# gradients.
 
 from brainstat.context.histology import (
     compute_histology_gradients,
@@ -96,19 +94,19 @@ from brainstat.context.histology import (
 )
 from brainstat.datasets import fetch_parcellation
 
-# Load the Schaefer 400 atlas
-schaefer_400 = fetch_parcellation("fsaverage5", "schaefer", 400)
-
 # Run the analysis
 histology_profiles = read_histology_profile(template="fsaverage5")
 mpc = compute_mpc(histology_profiles, labels=schaefer_400)
 gradient_map = compute_histology_gradients(mpc)
 
 ########################################################################
-# Lets plot the first gradient of histology to see what it looks like.
-# We will use BrainSpace to create our plots. For full details on how
-# BrainSpace's plotting functionality works, please consult the BrainSpace
-# ReadTheDocs.
+# The variable histology_profiles now contains histological profiles sampled at
+# 50 different depths across the cortex, mpc contains the covariance of these
+# profiles, and gradient_map contains their gradients. Depending on your
+# use-case, each of these variables could be of interest, but for purposes of
+# this tutorial we'll plot the gradients to the surface with BrainSpace. For
+# details on what the GradientMaps class, gm, contains please consult the
+# BrainSpace documentation.
 
 from brainspace.plotting.surface_plotting import plot_hemispheres
 from brainspace.utils.parcellation import map_to_labels
@@ -133,3 +131,13 @@ plot_hemispheres(
     embed_nb=True,
     label_text=["Gradient 1", "Gradient 2"],
 )
+
+########################################################################
+# Note that we no longer use the y-axis regression used in (Paquola et al, 2019,
+# Plos Biology), as such the first gradient becomes an anterior-posterior-
+# gradient.
+#
+# That concludes the tutorials of BrainStat. If anything is unclear, or if you
+# think you've found a bug, please post it to the Issues page of our Github.
+#
+# Happy BrainStating!

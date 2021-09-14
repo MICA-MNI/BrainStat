@@ -47,9 +47,6 @@ end
 if options.database ~= "neurosynth"
     error('The only valid database method is ''neurosynth''.');
 end
-if options.template ~= "fsaverage" && options.template ~= "fsaverage5"
-    error('The only valid templates are fsaverage and fsaverage5.');
-end
 
 mask = interpolated_volume ~= 0;
   

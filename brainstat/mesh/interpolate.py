@@ -334,11 +334,12 @@ def __create_precomputed(data_dir: Optional[Union[str, Path]] = None) -> None:
     """Create nearest neighbor interpolation niftis for MATLAB."""
     data_dir = Path(data_dir) if data_dir else data_directories["BRAINSTAT_DATA_DIR"]
     mni152 = load_mni152_brain_mask()
-    for template in ("fsaverage5", "fsaverage"):
+    for template in ("fsaverage5", "fsaverage", "civet41k", "civet164k"):
         output_file = data_dir / f"nn_interp_{template}.nii.gz"
         if output_file.exists():
             continue
-        pial = fetch_template_surface(template, layer="pial", join=False)
+        top_surf = "pial" if template[:9] == "fsaverage" else "mid"
+        pial = fetch_template_surface(template, layer=top_surf, join=False)
         white = fetch_template_surface(template, layer="white", join=False)
         labels = (
             np.arange(1, get_points(pial[0]).shape[0] + 1),
@@ -361,10 +362,10 @@ def __create_precomputed(data_dir: Optional[Union[str, Path]] = None) -> None:
 
         pial_fslr32k = (build_polydata(hcp.mesh.pial[0], hcp.mesh.pial[1]),)
         white_fslr32k = (build_polydata(hcp.mesh.white[0], hcp.mesh.white[1]),)
-        labels_fslr32k = (np.arange(1, get_points(pial[0]).shape[0] + 1),)
+        labels_fslr32k = (np.arange(1, get_points(pial_fslr32k[0]).shape[0] + 1),)
         multi_surface_to_volume(
-            pial=pial,
-            white=white,
+            pial=pial_fslr32k,
+            white=white_fslr32k,
             volume_template=mni152,
             labels=labels_fslr32k,
             output_file=str(data_dir / "nn_interp_fslr32k.nii.gz"),

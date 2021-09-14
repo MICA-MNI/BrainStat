@@ -53,7 +53,7 @@ if ~exist(filename, 'file') || options.overwrite
 end
 
 if options.verbose
-    disp('Reading atlas from file.')
+    disp('Reading atlas from file. This may take a few minutes.')
 end
 [expression, gene_names] = read_csv_gz(filename);
 end

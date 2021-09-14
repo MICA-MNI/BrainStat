@@ -1,28 +1,28 @@
-function varargout = read_surface_data(files)
+function labels = read_surface_data(files)
 
 if ischar(files)
     files = {files};
 end
 
-varargout = cell(1,numel(files));
+labels = cell(1,numel(files));
 for ii = 1:numel(files)
     if endsWith(files{ii}, {'.shape.gii','.func.gii', '.label.gii'}) 
         gii = gifti(files{ii});
-        varargout{ii} = gii.cdata;
+        labels{ii} = gii.cdata;
     elseif endsWith(files{ii}, '.annot')
-        varargout{ii} = annot2parcellation(files{ii});
+        labels{ii} = annot2parcellation(files{ii});
     elseif endsWith(files{ii}, '.dlabel.nii')
         cii = io_utils.cifti_matlab.cifti_read(files{ii});
-        varargout{ii} = cii.cdata;
+        labels{ii} = cii.cdata;
     elseif endsWith(files{ii}, '.mat')
         obj = matfile(files{ii});
         f = fieldnames(obj);
         if numel(f) ~= 2
             error('Cannot load data from .mat files containing more than one variable.');
         end
-        varargout{ii} = obj.(f{2});
+        labels{ii} = obj.(f{2});
     elseif endsWith(files{ii}, {'.txt','.thickness','.mgh','.asc'})
-        varargout{ii} = io_utils.SurfStatReadData1(files{ii});
+        labels{ii} = io_utils.SurfStatReadData1(files{ii});
     else
         error('Unknown file format.')
     end
