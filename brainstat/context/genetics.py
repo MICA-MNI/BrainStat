@@ -1,10 +1,11 @@
 """Genetic decoding using abagen."""
 import tempfile
 from pathlib import Path
-from typing import List, Optional, Sequence, Union
+from typing import Optional, Sequence, Union
 
 import numpy as np
 import pandas as pd
+import nibabel as nib
 from abagen import check_atlas, get_expression_data
 from brainspace.mesh.mesh_io import read_surface, write_surface
 from sklearn.model_selection import ParameterGrid
@@ -88,20 +89,23 @@ def surface_genetic_expression(
     elif surfaces is None:
         surfaces = []
 
-    temp_surfaces: List[Path] = []
-    for i, surface in enumerate(surfaces):
+    surfaces_gii = []
+    for surface in surfaces:
         if not isinstance(surface, str) and not isinstance(surface, Path):
-            temp_surfaces.append(tempfile.NamedTemporaryFile(suffix=".gii"))
-            write_surface(surface, temp_surfaces[i].name, otype="gii")
-
-    if temp_surfaces:
-        surfaces = [x.name for x in temp_surfaces]
+            # Rather roundabout deletion of the temporary file for Windows compatibility.
+            with tempfile.NamedTemporaryFile(suffix=".gii", delete=False) as f:
+                name = f.name
+                write_surface(surface, name, otype="gii")
+            surfaces_gii.append(nib.load(name))
+            (Path(name)).unlink()
+        else:
+            surfaces_gii.append(nib.load(surface))
 
     # Use abagen to grab expression data.
     print(
         "If you use BrainStat's genetics functionality, please cite abagen (https://abagen.readthedocs.io/en/stable/citing.html)."
     )
-    atlas = check_atlas(labels, geometry=surfaces, space=space)
+    atlas = check_atlas(labels, geometry=surfaces_gii, space=space)
     expression = get_expression_data(
         atlas,
         atlas_info=atlas_info,
