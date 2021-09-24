@@ -55,5 +55,7 @@ setuptools.setup(
         "Source": "https://github.com/MICA-LAB/BrainStat/",
     },
     include_package_data=True,
-    package_data={"logging_configuration": ["brainstat/logging.conf", "brainstat/data_urls.json"]}, 
+    package_data={
+        "logging_configuration": ["brainstat/logging.conf", "brainstat/data_urls.json"]
+    },
 )
