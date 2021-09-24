@@ -21,7 +21,7 @@ data_directories = {
     "BRAINSTAT_DATA_DIR": BRAINSTAT_DATA_DIR,
     "ABIDE_DATA_DIR": BRAINSTAT_DATA_DIR / "abide_data",
     "BIGBRAIN_DATA_DIR": BRAINSTAT_DATA_DIR / "bigbrain_data",
-    "MICS_DATA_DIR": BRAINSTAT_DATA_DIR / "mics_data",
+    "GRADIENT_DATA_DIR": BRAINSTAT_DATA_DIR / "gradient_data",
     "NEUROSYNTH_DATA_DIR": BRAINSTAT_DATA_DIR / "neurosynth_data",
     "PARCELLATION_DATA_DIR": BRAINSTAT_DATA_DIR / "parcellation_data",
     "SURFACE_DATA_DIR": BRAINSTAT_DATA_DIR / "surface_data",

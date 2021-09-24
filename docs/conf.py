@@ -116,6 +116,9 @@ intersphinx_mapping = {
     "brainspace": ("https://brainspace.readthedocs.io/en/latest", None),
 }
 
+# Don't show type hints in the documentation.
+autodoc_typehints = "none"
+
 # Autosummary settings
 autosummary_generate = True
 
