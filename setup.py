@@ -54,4 +54,6 @@ setuptools.setup(
         "Bug Reports": "https://github.com/MICA-LAB/BrainStat/issues",
         "Source": "https://github.com/MICA-LAB/BrainStat/",
     },
+    include_package_data=True,
+    package_data={"logging_configuration": ["brainstat/logging.conf", "brainstat/data_urls.json"]}, 
 )
