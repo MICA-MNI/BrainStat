@@ -1,6 +1,5 @@
 """Interpolations on a mesh."""
 import gzip
-import logging
 import os
 import shutil
 import tempfile

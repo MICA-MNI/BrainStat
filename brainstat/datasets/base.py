@@ -2,6 +2,7 @@
 from pathlib import Path
 from typing import List, Optional, Tuple, Union
 
+import h5py
 import numpy as np
 from brainspace.mesh.mesh_creation import build_polydata
 from brainspace.mesh.mesh_io import read_surface
@@ -154,6 +155,44 @@ def fetch_mask(
     else:
         n = len(mask)
         return mask[: n // 2], mask[n // 2 :]
+
+
+def fetch_gradients(
+    template: str = "fsaverage5",
+    name: str = "margulies",
+    data_dir: Optional[Union[str, Path]] = None,
+    overwrite: bool = False,
+) -> np.ndarray:
+    """Fetch example gradients.
+
+    Parameters
+    ----------
+    name : str
+        Name of the gradients. Valid values are "margulies2016", defaults to
+        "margulies2016".
+    template : str, optional
+        Name of the template surface. Valid values are "fsaverage5",
+        "fsaverage", "fslr32k", defaults to "fsaverage5".
+    data_dir : str, Path, optional
+        Path to the directory to store the gradient data files, by
+        default $HOME_DIR/brainstat_data/gradient_data.
+    overwrite : bool, optional
+        If true, overwrites existing files, by default False.
+
+    Returns
+    -------
+    numpy.ndarray
+        Vertex-by-gradient matrix.
+    """
+    data_dir = Path(data_dir) if data_dir else data_directories["GRADIENT_DATA_DIR"]
+
+    gradients_file = data_dir / f"{name}_gradients.h5"
+    if not gradients_file.exists() or overwrite:
+        url = read_data_fetcher_json()["gradients"][name]["url"]
+        _download_file(url, gradients_file, overwrite=overwrite)
+
+    hf = h5py.File(gradients_file, "r")
+    return hf[template].value
 
 
 def _fetch_template_surface_files(
