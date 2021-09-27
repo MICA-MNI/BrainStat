@@ -1,9 +1,9 @@
 """ Meta-analytic decoding based on NiMARE """
 import re
-import tempfile
 import urllib
 import zipfile
 from pathlib import Path
+from tempfile import NamedTemporaryFile
 from typing import Generator, Optional, Sequence, Union
 
 import nibabel as nib
@@ -68,19 +68,24 @@ def surface_decoder(
 
     mni152 = load_mni152_brain_mask()
 
-    stat_image = tempfile.NamedTemporaryFile(suffix=".nii.gz")
-    multi_surface_to_volume(
-        pial=pial,
-        white=white,
-        volume_template=mni152,
-        output_file=stat_image.name,
-        labels=stat_labels,
-        interpolation=interpolation,
-    )
+    with NamedTemporaryFile(suffix=".nii.gz", delete=False) as f:
+        name = f.name
+    try:
+        multi_surface_to_volume(
+            pial=pial,
+            white=white,
+            volume_template=mni152,
+            output_file=name,
+            labels=stat_labels,
+            interpolation=interpolation,
+        )
 
-    stat_volume = nib.load(stat_image.name)
-    mask = (stat_volume.get_fdata() != 0) & (mni152.get_fdata() != 0)
-    stat_vector = stat_volume.get_fdata()[mask]
+        stat_volume = nib.load(name)
+
+        mask = (stat_volume.get_fdata() != 0) & (mni152.get_fdata() != 0)
+        stat_vector = stat_volume.get_fdata()[mask]
+    finally:
+        Path(name).unlink()
 
     feature_names = []
     correlations = np.zeros(len(feature_files))
@@ -143,11 +148,16 @@ def _fetch_precomputed_neurosynth(data_dir: Path) -> Generator[Path, None, None]
         logger.info("Downloading Neurosynth data files.")
         response = urllib.request.urlopen(url)
 
-        zip_file = tempfile.NamedTemporaryFile(prefix=str(data_dir), suffix=".zip")
-        with open(zip_file.name, "wb") as fw:
-            fw.write(response.read())
+        # Open, close, and reopen file to deal with Windows permission issues.
+        with NamedTemporaryFile(prefix=str(data_dir), suffix=".zip", delete=False) as f:
+            name = f.name
+        try:
+            with open(name, "wb") as fw:
+                fw.write(response.read())
 
-        with zipfile.ZipFile(zip_file.name, "r") as fr:
-            fr.extractall(data_dir)
+            with zipfile.ZipFile(name, "r") as fr:
+                fr.extractall(data_dir)
+        finally:
+            (Path(name)).unlink()
 
     return data_dir.glob("Neurosynth_TFIDF__*z_desc-consistency.nii.gz")
