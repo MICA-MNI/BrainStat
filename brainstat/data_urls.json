@@ -15,6 +15,11 @@
             "url": "https://box.bic.mni.mcgill.ca/s/6zKHcg9xXu5inPR/download"
         }
     },
+    "gradients": {
+        "margulies2016": {
+            "url": "https://box.bic.mni.mcgill.ca/s/LWFaQlOxUWmRlc0/download"
+        }
+    },
     "masks": {
         "civet164k": {
             "url": "https://box.bic.mni.mcgill.ca/s/rei5HtTDvexlEPA/download"

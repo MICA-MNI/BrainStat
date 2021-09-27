@@ -42,6 +42,11 @@ def generate_data_fetcher_json() -> None:
                 "url": "https://box.bic.mni.mcgill.ca/s/6zKHcg9xXu5inPR/download",
             },
         },
+        "gradients": {
+            "margulies2016": {
+                "url": "https://box.bic.mni.mcgill.ca/s/LWFaQlOxUWmRlc0/download",
+            }
+        },
         "neurosynth_precomputed": {
             "url": "https://box.bic.mni.mcgill.ca/s/GvislmLffbCIZoI/download",
             "n_files": 3228,

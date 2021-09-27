@@ -12,7 +12,6 @@ def yeo_networks_associations(
     template: str = "fsaverage5",
     seven_networks: bool = True,
     data_dir: Optional[Union[str, Path]] = None,
-    overwrite: bool = False,
     reduction_operation: Union[str, Callable] = "mean",
 ) -> np.ndarray:
     """Computes association
@@ -29,8 +28,6 @@ def yeo_networks_associations(
         parcellation, by default True.
     data_dir : str, Path, optional
         Data directory to store the Yeo network files, by default $HOME_DIR/brainstat_data/parcellation_data.
-    overwrite : bool, optional
-        If true, overwrites old data files, by default False.
     reduction_operation : str, callable, optional
         How to summarize data. If str, options are: {‘min’, ‘max’, ‘sum’,
         ‘mean’, ‘median’, ‘mode’, ‘average’}. If callable, it should receive a
@@ -49,13 +46,12 @@ def yeo_networks_associations(
         n_regions=n_regions,
         join=True,
         data_dir=data_dir,
-        overwrite=overwrite,
     )
 
-    data_2d = np.reshape(data, (data.shape[0], -1))
+    data_2d = np.reshape(data, (np.shape(data)[0], -1))
     n_features = data_2d.shape[1]
 
-    yeo_mean = np.zeros(n_regions, n_features)
+    yeo_mean = np.zeros((n_regions, n_features))
     mask = yeo_networks != 0
     for i in range(n_features):
         yeo_mean[:, i] = reduce_by_labels(
@@ -126,7 +122,7 @@ def _columnwise_correlate(x: ArrayLike, y: Optional[ArrayLike] = None) -> np.nda
         Pearson correlation matrix.
     """
 
-    n_samples, n_features = x.shape
+    n_samples, n_features = np.shape(x)
     centering = np.identity(n_samples) - 1 / n_samples
     scaling = lambda v: np.identity(n_features) * np.std(v, axis=0, ddof=1)
     centered_scaled = lambda v: centering @ v @ np.linalg.inv(scaling(v))

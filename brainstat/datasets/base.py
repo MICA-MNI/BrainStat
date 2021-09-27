@@ -159,7 +159,7 @@ def fetch_mask(
 
 def fetch_gradients(
     template: str = "fsaverage5",
-    name: str = "margulies",
+    name: str = "margulies2016",
     data_dir: Optional[Union[str, Path]] = None,
     overwrite: bool = False,
 ) -> np.ndarray:
@@ -167,12 +167,12 @@ def fetch_gradients(
 
     Parameters
     ----------
-    name : str
-        Name of the gradients. Valid values are "margulies2016", defaults to
-        "margulies2016".
     template : str, optional
         Name of the template surface. Valid values are "fsaverage5",
         "fsaverage", "fslr32k", defaults to "fsaverage5".
+    name : str
+        Name of the gradients. Valid values are "margulies2016", defaults to
+        "margulies2016".
     data_dir : str, Path, optional
         Path to the directory to store the gradient data files, by
         default $HOME_DIR/brainstat_data/gradient_data.
@@ -185,14 +185,15 @@ def fetch_gradients(
         Vertex-by-gradient matrix.
     """
     data_dir = Path(data_dir) if data_dir else data_directories["GRADIENT_DATA_DIR"]
+    data_dir.mkdir(parents=True, exist_ok=True)
 
-    gradients_file = data_dir / f"{name}_gradients.h5"
+    gradients_file = data_dir / f"gradients_{name}.h5"
     if not gradients_file.exists() or overwrite:
         url = read_data_fetcher_json()["gradients"][name]["url"]
         _download_file(url, gradients_file, overwrite=overwrite)
 
     hf = h5py.File(gradients_file, "r")
-    return hf[template].value
+    return np.array(hf[template]).T
 
 
 def _fetch_template_surface_files(
