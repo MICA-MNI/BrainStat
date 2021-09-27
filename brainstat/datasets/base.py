@@ -1,4 +1,6 @@
 """ Load external datasets. """
+import tempfile
+import zipfile
 from pathlib import Path
 from typing import List, Optional, Tuple, Union
 
@@ -32,11 +34,12 @@ def fetch_parcellation(
         The surface template. Valid values are "fsaverage", "fsaverage5",
         "fsaverage6", "fslr32k", by default "fsaverage5".
     atlas : str
-        Name of the atlas. Valid names are "schaefer", "cammoun", "glasser".
+        Name of the atlas. Valid names are "cammoun", "glasser", "schaefer", "yeo".
     n_regions : int
-        Number of regions of the requested atlas. Valid values for the "schaefer" atlas are
-        100, 200, 300, 400, 500, 600, 800, 1000. Valid values for the cammoun atlas are 33,
-        60, 125, 250, 500. Valid values for the glasser atlas are 360.
+        Number of regions of the requested atlas. Valid values for the cammoun
+        atlas are 33, 60, 125, 250, 500. Valid values for the glasser atlas are
+        360. Valid values for the "schaefer" atlas are 100, 200, 300, 400, 500,
+        600, 800, 1000. Valid values for "yeo" are 7 and 17.
     join : bool, optional
         If true, returns parcellation as a single array, if false, returns an
         array per hemisphere, by default True.
@@ -63,6 +66,8 @@ def fetch_parcellation(
         parcellations = _fetch_cammoun_parcellation(template, n_regions, data_dir)
     elif atlas == "glasser":
         parcellations = _fetch_glasser_parcellation(template, data_dir)
+    elif atlas == "yeo":
+        parcellations = _fetch_yeo_parcellation(template, n_regions, data_dir)
     else:
         raise ValueError(f"Invalid atlas: {atlas}")
 
@@ -87,19 +92,22 @@ def fetch_template_surface(
         "fsaverage3", "fsaverage4", "fsaverage5", "fsaverage6", "civet41k",
         "civet164k".
     join : bool, optional
-        If true, returns surfaces as a single object, if false, returns an object per hemisphere, by default True.
+        If true, returns surfaces as a single object, if false, returns an
+        object per hemisphere, by default True.
     layer : str, optional
         Name of the cortical surface of interest. Valid values are "white",
         "smoothwm", "pial", "inflated", "sphere" for fsaverage surfaces and
         "midthickness", "inflated", "vinflated" for "fslr32k". If None,
         defaults to "pial" or "midthickness", by default None.
     data_dir : str, Path, optional
-        Directory to save the data, by default $HOME_DIR/brainstat_data/surface_data.
+        Directory to save the data, by default
+        $HOME_DIR/brainstat_data/surface_data.
 
     Returns
     -------
     BSPolyData or tuple of BSPolyData
-        Output surface(s). If a tuple, then the first element is the left hemisphere.
+        Output surface(s). If a tuple, then the first element is the left
+        hemisphere.
     """
 
     data_dir = Path(data_dir) if data_dir else data_directories["SURFACE_DATA_DIR"]
@@ -241,10 +249,6 @@ def _fetch_template_surface_files(
 def _valid_parcellations() -> dict:
     """Returns a dictionary of valid parcellations."""
     return {
-        "schaefer": {
-            "n_regions": (100, 200, 300, 400, 500, 600, 800, 1000),
-            "surfaces": ("fsaverage5", "fsaverage6", "fsaverage", "fslr32k"),
-        },
         "cammoun": {
             "n_regions": (33, 60, 125, 250, 500),
             "surfaces": ("fsaverage5", "fsaverage6", "fsaverage", "fslr32k"),
@@ -252,6 +256,14 @@ def _valid_parcellations() -> dict:
         "glasser": {
             "n_regions": (360,),
             "surfaces": ("fsaverage5", "fsaverage", "fslr32k"),
+        },
+        "schaefer": {
+            "n_regions": (100, 200, 300, 400, 500, 600, 800, 1000),
+            "surfaces": ("fsaverage5", "fsaverage6", "fsaverage", "fslr32k"),
+        },
+        "yeo": {
+            "n_regions": (7, 17),
+            "surfaces": ("fsaverage5", "fsaverage6", "fsaverage", "fslr32k"),
         },
     }
 
@@ -299,3 +311,25 @@ def _fetch_glasser_parcellation(template: str, data_dir: Path) -> List[np.ndarra
     parcellations = [x.darrays[0].data for x in gifti]
     parcellations[1] = (parcellations[1] + 180) * (parcellations[1] > 0)
     return parcellations
+
+
+def _fetch_yeo_parcellation(
+    template: str, n_regions: int, data_dir: Path
+) -> List[np.ndarray]:
+    """Fetches Yeo parcellation."""
+    filenames = [
+        data_dir / f"{template}_{hemi}_yeo{n_regions}.label.gii"
+        for hemi in ("lh", "rh")
+    ]
+    if not all([x.exists() for x in filenames]):
+        url = read_data_fetcher_json()["parcellations"]["yeo"]["url"]
+        with tempfile.NamedTemporaryFile(suffix=".zip") as f:
+            downloaded_file = Path(f.name)
+        try:
+            _download_file(url, downloaded_file)
+            with zipfile.ZipFile(downloaded_file, "r") as zip_ref:
+                zip_ref.extractall(data_dir)
+        finally:
+            downloaded_file.unlink()
+
+    return [nib_load(file).darrays[0].data for file in filenames]

@@ -3,8 +3,9 @@ from typing import Callable, Optional, Union
 
 import numpy as np
 from brainspace.utils.parcellation import reduce_by_labels
-from brainstat.datasets import fetch_parcellation, fetch_gradients
+
 from brainstat._typing import ArrayLike
+from brainstat.datasets import fetch_gradients, fetch_parcellation
 
 
 def yeo_networks_associations(

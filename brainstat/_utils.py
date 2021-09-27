@@ -72,6 +72,7 @@ def generate_data_fetcher_json() -> None:
                     ),
                 },
             },
+            "yeo": {"url": "https://box.bic.mni.mcgill.ca/s/vcSXEk1wx0jN86N/download"},
         },
         "masks": {
             "civet41k": {
