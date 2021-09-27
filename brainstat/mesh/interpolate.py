@@ -211,7 +211,7 @@ def cortical_ribbon(
     try:
         import pyembree
     except ImportError:
-        ModuleNotFoundError(
+        raise ModuleNotFoundError(
             "The package pyembree is required for this function. "
             + "You can install it with the conda package manager: "
             + "`conda install -c conda-forge pyembree`."

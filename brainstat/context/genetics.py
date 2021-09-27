@@ -3,14 +3,14 @@ import tempfile
 from pathlib import Path
 from typing import Optional, Sequence, Union
 
+import nibabel as nib
 import numpy as np
 import pandas as pd
-import nibabel as nib
 from abagen import check_atlas, get_expression_data
 from brainspace.mesh.mesh_io import read_surface, write_surface
 from sklearn.model_selection import ParameterGrid
 
-from brainstat._utils import data_directories
+from brainstat._utils import data_directories, logger
 from brainstat.datasets.base import (
     _fetch_template_surface_files,
     _valid_parcellations,
@@ -93,16 +93,18 @@ def surface_genetic_expression(
     for surface in surfaces:
         if not isinstance(surface, str) and not isinstance(surface, Path):
             # Rather roundabout deletion of the temporary file for Windows compatibility.
-            with tempfile.NamedTemporaryFile(suffix=".gii", delete=False) as f:
-                name = f.name
-                write_surface(surface, name, otype="gii")
-            surfaces_gii.append(nib.load(name))
-            (Path(name)).unlink()
+            try:
+                with tempfile.NamedTemporaryFile(suffix=".gii", delete=False) as f:
+                    name = f.name
+                    write_surface(surface, name, otype="gii")
+                surfaces_gii.append(nib.load(name))
+            finally:
+                Path(name).unlink()
         else:
             surfaces_gii.append(nib.load(surface))
 
     # Use abagen to grab expression data.
-    print(
+    logger.info(
         "If you use BrainStat's genetics functionality, please cite abagen (https://abagen.readthedocs.io/en/stable/citing.html)."
     )
     atlas = check_atlas(labels, geometry=surfaces_gii, space=space)
