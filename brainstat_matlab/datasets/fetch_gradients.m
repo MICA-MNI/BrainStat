@@ -14,13 +14,13 @@ arguments
     template (1,1) string = "fsaverage5"
     name (1,1) string = "margulies2016"
     options.data_dir (1,1) string = brainstat_utils.get_brainstat_directories('gradient_data_dir')
-    options.overwrite (1,1) logical = True
+    options.overwrite (1,1) logical = false
 end
 
 gradients_file = options.data_dir + filesep + name + "_gradients.h5";
-if ~exists(gradients_file, 'file') || options.overwrite
+if ~exist(gradients_file, 'file') || options.overwrite
     json = brainstat_utils.read_data_fetcher_json();
     websave(gradients_file, json.gradients.(name).url);
 end
 
-gradients = h5read(gradients_file, template);
+gradients = h5read(gradients_file, "/" + template);
