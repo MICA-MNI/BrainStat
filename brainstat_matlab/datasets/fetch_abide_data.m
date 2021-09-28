@@ -34,7 +34,7 @@ if ~exist(summary_spreadsheet, 'file') || options.overwrite
     websave(summary_spreadsheet, json.abide_tutorial.summary_spreadsheet.url);
 end
 
-demographics = readtable(summary_spreadsheet, 'VariableNamingRule', 'preserve');
+demographics = readtable(summary_spreadsheet, 'PreserveVariableNames', true);
 demographics = select_subjects(demographics, options.sites, options.keep_patient, options.keep_control);
 
 thickness = zeros(size(demographics,1), 81924);
@@ -48,7 +48,7 @@ for ii = 1:size(demographics,1)
         if ~exist(filename, 'file') || options.overwrite
             url = thickness_url("native_rms_rsl_tlink_30mm_" + hemi{jj}, demographics.FILE_ID{ii});
             try
-                websave(filename, url)
+                websave(filename, url);
             catch err
                 delete(filename); % An empty file is created on failure.
                 if ismember(err.identifier, ["MATLAB:webserivces:UnknownHost", "MATLAB:webservices:HTTP404StatusCodeError"])
@@ -79,7 +79,7 @@ if ~keep_control
 end
 
 if ~isempty(sites)
-    demographics = demographics(ismember(demographics.SITE_ID, sites), :);
+    demographics = demographics(ismember(demographics.SITE_ID, upper(sites)), :);
 end
 end
 
