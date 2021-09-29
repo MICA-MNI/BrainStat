@@ -49,10 +49,10 @@ def yeo_networks_associations(
         data_dir=data_dir,
     )
 
-    if data.ndim == 1:
-        data_2d = data[:, None]
+    if np.array(data).ndim == 1:
+        data_2d = np.array(data)[:, None]
     else:
-        data_2d = data
+        data_2d = np.array(data)
 
     n_features = data_2d.shape[1]
 

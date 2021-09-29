@@ -21,7 +21,6 @@ analysis can take several minutes.
 import numpy as np
 import plotly.express as px
 
-
 from brainstat.context.genetics import surface_genetic_expression
 from brainstat.datasets import fetch_parcellation, fetch_template_surface
 
@@ -155,15 +154,15 @@ plot_hemispheres(
 #
 # Lets first have a look at contextualization of cortical thickness using the
 # Yeo networks. We'll use some of the sample cortical thickness data included
-# with BrainSpace, and see what its mean is within each Yeo network. 
+# with BrainSpace, and see what its mean is within each Yeo network.
 #
 # We'll use the package plotly to visualize the output. plotly is not a
 # dependency of BrainStat so you'll have to install it separately (:code:`pip
 # install plotly`) if you want to use this functionality.
 
 import pandas as pd
-
 from brainspace.datasets import load_marker
+
 from brainstat.context.resting import yeo_networks_associations
 from brainstat.datasets import fetch_yeo_networks_metadata
 
@@ -228,8 +227,8 @@ thickness_left, thickness_right = load_marker("thickness", join=False)
 
 # Run spin test with 100 permutations (note: we generally recommend >=1000)
 n_rep = 100
-sp = SpinPermutations(n_rep = n_rep, random_state = 2021)
-sp.fit(sphere_left, points_rh = sphere_right)
+sp = SpinPermutations(n_rep=n_rep, random_state=2021)
+sp.fit(sphere_left, points_rh=sphere_right)
 thickness_rotated = np.hstack(sp.randomize(thickness_left, thickness_right))
 
 # Compute correlation between empirical and permuted data.
@@ -238,7 +237,9 @@ r_empirical = np.corrcoef(functional_gradients[mask, 0], thickness[mask])[0, 1]
 r_permuted = np.zeros(n_rep)
 for i in range(n_rep):
     mask = ~np.isnan(functional_gradients[:, 0]) & ~np.isnan(thickness_rotated[i, :])
-    r_permuted[i] = np.corrcoef(functional_gradients[mask, 0], thickness_rotated[i, mask])[1:, 0]
+    r_permuted[i] = np.corrcoef(
+        functional_gradients[mask, 0], thickness_rotated[i, mask]
+    )[1:, 0]
 
 # Significance depends on whether we do a one-tailed or two-tailed test.
 # If one-tailed it depends on in which direction the test is.

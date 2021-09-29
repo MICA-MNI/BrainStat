@@ -204,7 +204,7 @@ def fetch_gradients(
     return np.array(hf[template]).T
 
 
-def fetch_yeo_networks_metadata(n: int) -> Tuple[Tuple[str, ...], np.ndarray]:
+def fetch_yeo_networks_metadata(n: int) -> Tuple[List[str], np.ndarray]:
     """Fetch Yeo networks metadata.
 
     Parameters
@@ -214,14 +214,14 @@ def fetch_yeo_networks_metadata(n: int) -> Tuple[Tuple[str, ...], np.ndarray]:
 
     Returns
     -------
-    tuple
+    list of str
         Names of Yeo networks.
     np.ndarray
         Colormap for the Yeo networks.
     """
 
     if n == 7:
-        network_names = (
+        network_names = [
             "Visual",
             "Somatomotor",
             "Dorsal Attention",
@@ -229,7 +229,7 @@ def fetch_yeo_networks_metadata(n: int) -> Tuple[Tuple[str, ...], np.ndarray]:
             "Limbic",
             "Frontoparietal",
             "Default mode",
-        )
+        ]
         colormap = (
             np.array(
                 [
@@ -245,7 +245,7 @@ def fetch_yeo_networks_metadata(n: int) -> Tuple[Tuple[str, ...], np.ndarray]:
             / 255
         )
     elif n == 17:
-        network_names = (
+        network_names = [
             "Visual A",
             "Visual B",
             "Somatomotor A",
@@ -263,7 +263,7 @@ def fetch_yeo_networks_metadata(n: int) -> Tuple[Tuple[str, ...], np.ndarray]:
             "Default C",
             "Default A",
             "Default B",
-        )
+        ]
         colormap = (
             np.array(
                 [
