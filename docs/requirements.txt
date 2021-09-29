@@ -2,4 +2,5 @@ Sphinx==3.5.4
 sphinxcontrib-matlabdomain
 sphinx_rtd_theme
 sphinx-gallery
+plotly
 -r ../requirements.txt
