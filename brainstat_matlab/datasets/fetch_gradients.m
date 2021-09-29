@@ -9,6 +9,12 @@ function gradients = fetch_gradients(template, name, options)
 %   'data_dir': Directory to store the downloaded data files, defaults to 
 %       $HOME_DIR/brainstat_data/gradient_data.
 %   'overwrite': If true, overwrite existing data files, defaults to false.
+%   
+% Note: margulies2016 gradients were computed from the mean HCP-S1200
+% functional connectome using BrainSpace with the following parameters:
+% cosine similarity kernel, diffusion embedding, alpha=0.5, sparsity=90,
+% and diffusion_time=0. Gradients were computed on the fsaverage5 surface
+% and interpolated to the other surfaces. 
 
 arguments
     template (1,1) string = "fsaverage5"
