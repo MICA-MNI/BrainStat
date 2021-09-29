@@ -19,6 +19,9 @@ analysis can take several minutes.
 """
 
 import numpy as np
+import plotly.express as px
+
+
 from brainstat.context.genetics import surface_genetic_expression
 from brainstat.datasets import fetch_parcellation, fetch_template_surface
 
@@ -26,7 +29,7 @@ schaefer_400 = fetch_parcellation("fsaverage5", "schaefer", 400)
 surfaces = fetch_template_surface("fsaverage5", join=False)
 
 expression = surface_genetic_expression(schaefer_400, surfaces, space="fsaverage")
-print(expression)
+print(expression.iloc[0:5, 0:5])
 
 ########################################################################
 # Expression is a pandas DataFrame which shows the genetic expression of genes
@@ -130,6 +133,11 @@ plot_hemispheres(
     vertexwise_data,
     embed_nb=True,
     label_text=["Gradient 1", "Gradient 2"],
+    color_bar=True,
+    size=(1400, 400),
+    zoom=1.45,
+    nan_color=(0.7, 0.7, 0.7, 1),
+    cb__labelTextProperty={"fontSize": 12},
 )
 
 ########################################################################
@@ -137,6 +145,109 @@ plot_hemispheres(
 # Plos Biology), as such the first gradient becomes an anterior-posterior-
 # gradient.
 #
+# Resting-state contextualization
+# -------------------------------
+# Lastly, BrainStat provides contextualization using resting-state fMRI markers:
+# specifically, with the Yeo functional networks (Yeo et al., 2011, Journal of
+# Neurophysiology), a clustering of resting-state connectivity, and the
+# functional gradients (Margulies et al., 2016, PNAS), a lower dimensional
+# manifold of resting-state connectivity.
+#
+# Lets first have a look at contextualization of cortical thickness using the
+# Yeo networks. We'll use some of the sample cortical thickness data included
+# with BrainSpace, and see what its mean is within each Yeo network. 
+#
+# We'll use the package plotly to visualize the output. plotly is not a
+# dependency of BrainStat so you'll have to install it separately (:code:`pip
+# install plotly`) if you want to use this functionality.
+
+import pandas as pd
+
+from brainspace.datasets import load_marker
+from brainstat.context.resting import yeo_networks_associations
+from brainstat.datasets import fetch_yeo_networks_metadata
+
+thickness = load_marker("thickness", join=True)
+
+mean_thickness = np.squeeze(yeo_networks_associations(thickness, "fslr32k"))
+network_names, colormap = fetch_yeo_networks_metadata(7)
+
+df = pd.DataFrame(
+    dict(
+        r=mean_thickness,
+        theta=network_names,
+    )
+)
+fig = px.line_polar(df, r="r", theta="theta", line_close=True)
+fig.update_traces(fill="toself")
+fig
+
+###########################################################################
+# Here we can see that, on average, the somatomotor/visual cortices have low
+# cortical thickness whereas the default/limbic cortices have high thickness.
+#
+# Next, lets have a look at how cortical thickness relates to the first
+# functional gradient which describes a sensory-transmodal axis in the brain.
+# First lets plot the first gradient.
+
+from brainstat.datasets import fetch_gradients
+
+functional_gradients = fetch_gradients("fslr32k", "margulies2016")
+surface_left, surface_right = fetch_template_surface("fslr32k", join=False)
+
+plot_hemispheres(
+    surface_left,
+    surface_right,
+    functional_gradients[:, 0].T,
+    embed_nb=True,
+    label_text=["Gradient 1"],
+    color_bar=True,
+    size=(1400, 200),
+    zoom=1.45,
+    nan_color=(0.7, 0.7, 0.7, 1),
+    cb__labelTextProperty={"fontSize": 12},
+)
+
+###########################################################################
+# There are many ways to compare these gradients to cortical markers such as
+# cortical thickness. In general, we recommend using corrections for spatial
+# autocorrelation which are implemented in BrainSpace. We'll show a correction
+# with spin test in this tutorial; for other methods and further details please
+# consult the BrainSpace tutorials.
+#
+# In a spin test we compare the empirical correlation between the gradient and
+# the cortical marker to a distribution of correlations derived from data
+# rotated across the cortical surface. The p-value then depends on the
+# percentile of the empirical correlation within the permuted distribution.
+
+from brainspace.datasets import load_conte69
+from brainspace.null_models import SpinPermutations
+
+sphere_left, sphere_right = load_conte69(as_sphere=True)
+thickness_left, thickness_right = load_marker("thickness", join=False)
+
+# Run spin test with 100 permutations (note: we generally recommend >=1000)
+n_rep = 100
+sp = SpinPermutations(n_rep = n_rep, random_state = 2021)
+sp.fit(sphere_left, points_rh = sphere_right)
+thickness_rotated = np.hstack(sp.randomize(thickness_left, thickness_right))
+
+# Compute correlation between empirical and permuted data.
+mask = ~np.isnan(functional_gradients[:, 0]) & ~np.isnan(thickness)
+r_empirical = np.corrcoef(functional_gradients[mask, 0], thickness[mask])[0, 1]
+r_permuted = np.zeros(n_rep)
+for i in range(n_rep):
+    mask = ~np.isnan(functional_gradients[:, 0]) & ~np.isnan(thickness_rotated[i, :])
+    r_permuted[i] = np.corrcoef(functional_gradients[mask, 0], thickness_rotated[i, mask])[1:, 0]
+
+# Significance depends on whether we do a one-tailed or two-tailed test.
+# If one-tailed it depends on in which direction the test is.
+p_value_right_tailed = np.mean(r_empirical > r_permuted)
+p_value_left_tailed = np.mean(r_empirical < r_permuted)
+p_value_two_tailed = np.minimum(p_value_right_tailed, p_value_left_tailed) * 2
+print(f"Two tailed p-value: {p_value_two_tailed}")
+
+###########################################################################
 # That concludes the tutorials of BrainStat. If anything is unclear, or if you
 # think you've found a bug, please post it to the Issues page of our Github.
 #

@@ -19,6 +19,8 @@ analysis can take several minutes.
 """
 
 import numpy as np
+import plotly.express as px
+
 
 from brainstat.context.genetics import surface_genetic_expression
 from brainstat.datasets import fetch_parcellation, fetch_template_surface
@@ -27,7 +29,7 @@ schaefer_400 = fetch_parcellation("fsaverage5", "schaefer", 400)
 surfaces = fetch_template_surface("fsaverage5", join=False)
 
 expression = surface_genetic_expression(schaefer_400, surfaces, space="fsaverage")
-print(expression)
+print(expression.iloc[0:5, 0:5])
 
 ########################################################################
 # Expression is a pandas DataFrame which shows the genetic expression of genes
@@ -131,6 +133,11 @@ plot_hemispheres(
     vertexwise_data,
     embed_nb=True,
     label_text=["Gradient 1", "Gradient 2"],
+    color_bar=True,
+    size=(1400, 400),
+    zoom=1.45,
+    nan_color=(0.7, 0.7, 0.7, 1),
+    cb__labelTextProperty={"fontSize": 12},
 )
 
 ########################################################################
@@ -148,40 +155,32 @@ plot_hemispheres(
 #
 # Lets first have a look at contextualization of cortical thickness using the
 # Yeo networks. We'll use some of the sample cortical thickness data included
-# with BrainSpace, and see what its mean is within each Yeo network. We'll use
-# the package plotly to visualize this. plotly is not a dependency of BrainStat
-# so you'll have to install it separately (pip install plotly) if you want to
-# use this functionality.
+# with BrainSpace, and see what its mean is within each Yeo network. 
+#
+# We'll use the package plotly to visualize the output. plotly is not a
+# dependency of BrainStat so you'll have to install it separately (:code:`pip
+# install plotly`) if you want to use this functionality.
 
 import pandas as pd
-import plotly.graph_objects as go
 
 from brainspace.datasets import load_marker
-from brainspace.utils.parcellation import reduce_by_labels
+from brainstat.context.resting import yeo_networks_associations
 from brainstat.datasets import fetch_yeo_networks_metadata
 
 thickness = load_marker("thickness", join=True)
 
-yeo_7_networks = fetch_parcellation("fslr32k", "yeo", 7)
+mean_thickness = np.squeeze(yeo_networks_associations(thickness, "fslr32k"))
 network_names, colormap = fetch_yeo_networks_metadata(7)
 
-mean_thickness = reduce_by_labels(thickness, yeo_7_networks, red_op=np.nanmean)[
-    1:
-]  # 0 == midline
-
-df = pd.DataFrame(mean_thickness[None, :], columns=network_names)
-fig = go.Figure(
-    data=go.Scatterpolar(r=mean_thickness, theta=network_names, fill="toself")
+df = pd.DataFrame(
+    dict(
+        r=mean_thickness,
+        theta=network_names,
+    )
 )
-
-fig.update_layout(
-    polar=dict(
-        radialaxis=dict(visible=True),
-    ),
-    showlegend=False,
-)
-
-fig.show(renderer="png")
+fig = px.line_polar(df, r="r", theta="theta", line_close=True)
+fig.update_traces(fill="toself")
+fig
 
 ###########################################################################
 # Here we can see that, on average, the somatomotor/visual cortices have low
@@ -189,7 +188,7 @@ fig.show(renderer="png")
 #
 # Next, lets have a look at how cortical thickness relates to the first
 # functional gradient which describes a sensory-transmodal axis in the brain.
-# First lets plot the first few gradients.
+# First lets plot the first gradient.
 
 from brainstat.datasets import fetch_gradients
 
@@ -199,9 +198,14 @@ surface_left, surface_right = fetch_template_surface("fslr32k", join=False)
 plot_hemispheres(
     surface_left,
     surface_right,
-    functional_gradients[:, 0:3].T,
+    functional_gradients[:, 0].T,
     embed_nb=True,
-    label_text=["Gradient 1", "Gradient 2", "Gradient 3"],
+    label_text=["Gradient 1"],
+    color_bar=True,
+    size=(1400, 200),
+    zoom=1.45,
+    nan_color=(0.7, 0.7, 0.7, 1),
+    cb__labelTextProperty={"fontSize": 12},
 )
 
 ###########################################################################
@@ -217,31 +221,31 @@ plot_hemispheres(
 # percentile of the empirical correlation within the permuted distribution.
 
 from brainspace.datasets import load_conte69
-from brainspace.null_models.spin import spin_permutations
+from brainspace.null_models import SpinPermutations
 
 sphere_left, sphere_right = load_conte69(as_sphere=True)
-# Note: we generally recommend running >=1000 permutations. For purposes
-# of this tutorial we will only run 100.
-thickness_permuted_left, thickness_permuted_right = spin_permutations(
-    (sphere_left, sphere_right),
-    data=np.reshape(thickness, (-1, 2), order="F"),
-    n_rep=100,
-    random_state=2021,
-)
+thickness_left, thickness_right = load_marker("thickness", join=False)
 
-thickness_permuted = np.concatenate(
-    (thickness_permuted_left, thickness_permuted_right), axis=1
-)
+# Run spin test with 100 permutations (note: we generally recommend >=1000)
+n_rep = 100
+sp = SpinPermutations(n_rep = n_rep, random_state = 2021)
+sp.fit(sphere_left, points_rh = sphere_right)
+thickness_rotated = np.hstack(sp.randomize(thickness_left, thickness_right))
 
-r_empirical = np.corrcoef(functional_gradients[:, 0], thickness)[0, 1]
-r_permuted = np.corrcoef(functional_gradients[:, 0], thickness_permuted)[1:, 0]
-
+# Compute correlation between empirical and permuted data.
+mask = ~np.isnan(functional_gradients[:, 0]) & ~np.isnan(thickness)
+r_empirical = np.corrcoef(functional_gradients[mask, 0], thickness[mask])[0, 1]
+r_permuted = np.zeros(n_rep)
+for i in range(n_rep):
+    mask = ~np.isnan(functional_gradients[:, 0]) & ~np.isnan(thickness_rotated[i, :])
+    r_permuted[i] = np.corrcoef(functional_gradients[mask, 0], thickness_rotated[i, mask])[1:, 0]
 
 # Significance depends on whether we do a one-tailed or two-tailed test.
 # If one-tailed it depends on in which direction the test is.
 p_value_right_tailed = np.mean(r_empirical > r_permuted)
 p_value_left_tailed = np.mean(r_empirical < r_permuted)
 p_value_two_tailed = np.minimum(p_value_right_tailed, p_value_left_tailed) * 2
+print(f"Two tailed p-value: {p_value_two_tailed}")
 
 ###########################################################################
 # That concludes the tutorials of BrainStat. If anything is unclear, or if you

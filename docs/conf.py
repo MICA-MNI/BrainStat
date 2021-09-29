@@ -84,12 +84,16 @@ extensions = [
 ]
 
 from sphinx_gallery.sorting import FileNameSortKey
+from plotly.io._sg_scraper import plotly_sg_scraper
+
+import plotly.io as pio
+pio.renderers.default = 'sphinx_gallery_png'
 
 sphinx_gallery_conf = {
     "examples_dirs": "python/tutorials",
     "gallery_dirs": "python/generated_tutorials",
     "thumbnail_size": (250, 250),
-    "image_scrapers": ("matplotlib", _get_sg_image_scraper()),
+    "image_scrapers": ("matplotlib", _get_sg_image_scraper(), plotly_sg_scraper,),
     "within_subsection_order": FileNameSortKey,
     "download_all_examples": False,
     "remove_config_comments": True,
@@ -107,13 +111,7 @@ napoleon_use_rtype = False
 # Intersphinx settings
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3/", None),
-    "numpy": ("http://docs.scipy.org/doc/numpy/", None),
-    "nilearn": ("https://nilearn.github.io/", None),
-    "nibabel": ("https://nipy.org/nibabel/", None),
-    "sklearn": ("http://scikit-learn.org/stable", None),
-    "scipy": ("https://docs.scipy.org/doc/scipy/reference", None),
     "brainstat": ("https://brainstat.readthedocs.io/en/latest", None),
-    "brainspace": ("https://brainspace.readthedocs.io/en/latest", None),
 }
 
 # Don't show type hints in the documentation.

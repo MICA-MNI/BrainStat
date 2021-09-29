@@ -13,7 +13,7 @@ def yeo_networks_associations(
     template: str = "fsaverage5",
     seven_networks: bool = True,
     data_dir: Optional[Union[str, Path]] = None,
-    reduction_operation: Union[str, Callable] = "mean",
+    reduction_operation: Union[str, Callable] = np.nanmean,
 ) -> np.ndarray:
     """Computes association
 
@@ -49,16 +49,19 @@ def yeo_networks_associations(
         data_dir=data_dir,
     )
 
-    data_2d = np.reshape(data, (np.shape(data)[0], -1))
+    if data.ndim == 1:
+        data_2d = data[:, None]
+    else:
+        data_2d = data
+
     n_features = data_2d.shape[1]
 
-    yeo_mean = np.zeros((n_regions, n_features))
-    mask = yeo_networks != 0
+    yeo_mean = np.zeros((n_regions + 1, n_features))
     for i in range(n_features):
         yeo_mean[:, i] = reduce_by_labels(
-            data_2d[:, i], yeo_networks, mask=mask, red_op=reduction_operation
+            data_2d[:, i], yeo_networks, red_op=reduction_operation
         )
-    return yeo_mean
+    return yeo_mean[1:, :]
 
 
 def gradients_corr(
