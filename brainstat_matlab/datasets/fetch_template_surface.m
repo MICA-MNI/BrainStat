@@ -48,9 +48,6 @@ function [surf_lh, surf_rh] = read_surface_from_targz(filename, template, layer)
 % Reads the requested file from a .tar.gz file. 
 data_dir = fileparts(filename);
 
-gunzip(filename)
-untar(filename(1:end-3), data_dir)
-
 switch template
     case {'fslr32k', 'conte69'}
         files = string(data_dir) + filesep + "tpl-conte69" + filesep + ...
@@ -66,6 +63,12 @@ switch template
     otherwise
         error('Unknown template ''%s''.', template);
 end
+
+if ~all(cellfun(@(x) exist(x, 'file'), files))
+    gunzip(filename)
+    untar(filename(1:end-3), data_dir)
+end
+
 surf_lh = read_surface(files{1});
 surf_rh = read_surface(files{2});
 

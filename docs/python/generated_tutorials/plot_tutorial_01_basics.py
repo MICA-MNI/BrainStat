@@ -11,6 +11,7 @@ simply set `sites` to `None`.
 
 
 import numpy as np
+
 from brainstat.datasets import fetch_mask, fetch_template_surface
 from brainstat.tutorial.utils import fetch_abide_data
 
@@ -39,6 +40,7 @@ plot_hemispheres(
     zoom=1.45,
     cb__labelTextProperty={"fontSize": 12},
 )
+
 
 ###################################################################
 # Next, lets see whether cortical thickness is related to age in our sample
@@ -109,6 +111,7 @@ def plot_slm_results(slm):
         cmap="bwr",
         size=(1400, 200),
         zoom=1.45,
+        nan_color=(0.7, 0.7, 0.7, 1),
         cb__labelTextProperty={"fontSize": 12},
     )
 
