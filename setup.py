@@ -48,7 +48,7 @@ setuptools.setup(
         "scipy>=1.3.3",
         "trimesh",
     ],
-    extras_require={"dev": ["gitpython", "hcp-utils", "mypy", "pytest"]},
+    extras_require={"dev": ["gitpython", "hcp-utils", "mypy", "plotly", "pytest"]},
     project_urls={  # Optional
         "Documentation": "https://brainstat.readthedocs.io",
         "Bug Reports": "https://github.com/MICA-LAB/BrainStat/issues",

@@ -21,7 +21,7 @@ data_directories = {
     "BRAINSTAT_DATA_DIR": BRAINSTAT_DATA_DIR,
     "ABIDE_DATA_DIR": BRAINSTAT_DATA_DIR / "abide_data",
     "BIGBRAIN_DATA_DIR": BRAINSTAT_DATA_DIR / "bigbrain_data",
-    "MICS_DATA_DIR": BRAINSTAT_DATA_DIR / "mics_data",
+    "GRADIENT_DATA_DIR": BRAINSTAT_DATA_DIR / "gradient_data",
     "NEUROSYNTH_DATA_DIR": BRAINSTAT_DATA_DIR / "neurosynth_data",
     "PARCELLATION_DATA_DIR": BRAINSTAT_DATA_DIR / "parcellation_data",
     "SURFACE_DATA_DIR": BRAINSTAT_DATA_DIR / "surface_data",
@@ -41,6 +41,11 @@ def generate_data_fetcher_json() -> None:
             "fslr32k": {
                 "url": "https://box.bic.mni.mcgill.ca/s/6zKHcg9xXu5inPR/download",
             },
+        },
+        "gradients": {
+            "margulies2016": {
+                "url": "https://box.bic.mni.mcgill.ca/s/LWFaQlOxUWmRlc0/download",
+            }
         },
         "neurosynth_precomputed": {
             "url": "https://box.bic.mni.mcgill.ca/s/GvislmLffbCIZoI/download",
@@ -67,6 +72,7 @@ def generate_data_fetcher_json() -> None:
                     ),
                 },
             },
+            "yeo": {"url": "https://box.bic.mni.mcgill.ca/s/vcSXEk1wx0jN86N/download"},
         },
         "masks": {
             "civet41k": {

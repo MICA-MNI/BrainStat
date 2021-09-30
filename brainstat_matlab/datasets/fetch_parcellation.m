@@ -1,16 +1,15 @@
 function parcellation = fetch_parcellation(template, atlas, n_regions, options)
 % FETCH_PARCELLATION    loads a fsaverage or conte69 surface template
 %   parcellation = FETCH_PARCELLATION(template, atlas, n_regions, varargin)
-%   downloads and loads the 'schaefer' or 'cammoun' atlas on 'fsaverage5',
-%   'fsaverage6', 'fsaverage', or 'fslr32k' (a.k.a. conte69) surface
-%   template. By default, a pial surface is loaded for fsaverage templates
-%   and a midthickness surface is loaded for conte69.
+%   downloads and loads the 'cammoun', 'glasser', 'schaefer', or 'yeo',
+%   atlas on 'fsaverage5', 'fsaverage6', 'fsaverage', or 'fslr32k' (a.k.a.
+%   conte69) surface template. 
 %
-%   Supported number of regions for the Schaefer atlas are: 100, 200, 300,
-%   400, 500, 600, 800, 1000. Supported number of regions for the Cammoun
-%   atlas are: 33, 60, 125, 250, 500. Supported number of regions for the
-%   Glasser atlas is 360. Note that fsaverage6 is not supported for the
-%   Glasser parcellation.
+%   Supported number of regions for each atlas are as follows:
+%       Cammoun: 33, 60, 125, 250, 500. 
+%       Glasser: 360 (Note fsaverage6 not supported).
+%       Schaefer: 100, 200, 300, 400, 500, 600, 800, 1000. 
+%       Yeo: 7, 17
 %
 %   Valid name-value pairs are:
 %       'data_dir': a char containing the path to the location to store the
@@ -27,24 +26,31 @@ arguments
     options.seven_networks (1,1) logical = true
 end
 
+atlas = lower(atlas);
+
 if atlas == "conte69"
     atlas = 'fslr32k';
 end
 
-if atlas ~= "glasser"
-    filename = dataset_utils.download_OSF_files(...
-        template, ...
-        'data_dir', options.data_dir, ...
-        'parcellation', atlas);
+switch lower(atlas)
+    case {'schaefer', 'cammoun'}
+        filename = dataset_utils.download_OSF_files(...
+            template, ...
+            'data_dir', options.data_dir, ...
+            'parcellation', atlas);
 
-    parcellation = read_parcellation_from_targz(...
-        filename, ...
-        template, ...
-        atlas, ...
-        n_regions, ...
-        options.seven_networks);
-else
-    parcellation = fetch_glasser_parcellation(template, options.data_dir);
+        parcellation = read_parcellation_from_targz(...
+            filename, ...
+            template, ...
+            atlas, ...
+            n_regions, ...
+            options.seven_networks);
+    case 'glasser'
+        parcellation = fetch_glasser_parcellation(template, options.data_dir);
+    case "yeo"
+        parcellation = fetch_yeo_parcellation(template, n_regions, options.data_dir);
+    otherwise
+        error("Unknown atlas: '%s'.", atlas)
 end
 end
 
@@ -141,22 +147,32 @@ rmdir(temp_dir);
 end
 
 function parcellation = fetch_glasser_parcellation(template, data_dir)
-    urls = struct(...
-        'fslr32k', [ ...
-            "https://box.bic.mni.mcgill.ca/s/y2NMHXr47WOCtpp/download", ...
-            "https://box.bic.mni.mcgill.ca/s/Y0Fmd2tIF69Mqpt/download"], ...
-        'fsaverage', [ ...
-            "https://box.bic.mni.mcgill.ca/s/j4nfMA4D7jSx3QZ/download", ...
-            "https://box.bic.mni.mcgill.ca/s/qZTplkH4A4exOnF/download"], ...
-        'fsaverage5', [ ...
-            "https://box.bic.mni.mcgill.ca/s/Kg4VdWRt4NHvr3B/download", ...
-            "https://box.bic.mni.mcgill.ca/s/9sEXgVKi3VJ9pXV/download"] ...
-        );
-    filepaths = data_dir + filesep + "glasser_360_" + template + "_" + ["lh", "rh"] + ".label.gii";
-    for ii = 1:numel(filepaths)
-        websave(filepaths{ii}, urls.(template){ii});
+    json = brainstat_utils.read_data_fetcher_json();
+    urls = json.parcellations.glasser.(template).url; 
+ 
+    filenames = data_dir + filesep + "glasser_360_" + template + "_" + ["lh", "rh"] + ".label.gii";
+    if ~all(cellfun(@(x) exist(x, 'file'), filenames))
+        for ii = 1:numel(filenames)
+            websave(filenames{ii}, urls{ii});
+        end
     end
-    parcellations = read_surface_data(filepaths);
+    parcellations = read_surface_data(filenames);
     parcellation = [double(parcellations{1}); double(parcellations{2}) + 180*(parcellations{2}>0)];   
+end
+
+function parcellation = fetch_yeo_parcellation(template, n_regions, data_dir)
+    json = brainstat_utils.read_data_fetcher_json();
+    url = json.parcellations.yeo.url; 
+    
+    filenames = data_dir + filesep + template + "_" + ["lh", "rh"] + "_yeo" + num2str(n_regions) + ".label.gii";
+    if ~all(cellfun(@(x) exist(x, 'file'), filenames))
+        zipfile = tempname + ".zip";
+        cleaner = onCleanup(@(x) delete(zipfile));
+        websave(zipfile, url);
+        unzip(zipfile, data_dir);
+    end
+
+    parcellations = read_surface_data(filenames);
+    parcellation = [double(parcellations{1}); double(parcellations{2})];   
 end
 

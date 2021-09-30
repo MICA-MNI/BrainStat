@@ -36,12 +36,14 @@ example of how we use abagen to get the genetic expression of the 400 regions
 of the Schaefer atlas. Please note that downloading the dataset and running this
 analysis can take several minutes.
 
-.. GENERATED FROM PYTHON SOURCE LINES 20-31
+.. GENERATED FROM PYTHON SOURCE LINES 20-33
 
 .. code-block:: default
 
 
     import numpy as np
+    import plotly.express as px
+
     from brainstat.context.genetics import surface_genetic_expression
     from brainstat.datasets import fetch_parcellation, fetch_template_surface
 
@@ -49,7 +51,7 @@ analysis can take several minutes.
     surfaces = fetch_template_surface("fsaverage5", join=False)
 
     expression = surface_genetic_expression(schaefer_400, surfaces, space="fsaverage")
-    print(expression)
+    print(expression.iloc[0:5, 0:5])
 
 
 
@@ -61,27 +63,18 @@ analysis can take several minutes.
 
  .. code-block:: none
 
-    If you use BrainStat's genetics functionality, please cite abagen (https://abagen.readthedocs.io/en/stable/citing.html).
-    gene_symbol      A1BG  A1BG-AS1       A2M     A2ML1   A3GALT2    A4GALT      AAAS      AACS   AADACL3  ...    ZWILCH     ZWINT      ZXDA      ZXDB      ZXDC    ZYG11B       ZYX     ZZEF1      ZZZ3
-    label                                                                                                  ...                                                                                          
-    1            0.616241  0.663905  0.346942  0.442031  0.528662  0.385995  0.450701  0.610946  0.700893  ...  0.677480  0.670887  0.735968  0.393920  0.530751  0.654544  0.379364  0.557027  0.416022
-    2            0.695402  0.552844  0.438033  0.454978  0.495349  0.426254  0.313420  0.677285  0.482006  ...  0.709731  0.693832  0.622805  0.544404  0.500129  0.554081  0.293495  0.392343  0.601068
-    3            0.505258  0.561028  0.534480  0.517866  0.451078  0.377681  0.635056  0.646470  0.506606  ...  0.477834  0.506369  0.543594  0.559509  0.445725  0.528291  0.656205  0.573194  0.564922
-    4            0.405253  0.393486  0.494290  0.672039  0.562577  0.462485  0.426054  0.581588  0.671947  ...  0.421138  0.418171  0.514962  0.620589  0.505453  0.518247  0.525360  0.667703  0.418323
-    5            0.264929  0.120622  0.494322  0.766259  0.917175  0.179186  0.413368  0.388243  0.637066  ...  0.554290  0.299879  0.473553  0.829499  0.775317  0.519083  0.815647  0.812410  0.364021
-    ...               ...       ...       ...       ...       ...       ...       ...       ...       ...  ...       ...       ...       ...       ...       ...       ...       ...       ...       ...
-    396               NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN  ...       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN
-    397          0.499900  0.259409  0.405187  0.844304  0.600706  0.775612  0.505645  0.312653  0.450115  ...  0.409626  0.142667  0.414844  0.941867  0.747326  0.485406  0.390599  0.443900  0.330393
-    398          0.635517  0.701399  0.528614  0.323811  0.622531  0.564279  0.602727  0.708670  0.341587  ...  0.383145  0.317572  0.383137  0.208097  0.355344  0.632177  0.602474  0.233541  0.478760
-    399          0.476907  0.322261  0.361887  0.351364  0.173268  0.866365  0.384485  0.466906  0.067823  ...  0.537216  0.104176  0.655510  0.497964  0.809990  0.408175  0.666588  0.284690  0.362532
-    400               NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN  ...       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN       NaN
-
-    [400 rows x 15631 columns]
+    gene_symbol      A1BG  A1BG-AS1       A2M     A2ML1   A3GALT2
+    label                                                        
+    1            0.616241  0.663905  0.346942  0.442031  0.528662
+    2            0.695402  0.552844  0.438033  0.454978  0.495349
+    3            0.505258  0.561028  0.534480  0.517866  0.451078
+    4            0.405253  0.393486  0.494290  0.672039  0.562577
+    5            0.264929  0.120622  0.494322  0.766259  0.917175
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 32-53
+.. GENERATED FROM PYTHON SOURCE LINES 34-55
 
 Expression is a pandas DataFrame which shows the genetic expression of genes
 within each region of the atlas. By default, the values will fall in the range
@@ -105,7 +98,7 @@ this data on the CIVET surface, so we will also load those surfaces. The
 surface decoder interpolates the data from the surface to the voxels in the
 volume that are in between the two input surfaces.
 
-.. GENERATED FROM PYTHON SOURCE LINES 53-65
+.. GENERATED FROM PYTHON SOURCE LINES 55-67
 
 .. code-block:: default
 
@@ -131,18 +124,18 @@ volume that are in between the two input surfaces.
 
  .. code-block:: none
 
-    0it [00:00, ?it/s]    Fetching thickness data for subject 1 out of 56: : 0it [00:00, ?it/s]    Fetching thickness data for subject 1 out of 56: : 1it [00:00,  4.69it/s]    Fetching thickness data for subject 2 out of 56: : 1it [00:00,  4.69it/s]    Fetching thickness data for subject 2 out of 56: : 2it [00:00,  4.79it/s]    Fetching thickness data for subject 3 out of 56: : 2it [00:00,  4.79it/s]    Fetching thickness data for subject 3 out of 56: : 3it [00:00,  4.85it/s]    Fetching thickness data for subject 4 out of 56: : 3it [00:00,  4.85it/s]    Fetching thickness data for subject 4 out of 56: : 4it [00:00,  4.87it/s]    Fetching thickness data for subject 5 out of 56: : 4it [00:00,  4.87it/s]    Fetching thickness data for subject 5 out of 56: : 5it [00:01,  4.90it/s]    Fetching thickness data for subject 6 out of 56: : 5it [00:01,  4.90it/s]    Fetching thickness data for subject 6 out of 56: : 6it [00:01,  4.91it/s]    Fetching thickness data for subject 7 out of 56: : 6it [00:01,  4.91it/s]    Fetching thickness data for subject 7 out of 56: : 7it [00:01,  4.90it/s]    Fetching thickness data for subject 8 out of 56: : 7it [00:01,  4.90it/s]    Fetching thickness data for subject 8 out of 56: : 8it [00:01,  4.92it/s]    Fetching thickness data for subject 9 out of 56: : 8it [00:01,  4.92it/s]    Fetching thickness data for subject 9 out of 56: : 9it [00:01,  4.92it/s]    Fetching thickness data for subject 10 out of 56: : 9it [00:01,  4.92it/s]    Fetching thickness data for subject 10 out of 56: : 10it [00:02,  4.89it/s]    Fetching thickness data for subject 11 out of 56: : 10it [00:02,  4.89it/s]    Fetching thickness data for subject 11 out of 56: : 11it [00:02,  4.93it/s]    Fetching thickness data for subject 12 out of 56: : 11it [00:02,  4.93it/s]    Fetching thickness data for subject 12 out of 56: : 12it [00:02,  4.88it/s]    Fetching thickness data for subject 13 out of 56: : 12it [00:02,  4.88it/s]    Fetching thickness data for subject 13 out of 56: : 13it [00:02,  4.89it/s]    Fetching thickness data for subject 14 out of 56: : 13it [00:02,  4.89it/s]    Fetching thickness data for subject 14 out of 56: : 14it [00:02,  4.89it/s]    Fetching thickness data for subject 15 out of 56: : 14it [00:02,  4.89it/s]    Fetching thickness data for subject 15 out of 56: : 15it [00:03,  4.91it/s]    Fetching thickness data for subject 16 out of 56: : 15it [00:03,  4.91it/s]    Fetching thickness data for subject 16 out of 56: : 16it [00:03,  4.89it/s]    Fetching thickness data for subject 17 out of 56: : 16it [00:03,  4.89it/s]    Fetching thickness data for subject 17 out of 56: : 17it [00:03,  4.91it/s]    Fetching thickness data for subject 18 out of 56: : 17it [00:03,  4.91it/s]    Fetching thickness data for subject 18 out of 56: : 18it [00:03,  4.92it/s]    Fetching thickness data for subject 19 out of 56: : 18it [00:03,  4.92it/s]    Fetching thickness data for subject 19 out of 56: : 19it [00:03,  4.89it/s]    Fetching thickness data for subject 20 out of 56: : 19it [00:03,  4.89it/s]    Fetching thickness data for subject 20 out of 56: : 20it [00:04,  4.91it/s]    Fetching thickness data for subject 21 out of 56: : 20it [00:04,  4.91it/s]    Fetching thickness data for subject 21 out of 56: : 21it [00:04,  4.90it/s]    Fetching thickness data for subject 22 out of 56: : 21it [00:04,  4.90it/s]    Fetching thickness data for subject 22 out of 56: : 22it [00:04,  4.88it/s]    Fetching thickness data for subject 23 out of 56: : 22it [00:04,  4.88it/s]    Fetching thickness data for subject 23 out of 56: : 23it [00:04,  4.91it/s]    Fetching thickness data for subject 24 out of 56: : 23it [00:04,  4.91it/s]    Fetching thickness data for subject 24 out of 56: : 24it [00:04,  4.91it/s]    Fetching thickness data for subject 25 out of 56: : 24it [00:04,  4.91it/s]    Fetching thickness data for subject 25 out of 56: : 25it [00:05,  4.89it/s]    Fetching thickness data for subject 26 out of 56: : 25it [00:05,  4.89it/s]    Fetching thickness data for subject 26 out of 56: : 26it [00:05,  4.91it/s]    Fetching thickness data for subject 27 out of 56: : 26it [00:05,  4.91it/s]    Fetching thickness data for subject 27 out of 56: : 27it [00:05,  4.87it/s]    Fetching thickness data for subject 28 out of 56: : 27it [00:05,  4.87it/s]    Fetching thickness data for subject 28 out of 56: : 28it [00:05,  4.90it/s]    Fetching thickness data for subject 29 out of 56: : 28it [00:05,  4.90it/s]    Fetching thickness data for subject 29 out of 56: : 29it [00:05,  4.88it/s]    Fetching thickness data for subject 30 out of 56: : 29it [00:05,  4.88it/s]    Fetching thickness data for subject 30 out of 56: : 30it [00:06,  4.90it/s]    Fetching thickness data for subject 31 out of 56: : 30it [00:06,  4.90it/s]    Fetching thickness data for subject 31 out of 56: : 31it [00:06,  4.93it/s]    Fetching thickness data for subject 32 out of 56: : 31it [00:06,  4.93it/s]    Fetching thickness data for subject 32 out of 56: : 32it [00:06,  4.91it/s]    Fetching thickness data for subject 33 out of 56: : 32it [00:06,  4.91it/s]    Fetching thickness data for subject 33 out of 56: : 33it [00:06,  4.93it/s]    Fetching thickness data for subject 34 out of 56: : 33it [00:06,  4.93it/s]    Fetching thickness data for subject 34 out of 56: : 34it [00:06,  4.92it/s]    Fetching thickness data for subject 35 out of 56: : 34it [00:06,  4.92it/s]    Fetching thickness data for subject 35 out of 56: : 35it [00:07,  4.91it/s]    Fetching thickness data for subject 36 out of 56: : 35it [00:07,  4.91it/s]    Fetching thickness data for subject 36 out of 56: : 36it [00:07,  4.91it/s]    Fetching thickness data for subject 37 out of 56: : 36it [00:07,  4.91it/s]    Fetching thickness data for subject 37 out of 56: : 37it [00:07,  4.87it/s]    Fetching thickness data for subject 38 out of 56: : 37it [00:07,  4.87it/s]    Fetching thickness data for subject 38 out of 56: : 38it [00:07,  4.84it/s]    Fetching thickness data for subject 39 out of 56: : 38it [00:07,  4.84it/s]    Fetching thickness data for subject 39 out of 56: : 39it [00:07,  4.86it/s]    Fetching thickness data for subject 40 out of 56: : 39it [00:07,  4.86it/s]    Fetching thickness data for subject 40 out of 56: : 40it [00:08,  4.84it/s]    Fetching thickness data for subject 41 out of 56: : 40it [00:08,  4.84it/s]    Fetching thickness data for subject 41 out of 56: : 41it [00:08,  4.84it/s]    Fetching thickness data for subject 42 out of 56: : 41it [00:08,  4.84it/s]    Fetching thickness data for subject 42 out of 56: : 42it [00:08,  4.86it/s]    Fetching thickness data for subject 43 out of 56: : 42it [00:08,  4.86it/s]    Fetching thickness data for subject 43 out of 56: : 43it [00:08,  4.86it/s]    Fetching thickness data for subject 44 out of 56: : 43it [00:08,  4.86it/s]    Fetching thickness data for subject 44 out of 56: : 44it [00:08,  4.90it/s]    Fetching thickness data for subject 45 out of 56: : 44it [00:08,  4.90it/s]    Fetching thickness data for subject 45 out of 56: : 45it [00:09,  4.90it/s]    Fetching thickness data for subject 46 out of 56: : 45it [00:09,  4.90it/s]    Fetching thickness data for subject 46 out of 56: : 46it [00:09,  4.87it/s]    Fetching thickness data for subject 47 out of 56: : 46it [00:09,  4.87it/s]    Fetching thickness data for subject 47 out of 56: : 47it [00:09,  4.89it/s]    Fetching thickness data for subject 48 out of 56: : 47it [00:09,  4.89it/s]    Fetching thickness data for subject 48 out of 56: : 48it [00:09,  4.89it/s]    Fetching thickness data for subject 49 out of 56: : 48it [00:09,  4.89it/s]    Fetching thickness data for subject 49 out of 56: : 49it [00:10,  4.91it/s]    Fetching thickness data for subject 50 out of 56: : 49it [00:10,  4.91it/s]    Fetching thickness data for subject 50 out of 56: : 50it [00:10,  4.93it/s]    Fetching thickness data for subject 51 out of 56: : 50it [00:10,  4.93it/s]    Fetching thickness data for subject 51 out of 56: : 51it [00:10,  4.90it/s]    Fetching thickness data for subject 52 out of 56: : 51it [00:10,  4.90it/s]    Fetching thickness data for subject 52 out of 56: : 52it [00:10,  4.92it/s]    Fetching thickness data for subject 53 out of 56: : 52it [00:10,  4.92it/s]    Fetching thickness data for subject 53 out of 56: : 53it [00:10,  4.91it/s]    Fetching thickness data for subject 54 out of 56: : 53it [00:10,  4.91it/s]    Fetching thickness data for subject 54 out of 56: : 54it [00:11,  4.87it/s]    Fetching thickness data for subject 55 out of 56: : 54it [00:11,  4.87it/s]    Fetching thickness data for subject 55 out of 56: : 55it [00:11,  4.90it/s]    Fetching thickness data for subject 56 out of 56: : 55it [00:11,  4.90it/s]    Fetching thickness data for subject 56 out of 56: : 56it [00:11,  4.90it/s]    Fetching thickness data for subject 56 out of 56: : 56it [00:11,  4.89it/s]
+    0it [00:00, ?it/s]    Fetching thickness data for subject 1 out of 56: : 0it [00:00, ?it/s]    Fetching thickness data for subject 1 out of 56: : 1it [00:00,  4.56it/s]    Fetching thickness data for subject 2 out of 56: : 1it [00:00,  4.56it/s]    Fetching thickness data for subject 2 out of 56: : 2it [00:00,  4.63it/s]    Fetching thickness data for subject 3 out of 56: : 2it [00:00,  4.63it/s]    Fetching thickness data for subject 3 out of 56: : 3it [00:00,  4.67it/s]    Fetching thickness data for subject 4 out of 56: : 3it [00:00,  4.67it/s]    Fetching thickness data for subject 4 out of 56: : 4it [00:00,  4.67it/s]    Fetching thickness data for subject 5 out of 56: : 4it [00:00,  4.67it/s]    Fetching thickness data for subject 5 out of 56: : 5it [00:01,  4.69it/s]    Fetching thickness data for subject 6 out of 56: : 5it [00:01,  4.69it/s]    Fetching thickness data for subject 6 out of 56: : 6it [00:01,  4.70it/s]    Fetching thickness data for subject 7 out of 56: : 6it [00:01,  4.70it/s]    Fetching thickness data for subject 7 out of 56: : 7it [00:01,  4.68it/s]    Fetching thickness data for subject 8 out of 56: : 7it [00:01,  4.68it/s]    Fetching thickness data for subject 8 out of 56: : 8it [00:01,  4.68it/s]    Fetching thickness data for subject 9 out of 56: : 8it [00:01,  4.68it/s]    Fetching thickness data for subject 9 out of 56: : 9it [00:01,  4.65it/s]    Fetching thickness data for subject 10 out of 56: : 9it [00:01,  4.65it/s]    Fetching thickness data for subject 10 out of 56: : 10it [00:02,  4.69it/s]    Fetching thickness data for subject 11 out of 56: : 10it [00:02,  4.69it/s]    Fetching thickness data for subject 11 out of 56: : 11it [00:02,  4.69it/s]    Fetching thickness data for subject 12 out of 56: : 11it [00:02,  4.69it/s]    Fetching thickness data for subject 12 out of 56: : 12it [00:02,  4.66it/s]    Fetching thickness data for subject 13 out of 56: : 12it [00:02,  4.66it/s]    Fetching thickness data for subject 13 out of 56: : 13it [00:02,  4.65it/s]    Fetching thickness data for subject 14 out of 56: : 13it [00:02,  4.65it/s]    Fetching thickness data for subject 14 out of 56: : 14it [00:03,  4.62it/s]    Fetching thickness data for subject 15 out of 56: : 14it [00:03,  4.62it/s]    Fetching thickness data for subject 15 out of 56: : 15it [00:03,  4.66it/s]    Fetching thickness data for subject 16 out of 56: : 15it [00:03,  4.66it/s]    Fetching thickness data for subject 16 out of 56: : 16it [00:03,  4.66it/s]    Fetching thickness data for subject 17 out of 56: : 16it [00:03,  4.66it/s]    Fetching thickness data for subject 17 out of 56: : 17it [00:03,  4.71it/s]    Fetching thickness data for subject 18 out of 56: : 17it [00:03,  4.71it/s]    Fetching thickness data for subject 18 out of 56: : 18it [00:03,  4.70it/s]    Fetching thickness data for subject 19 out of 56: : 18it [00:03,  4.70it/s]    Fetching thickness data for subject 19 out of 56: : 19it [00:04,  4.71it/s]    Fetching thickness data for subject 20 out of 56: : 19it [00:04,  4.71it/s]    Fetching thickness data for subject 20 out of 56: : 20it [00:04,  4.75it/s]    Fetching thickness data for subject 21 out of 56: : 20it [00:04,  4.75it/s]    Fetching thickness data for subject 21 out of 56: : 21it [00:04,  4.78it/s]    Fetching thickness data for subject 22 out of 56: : 21it [00:04,  4.78it/s]    Fetching thickness data for subject 22 out of 56: : 22it [00:04,  4.56it/s]    Fetching thickness data for subject 23 out of 56: : 22it [00:04,  4.56it/s]    Fetching thickness data for subject 23 out of 56: : 23it [00:04,  4.28it/s]    Fetching thickness data for subject 24 out of 56: : 23it [00:04,  4.28it/s]    Fetching thickness data for subject 24 out of 56: : 24it [00:05,  4.45it/s]    Fetching thickness data for subject 25 out of 56: : 24it [00:05,  4.45it/s]    Fetching thickness data for subject 25 out of 56: : 25it [00:05,  4.63it/s]    Fetching thickness data for subject 26 out of 56: : 25it [00:05,  4.63it/s]    Fetching thickness data for subject 26 out of 56: : 26it [00:05,  4.51it/s]    Fetching thickness data for subject 27 out of 56: : 26it [00:05,  4.51it/s]    Fetching thickness data for subject 27 out of 56: : 27it [00:05,  4.35it/s]    Fetching thickness data for subject 28 out of 56: : 27it [00:05,  4.35it/s]    Fetching thickness data for subject 28 out of 56: : 28it [00:06,  4.47it/s]    Fetching thickness data for subject 29 out of 56: : 28it [00:06,  4.47it/s]    Fetching thickness data for subject 29 out of 56: : 29it [00:06,  4.62it/s]    Fetching thickness data for subject 30 out of 56: : 29it [00:06,  4.62it/s]    Fetching thickness data for subject 30 out of 56: : 30it [00:06,  4.43it/s]    Fetching thickness data for subject 31 out of 56: : 30it [00:06,  4.43it/s]    Fetching thickness data for subject 31 out of 56: : 31it [00:06,  4.34it/s]    Fetching thickness data for subject 32 out of 56: : 31it [00:06,  4.34it/s]    Fetching thickness data for subject 32 out of 56: : 32it [00:07,  4.06it/s]    Fetching thickness data for subject 33 out of 56: : 32it [00:07,  4.06it/s]    Fetching thickness data for subject 33 out of 56: : 33it [00:07,  4.03it/s]    Fetching thickness data for subject 34 out of 56: : 33it [00:07,  4.03it/s]    Fetching thickness data for subject 34 out of 56: : 34it [00:07,  4.13it/s]    Fetching thickness data for subject 35 out of 56: : 34it [00:07,  4.13it/s]    Fetching thickness data for subject 35 out of 56: : 35it [00:07,  4.12it/s]    Fetching thickness data for subject 36 out of 56: : 35it [00:07,  4.12it/s]    Fetching thickness data for subject 36 out of 56: : 36it [00:08,  4.14it/s]    Fetching thickness data for subject 37 out of 56: : 36it [00:08,  4.14it/s]    Fetching thickness data for subject 37 out of 56: : 37it [00:08,  4.33it/s]    Fetching thickness data for subject 38 out of 56: : 37it [00:08,  4.33it/s]    Fetching thickness data for subject 38 out of 56: : 38it [00:08,  4.39it/s]    Fetching thickness data for subject 39 out of 56: : 38it [00:08,  4.39it/s]    Fetching thickness data for subject 39 out of 56: : 39it [00:08,  4.50it/s]    Fetching thickness data for subject 40 out of 56: : 39it [00:08,  4.50it/s]    Fetching thickness data for subject 40 out of 56: : 40it [00:08,  4.42it/s]    Fetching thickness data for subject 41 out of 56: : 40it [00:08,  4.42it/s]    Fetching thickness data for subject 41 out of 56: : 41it [00:09,  4.46it/s]    Fetching thickness data for subject 42 out of 56: : 41it [00:09,  4.46it/s]    Fetching thickness data for subject 42 out of 56: : 42it [00:09,  4.53it/s]    Fetching thickness data for subject 43 out of 56: : 42it [00:09,  4.53it/s]    Fetching thickness data for subject 43 out of 56: : 43it [00:09,  4.52it/s]    Fetching thickness data for subject 44 out of 56: : 43it [00:09,  4.52it/s]    Fetching thickness data for subject 44 out of 56: : 44it [00:09,  4.59it/s]    Fetching thickness data for subject 45 out of 56: : 44it [00:09,  4.59it/s]    Fetching thickness data for subject 45 out of 56: : 45it [00:09,  4.66it/s]    Fetching thickness data for subject 46 out of 56: : 45it [00:09,  4.66it/s]    Fetching thickness data for subject 46 out of 56: : 46it [00:10,  4.72it/s]    Fetching thickness data for subject 47 out of 56: : 46it [00:10,  4.72it/s]    Fetching thickness data for subject 47 out of 56: : 47it [00:10,  4.78it/s]    Fetching thickness data for subject 48 out of 56: : 47it [00:10,  4.78it/s]    Fetching thickness data for subject 48 out of 56: : 48it [00:10,  4.76it/s]    Fetching thickness data for subject 49 out of 56: : 48it [00:10,  4.76it/s]    Fetching thickness data for subject 49 out of 56: : 49it [00:10,  4.82it/s]    Fetching thickness data for subject 50 out of 56: : 49it [00:10,  4.82it/s]    Fetching thickness data for subject 50 out of 56: : 50it [00:10,  4.84it/s]    Fetching thickness data for subject 51 out of 56: : 50it [00:10,  4.84it/s]    Fetching thickness data for subject 51 out of 56: : 51it [00:11,  4.52it/s]    Fetching thickness data for subject 52 out of 56: : 51it [00:11,  4.52it/s]    Fetching thickness data for subject 52 out of 56: : 52it [00:11,  4.53it/s]    Fetching thickness data for subject 53 out of 56: : 52it [00:11,  4.53it/s]    Fetching thickness data for subject 53 out of 56: : 53it [00:11,  4.65it/s]    Fetching thickness data for subject 54 out of 56: : 53it [00:11,  4.65it/s]    Fetching thickness data for subject 54 out of 56: : 54it [00:11,  4.68it/s]    Fetching thickness data for subject 55 out of 56: : 54it [00:11,  4.68it/s]    Fetching thickness data for subject 55 out of 56: : 55it [00:12,  4.53it/s]    Fetching thickness data for subject 56 out of 56: : 55it [00:12,  4.53it/s]    Fetching thickness data for subject 56 out of 56: : 56it [00:12,  4.48it/s]    Fetching thickness data for subject 56 out of 56: : 56it [00:12,  4.54it/s]
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 66-69
+.. GENERATED FROM PYTHON SOURCE LINES 68-71
 
 Next we can run the analysis. Note that the data, surfaces, and mask have to
 be provided seperately for each hemisphere. Also note that downloading the
 dataset and running this analysis can take several minutes.
 
-.. GENERATED FROM PYTHON SOURCE LINES 69-77
+.. GENERATED FROM PYTHON SOURCE LINES 71-79
 
 .. code-block:: default
 
@@ -165,24 +158,24 @@ dataset and running this analysis can take several minutes.
  .. code-block:: none
 
                     Pearson's r
-    temporal           0.389824
-    frontotemporal     0.380859
-    pole               0.363267
-    dementia           0.346098
-    empathic           0.314584
+    temporal           0.389858
+    frontotemporal     0.380888
+    pole               0.363275
+    dementia           0.346128
+    empathic           0.314565
     ...                     ...
-    visual            -0.282120
-    parieto           -0.282926
-    sighted           -0.290601
-    primary           -0.306733
-    v1                -0.371183
+    visual            -0.282079
+    parieto           -0.282921
+    sighted           -0.290577
+    primary           -0.306713
+    v1                -0.371169
 
     [3228 rows x 1 columns]
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 78-89
+.. GENERATED FROM PYTHON SOURCE LINES 80-91
 
 meta_analysis now contains a pandas.dataFrame with the correlation values
 for each requested feature. If no feature was requested (like here) then
@@ -196,7 +189,7 @@ as first shown by (Paquola et al, 2019, Plos Biology), computed from the
 BigBrain dataset. Firstly, lets download the MPC data and compute its
 gradients.
 
-.. GENERATED FROM PYTHON SOURCE LINES 89-102
+.. GENERATED FROM PYTHON SOURCE LINES 91-104
 
 .. code-block:: default
 
@@ -223,15 +216,19 @@ gradients.
 
  .. code-block:: none
 
-    /Users/reinder/GitHub/BrainStat/brainstat/context/histology.py:103: RuntimeWarning: divide by zero encountered in true_divide
-      mpc = 0.5 * np.log((1 + p_corr) / (1 - p_corr))
-    /Users/reinder/GitHub/BrainStat/brainstat/context/histology.py:103: RuntimeWarning: invalid value encountered in log
-      mpc = 0.5 * np.log((1 + p_corr) / (1 - p_corr))
+    /Users/reinder/GitHub/BrainStat/brainstat/context/histology.py:103: RuntimeWarning:
+
+    divide by zero encountered in true_divide
+
+    /Users/reinder/GitHub/BrainStat/brainstat/context/histology.py:103: RuntimeWarning:
+
+    invalid value encountered in log
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 103-110
+
+.. GENERATED FROM PYTHON SOURCE LINES 105-112
 
 The variable histology_profiles now contains histological profiles sampled at
 50 different depths across the cortex, mpc contains the covariance of these
@@ -241,7 +238,7 @@ this tutorial we'll plot the gradients to the surface with BrainSpace. For
 details on what the GradientMaps class, gm, contains please consult the
 BrainSpace documentation.
 
-.. GENERATED FROM PYTHON SOURCE LINES 110-135
+.. GENERATED FROM PYTHON SOURCE LINES 112-142
 
 .. code-block:: default
 
@@ -268,6 +265,11 @@ BrainSpace documentation.
         vertexwise_data,
         embed_nb=True,
         label_text=["Gradient 1", "Gradient 2"],
+        color_bar=True,
+        size=(1400, 400),
+        zoom=1.45,
+        nan_color=(0.7, 0.7, 0.7, 1),
+        cb__labelTextProperty={"fontSize": 12},
     )
 
 
@@ -284,18 +286,195 @@ BrainSpace documentation.
 
  .. code-block:: none
 
-    /Users/reinder/opt/miniconda3/envs/python3.8/lib/python3.8/site-packages/brainspace/plotting/base.py:287: UserWarning: Interactive mode requires 'panel'. Setting 'interactive=False'
-      warnings.warn("Interactive mode requires 'panel'. "
+    /Users/reinder/opt/miniconda3/envs/python3.8/lib/python3.8/site-packages/brainspace/plotting/base.py:287: UserWarning:
+
+    Interactive mode requires 'panel'. Setting 'interactive=False'
+
 
     <IPython.core.display.Image object>
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 136-144
+.. GENERATED FROM PYTHON SOURCE LINES 143-162
 
 Note that we no longer use the y-axis regression used in (Paquola et al, 2019,
 Plos Biology), as such the first gradient becomes an anterior-posterior-
 gradient.
+
+Resting-state contextualization
+-------------------------------
+Lastly, BrainStat provides contextualization using resting-state fMRI markers:
+specifically, with the Yeo functional networks (Yeo et al., 2011, Journal of
+Neurophysiology), a clustering of resting-state connectivity, and the
+functional gradients (Margulies et al., 2016, PNAS), a lower dimensional
+manifold of resting-state connectivity.
+
+Lets first have a look at contextualization of cortical thickness using the
+Yeo networks. We'll use some of the sample cortical thickness data included
+with BrainSpace, and see what its mean is within each Yeo network.
+
+We'll use the package plotly to visualize the output. plotly is not a
+dependency of BrainStat so you'll have to install it separately (:code:`pip
+install plotly`) if you want to use this functionality.
+
+.. GENERATED FROM PYTHON SOURCE LINES 162-184
+
+.. code-block:: default
+
+
+    import pandas as pd
+    from brainspace.datasets import load_marker
+
+    from brainstat.context.resting import yeo_networks_associations
+    from brainstat.datasets import fetch_yeo_networks_metadata
+
+    thickness = load_marker("thickness", join=True)
+
+    mean_thickness = np.squeeze(yeo_networks_associations(thickness, "fslr32k"))
+    network_names, colormap = fetch_yeo_networks_metadata(7)
+
+    df = pd.DataFrame(
+        dict(
+            r=mean_thickness,
+            theta=network_names,
+        )
+    )
+    fig = px.line_polar(df, r="r", theta="theta", line_close=True)
+    fig.update_traces(fill="toself")
+    fig
+
+
+
+
+
+
+.. raw:: html
+
+    <div class="output_subarea output_html rendered_html output_result">
+    <div>                        <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+            <script src="https://cdn.plot.ly/plotly-2.4.2.min.js"></script>                <div id="805405ba-d77c-4673-89a8-52b15f5eebcc" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script type="text/javascript">                                    window.PLOTLYENV=window.PLOTLYENV || {};                                    if (document.getElementById("805405ba-d77c-4673-89a8-52b15f5eebcc")) {                    Plotly.newPlot(                        "805405ba-d77c-4673-89a8-52b15f5eebcc",                        [{"fill":"toself","hovertemplate":"r=%{r}<br>theta=%{theta}<extra></extra>","legendgroup":"","line":{"color":"#636efa","dash":"solid"},"marker":{"symbol":"circle"},"mode":"lines","name":"","r":[2.319562196397443,2.5167515701206464,2.5033237537928046,2.816073546431524,2.9996430412371136,2.650676862123613,2.797756872894585,2.319562196397443],"showlegend":false,"subplot":"polar","theta":["Visual","Somatomotor","Dorsal Attention","Ventral Attention","Limbic","Frontoparietal","Default mode","Visual"],"type":"scatterpolar"}],                        {"legend":{"tracegroupgap":0},"margin":{"t":60},"polar":{"angularaxis":{"direction":"clockwise","rotation":90},"domain":{"x":[0.0,1.0],"y":[0.0,1.0]}},"template":{"data":{"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"heatmapgl":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmapgl"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"#E5ECF6","showlakes":true,"showland":true,"subunitcolor":"white"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"bgcolor":"#E5ECF6","radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","gridwidth":2,"linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white"},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","gridwidth":2,"linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white"},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","gridwidth":2,"linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"bgcolor":"#E5ECF6","caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","zerolinewidth":2}}}},                        {"responsive": true}                    )                };                            </script>        </div>
+    </div>
+    <br />
+    <br />
+
+.. GENERATED FROM PYTHON SOURCE LINES 185-191
+
+Here we can see that, on average, the somatomotor/visual cortices have low
+cortical thickness whereas the default/limbic cortices have high thickness.
+
+Next, lets have a look at how cortical thickness relates to the first
+functional gradient which describes a sensory-transmodal axis in the brain.
+First lets plot the first gradient.
+
+.. GENERATED FROM PYTHON SOURCE LINES 191-210
+
+.. code-block:: default
+
+
+    from brainstat.datasets import fetch_gradients
+
+    functional_gradients = fetch_gradients("fslr32k", "margulies2016")
+    surface_left, surface_right = fetch_template_surface("fslr32k", join=False)
+
+    plot_hemispheres(
+        surface_left,
+        surface_right,
+        functional_gradients[:, 0].T,
+        embed_nb=True,
+        label_text=["Gradient 1"],
+        color_bar=True,
+        size=(1400, 200),
+        zoom=1.45,
+        nan_color=(0.7, 0.7, 0.7, 1),
+        cb__labelTextProperty={"fontSize": 12},
+    )
+
+
+
+
+.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_002.png
+    :alt: plot tutorial 02 context
+    :class: sphx-glr-single-img
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+    /Users/reinder/opt/miniconda3/envs/python3.8/lib/python3.8/site-packages/brainspace/plotting/base.py:287: UserWarning:
+
+    Interactive mode requires 'panel'. Setting 'interactive=False'
+
+
+    <IPython.core.display.Image object>
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 211-221
+
+There are many ways to compare these gradients to cortical markers such as
+cortical thickness. In general, we recommend using corrections for spatial
+autocorrelation which are implemented in BrainSpace. We'll show a correction
+with spin test in this tutorial; for other methods and further details please
+consult the BrainSpace tutorials.
+
+In a spin test we compare the empirical correlation between the gradient and
+the cortical marker to a distribution of correlations derived from data
+rotated across the cortical surface. The p-value then depends on the
+percentile of the empirical correlation within the permuted distribution.
+
+.. GENERATED FROM PYTHON SOURCE LINES 221-251
+
+.. code-block:: default
+
+
+    from brainspace.datasets import load_conte69
+    from brainspace.null_models import SpinPermutations
+
+    sphere_left, sphere_right = load_conte69(as_sphere=True)
+    thickness_left, thickness_right = load_marker("thickness", join=False)
+
+    # Run spin test with 100 permutations (note: we generally recommend >=1000)
+    n_rep = 100
+    sp = SpinPermutations(n_rep=n_rep, random_state=2021)
+    sp.fit(sphere_left, points_rh=sphere_right)
+    thickness_rotated = np.hstack(sp.randomize(thickness_left, thickness_right))
+
+    # Compute correlation between empirical and permuted data.
+    mask = ~np.isnan(functional_gradients[:, 0]) & ~np.isnan(thickness)
+    r_empirical = np.corrcoef(functional_gradients[mask, 0], thickness[mask])[0, 1]
+    r_permuted = np.zeros(n_rep)
+    for i in range(n_rep):
+        mask = ~np.isnan(functional_gradients[:, 0]) & ~np.isnan(thickness_rotated[i, :])
+        r_permuted[i] = np.corrcoef(
+            functional_gradients[mask, 0], thickness_rotated[i, mask]
+        )[1:, 0]
+
+    # Significance depends on whether we do a one-tailed or two-tailed test.
+    # If one-tailed it depends on in which direction the test is.
+    p_value_right_tailed = np.mean(r_empirical > r_permuted)
+    p_value_left_tailed = np.mean(r_empirical < r_permuted)
+    p_value_two_tailed = np.minimum(p_value_right_tailed, p_value_left_tailed) * 2
+    print(f"Two tailed p-value: {p_value_two_tailed}")
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+    Two tailed p-value: 0.02
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 252-256
 
 That concludes the tutorials of BrainStat. If anything is unclear, or if you
 think you've found a bug, please post it to the Issues page of our Github.
@@ -305,7 +484,7 @@ Happy BrainStating!
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 3 minutes  15.649 seconds)
+   **Total running time of the script:** ( 3 minutes  38.059 seconds)
 
 
 .. _sphx_glr_download_python_generated_tutorials_plot_tutorial_02_context.py:
