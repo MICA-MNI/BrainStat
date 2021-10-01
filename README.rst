@@ -12,7 +12,7 @@ BrainStat : A toolbox for statistical analysis of neuroimaging data
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
 .. image:: https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg
-    :target: https://www.mathworks.com/matlabcentral/fileexchange/89827-brainstat-alpha-version
+    :target: https://www.mathworks.com/matlabcentral/fileexchange/89827-brainstat
 
 Welcome to BrainStat's documentation!
 
@@ -50,7 +50,8 @@ Developers
 License
 -------
 
-The BrainStat source code is available under the `BSD (3-Clause) license <https://github.com/MICA-LAB/BrainStat/blob/master/LICENSE>`_.
+The BrainStat source code is available under the `BSD (3-Clause) license
+<https://github.com/MICA-LAB/BrainStat/blob/master/LICENSE>`_.
 
 
 Support
