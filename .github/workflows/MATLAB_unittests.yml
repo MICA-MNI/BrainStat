@@ -8,6 +8,11 @@ on:
 
 jobs:
   matlab_unit_test:
+    strategy:
+      fail-fast: false
+      matrix:
+        matlab-version: [R019b, latest]
+
     runs-on: ubuntu-latest
     
     steps:

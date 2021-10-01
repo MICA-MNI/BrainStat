@@ -5,7 +5,7 @@ function mustBeOfSize(x, dimension_size)
 
 arguments
     x
-    dimension_size {mustBeInteger, mustBeNonnegative, mustBeVector} 
+    dimension_size {mustBeInteger, mustBeNonnegative} 
 end
 
 if ndims(x) ~= numel(dimension_size)

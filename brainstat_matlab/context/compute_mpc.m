@@ -7,8 +7,8 @@ function mpc = compute_mpc(profile, labels)
 %   See also COMPUTE_HISTOLOGY_GRADIENTS, READ_HISTOLOGY_PROFILE.
 
 arguments
-    profile (:,:) {mustBeFloat}
-    labels {mustBeVector}
+    profile (:,:)
+    labels
 end
 
 roi_profile = labelmean(profile', labels(:)');

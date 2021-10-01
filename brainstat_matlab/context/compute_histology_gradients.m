@@ -9,7 +9,7 @@ function gm = compute_histology_gradients(mpc, options)
 %
 %   See also GRADIENTMAPS, COMPUTE_MPC.
 arguments 
-    mpc (:,:) {mustBeFloat}
+    mpc (:,:)
     options.kernel (1,:) char = 'na'
     options.approach (1,:) = 'dm'
     options.n_components (1,1) = 10

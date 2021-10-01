@@ -7,7 +7,7 @@ function [volume,header] = read_volume(file)
 % ADD LINK TO BRAINSTAT DOCUMENTATION. 
 
 arguments
-    file (1,:) char {mustBeFile}
+    file (1,:) char
 end
 
 % Niftiread is part of the image processing toolbox 
