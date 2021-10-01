@@ -82,9 +82,9 @@ classdef SLM < matlab.mixin.Copyable
             % Constructor for the SLM class. 
             arguments
                 model
-                contrast {mustBeVector}
+                contrast
                 options.surf = struct()
-                options.mask logical {mustBeVector} = 1;
+                options.mask logical = 1;
                 options.correction string {mustBeValidCorrection} = []
                 options.niter (1,1) double {mustBeInteger, mustBePositive} = 1
                 options.thetalim (1,1) double {mustBePositive} = 0.01

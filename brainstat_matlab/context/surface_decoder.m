@@ -31,7 +31,7 @@ function [pearsons_r_sort, feature_names_sort] = surface_decoder(stat_data, opti
 %   these packages were integral to generating the data used here.
 
 arguments
-    stat_data {mustBeNumeric, mustBeVector}
+    stat_data {mustBeNumeric}
     options.template (1,:) char = 'fsaverage5'
     options.interpolation (1,:) char = 'nearest'
     options.data_dir (1,1) string = brainstat_utils.get_brainstat_directories('neurosynth_data_dir');
