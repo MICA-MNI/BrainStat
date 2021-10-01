@@ -1,4 +1,9 @@
 function [network_names, colormap] = fetch_yeo_networks_metadata(n_regions)
+% FETCH_YEO_NETWORKS_METADATA    fetches names and colormaps of the yeo networks
+%
+% [network_names, colormap] = FETCH_YEO_NETWORKS_METADATA(n_regions) returns the
+% names and colormaps of the yeo networks. The number of regions must be either
+% 7 or 17.
 
 switch n_regions
     case 7
