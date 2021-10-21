@@ -22,7 +22,7 @@ arguments
     template (1,:) char
     atlas (1,:) char
     n_regions (1,1) double
-    options.data_dir (1,:) string {mustBeFolder} = brainstat_utils.get_brainstat_directories('parcellation_data_dir')
+    options.data_dir (1,:) string = brainstat_utils.get_brainstat_directories('parcellation_data_dir')
     options.seven_networks (1,1) logical = true
 end
 

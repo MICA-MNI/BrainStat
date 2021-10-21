@@ -2,7 +2,7 @@
 import sys
 import warnings
 
-__version__ = "0.2.7"
+__version__ = "0.2.8a3"
 
 
 if sys.version_info[1] == 6:
