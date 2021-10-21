@@ -1,1 +1,2 @@
-include brainstat/data_urls.json brainstat/logging.conf
+include brainstat/data_urls.json 
+include brainstat/logging.conf
