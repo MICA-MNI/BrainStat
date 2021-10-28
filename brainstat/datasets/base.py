@@ -370,7 +370,7 @@ def _fetch_schaefer_parcellation(
         parcellations = [x for x in np.reshape(parcellation_full, (2, -1))]
     else:
         parcellations = [read_annot(file)[0] for file in bunch[key]]
-        parcellations[1] += n_regions // 2
+        parcellations[1][parcellations[1] != 0] += n_regions // 2
     return parcellations
 
 
