@@ -1,4 +1,4 @@
-function [surf_lh, surf_rh] = fetch_template_surface(template, options)
+function varargout = fetch_template_surface(template, options)
 % FETCH_TEMPLATE_SURFACE    loads a fsaverage or conte69 surface template
 %   [surf_lh, surf_rh] = FETCH_TEMPLATE_SURFACE(template, varargin) downloads
 %   and loads a 'fsaverage3', 'fsaverage4', 'fsaverage5', 'fsaverage6',
@@ -20,6 +20,7 @@ arguments
     template (1,:) char
     options.data_dir (1,:) string = brainstat_utils.get_brainstat_directories('surface_data_dir')
     options.layer char = ''
+    options.join (1,1) logical = false
 end
 
 switch lower(template)
@@ -40,6 +41,13 @@ switch lower(template)
 end
 filename = dataset_utils.download_OSF_files(template, 'data_dir', options.data_dir);
 [surf_lh, surf_rh] = read_surface_from_targz(filename, template, options.layer);
+
+if options.join
+    surf = io_utils.combine_surfaces(surf_lh, surf_rh, 'Matlab');
+    varargout = {surf};
+else
+    varargout = {surf_lh, surf_rh};
+end
 
 end
 

@@ -94,6 +94,52 @@ classdef test_precomputed < matlab.unittest.TestCase
                         slm_output.correction = {slm_output.correction};
                     end
                 end
+
+                % Peak and clus were changed to a table in Brainstat - change the saved output to the new organization. 
+                if ismember('P', fieldnames(slm_output))
+                    for x = ["peak", "clus"]
+                        if ismember(x{1}, fieldnames(output.P))
+                            for f = fieldnames(output.P.(x{1}))'
+                                if f == "clusid"
+                                    output.P.(x{1}).clusid{2} = output.P.(x{1}).clusid{2} + max(output.P.(x{1}).clusid{1});
+                                end
+                                try
+                                    output.P.(x{1}).(f{1}) = [output.P.(x{1}).(f{1}){1}; output.P.(x{1}).(f{1}){2}];
+                                catch
+                                    keyboard;
+                                end
+                            end
+                            output.P.(x{1}) = struct2table(output.P.(x{1}));
+                            if x == "peak"
+                                output.P.(x{1}) = sortrows(output.P.(x{1}), 't', 'descend');
+                            else
+                                output.P.(x{1}) = sortrows(output.P.(x{1}), 'P', 'ascend');
+                            end
+                        end
+                    end
+                    if ismember('clusid', fieldnames(slm_output.P))
+                        newIds = output.P.clusid{2};
+                        newIds(newIds~=0) = newIds(newIds~=0) + max(output.P.clusid{1});
+                        output.P.clusid = [output.P.clusid{1}, newIds];
+                    end
+
+                    if input.two_tailed
+                        % Two-tailed behavior for P.pval.C changed (now
+                        % corrected for two comparisons). Regular test fails. 
+                        % Run a custom test.
+                        almost_equal = @(x,y) abs(x-y) < 1e-8;
+                        if all( ...
+                                almost_equal(slm_output.P.pval.C, output.P.pval.C{1}) | ...
+                                almost_equal(slm_output.P.pval.C, output.P.pval.C{1}*2) | ...
+                                slm_output.P.pval.C == 1)
+                            slm_output.P.pval.C = [];
+                            output.P.pval.C = [];
+                        else
+                            error('Error in P.pval.C');
+                        end
+                    end
+                end
+
                 if ismember('surf', fieldnames(input))
                     if ismember('coord', fieldnames(input.surf))
                         output.surf.coord = output.surf.coord';
