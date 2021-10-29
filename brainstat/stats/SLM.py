@@ -111,7 +111,9 @@ class SLM:
             An error will be thrown when multivariate data is provided and a
             one-tailed test is requested.
         """
-        if Y.ndim > 2:
+        if Y.ndim < 2 or Y.ndim > 3:
+            raise ValueError("Input data must be two or three dimensional.")
+        elif Y.ndim == 3:
             if (not self.two_tailed) and Y.shape[2] > 1:
                 raise ValueError(
                     "One-tailed tests are not implemented for multivariate data."
