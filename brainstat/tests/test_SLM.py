@@ -71,6 +71,18 @@ def dummy_test(infile, expfile):
 
     slm.fit(idic["Y"])
 
+    # Format of self.P changed since files were created -- revert to original.
+    if slm.P is not None:
+        for key in ["peak", "clus"]:
+            if key in slm.P and slm.P[key].size == 0:
+                slm.P[key] = slm.P[key].to_dict()
+                for key2 in slm.P[key].keys():
+                    slm.P[key][key2] = [None, None] if slm.two_tailed else None
+        if "C" in slm.P["pval"] and slm.P["pval"]["C"] is None and slm.two_tailed:
+            slm.P["pval"]["C"] = [None, None]
+        if "clusid" in slm.P and slm.P["clusid"] is None and slm.two_tailed:
+            slm.P["clusid"] = [None, None]
+
     # load expected outout data
     efile = open(expfile, "br")
     out = pickle.load(efile)

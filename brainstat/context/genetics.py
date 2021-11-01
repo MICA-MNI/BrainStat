@@ -6,7 +6,6 @@ from typing import Optional, Sequence, Union
 import nibabel as nib
 import numpy as np
 import pandas as pd
-import nibabel as nib
 from abagen import check_atlas, get_expression_data
 from brainspace.mesh.mesh_io import read_surface, write_surface
 from sklearn.model_selection import ParameterGrid

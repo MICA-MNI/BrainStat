@@ -2,15 +2,19 @@
 """ Standard Linear regression models. """
 import warnings
 from cmath import sqrt
+from pathlib import Path
 from pprint import pformat
 from typing import Any, List, Optional, Sequence, Tuple, Union
 
 import numpy as np
+import pandas as pd
 from brainspace.mesh.mesh_elements import get_cells, get_points
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 
 from brainstat._typing import ArrayLike
 from brainstat._utils import deprecated
+from brainstat.datasets import fetch_parcellation, fetch_template_surface
+from brainstat.datasets.base import fetch_template_surface, fetch_yeo_networks_metadata
 from brainstat.mesh.utils import _mask_edges, mesh_edges
 from brainstat.stats.terms import FixedEffect, MixedEffect
 from brainstat.stats.utils import apply_mask, undo_mask
@@ -28,7 +32,7 @@ class SLM:
         self,
         model: Union[FixedEffect, MixedEffect],
         contrast: Union[ArrayLike, FixedEffect],
-        surf: Optional[Union[dict, BSPolyData]] = None,
+        surf: Optional[Union[str, dict, BSPolyData]] = None,
         mask: Optional[ArrayLike] = None,
         *,
         correction: Optional[Union[str, Sequence[str]]] = None,
@@ -37,6 +41,7 @@ class SLM:
         drlim: float = 0.1,
         two_tailed: bool = True,
         cluster_threshold: float = 0.001,
+        data_dir: Optional[Union[str, Path]] = None
     ) -> None:
         """Constructor for the SLM class.
 
@@ -46,10 +51,11 @@ class SLM:
             The linear model to be fitted of dimensions (observations, predictors).
         contrast : array-like, brainstat.stats.terms.FixedEffect
             Vector of contrasts in the observations.
-        surf : dict, BSPolyData, optional
+        surf : str, dict, BSPolyData, optional
             A surface provided as either a dictionary with keys 'tri' for its
             faces (n-by-3 array) and 'coord' for its coordinates (3-by-n array),
-            or as a BrainSpace BSPolyData object by default None.
+            or as a BrainSpace BSPolyData object, or a string containing a
+            template name accepted by fetch_template_surface, by default None.
         mask : array-like, optional
             A mask containing True for vertices to include in the analysis, by
             default None.
@@ -73,20 +79,29 @@ class SLM:
         cluster_threshold : float, optional
             P-value threshold or statistic threshold for defining clusters in
             random field theory, by default 0.001.
+        data_dir : str, pathlib.Path, optional
+            Path to the location to store BrainStat data files, defaults to
+            $HOME_DIR/brainstat_data.
         """
         # Input arguments.
         self.model = model
         self.contrast = contrast
-        self.surf = surf
+
+        if isinstance(surf, str):
+            self.surf_name = surf
+            self.surf = fetch_template_surface(self.surf_name)
+        else:
+            self.surf_name = None
+            self.surf = surf
+
         self.mask = mask
-        self.correction = correction
-        if isinstance(self.correction, str):
-            self.correction = [self.correction]
+        self.correction = [correction] if isinstance(correction, str) else correction
         self.niter = niter
         self.thetalim = thetalim
         self.drlim = drlim
         self.two_tailed = two_tailed
         self.cluster_threshold = cluster_threshold
+        self.data_dir = data_dir
 
         # Error check
         if self.surf is None:
@@ -115,7 +130,7 @@ class SLM:
             raise ValueError("Input data must be two or three dimensional.")
         elif Y.ndim == 3:
             if (not self.two_tailed) and Y.shape[2] > 1:
-                raise ValueError(
+                raise NotImplementedError(
                     "One-tailed tests are not implemented for multivariate data."
                 )
             student_t_test = Y.shape[2] == 1
@@ -148,6 +163,7 @@ class SLM:
         else:
             self.P = P1
             self.Q = Q1
+        self._surfstat_to_brainstat_rft()
 
     def _run_multiple_comparisons(self) -> Tuple[Optional[dict], Optional[np.ndarray]]:
         """Runs the multiple comparisons tests and returns their outputs.
@@ -191,6 +207,41 @@ class SLM:
         self.P = None
         self.Q = None
         self.du = None
+
+    def _surfstat_to_brainstat_rft(self) -> None:
+        """Convert SurfStat RFT output to BrainStat RFT output."""
+        if self.P is not None:
+            if "peak" in self.P:
+                if self.P["peak"]["vertid"]:
+                    self.P["peak"]["vertid"] = self.P["peak"]["vertid"].astype(int)
+                if self.P["peak"]["vertid"]:
+                    self.P["peak"]["clusid"] = self.P["peak"]["clusid"].astype(int)
+
+                if self.surf_name in (
+                    "fsaverage",
+                    "fsaverage5",
+                    "fslr32k",
+                    "civet41k",
+                    "civet164k",
+                ):
+                    yeo7 = fetch_parcellation(
+                        self.surf_name, "yeo", 7, data_dir=self.data_dir
+                    )
+                    yeo_names, _ = fetch_yeo_networks_metadata(7)
+                    yeo_names.insert(0, "Undefined")
+                    yeo7_index = yeo7[self.P["peak"]["vertid"]]
+                    self.P["peak"]["yeo7"] = np.take(yeo_names, yeo7_index)
+
+            for field in ["peak", "clus"]:
+                if field in self.P:
+                    for key, value in self.P[field].items():
+                        self.P[field][key] = np.squeeze(self.P[field][key])
+
+                    if self.P[field]["P"].ndim != 0:
+                        self.P[field] = pd.DataFrame.from_dict(self.P[field])
+                        self.P[field].sort_values(by="P", ascending=True)
+                    else:
+                        self.P[field] = pd.DataFrame(columns=self.P[field].keys())
 
     def _unmask(self) -> None:
         """Changes all masked parameters to their input dimensions."""
@@ -310,13 +361,28 @@ def _merge_rft(P1: dict, P2: dict) -> dict:
     for key1 in P1:
         P[key1] = {}
         if key1 == "clusid":
-            P[key1] = [P1[key1], P2[key1]]
+            if P1[key1] is None:
+                P[key1] = P2[key1]
+            elif P2[key1] is None:
+                P[key1] = P1[key1]
+            else:
+                P[key1] = np.append(P1[key1], P2[key1] + np.amax(P1[key1]))
             continue
         for key2 in P1[key1]:
-            if key2 == "P" and key1 == "pval":
+            if key1 == "pval":
                 P[key1][key2] = _onetailed_to_twotailed(P1[key1][key2], P2[key1][key2])
             else:
-                P[key1][key2] = [P1[key1][key2], P2[key1][key2]]
+                if P1[key1][key2] is None:
+                    P[key1][key2] = P2[key1][key2]
+                elif P2[key1][key2] is None:
+                    P[key1][key2] = P1[key1][key2]
+                elif key2 == "clusid":
+                    P[key1][key2] = np.append(
+                        P1[key1][key2], P2[key1][key2] + np.amax(P1[key1][key2])
+                    )
+                else:
+                    P[key1][key2] = np.append(P1[key1][key2], P2[key1][key2])
+
     return P
 
 
@@ -342,6 +408,13 @@ def _merge_fdr(Q1: Optional[ArrayLike], Q2: Optional[ArrayLike]) -> np.ndarray:
 
 def _onetailed_to_twotailed(p1: ArrayLike, p2: ArrayLike) -> np.ndarray:
     """Converts two one-tailed tests to a two-tailed test"""
+    if p1 is None and p2 is None:
+        return None
+    elif p1 is None:
+        p1 = p2
+    elif p2 is None:
+        p2 = p1
+
     return np.minimum(np.minimum(p1, p2) * 2, 1)
 
 
