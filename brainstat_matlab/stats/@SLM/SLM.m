@@ -9,9 +9,13 @@ classdef SLM < matlab.mixin.Copyable
 %   
 %   Valid name-value pairs:
 %   surf: 
-%       A char array containing a path to a surface, a cell/string array of the
-%       aforementioned, or a loaded surface in SurfStat format. Defaults to 
-%       struct(). 
+%       A char array containing a path to a surface, a cell/string array of
+%       the aforementioned, a loaded surface in SurfStat format, or a
+%       template name. Valid template names are: fsaverage3', 'fsaverage4',
+%       'fsaverage5' (Y), 'fsaverage6',  'fsaverage' (Y), 'fslr32k' (Y),
+%       'civet41k' (Y), 'civet164k' (Y). If the template name is marked
+%       with (Y), then a list of Yeo-7 network labels is returned with the
+%       table in slm.P.peak. Defaults to struct().
 %   mask:  
 %       A logical vector containing true for vertices that should be kept 
 %       during the analysis. Defaults to [].
@@ -31,12 +35,17 @@ classdef SLM < matlab.mixin.Copyable
 %   cluster_threshold:
 %       P-value threshold or statistic threshold for defining clusters, Defaults
 %       to 0.001.
+%   data_dir:
+%       Location to store parcellation files. Used only if surf is a
+%       template name
+%       Defaults to $HOME_DIR/brainstat_data
 
 
     properties
         model
         contrast
         surf
+        surf_name
         mask
         correction
         niter
@@ -44,6 +53,7 @@ classdef SLM < matlab.mixin.Copyable
         drlim
         two_tailed
         cluster_threshold
+        data_dir
     end
 
     properties(SetAccess=protected)
@@ -91,15 +101,12 @@ classdef SLM < matlab.mixin.Copyable
                 options.drlim (1,1) double {mustBePositive} = 0.1
                 options.two_tailed (1,1) logical = true
                 options.cluster_threshold (1,1) double {mustBePositive} = 0.001
+                options.data_dir (1,:) string = ""
             end
             
             obj.model = model;
-            obj.contrast = contrast;                
-            if numel(options.surf) > 1
-                options.surf = io_utils.combine_surfaces(options.surf{1}, options.surf{2}, 'SurfStat');
-            elseif ~isempty(fieldnames(struct))
-                options.surf = io_utils.convert_surface(options.surf, 'format', 'SurfStat');
-            end
+            obj.contrast = contrast;
+            [options.surf, obj.surf_name] = obj.parse_surface(options.surf);
             for field = fieldnames(options)'
                 obj.(field{1}) = options.(field{1});
             end
@@ -211,8 +218,22 @@ classdef SLM < matlab.mixin.Copyable
                 obj.Q = obj.merge_fdr(Q1, Q2);
             else
                 obj.P = P1;
+                % Make sure output format is the same as two-tailed.
+                if ~isempty(P1)
+                    for field = {'peak', 'clus', 'clusid'}
+                        if field == "clusid"
+                            obj.P.(field{1}) = {obj.P.(field{1})};
+                        else
+                            for field2 = fieldnames(obj.P.(field{1}))'
+                                obj.P.(field{1}).(field2{1}) = {obj.P.(field{1}).(field2{1})};
+                            end
+                        end
+                    end
+                end
                 obj.Q = Q1;
             end
+
+            obj.surfstat_to_brainstat_rft();
         end   
         
         function [P, Q] = run_multiple_comparisons(obj)
@@ -227,6 +248,43 @@ classdef SLM < matlab.mixin.Copyable
             end
             if ismember('fdr', obj.correction)
                 Q = obj.fdr();
+            end
+        end
+
+        function surfstat_to_brainstat_rft(obj)
+            % Converts SurfStat structure arrays of peak and clus to tables
+            % with the Yeo networks included. 
+            %
+            % Yeo networks are included only if the surface was defined by
+            % a char array.
+            
+            if ismember('rft', obj.correction)
+                f = fieldnames(obj.P);
+                if ismember('peak', f)
+                    if ismember(obj.surf_name, {'fsaverage', 'fsaverage5', 'fslr32k', 'civet41k', 'civet164k'})
+                        if obj.data_dir ~= ""
+                            yeo7 = fetch_parcellation(obj.surf_name, 'yeo', 7, 'data_dir', obj.data_dir);
+                        else
+                            yeo7 = fetch_parcellation(obj.surf_name, 'yeo', 7);
+                        end
+                        yeo_names = ["Undefined"; fetch_yeo_networks_metadata(7)];
+                        for ii = 1:numel(obj.P.peak.t)
+                            yeo7_index = yeo7(obj.P.peak.vertid{ii});
+                            obj.P.peak.yeo7{ii} = yeo_names(yeo7_index + 1);
+                        end
+                    end
+                end
+                for field = ["peak", "clus"]
+                    if ismember(field{1}, f)
+                        for ii = 1:numel(obj.P.(field{1}).P)
+                            one_tail_array = structfun(@(x) x{ii}, obj.P.(field{1}), 'Uniform', false);
+                            P_field_tmp.(field{1}){ii} = struct2table(one_tail_array);
+                            P_field_tmp.(field{1}){ii} = sortrows(P_field_tmp.(field{1}){ii}, 'P', 'ascend');
+                        end
+                    end
+                end
+                obj.P.peak = P_field_tmp.peak;
+                obj.P.clus = P_field_tmp.clus;
             end
         end
 
@@ -265,6 +323,25 @@ classdef SLM < matlab.mixin.Copyable
     methods(Static)
         %% Static methods
         
+        function [surf_out, surf_name] = parse_surface(surf)
+            % Parses input surfaces. 
+            surf_name = '';
+            if ischar(surf)
+                if ismember(surf, {'fsaverage3', 'fsaverage4', 'fsaverage5', 'fsaverage6', ...
+                    'fsaverage', 'fslr32k', 'civet41k', 'civet164k'})
+                    surf_name = surf;
+                    surf_out = fetch_template_surface(surf_name, 'join', true);
+                    surf_out = io_utils.convert_surface(surf_out, 'format', 'SurfStat');
+                end
+            elseif numel(surf) > 1
+                surf_out = io_utils.combine_surfaces(surf{1}, surf{2}, 'SurfStat');
+            elseif ~isempty(fieldnames(surf))
+                surf_out = io_utils.convert_surface(surf, 'format', 'SurfStat');
+            else
+                surf_out = [];
+            end
+        end
+
         function P = merge_rft(P1, P2)
             % Merge two one-tailed outputs of the random_field_theory function
             % into a single structure. Both P1 and P2 are the output of the RFT function.
@@ -277,17 +354,17 @@ classdef SLM < matlab.mixin.Copyable
             for key1_loop = fieldnames(P1)'
                 key1 = key1_loop{1};
                 if key1 == "clusid"
-                    P.(key1) = {P1.(key1), P2.(key1)};
-                else
-                    P.(key1) = struct();
-                    for key2_loop = fieldnames(P1.(key1))'
-                        key2 = key2_loop{1};
-                        if key2 == "P" && key1 == "pval"
-                            P.(key1).(key2) = brainstat_utils.one_tailed_to_two_tailed(...
-                                P1.(key1).(key2), P2.(key1).(key2));
-                        else
-                            P.(key1).(key2) = {P1.(key1).(key2), P2.(key1).(key2)};
-                        end
+                    P.clusid = {P1.(key1); P2.(key1)};
+                    continue
+                end
+                P.(key1) = struct();
+                for key2_loop = fieldnames(P1.(key1))'
+                    key2 = key2_loop{1};
+                    if key1 == "pval"
+                        P.(key1).(key2) = brainstat_utils.one_tailed_to_two_tailed(...
+                            P1.(key1).(key2), P2.(key1).(key2));
+                    else
+                        P.(key1).(key2) = {P1.(key1).(key2); P2.(key1).(key2)};
                     end
                 end
             end

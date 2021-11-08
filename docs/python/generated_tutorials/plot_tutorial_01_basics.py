@@ -89,7 +89,9 @@ print(model)
 from brainstat.stats.SLM import SLM
 
 contrast_age = model.AGE_AT_SCAN
-slm_age = SLM(model, contrast_age, surf=pial_combined, mask=mask, correction="rft")
+slm_age = SLM(
+    model, contrast_age, surf=pial_combined, mask=mask, correction=["fdr", "rft"]
+)
 slm_age.fit(thickness)
 
 
@@ -123,7 +125,25 @@ def plot_slm_results(slm):
         pial_left,
         pial_right,
         pval,
-        label_text=["p-values"],
+        label_text=["p-values (RFT)"],
+        color_bar=True,
+        color_range=(0, 0.05),
+        embed_nb=True,
+        cmap="hot_r",
+        size=(1400, 200),
+        zoom=1.45,
+        nan_color=(0.7, 0.7, 0.7, 1),
+        cb__labelTextProperty={"fontSize": 12},
+    )
+
+    pval = slm.Q
+    pval[pval > 0.05] = np.nan
+    pval[~mask] = np.nan
+    plot_hemispheres(
+        pial_left,
+        pial_right,
+        pval,
+        label_text=["p-values (FDR)"],
         color_bar=True,
         color_range=(0, 0.05),
         embed_nb=True,
@@ -137,6 +157,25 @@ def plot_slm_results(slm):
 
 plot_slm_results(slm_age)
 
+###################################################################
+# BrainStat also allows for assessing significant clusters and peaks. The data
+# on clusters are stored in tables inside BrainStatModel.P.clus and information
+# on the peaks is stored in BrainStatModel.P.peak. If a two-tailed test is run
+# (BrainStat defaults to two-tailed), a table is returned for each tail. The
+# first table uses the contrast as provided, the second table uses the inverse
+# contrast. If a one-tailed test is performed, then only a single table is
+# returned. Lets print the inverted contrast cluster table.
+#
+
+print(slm_age.P["clus"][1])
+
+###################################################################
+# Here, we see that cluster 1 contains 8738 vertices and is significant at a
+# p-value of 7.45e-08. Clusters are sorted by p-value; later clusters will
+# generally be smaller and have higher p-values. Lets now have a look at the
+# peaks within these clusters.
+
+print(slm_age.P["peak"][1])
 
 ###################################################################
 # By default BrainStat uses a two-tailed test. If you want to get a one-tailed
@@ -151,7 +190,7 @@ slm_age_onetailed = SLM(
     model,
     -contrast_age,
     surf=pial_combined,
-    correction="rft",
+    correction=["fdr", "rft"],
     mask=mask,
     two_tailed=False,
 )
@@ -165,7 +204,11 @@ plot_slm_results(slm_age_onetailed)
 
 contrast_patient = model.DX_GROUP
 slm_patient = SLM(
-    model, contrast_patient, surf=pial_combined, mask=mask, correction="rft"
+    model,
+    contrast_patient,
+    surf=pial_combined,
+    mask=mask,
+    correction=["fdr", "rft"],
 )
 slm_patient.fit(thickness)
 
@@ -187,7 +230,11 @@ random_site = MixedEffect(demographics.SITE_ID, name_ran="Site")
 
 model_random = term_age + term_patient + random_site
 slm_random = SLM(
-    model_random, contrast_age, surf=pial_combined, mask=mask, correction="rft"
+    model_random,
+    contrast_age,
+    surf=pial_combined,
+    mask=mask,
+    correction=["fdr", "rft"],
 )
 slm_random.fit(thickness)
 
