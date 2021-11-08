@@ -165,7 +165,7 @@ class SLM:
             # Make variable type consistent with two one tailed outputs.
             for field in ["peak", "clus", "clusid"]:
                 if self.P is not None and field in self.P:
-                    if field == "clusid":
+                    if field is "clusid":
                         self.P[field] = [self.P[field]]
                     else:
                         for field2 in self.P[field].keys():
@@ -248,7 +248,7 @@ class SLM:
                         yeo7_index = yeo7[self.P["peak"]["vertid"][i]]
                         if "yeo7" not in self.P["peak"]:
                             self.P["peak"]["yeo7"] = []
-                        self.P["peak"]["yeo7"].append(np.take(yeo_names, yeo7_index))
+                        self.P["peak"]["yeo7"][i] = np.take(yeo_names, yeo7_index)
 
             if "clus" in self.P:
                 for i in range(len(self.P["clus"]["clusid"])):
