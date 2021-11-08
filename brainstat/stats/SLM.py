@@ -165,7 +165,7 @@ class SLM:
             # Make variable type consistent with two one tailed outputs.
             for field in ["peak", "clus", "clusid"]:
                 if self.P is not None and field in self.P:
-                    if field is "clusid":
+                    if field == "clusid":
                         self.P[field] = [self.P[field]]
                     else:
                         for field2 in self.P[field].keys():
