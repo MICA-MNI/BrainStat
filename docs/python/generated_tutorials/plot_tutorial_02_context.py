@@ -152,62 +152,29 @@ plot_hemispheres(
 # functional gradients (Margulies et al., 2016, PNAS), a lower dimensional
 # manifold of resting-state connectivity.
 #
-# Lets first have a look at contextualization of cortical thickness using the
-# Yeo networks. We'll use some of the sample cortical thickness data included
-# with BrainSpace, and see what its mean is within each Yeo network.
+# As an example, lets have a look at the first functional gradient within the
+# Yeo networks.
 #
-# We'll use the package plotly to visualize the output. plotly is not a
-# dependency of BrainStat so you'll have to install it separately (:code:`pip
-# install plotly`) if you want to use this functionality.
 
-import pandas as pd
-from brainspace.datasets import load_marker
+import matplotlib.pyplot as plt
 
-from brainstat.context.resting import yeo_networks_associations
-from brainstat.datasets import fetch_yeo_networks_metadata
-
-thickness = load_marker("thickness", join=True)
-
-mean_thickness = np.squeeze(yeo_networks_associations(thickness, "fslr32k"))
-network_names, colormap = fetch_yeo_networks_metadata(7)
-
-df = pd.DataFrame(
-    dict(
-        r=mean_thickness,
-        theta=network_names,
-    )
-)
-fig = px.line_polar(df, r="r", theta="theta", line_close=True)
-fig.update_traces(fill="toself")
-fig
-
-###########################################################################
-# Here we can see that, on average, the somatomotor/visual cortices have low
-# cortical thickness whereas the default/limbic cortices have high thickness.
-#
-# Next, lets have a look at how cortical thickness relates to the first
-# functional gradient which describes a sensory-transmodal axis in the brain.
-# First lets plot the first gradient.
-
-from brainstat.datasets import fetch_gradients
+from brainstat.context.resting import yeo_networks_average
+from brainstat.datasets import fetch_gradients, fetch_yeo_networks_metadata
 
 functional_gradients = fetch_gradients("fslr32k", "margulies2016")
-surface_left, surface_right = fetch_template_surface("fslr32k", join=False)
+yeo_gradients = yeo_networks_average(functional_gradients, "fslr32k")
+network_names, yeo_colormap = fetch_yeo_networks_metadata(7)
 
-plot_hemispheres(
-    surface_left,
-    surface_right,
-    functional_gradients[:, 0].T,
-    embed_nb=True,
-    label_text=["Gradient 1"],
-    color_bar=True,
-    size=(1400, 200),
-    zoom=1.45,
-    nan_color=(0.7, 0.7, 0.7, 1),
-    cb__labelTextProperty={"fontSize": 12},
-)
+plt.bar(np.arange(7), yeo_gradients[:, 0], color=yeo_colormap)
+plt.xticks(np.arange(7), network_names, rotation=90)
+plt.gcf().subplots_adjust(bottom=0.3)
+plt.show()
 
 ###########################################################################
+# Unsurprisingly, the gradients are very similar to the Yeo networks, with
+# higher gradient values in higher order networks and lower values in lower
+# order networks.
+#
 # There are many ways to compare these gradients to cortical markers such as
 # cortical thickness. In general, we recommend using corrections for spatial
 # autocorrelation which are implemented in BrainSpace. We'll show a correction
@@ -219,11 +186,12 @@ plot_hemispheres(
 # rotated across the cortical surface. The p-value then depends on the
 # percentile of the empirical correlation within the permuted distribution.
 
-from brainspace.datasets import load_conte69
+from brainspace.datasets import load_conte69, load_marker
 from brainspace.null_models import SpinPermutations
 
 sphere_left, sphere_right = load_conte69(as_sphere=True)
 thickness_left, thickness_right = load_marker("thickness", join=False)
+thickness = load_marker("thickness", join=True)
 
 # Run spin test with 100 permutations (note: we generally recommend >=1000)
 n_rep = 100
