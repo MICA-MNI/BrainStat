@@ -99,29 +99,15 @@ classdef test_precomputed < matlab.unittest.TestCase
                 if ismember('P', fieldnames(slm_output))
                     for x = ["peak", "clus"]
                         if ismember(x{1}, fieldnames(output.P))
-                            for f = fieldnames(output.P.(x{1}))'
-                                if f == "clusid"
-                                    output.P.(x{1}).clusid{2} = output.P.(x{1}).clusid{2} + max(output.P.(x{1}).clusid{1});
-                                end
-                                try
-                                    output.P.(x{1}).(f{1}) = [output.P.(x{1}).(f{1}){1}; output.P.(x{1}).(f{1}){2}];
-                                catch
-                                    keyboard;
-                                end
-                            end
-                            output.P.(x{1}) = struct2table(output.P.(x{1}));
-                            if x == "peak"
-                                output.P.(x{1}) = sortrows(output.P.(x{1}), 't', 'descend');
-                            else
-                                output.P.(x{1}) = sortrows(output.P.(x{1}), 'P', 'ascend');
+                            for ii = 1:numel(output.P.(x{1}).P)
+                                one_tail_array = structfun(@(x) x{ii}, output.P.(x{1}), 'Uniform', false);
+                                P_field_tmp.(x{1}){ii} = struct2table(one_tail_array);
+                                P_field_tmp.(x{1}){ii} = sortrows(P_field_tmp.(x{1}){ii}, 'P', 'ascend');
                             end
                         end
                     end
-                    if ismember('clusid', fieldnames(slm_output.P))
-                        newIds = output.P.clusid{2};
-                        newIds(newIds~=0) = newIds(newIds~=0) + max(output.P.clusid{1});
-                        output.P.clusid = [output.P.clusid{1}, newIds];
-                    end
+                    output.P.peak = P_field_tmp.peak;
+                    output.P.clus = P_field_tmp.clus;
 
                     if input.two_tailed
                         % Two-tailed behavior for P.pval.C changed (now
@@ -150,7 +136,11 @@ classdef test_precomputed < matlab.unittest.TestCase
                 end
                 
                 % Compare
-                recursive_equality(testCase, slm_output, output, pair{1});
+                try
+                    recursive_equality(testCase, slm_output, output, pair{1});
+                catch
+                    keyboard;
+                end
 
             end
         end

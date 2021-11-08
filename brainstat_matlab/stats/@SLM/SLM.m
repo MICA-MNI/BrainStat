@@ -218,6 +218,18 @@ classdef SLM < matlab.mixin.Copyable
                 obj.Q = obj.merge_fdr(Q1, Q2);
             else
                 obj.P = P1;
+                % Make sure output format is the same as two-tailed.
+                if ~isempty(P1)
+                    for field = {'peak', 'clus', 'clusid'}
+                        if field == "clusid"
+                            obj.P.(field{1}) = {obj.P.(field{1})};
+                        else
+                            for field2 = fieldnames(obj.P.(field{1}))'
+                                obj.P.(field{1}).(field2{1}) = {obj.P.(field{1}).(field2{1})};
+                            end
+                        end
+                    end
+                end
                 obj.Q = Q1;
             end
 
@@ -256,16 +268,23 @@ classdef SLM < matlab.mixin.Copyable
                             yeo7 = fetch_parcellation(obj.surf_name, 'yeo', 7);
                         end
                         yeo_names = ["Undefined"; fetch_yeo_networks_metadata(7)];
-                        yeo7_index = yeo7(obj.P.peak.vertid);
-                        obj.P.peak.yeo7 = yeo_names(yeo7_index + 1);
+                        for ii = 1:numel(obj.P.peak.t)
+                            yeo7_index = yeo7(obj.P.peak.vertid{ii});
+                            obj.P.peak.yeo7{ii} = yeo_names(yeo7_index + 1);
+                        end
                     end
-                    obj.P.peak = struct2table(obj.P.peak);
-                    obj.P.peak = sortrows(obj.P.peak, 't', 'descend');
                 end
-                if ismember('clus', f)
-                    obj.P.clus = struct2table(obj.P.clus);
-                    obj.P.peak = sortrows(obj.P.peak, 'P', 'ascend');
+                for field = ["peak", "clus"]
+                    if ismember(field{1}, f)
+                        for ii = 1:numel(obj.P.(field{1}).P)
+                            one_tail_array = structfun(@(x) x{ii}, obj.P.(field{1}), 'Uniform', false);
+                            P_field_tmp.(field{1}){ii} = struct2table(one_tail_array);
+                            P_field_tmp.(field{1}){ii} = sortrows(P_field_tmp.(field{1}){ii}, 'P', 'ascend');
+                        end
+                    end
                 end
+                obj.P.peak = P_field_tmp.peak;
+                obj.P.clus = P_field_tmp.clus;
             end
         end
 
@@ -335,26 +354,17 @@ classdef SLM < matlab.mixin.Copyable
             for key1_loop = fieldnames(P1)'
                 key1 = key1_loop{1};
                 if key1 == "clusid"
-                    newIds = P2.(key1);
-                    if ~isempty(P1.(key1))
-                        newIds(newIds~=0) = newIds(newIds~=0) + max(P1.(key1));
-                    end
-                    P.(key1) = [P1.(key1), newIds];
-                else
-                    P.(key1) = struct();
-                    for key2_loop = fieldnames(P1.(key1))'
-                        key2 = key2_loop{1};
-                        if key1 == "pval"
-                            P.(key1).(key2) = brainstat_utils.one_tailed_to_two_tailed(...
-                                P1.(key1).(key2), P2.(key1).(key2));
-                        elseif ismember(key1, ["peak", "clus"])
-                            if key2 == "clusid"
-                                if ~isempty(P1.(key1).(key2))
-                                    P2.(key1).(key2) = P2.(key1).(key2) + max(P1.(key1).(key2));
-                                end
-                            end
-                            P.(key1).(key2) = [P1.(key1).(key2); P2.(key1).(key2)];
-                        end
+                    P.clusid = {P1.(key1); P2.(key1)};
+                    continue
+                end
+                P.(key1) = struct();
+                for key2_loop = fieldnames(P1.(key1))'
+                    key2 = key2_loop{1};
+                    if key1 == "pval"
+                        P.(key1).(key2) = brainstat_utils.one_tailed_to_two_tailed(...
+                            P1.(key1).(key2), P2.(key1).(key2));
+                    else
+                        P.(key1).(key2) = {P1.(key1).(key2); P2.(key1).(key2)};
                     end
                 end
             end

@@ -275,27 +275,6 @@ class SLM:
                         P_tmp.append(pd.DataFrame(columns=tail_dict.keys()))
                 self.P[field] = P_tmp
 
-            """
-            none_squeeze = lambda x: np.squeeze(x) if x is not None else None
-            P = {}
-            for field in ["peak", "clus"]:
-                P_tmp = []
-                if field in self.P:
-                    for i in range(len(self.P[field])):
-                        for key, value in self.P[field].items():
-                            try:
-                                self.P[field][key][i] = none_squeeze(self.P[field][key][i])
-                            except:
-                                import pdb
-                                pdb.set_trace()
-                        if self.P[field]["P"][i] is not None:
-                            tail_dict = {x[i] for x in self.P[field]}
-                            P_tmp.append(pd.DataFrame.from_dict(tail_dict))
-                            P_tmp[i].sort_values(by="P", ascending=True)
-                        else:
-                            P_tmp.append(pd.DataFrame(columns=self.P[field].keys()))
-                P[field] = P_tmp
-                """
 
     def _unmask(self) -> None:
         """Changes all masked parameters to their input dimensions."""
