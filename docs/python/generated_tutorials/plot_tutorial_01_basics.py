@@ -165,7 +165,7 @@ plot_slm_results(slm_age)
 # first table uses the contrast as provided, the second table uses the inverse
 # contrast. If a one-tailed test is performed, then only a single table is
 # returned. Lets print the inverted contrast cluster table.
-# 
+#
 
 print(slm_age.P["clus"][1])
 
@@ -173,7 +173,7 @@ print(slm_age.P["clus"][1])
 # Here, we see that cluster 1 contains 8738 vertices and is significant at a
 # p-value of 7.45e-08. Clusters are sorted by p-value; later clusters will
 # generally be smaller and have higher p-values. Lets now have a look at the
-# peaks within these clusters. 
+# peaks within these clusters.
 
 print(slm_age.P["peak"][1])
 
