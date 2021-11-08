@@ -275,7 +275,6 @@ class SLM:
                         P_tmp.append(pd.DataFrame(columns=tail_dict.keys()))
                 self.P[field] = P_tmp
 
-
     def _unmask(self) -> None:
         """Changes all masked parameters to their input dimensions."""
         simple_unmask_parameters = ["t", "coef", "SSE", "r", "ef", "sd", "dfs"]
