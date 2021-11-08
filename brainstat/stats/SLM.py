@@ -162,7 +162,16 @@ class SLM:
             self.Q = _merge_fdr(Q1, Q2)
         else:
             self.P = P1
+            # Make variable type consistent with two one tailed outputs.
+            for field in ["peak", "clus", "clusid"]:
+                if self.P is not None and field in self.P:
+                    if field is "clusid":
+                        self.P[field] = [self.P[field]]
+                    else:
+                        for field2 in self.P[field].keys():
+                            self.P[field][field2] = [self.P[field][field2]]
             self.Q = Q1
+
         self._surfstat_to_brainstat_rft()
 
     def _run_multiple_comparisons(self) -> Tuple[Optional[dict], Optional[np.ndarray]]:
@@ -209,39 +218,84 @@ class SLM:
         self.du = None
 
     def _surfstat_to_brainstat_rft(self) -> None:
-        """Convert SurfStat RFT output to BrainStat RFT output."""
+        """Convert SurfStat RFT output to BrainStat RFT output.
+        In short, we convert the peak/clus arrays to pandas dataframes and add Yeo networks.
+        """
         if self.P is not None:
             if "peak" in self.P:
-                if self.P["peak"]["vertid"]:
-                    self.P["peak"]["vertid"] = self.P["peak"]["vertid"].astype(int)
-                if self.P["peak"]["vertid"]:
-                    self.P["peak"]["clusid"] = self.P["peak"]["clusid"].astype(int)
+                for i in range(len(self.P["peak"]["t"])):
+                    if self.P["peak"]["vertid"][i] is not None:
+                        self.P["peak"]["vertid"][i] = self.P["peak"]["vertid"][
+                            i
+                        ].astype(int)
+                    if self.P["peak"]["clusid"][i] is not None:
+                        self.P["peak"]["clusid"][i] = self.P["peak"]["clusid"][
+                            i
+                        ].astype(int)
 
-                if self.surf_name in (
-                    "fsaverage",
-                    "fsaverage5",
-                    "fslr32k",
-                    "civet41k",
-                    "civet164k",
-                ):
-                    yeo7 = fetch_parcellation(
-                        self.surf_name, "yeo", 7, data_dir=self.data_dir
-                    )
-                    yeo_names, _ = fetch_yeo_networks_metadata(7)
-                    yeo_names.insert(0, "Undefined")
-                    yeo7_index = yeo7[self.P["peak"]["vertid"]]
-                    self.P["peak"]["yeo7"] = np.take(yeo_names, yeo7_index)
+                    if self.surf_name in (
+                        "fsaverage",
+                        "fsaverage5",
+                        "fslr32k",
+                        "civet41k",
+                        "civet164k",
+                    ):
+                        yeo7 = fetch_parcellation(
+                            self.surf_name, "yeo", 7, data_dir=self.data_dir
+                        )
+                        yeo_names, _ = fetch_yeo_networks_metadata(7)
+                        yeo_names.insert(0, "Undefined")
+                        yeo7_index = yeo7[self.P["peak"]["vertid"][i]]
+                        if "yeo7" not in self.P["peak"]:
+                            self.P["peak"]["yeo7"] = []
+                        self.P["peak"]["yeo7"][i] = np.take(yeo_names, yeo7_index)
 
+            if "clus" in self.P:
+                for i in range(len(self.P["clus"]["clusid"])):
+                    if self.P["clus"]["clusid"][i] is not None:
+                        self.P["clus"]["clusid"][i] = self.P["clus"]["clusid"][
+                            i
+                        ].astype(int)
+
+            none_squeeze = lambda x: np.squeeze(x) if x is not None else None
             for field in ["peak", "clus"]:
-                if field in self.P:
-                    for key, value in self.P[field].items():
-                        self.P[field][key] = np.squeeze(self.P[field][key])
-
-                    if self.P[field]["P"].ndim != 0:
-                        self.P[field] = pd.DataFrame.from_dict(self.P[field])
-                        self.P[field].sort_values(by="P", ascending=True)
+                P_tmp = []
+                for i in range(len(self.P[field]["P"])):
+                    tail_dict = {
+                        key: none_squeeze(value[i])
+                        for key, value in self.P[field].items()
+                    }
+                    if tail_dict["P"] is not None:
+                        if tail_dict["P"].size == 1:
+                            P_tmp.append(pd.DataFrame.from_dict([tail_dict]))
+                        else:
+                            P_tmp.append(pd.DataFrame.from_dict(tail_dict))
+                            P_tmp[i].sort_values(by="P", ascending=True)
                     else:
-                        self.P[field] = pd.DataFrame(columns=self.P[field].keys())
+                        P_tmp.append(pd.DataFrame(columns=tail_dict.keys()))
+                self.P[field] = P_tmp
+
+            """
+            none_squeeze = lambda x: np.squeeze(x) if x is not None else None
+            P = {}
+            for field in ["peak", "clus"]:
+                P_tmp = []
+                if field in self.P:
+                    for i in range(len(self.P[field])):
+                        for key, value in self.P[field].items():
+                            try:
+                                self.P[field][key][i] = none_squeeze(self.P[field][key][i])
+                            except:
+                                import pdb
+                                pdb.set_trace()
+                        if self.P[field]["P"][i] is not None:
+                            tail_dict = {x[i] for x in self.P[field]}
+                            P_tmp.append(pd.DataFrame.from_dict(tail_dict))
+                            P_tmp[i].sort_values(by="P", ascending=True)
+                        else:
+                            P_tmp.append(pd.DataFrame(columns=self.P[field].keys()))
+                P[field] = P_tmp
+                """
 
     def _unmask(self) -> None:
         """Changes all masked parameters to their input dimensions."""
@@ -358,31 +412,16 @@ def _merge_rft(P1: dict, P2: dict) -> dict:
         return None
 
     P = {}
-    for key1 in P1:
+    for key1 in P1 or P2:
         P[key1] = {}
         if key1 == "clusid":
-            if P1[key1] is None:
-                P[key1] = P2[key1]
-            elif P2[key1] is None:
-                P[key1] = P1[key1]
-            else:
-                P[key1] = np.append(P1[key1], P2[key1] + np.amax(P1[key1]))
+            P[key1] = [P1[key1], P2[key1]]
             continue
         for key2 in P1[key1]:
             if key1 == "pval":
                 P[key1][key2] = _onetailed_to_twotailed(P1[key1][key2], P2[key1][key2])
             else:
-                if P1[key1][key2] is None:
-                    P[key1][key2] = P2[key1][key2]
-                elif P2[key1][key2] is None:
-                    P[key1][key2] = P1[key1][key2]
-                elif key2 == "clusid":
-                    P[key1][key2] = np.append(
-                        P1[key1][key2], P2[key1][key2] + np.amax(P1[key1][key2])
-                    )
-                else:
-                    P[key1][key2] = np.append(P1[key1][key2], P2[key1][key2])
-
+                P[key1][key2] = [P1[key1][key2], P2[key1][key2]]
     return P
 
 
