@@ -1,4 +1,4 @@
-"""Data included with BrainStat."""
+""" Data included with BrainStat. """
 from .base import (
     fetch_gradients,
     fetch_mask,
