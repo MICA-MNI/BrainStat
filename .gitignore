@@ -1,3 +1,6 @@
+*.prof 
+local_scripts/*
+
 docs/_build
 docs/generated
 test_python
