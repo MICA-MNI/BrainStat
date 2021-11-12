@@ -84,7 +84,7 @@ def to_df(
             )
         df.columns = names
 
-    return pd.get_dummies(df)
+    return pd.get_dummies(df, dtype=np.int8)
 
 
 def get_index(df: pd.DataFrame) -> Optional[int]:
