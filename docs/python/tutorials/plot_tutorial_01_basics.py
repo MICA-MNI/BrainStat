@@ -92,7 +92,7 @@ from brainstat.stats.SLM import SLM
 
 contrast_age = model.AGE_AT_SCAN
 slm_age = SLM(
-    model, contrast_age, surf=pial_combined, mask=mask, correction=["fdr", "rft"]
+    model, contrast_age, surf="civet41k", mask=mask, correction=["fdr", "rft"]
 )
 slm_age.fit(thickness)
 
@@ -191,7 +191,7 @@ print(slm_age.P["peak"][1])
 slm_age_onetailed = SLM(
     model,
     -contrast_age,
-    surf=pial_combined,
+    surf="civet41k",
     correction=["fdr", "rft"],
     mask=mask,
     two_tailed=False,
@@ -208,7 +208,7 @@ contrast_patient = model.DX_GROUP_Patient - model.DX_GROUP_Control
 slm_patient = SLM(
     model,
     contrast_patient,
-    surf=pial_combined,
+    surf="civet41k",
     mask=mask,
     correction=["fdr", "rft"],
 )
@@ -234,7 +234,7 @@ model_random = term_age + term_patient + random_site
 slm_random = SLM(
     model_random,
     contrast_age,
-    surf=pial_combined,
+    surf="civet41k",
     mask=mask,
     correction=["fdr", "rft"],
 )
