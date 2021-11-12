@@ -198,16 +198,12 @@ def mesh_edges(
 
 
 def _mask_edges(edges: np.ndarray, mask: ArrayLike) -> Tuple[np.ndarray, np.ndarray]:
-    # TODO: this section is sloppily written.
     missing_edges = np.where(np.logical_not(mask))
-    remove_edges = np.zeros(edges.shape, dtype=bool)
-    for i in range(edges.shape[0]):
-        for j in range(edges.shape[1]):
-            remove_edges[i, j] = (edges[i, j] == missing_edges).any()
+    remove_edges = np.isin(edges, missing_edges)
     idx = ~np.any(remove_edges, axis=1)
-    edges = edges[idx, :]
-    edges = _make_contiguous(edges)
-    return edges, idx
+    edges_new = edges[idx, :]
+    edges_new = _make_contiguous(edges_new)
+    return edges_new, idx
 
 
 def _make_contiguous(Y: np.ndarray) -> np.ndarray:
@@ -223,7 +219,10 @@ def _make_contiguous(Y: np.ndarray) -> np.ndarray:
     numpy.ndarray
         Array Y converted to contiguous numbers in range(np.unique(Y).size).
     """
-    val = np.unique(Y)
-    for i in range(val.size):
-        Y[Y == val[i]] = i
-    return Y
+    Y_flat = Y.copy().flatten()
+    val = np.unique(Y_flat)
+    new_val = np.arange(val.size)
+
+    D = dict(np.array([val, new_val]).T)
+    Y_new = [D[i] for i in Y_flat]
+    return np.reshape(Y_new, Y.shape)
