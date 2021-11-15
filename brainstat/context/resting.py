@@ -23,7 +23,7 @@ def yeo_networks_associations(
         Data to be summarized in the Yeo networks in a sample-by-feature format.
     template : str, optional
         Surface template. Valid values are "fsaverage5", "fsaverage", and
-        "fslr32k", by default "fsaverage5".
+        "fslr32k", "civet41k", and "civet164k", by default "fsaverage5".
     seven_networks : bool, optional
         If true, uses the 7 network parcellation, otherwise uses the 17 network
         parcellation, by default True.

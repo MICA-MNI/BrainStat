@@ -15,7 +15,13 @@ from netneurotools.civet import read_civet
 from nibabel import load as nib_load
 from nibabel.freesurfer.io import read_annot, read_geometry
 
-from brainstat._utils import _download_file, data_directories, read_data_fetcher_json
+from brainstat._utils import (
+    _download_file,
+    data_directories,
+    logger,
+    read_data_fetcher_json,
+)
+from brainstat.mesh.interpolate import _surf2surf
 
 
 def fetch_parcellation(
@@ -32,7 +38,7 @@ def fetch_parcellation(
     ----------
     template : str,
         The surface template. Valid values are "fsaverage", "fsaverage5",
-        "fsaverage6", "fslr32k", by default "fsaverage5".
+        "fsaverage6", "fslr32k", "civet41k", "civet164k", by default "fsaverage5".
     atlas : str
         Name of the atlas. Valid names are "cammoun", "glasser", "schaefer", "yeo".
     n_regions : int
@@ -58,6 +64,15 @@ def fetch_parcellation(
     data_dir = Path(data_dir) if data_dir else data_directories["PARCELLATION_DATA_DIR"]
     data_dir.mkdir(parents=True, exist_ok=True)
 
+    if template == "civet41k" or template == "civet164k":
+        logger.warn(
+            "CIVET parcellations were not included with the toolbox. Interpolating parcellation from the fsaverage surface with a nearest neighbor interpolation."
+        )
+        civet_template = template
+        template = "fsaverage"
+    else:
+        civet_template = ""
+
     if atlas == "schaefer":
         parcellations = _fetch_schaefer_parcellation(
             template, n_regions, seven_networks, data_dir
@@ -70,6 +85,21 @@ def fetch_parcellation(
         parcellations = _fetch_yeo_parcellation(template, n_regions, data_dir)
     else:
         raise ValueError(f"Invalid atlas: {atlas}")
+
+    if civet_template:
+        fsaverage_left, fsaverage_right = fetch_template_surface(
+            "fsaverage", layer="white", join=False
+        )
+        civet_left, civet_right = fetch_template_surface(
+            civet_template, layer="white", join=False
+        )
+
+        parcellations[0] = _surf2surf(
+            fsaverage_left, civet_left, parcellations[0], interpolation="nearest"
+        )
+        parcellations[1] = _surf2surf(
+            fsaverage_right, civet_right, parcellations[1], interpolation="nearest"
+        )
 
     if join:
         return np.concatenate((parcellations[0], parcellations[1]), axis=0)
@@ -201,7 +231,33 @@ def fetch_gradients(
         _download_file(url, gradients_file, overwrite=overwrite)
 
     hf = h5py.File(gradients_file, "r")
-    return np.array(hf[template]).T
+    if template == "civet41k" or template == "civet164k":
+        logger.warn(
+            "CIVET gradients were not included with the toolbox. Interpolating gradients from the fsaverage surface with a nearest interpolation."
+        )
+        fsaverage_left, fsaverage_right = fetch_template_surface(
+            "fsaverage", layer="white", join=False
+        )
+        civet_left, civet_right = fetch_template_surface(
+            template, layer="white", join=False
+        )
+
+        gradients_fsaverage = np.array(hf["fsaverage"]).T
+        gradients_left = _surf2surf(
+            fsaverage_left,
+            civet_left,
+            gradients_fsaverage[: gradients_fsaverage.shape[0] // 2, :],
+            interpolation="nearest",
+        )
+        gradients_right = _surf2surf(
+            fsaverage_right,
+            civet_right,
+            gradients_fsaverage[gradients_fsaverage.shape[0] // 2 :, :],
+            interpolation="nearest",
+        )
+        return np.concatenate((gradients_left, gradients_right), axis=0)
+    else:
+        return np.array(hf[template]).T
 
 
 def fetch_yeo_networks_metadata(n: int) -> Tuple[List[str], np.ndarray]:
