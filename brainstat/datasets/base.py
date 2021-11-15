@@ -70,8 +70,6 @@ def fetch_parcellation(
         )
         civet_template = template
         template = "fsaverage"
-    else:
-        civet_template = None
 
     if atlas == "schaefer":
         parcellations = _fetch_schaefer_parcellation(
