@@ -17,7 +17,6 @@ from scipy.interpolate.ndgriddata import LinearNDInterpolator, NearestNDInterpol
 from scipy.spatial import cKDTree
 
 from brainstat._utils import data_directories, logger
-from brainstat.datasets import fetch_template_surface
 
 
 def surface_to_volume(
@@ -331,6 +330,9 @@ def ribbon_interpolation(
 
 def __create_precomputed(data_dir: Optional[Union[str, Path]] = None) -> None:
     """Create nearest neighbor interpolation niftis for MATLAB."""
+    # Embed import to prevent circular dependency.
+    from brainstat.datasets import fetch_template_surface
+
     data_dir = Path(data_dir) if data_dir else data_directories["BRAINSTAT_DATA_DIR"]
     mni152 = load_mni152_brain_mask()
     for template in ("fsaverage5", "fsaverage", "civet41k", "civet164k"):
@@ -449,3 +451,40 @@ def read_surface_gz(filename: str) -> BSPolyData:
             return read_surface(f_tmp.name)
     else:
         return read_surface(filename)
+
+
+def _surf2surf(
+    source: BSPolyData,
+    target: BSPolyData,
+    values: np.ndarray,
+    interpolation: str = "nearest",
+) -> np.ndarray:
+    """Performs an interpolations between two surfaces.
+
+    Parameters
+    ----------
+    source : BSPolyData
+        Source surface.
+    target : BSPolyData
+        Target surface.
+    values : np.ndarray
+        Values on source surface.
+    interpolation : str, optional
+        Interpolation type, valid values are "nearest" and "linear", by default "nearest".
+
+    Returns
+    -------
+    np.ndarray
+        Interpolated values on target surface.
+    """
+    source_coord = get_points(source)
+    target_coord = get_points(target)
+
+    if interpolation == "nearest":
+        interp = NearestNDInterpolator(source_coord, values)
+    elif interpolation == "linear":
+        interp = LinearNDInterpolator(source_coord, values)
+    else:
+        ValueError("Unknown interpolation type.")
+
+    return interp(target_coord)
