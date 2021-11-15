@@ -23,9 +23,70 @@ Tutorial 02: Context Decoding
 
 In this tutorial you will learn about the context decoding tools included with
 BrainStat. The context decoding module consists of three parts: genetic
-decoding, meta-analytic decoding and histological comparisons. First, we'll
-consider how to run the genetic decoding analysis. 
+decoding, meta-analytic decoding and histological comparisons. Before we start,
+lets run a linear model testing for the effects of age on cortical thickness as
+we did in Tutorial 1. We'll use the results of this model later in this
+tutorial.
 
+.. GENERATED FROM PYTHON SOURCE LINES 12-37
+
+.. code-block:: default
+
+
+    import numpy as np
+
+    from brainstat.datasets import fetch_mask, fetch_template_surface
+    from brainstat.stats.SLM import SLM
+    from brainstat.stats.terms import FixedEffect
+    from brainstat.tutorial.utils import fetch_abide_data
+
+    sites = ("PITT", "OLIN", "OHSU")
+    thickness, demographics = fetch_abide_data(sites=sites)
+    mask = fetch_mask("civet41k")
+
+    demographics.DX_GROUP[demographics.DX_GROUP == 1] = "Patient"
+    demographics.DX_GROUP[demographics.DX_GROUP == 2] = "Control"
+
+    term_age = FixedEffect(demographics.AGE_AT_SCAN)
+    term_patient = FixedEffect(demographics.DX_GROUP)
+    model = term_age + term_patient
+
+    contrast_age = model.AGE_AT_SCAN
+    slm_age = SLM(
+        model, contrast_age, surf="civet41k", mask=mask, correction=["fdr", "rft"]
+    )
+    slm_age.fit(thickness)
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+    0it [00:00, ?it/s]    Fetching thickness data for subject 1 out of 116: : 0it [00:00, ?it/s]    Fetching thickness data for subject 1 out of 116: : 1it [00:00,  4.99it/s]    Fetching thickness data for subject 2 out of 116: : 1it [00:00,  4.99it/s]    Fetching thickness data for subject 2 out of 116: : 2it [00:00,  4.81it/s]    Fetching thickness data for subject 3 out of 116: : 2it [00:00,  4.81it/s]    Fetching thickness data for subject 3 out of 116: : 3it [00:00,  4.70it/s]    Fetching thickness data for subject 4 out of 116: : 3it [00:00,  4.70it/s]    Fetching thickness data for subject 4 out of 116: : 4it [00:00,  4.84it/s]    Fetching thickness data for subject 5 out of 116: : 4it [00:00,  4.84it/s]    Fetching thickness data for subject 5 out of 116: : 5it [00:01,  4.88it/s]    Fetching thickness data for subject 6 out of 116: : 5it [00:01,  4.88it/s]    Fetching thickness data for subject 6 out of 116: : 6it [00:01,  4.50it/s]    Fetching thickness data for subject 7 out of 116: : 6it [00:01,  4.50it/s]    Fetching thickness data for subject 7 out of 116: : 7it [00:01,  4.70it/s]    Fetching thickness data for subject 8 out of 116: : 7it [00:01,  4.70it/s]    Fetching thickness data for subject 8 out of 116: : 8it [00:01,  4.85it/s]    Fetching thickness data for subject 9 out of 116: : 8it [00:01,  4.85it/s]    Fetching thickness data for subject 9 out of 116: : 9it [00:01,  4.99it/s]    Fetching thickness data for subject 10 out of 116: : 9it [00:01,  4.99it/s]    Fetching thickness data for subject 10 out of 116: : 10it [00:02,  5.05it/s]    Fetching thickness data for subject 11 out of 116: : 10it [00:02,  5.05it/s]    Fetching thickness data for subject 11 out of 116: : 11it [00:02,  5.09it/s]    Fetching thickness data for subject 12 out of 116: : 11it [00:02,  5.09it/s]    Fetching thickness data for subject 12 out of 116: : 12it [00:02,  5.15it/s]    Fetching thickness data for subject 13 out of 116: : 12it [00:02,  5.15it/s]    Fetching thickness data for subject 13 out of 116: : 13it [00:02,  5.16it/s]    Fetching thickness data for subject 14 out of 116: : 13it [00:02,  5.16it/s]    Fetching thickness data for subject 14 out of 116: : 14it [00:02,  5.21it/s]    Fetching thickness data for subject 15 out of 116: : 14it [00:02,  5.21it/s]    Fetching thickness data for subject 15 out of 116: : 15it [00:03,  5.24it/s]    Fetching thickness data for subject 16 out of 116: : 15it [00:03,  5.24it/s]    Fetching thickness data for subject 16 out of 116: : 16it [00:03,  5.22it/s]    Fetching thickness data for subject 17 out of 116: : 16it [00:03,  5.22it/s]    Fetching thickness data for subject 17 out of 116: : 17it [00:03,  5.25it/s]    Fetching thickness data for subject 18 out of 116: : 17it [00:03,  5.25it/s]    Fetching thickness data for subject 18 out of 116: : 18it [00:03,  5.24it/s]    Fetching thickness data for subject 19 out of 116: : 18it [00:03,  5.24it/s]    Fetching thickness data for subject 19 out of 116: : 19it [00:03,  5.26it/s]    Fetching thickness data for subject 20 out of 116: : 19it [00:03,  5.26it/s]    Fetching thickness data for subject 20 out of 116: : 20it [00:03,  5.28it/s]    Fetching thickness data for subject 21 out of 116: : 20it [00:03,  5.28it/s]    Fetching thickness data for subject 21 out of 116: : 21it [00:04,  5.27it/s]    Fetching thickness data for subject 22 out of 116: : 21it [00:04,  5.27it/s]    Fetching thickness data for subject 22 out of 116: : 22it [00:04,  5.28it/s]    Fetching thickness data for subject 23 out of 116: : 22it [00:04,  5.28it/s]    Fetching thickness data for subject 23 out of 116: : 23it [00:04,  5.30it/s]    Fetching thickness data for subject 24 out of 116: : 23it [00:04,  5.30it/s]    Fetching thickness data for subject 24 out of 116: : 24it [00:04,  5.25it/s]    Fetching thickness data for subject 25 out of 116: : 24it [00:04,  5.25it/s]    Fetching thickness data for subject 25 out of 116: : 25it [00:04,  5.26it/s]    Fetching thickness data for subject 26 out of 116: : 25it [00:04,  5.26it/s]    Fetching thickness data for subject 26 out of 116: : 26it [00:05,  5.26it/s]    Fetching thickness data for subject 27 out of 116: : 26it [00:05,  5.26it/s]    Fetching thickness data for subject 27 out of 116: : 27it [00:05,  5.26it/s]    Fetching thickness data for subject 28 out of 116: : 27it [00:05,  5.26it/s]    Fetching thickness data for subject 28 out of 116: : 28it [00:05,  5.29it/s]    Fetching thickness data for subject 29 out of 116: : 28it [00:05,  5.29it/s]    Fetching thickness data for subject 29 out of 116: : 29it [00:05,  5.27it/s]    Fetching thickness data for subject 30 out of 116: : 29it [00:05,  5.27it/s]    Fetching thickness data for subject 30 out of 116: : 30it [00:05,  4.62it/s]    Fetching thickness data for subject 31 out of 116: : 30it [00:05,  4.62it/s]    Fetching thickness data for subject 31 out of 116: : 31it [00:06,  4.04it/s]    Fetching thickness data for subject 32 out of 116: : 31it [00:06,  4.04it/s]    Fetching thickness data for subject 32 out of 116: : 32it [00:06,  3.42it/s]    Fetching thickness data for subject 33 out of 116: : 32it [00:06,  3.42it/s]    Fetching thickness data for subject 33 out of 116: : 33it [00:06,  3.64it/s]    Fetching thickness data for subject 34 out of 116: : 33it [00:06,  3.64it/s]    Fetching thickness data for subject 34 out of 116: : 34it [00:07,  3.97it/s]    Fetching thickness data for subject 35 out of 116: : 34it [00:07,  3.97it/s]    Fetching thickness data for subject 35 out of 116: : 35it [00:07,  4.19it/s]    Fetching thickness data for subject 36 out of 116: : 35it [00:07,  4.19it/s]    Fetching thickness data for subject 36 out of 116: : 36it [00:07,  4.39it/s]    Fetching thickness data for subject 37 out of 116: : 36it [00:07,  4.39it/s]    Fetching thickness data for subject 37 out of 116: : 37it [00:07,  4.40it/s]    Fetching thickness data for subject 38 out of 116: : 37it [00:07,  4.40it/s]    Fetching thickness data for subject 38 out of 116: : 38it [00:07,  4.44it/s]    Fetching thickness data for subject 39 out of 116: : 38it [00:07,  4.44it/s]    Fetching thickness data for subject 39 out of 116: : 39it [00:08,  4.18it/s]    Fetching thickness data for subject 40 out of 116: : 39it [00:08,  4.18it/s]    Fetching thickness data for subject 40 out of 116: : 40it [00:08,  4.27it/s]    Fetching thickness data for subject 41 out of 116: : 40it [00:08,  4.27it/s]    Fetching thickness data for subject 41 out of 116: : 41it [00:08,  3.59it/s]    Fetching thickness data for subject 42 out of 116: : 41it [00:08,  3.59it/s]    Fetching thickness data for subject 42 out of 116: : 42it [00:09,  3.58it/s]    Fetching thickness data for subject 43 out of 116: : 42it [00:09,  3.58it/s]    Fetching thickness data for subject 43 out of 116: : 43it [00:09,  3.75it/s]    Fetching thickness data for subject 44 out of 116: : 43it [00:09,  3.75it/s]    Fetching thickness data for subject 44 out of 116: : 44it [00:09,  3.47it/s]    Fetching thickness data for subject 45 out of 116: : 44it [00:09,  3.47it/s]    Fetching thickness data for subject 45 out of 116: : 45it [00:09,  3.36it/s]    Fetching thickness data for subject 46 out of 116: : 45it [00:09,  3.36it/s]    Fetching thickness data for subject 46 out of 116: : 46it [00:10,  3.27it/s]    Fetching thickness data for subject 47 out of 116: : 46it [00:10,  3.27it/s]    Fetching thickness data for subject 47 out of 116: : 47it [00:10,  3.48it/s]    Fetching thickness data for subject 48 out of 116: : 47it [00:10,  3.48it/s]    Fetching thickness data for subject 48 out of 116: : 48it [00:10,  3.68it/s]    Fetching thickness data for subject 49 out of 116: : 48it [00:10,  3.68it/s]    Fetching thickness data for subject 49 out of 116: : 49it [00:10,  4.03it/s]    Fetching thickness data for subject 50 out of 116: : 49it [00:10,  4.03it/s]    Fetching thickness data for subject 50 out of 116: : 50it [00:11,  3.38it/s]    Fetching thickness data for subject 51 out of 116: : 50it [00:11,  3.38it/s]    Fetching thickness data for subject 51 out of 116: : 51it [00:11,  3.52it/s]    Fetching thickness data for subject 52 out of 116: : 51it [00:11,  3.52it/s]    Fetching thickness data for subject 52 out of 116: : 52it [00:11,  3.54it/s]    Fetching thickness data for subject 53 out of 116: : 52it [00:11,  3.54it/s]    Fetching thickness data for subject 53 out of 116: : 53it [00:12,  3.82it/s]    Fetching thickness data for subject 54 out of 116: : 53it [00:12,  3.82it/s]    Fetching thickness data for subject 54 out of 116: : 54it [00:12,  4.00it/s]    Fetching thickness data for subject 55 out of 116: : 54it [00:12,  4.00it/s]    Fetching thickness data for subject 55 out of 116: : 55it [00:12,  4.22it/s]    Fetching thickness data for subject 56 out of 116: : 55it [00:12,  4.22it/s]    Fetching thickness data for subject 56 out of 116: : 56it [00:12,  3.93it/s]    Fetching thickness data for subject 57 out of 116: : 56it [00:12,  3.93it/s]    Fetching thickness data for subject 57 out of 116: : 57it [00:13,  4.01it/s]    Fetching thickness data for subject 58 out of 116: : 57it [00:13,  4.01it/s]    Fetching thickness data for subject 58 out of 116: : 58it [00:13,  4.29it/s]    Fetching thickness data for subject 59 out of 116: : 58it [00:13,  4.29it/s]    Fetching thickness data for subject 59 out of 116: : 59it [00:13,  4.54it/s]    Fetching thickness data for subject 60 out of 116: : 59it [00:13,  4.54it/s]    Fetching thickness data for subject 60 out of 116: : 60it [00:13,  4.49it/s]    Fetching thickness data for subject 61 out of 116: : 60it [00:13,  4.49it/s]    Fetching thickness data for subject 61 out of 116: : 61it [00:14,  3.97it/s]    Fetching thickness data for subject 62 out of 116: : 61it [00:14,  3.97it/s]    Fetching thickness data for subject 62 out of 116: : 62it [00:14,  3.65it/s]    Fetching thickness data for subject 63 out of 116: : 62it [00:14,  3.65it/s]    Fetching thickness data for subject 63 out of 116: : 63it [00:14,  3.74it/s]    Fetching thickness data for subject 64 out of 116: : 63it [00:14,  3.74it/s]    Fetching thickness data for subject 64 out of 116: : 64it [00:14,  3.98it/s]    Fetching thickness data for subject 65 out of 116: : 64it [00:14,  3.98it/s]    Fetching thickness data for subject 65 out of 116: : 65it [00:15,  4.18it/s]    Fetching thickness data for subject 66 out of 116: : 65it [00:15,  4.18it/s]    Fetching thickness data for subject 66 out of 116: : 66it [00:15,  4.42it/s]    Fetching thickness data for subject 67 out of 116: : 66it [00:15,  4.42it/s]    Fetching thickness data for subject 67 out of 116: : 67it [00:15,  4.60it/s]    Fetching thickness data for subject 68 out of 116: : 67it [00:15,  4.60it/s]    Fetching thickness data for subject 68 out of 116: : 68it [00:15,  4.78it/s]    Fetching thickness data for subject 69 out of 116: : 68it [00:15,  4.78it/s]    Fetching thickness data for subject 69 out of 116: : 69it [00:15,  4.13it/s]    Fetching thickness data for subject 70 out of 116: : 69it [00:15,  4.13it/s]    Fetching thickness data for subject 70 out of 116: : 70it [00:16,  3.95it/s]    Fetching thickness data for subject 71 out of 116: : 70it [00:16,  3.95it/s]    Fetching thickness data for subject 71 out of 116: : 71it [00:16,  4.21it/s]    Fetching thickness data for subject 72 out of 116: : 71it [00:16,  4.21it/s]    Fetching thickness data for subject 72 out of 116: : 72it [00:16,  4.36it/s]    Fetching thickness data for subject 73 out of 116: : 72it [00:16,  4.36it/s]    Fetching thickness data for subject 73 out of 116: : 73it [00:16,  4.58it/s]    Fetching thickness data for subject 74 out of 116: : 73it [00:16,  4.58it/s]    Fetching thickness data for subject 74 out of 116: : 74it [00:17,  4.62it/s]    Fetching thickness data for subject 75 out of 116: : 74it [00:17,  4.62it/s]    Fetching thickness data for subject 75 out of 116: : 75it [00:17,  4.66it/s]    Fetching thickness data for subject 76 out of 116: : 75it [00:17,  4.66it/s]    Fetching thickness data for subject 76 out of 116: : 76it [00:17,  4.70it/s]    Fetching thickness data for subject 77 out of 116: : 76it [00:17,  4.70it/s]    Fetching thickness data for subject 77 out of 116: : 77it [00:17,  4.81it/s]    Fetching thickness data for subject 78 out of 116: : 77it [00:17,  4.81it/s]    Fetching thickness data for subject 78 out of 116: : 78it [00:17,  4.88it/s]    Fetching thickness data for subject 79 out of 116: : 78it [00:17,  4.88it/s]    Fetching thickness data for subject 79 out of 116: : 79it [00:18,  4.94it/s]    Fetching thickness data for subject 80 out of 116: : 79it [00:18,  4.94it/s]    Fetching thickness data for subject 80 out of 116: : 80it [00:18,  5.01it/s]    Fetching thickness data for subject 81 out of 116: : 80it [00:18,  5.01it/s]    Fetching thickness data for subject 81 out of 116: : 81it [00:18,  5.08it/s]    Fetching thickness data for subject 82 out of 116: : 81it [00:18,  5.08it/s]    Fetching thickness data for subject 82 out of 116: : 82it [00:18,  5.12it/s]    Fetching thickness data for subject 83 out of 116: : 82it [00:18,  5.12it/s]    Fetching thickness data for subject 83 out of 116: : 83it [00:18,  5.17it/s]    Fetching thickness data for subject 84 out of 116: : 83it [00:18,  5.17it/s]    Fetching thickness data for subject 84 out of 116: : 84it [00:19,  5.17it/s]    Fetching thickness data for subject 85 out of 116: : 84it [00:19,  5.17it/s]    Fetching thickness data for subject 85 out of 116: : 85it [00:19,  4.94it/s]    Fetching thickness data for subject 86 out of 116: : 85it [00:19,  4.94it/s]    Fetching thickness data for subject 86 out of 116: : 86it [00:19,  4.83it/s]    Fetching thickness data for subject 87 out of 116: : 86it [00:19,  4.83it/s]    Fetching thickness data for subject 87 out of 116: : 87it [00:19,  4.86it/s]    Fetching thickness data for subject 88 out of 116: : 87it [00:19,  4.86it/s]    Fetching thickness data for subject 88 out of 116: : 88it [00:19,  4.93it/s]    Fetching thickness data for subject 89 out of 116: : 88it [00:19,  4.93it/s]    Fetching thickness data for subject 89 out of 116: : 89it [00:20,  5.01it/s]    Fetching thickness data for subject 90 out of 116: : 89it [00:20,  5.01it/s]    Fetching thickness data for subject 90 out of 116: : 90it [00:20,  5.08it/s]    Fetching thickness data for subject 91 out of 116: : 90it [00:20,  5.08it/s]    Fetching thickness data for subject 91 out of 116: : 91it [00:20,  5.10it/s]    Fetching thickness data for subject 92 out of 116: : 91it [00:20,  5.10it/s]    Fetching thickness data for subject 92 out of 116: : 92it [00:20,  5.05it/s]    Fetching thickness data for subject 93 out of 116: : 92it [00:20,  5.05it/s]    Fetching thickness data for subject 93 out of 116: : 93it [00:20,  5.08it/s]    Fetching thickness data for subject 94 out of 116: : 93it [00:20,  5.08it/s]    Fetching thickness data for subject 94 out of 116: : 94it [00:21,  5.14it/s]    Fetching thickness data for subject 95 out of 116: : 94it [00:21,  5.14it/s]    Fetching thickness data for subject 95 out of 116: : 95it [00:21,  5.15it/s]    Fetching thickness data for subject 96 out of 116: : 95it [00:21,  5.15it/s]    Fetching thickness data for subject 96 out of 116: : 96it [00:21,  5.11it/s]    Fetching thickness data for subject 97 out of 116: : 96it [00:21,  5.11it/s]    Fetching thickness data for subject 97 out of 116: : 97it [00:21,  4.22it/s]    Fetching thickness data for subject 98 out of 116: : 97it [00:21,  4.22it/s]    Fetching thickness data for subject 98 out of 116: : 98it [00:21,  4.24it/s]    Fetching thickness data for subject 99 out of 116: : 98it [00:21,  4.24it/s]    Fetching thickness data for subject 99 out of 116: : 99it [00:22,  4.26it/s]    Fetching thickness data for subject 100 out of 116: : 99it [00:22,  4.26it/s]    Fetching thickness data for subject 100 out of 116: : 100it [00:22,  4.37it/s]    Fetching thickness data for subject 101 out of 116: : 100it [00:22,  4.37it/s]    Fetching thickness data for subject 101 out of 116: : 101it [00:22,  4.34it/s]    Fetching thickness data for subject 102 out of 116: : 101it [00:22,  4.34it/s]    Fetching thickness data for subject 102 out of 116: : 102it [00:22,  4.53it/s]    Fetching thickness data for subject 103 out of 116: : 102it [00:22,  4.53it/s]    Fetching thickness data for subject 103 out of 116: : 103it [00:23,  4.68it/s]    Fetching thickness data for subject 104 out of 116: : 103it [00:23,  4.68it/s]    Fetching thickness data for subject 104 out of 116: : 104it [00:23,  4.83it/s]    Fetching thickness data for subject 105 out of 116: : 104it [00:23,  4.83it/s]    Fetching thickness data for subject 105 out of 116: : 105it [00:23,  4.94it/s]    Fetching thickness data for subject 106 out of 116: : 105it [00:23,  4.94it/s]    Fetching thickness data for subject 106 out of 116: : 106it [00:23,  5.01it/s]    Fetching thickness data for subject 107 out of 116: : 106it [00:23,  5.01it/s]    Fetching thickness data for subject 107 out of 116: : 107it [00:23,  5.01it/s]    Fetching thickness data for subject 108 out of 116: : 107it [00:23,  5.01it/s]    Fetching thickness data for subject 108 out of 116: : 108it [00:24,  5.00it/s]    Fetching thickness data for subject 109 out of 116: : 108it [00:24,  5.00it/s]    Fetching thickness data for subject 109 out of 116: : 109it [00:24,  5.03it/s]    Fetching thickness data for subject 110 out of 116: : 109it [00:24,  5.03it/s]    Fetching thickness data for subject 110 out of 116: : 110it [00:24,  5.07it/s]    Fetching thickness data for subject 111 out of 116: : 110it [00:24,  5.07it/s]    Fetching thickness data for subject 111 out of 116: : 111it [00:24,  5.05it/s]    Fetching thickness data for subject 112 out of 116: : 111it [00:24,  5.05it/s]    Fetching thickness data for subject 112 out of 116: : 112it [00:24,  5.12it/s]    Fetching thickness data for subject 113 out of 116: : 112it [00:24,  5.12it/s]    Fetching thickness data for subject 113 out of 116: : 113it [00:24,  5.15it/s]    Fetching thickness data for subject 114 out of 116: : 113it [00:25,  5.15it/s]    Fetching thickness data for subject 114 out of 116: : 114it [00:25,  5.16it/s]    Fetching thickness data for subject 115 out of 116: : 114it [00:25,  5.16it/s]    Fetching thickness data for subject 115 out of 116: : 115it [00:25,  5.19it/s]    Fetching thickness data for subject 116 out of 116: : 115it [00:25,  5.19it/s]    Fetching thickness data for subject 116 out of 116: : 116it [00:25,  5.22it/s]    Fetching thickness data for subject 116 out of 116: : 116it [00:25,  4.54it/s]
+    /Users/reinder/GitHub/BrainStat/docs/python/tutorials/plot_tutorial_02_context.py:24: SettingWithCopyWarning:
+
+
+    A value is trying to be set on a copy of a slice from a DataFrame
+
+    See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+
+    /Users/reinder/GitHub/BrainStat/docs/python/tutorials/plot_tutorial_02_context.py:25: SettingWithCopyWarning:
+
+
+    A value is trying to be set on a copy of a slice from a DataFrame
+
+    See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 38-46
 
 Genetics
 --------
@@ -36,52 +97,54 @@ example of how we use abagen to get the genetic expression of the 400 regions
 of the Schaefer atlas. Please note that downloading the dataset and running this
 analysis can take several minutes.
 
-.. GENERATED FROM PYTHON SOURCE LINES 20-33
+.. GENERATED FROM PYTHON SOURCE LINES 46-70
 
 .. code-block:: default
 
 
+    import copy
+
+    import matplotlib.pyplot as plt
     import numpy as np
-    import plotly.express as px
+    from matplotlib.cm import get_cmap
 
     from brainstat.context.genetics import surface_genetic_expression
-    from brainstat.datasets import fetch_parcellation, fetch_template_surface
+    from brainstat.datasets import fetch_parcellation
 
-    schaefer_400 = fetch_parcellation("fsaverage5", "schaefer", 400)
+    # Get Schaefer-100 genetic expression.
+    schaefer_100 = fetch_parcellation("fsaverage5", "schaefer", 100)
     surfaces = fetch_template_surface("fsaverage5", join=False)
+    expression = surface_genetic_expression(schaefer_100, surfaces, space="fsaverage")
 
-    expression = surface_genetic_expression(schaefer_400, surfaces, space="fsaverage")
-    print(expression.iloc[0:5, 0:5])
-
-
-
-
-
-.. rst-class:: sphx-glr-script-out
-
- Out:
-
- .. code-block:: none
-
-    gene_symbol      A1BG  A1BG-AS1       A2M     A2ML1   A3GALT2
-    label                                                        
-    1            0.616159  0.664012  0.347586  0.442892  0.528283
-    2            0.695626  0.552636  0.438083  0.455523  0.495006
-    3            0.505258  0.561028  0.534480  0.517866  0.451078
-    4            0.405339  0.393538  0.494515  0.672340  0.562199
-    5            0.264929  0.120622  0.494322  0.766259  0.917175
+    # Plot Schaefer-100 genetic expression matrix.
+    colormap = copy.copy(get_cmap())
+    colormap.set_bad(color="black")
+    plt.imshow(expression, aspect="auto", cmap=colormap)
+    plt.colorbar()
+    plt.xlabel("Genetic Expression")
+    plt.ylabel("Schaefer 100 Regions")
+    plt.show()
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 34-55
+.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_001.png
+    :alt: plot tutorial 02 context
+    :class: sphx-glr-single-img
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 71-92
 
 Expression is a pandas DataFrame which shows the genetic expression of genes
 within each region of the atlas. By default, the values will fall in the range
 [0, 1] where higher values represent higher expression. However, if you change
 the normalization function then this may change. Some regions may return NaN
 values for all genes. This occurs when there are no samples within this
-region across all donors.
+region across all donors. We've denoted this region with the black color in the
+matrix.
 
 By default, BrainStat uses all the default abagen parameters. If you wish to
 customize these parameters then the keyword arguments can be passed directly
@@ -92,59 +155,47 @@ Meta-Analytic
 -------------
 To perform meta-analytic decoding, BrainStat uses precomputed Neurosynth maps.
 Here we test which terms are most associated with a map of cortical thickness.
-A simple example analysis can be run as follows. First, we will load some
-cortical thickness data and two cortical surfaces. The ABIDE dataset provides
-this data on the CIVET surface, so we will also load those surfaces. The
-surface decoder interpolates the data from the surface to the voxels in the
-volume that are in between the two input surfaces.
+A simple example analysis can be run as follows. The surface decoder
+interpolates the data from the surface to the voxels in the volume that are in
+between the two input surfaces. We'll decode the t-statistics derived with our model
+earlier.
 
-.. GENERATED FROM PYTHON SOURCE LINES 55-67
+.. GENERATED FROM PYTHON SOURCE LINES 92-100
 
 .. code-block:: default
 
 
 
     from brainstat.context.meta_analysis import surface_decoder
-    from brainstat.datasets import fetch_mask
-    from brainstat.tutorial.utils import fetch_abide_data
 
     civet_mask = fetch_mask("civet41k")
     civet_surface_mid = fetch_template_surface("civet41k", layer="mid", join=False)
     civet_surface_white = fetch_template_surface("civet41k", layer="white", join=False)
-    subject_thickness, demographics = fetch_abide_data(sites=["PITT"])
-    thickness = subject_thickness.mean(axis=0)
 
 
 
 
 
-.. rst-class:: sphx-glr-script-out
-
- Out:
-
- .. code-block:: none
-
-    0it [00:00, ?it/s]    Fetching thickness data for subject 1 out of 56: : 0it [00:00, ?it/s]    Fetching thickness data for subject 1 out of 56: : 1it [00:00,  4.46it/s]    Fetching thickness data for subject 2 out of 56: : 1it [00:00,  4.46it/s]    Fetching thickness data for subject 2 out of 56: : 2it [00:00,  4.55it/s]    Fetching thickness data for subject 3 out of 56: : 2it [00:00,  4.55it/s]    Fetching thickness data for subject 3 out of 56: : 3it [00:00,  4.62it/s]    Fetching thickness data for subject 4 out of 56: : 3it [00:00,  4.62it/s]    Fetching thickness data for subject 4 out of 56: : 4it [00:00,  4.62it/s]    Fetching thickness data for subject 5 out of 56: : 4it [00:00,  4.62it/s]    Fetching thickness data for subject 5 out of 56: : 5it [00:01,  4.65it/s]    Fetching thickness data for subject 6 out of 56: : 5it [00:01,  4.65it/s]    Fetching thickness data for subject 6 out of 56: : 6it [00:01,  4.68it/s]    Fetching thickness data for subject 7 out of 56: : 6it [00:01,  4.68it/s]    Fetching thickness data for subject 7 out of 56: : 7it [00:01,  4.68it/s]    Fetching thickness data for subject 8 out of 56: : 7it [00:01,  4.68it/s]    Fetching thickness data for subject 8 out of 56: : 8it [00:01,  4.64it/s]    Fetching thickness data for subject 9 out of 56: : 8it [00:01,  4.64it/s]    Fetching thickness data for subject 9 out of 56: : 9it [00:01,  4.65it/s]    Fetching thickness data for subject 10 out of 56: : 9it [00:01,  4.65it/s]    Fetching thickness data for subject 10 out of 56: : 10it [00:02,  4.63it/s]    Fetching thickness data for subject 11 out of 56: : 10it [00:02,  4.63it/s]    Fetching thickness data for subject 11 out of 56: : 11it [00:02,  4.59it/s]    Fetching thickness data for subject 12 out of 56: : 11it [00:02,  4.59it/s]    Fetching thickness data for subject 12 out of 56: : 12it [00:02,  4.59it/s]    Fetching thickness data for subject 13 out of 56: : 12it [00:02,  4.59it/s]    Fetching thickness data for subject 13 out of 56: : 13it [00:02,  4.49it/s]    Fetching thickness data for subject 14 out of 56: : 13it [00:02,  4.49it/s]    Fetching thickness data for subject 14 out of 56: : 14it [00:03,  4.54it/s]    Fetching thickness data for subject 15 out of 56: : 14it [00:03,  4.54it/s]    Fetching thickness data for subject 15 out of 56: : 15it [00:03,  4.60it/s]    Fetching thickness data for subject 16 out of 56: : 15it [00:03,  4.60it/s]    Fetching thickness data for subject 16 out of 56: : 16it [00:03,  4.63it/s]    Fetching thickness data for subject 17 out of 56: : 16it [00:03,  4.63it/s]    Fetching thickness data for subject 17 out of 56: : 17it [00:03,  4.64it/s]    Fetching thickness data for subject 18 out of 56: : 17it [00:03,  4.64it/s]    Fetching thickness data for subject 18 out of 56: : 18it [00:03,  4.64it/s]    Fetching thickness data for subject 19 out of 56: : 18it [00:03,  4.64it/s]    Fetching thickness data for subject 19 out of 56: : 19it [00:04,  4.64it/s]    Fetching thickness data for subject 20 out of 56: : 19it [00:04,  4.64it/s]    Fetching thickness data for subject 20 out of 56: : 20it [00:04,  4.65it/s]    Fetching thickness data for subject 21 out of 56: : 20it [00:04,  4.65it/s]    Fetching thickness data for subject 21 out of 56: : 21it [00:04,  4.67it/s]    Fetching thickness data for subject 22 out of 56: : 21it [00:04,  4.67it/s]    Fetching thickness data for subject 22 out of 56: : 22it [00:04,  4.69it/s]    Fetching thickness data for subject 23 out of 56: : 22it [00:04,  4.69it/s]    Fetching thickness data for subject 23 out of 56: : 23it [00:04,  4.66it/s]    Fetching thickness data for subject 24 out of 56: : 23it [00:04,  4.66it/s]    Fetching thickness data for subject 24 out of 56: : 24it [00:05,  4.63it/s]    Fetching thickness data for subject 25 out of 56: : 24it [00:05,  4.63it/s]    Fetching thickness data for subject 25 out of 56: : 25it [00:05,  4.65it/s]    Fetching thickness data for subject 26 out of 56: : 25it [00:05,  4.65it/s]    Fetching thickness data for subject 26 out of 56: : 26it [00:05,  4.66it/s]    Fetching thickness data for subject 27 out of 56: : 26it [00:05,  4.66it/s]    Fetching thickness data for subject 27 out of 56: : 27it [00:05,  4.64it/s]    Fetching thickness data for subject 28 out of 56: : 27it [00:05,  4.64it/s]    Fetching thickness data for subject 28 out of 56: : 28it [00:06,  4.65it/s]    Fetching thickness data for subject 29 out of 56: : 28it [00:06,  4.65it/s]    Fetching thickness data for subject 29 out of 56: : 29it [00:06,  4.64it/s]    Fetching thickness data for subject 30 out of 56: : 29it [00:06,  4.64it/s]    Fetching thickness data for subject 30 out of 56: : 30it [00:06,  4.64it/s]    Fetching thickness data for subject 31 out of 56: : 30it [00:06,  4.64it/s]    Fetching thickness data for subject 31 out of 56: : 31it [00:06,  4.67it/s]    Fetching thickness data for subject 32 out of 56: : 31it [00:06,  4.67it/s]    Fetching thickness data for subject 32 out of 56: : 32it [00:06,  4.69it/s]    Fetching thickness data for subject 33 out of 56: : 32it [00:06,  4.69it/s]    Fetching thickness data for subject 33 out of 56: : 33it [00:07,  4.66it/s]    Fetching thickness data for subject 34 out of 56: : 33it [00:07,  4.66it/s]    Fetching thickness data for subject 34 out of 56: : 34it [00:07,  4.66it/s]    Fetching thickness data for subject 35 out of 56: : 34it [00:07,  4.66it/s]    Fetching thickness data for subject 35 out of 56: : 35it [00:07,  4.68it/s]    Fetching thickness data for subject 36 out of 56: : 35it [00:07,  4.68it/s]    Fetching thickness data for subject 36 out of 56: : 36it [00:07,  4.69it/s]    Fetching thickness data for subject 37 out of 56: : 36it [00:07,  4.69it/s]    Fetching thickness data for subject 37 out of 56: : 37it [00:07,  4.66it/s]    Fetching thickness data for subject 38 out of 56: : 37it [00:07,  4.66it/s]    Fetching thickness data for subject 38 out of 56: : 38it [00:08,  4.65it/s]    Fetching thickness data for subject 39 out of 56: : 38it [00:08,  4.65it/s]    Fetching thickness data for subject 39 out of 56: : 39it [00:08,  4.67it/s]    Fetching thickness data for subject 40 out of 56: : 39it [00:08,  4.67it/s]    Fetching thickness data for subject 40 out of 56: : 40it [00:08,  4.65it/s]    Fetching thickness data for subject 41 out of 56: : 40it [00:08,  4.65it/s]    Fetching thickness data for subject 41 out of 56: : 41it [00:08,  4.64it/s]    Fetching thickness data for subject 42 out of 56: : 41it [00:08,  4.64it/s]    Fetching thickness data for subject 42 out of 56: : 42it [00:09,  4.66it/s]    Fetching thickness data for subject 43 out of 56: : 42it [00:09,  4.66it/s]    Fetching thickness data for subject 43 out of 56: : 43it [00:09,  4.65it/s]    Fetching thickness data for subject 44 out of 56: : 43it [00:09,  4.65it/s]    Fetching thickness data for subject 44 out of 56: : 44it [00:09,  4.64it/s]    Fetching thickness data for subject 45 out of 56: : 44it [00:09,  4.64it/s]    Fetching thickness data for subject 45 out of 56: : 45it [00:09,  4.66it/s]    Fetching thickness data for subject 46 out of 56: : 45it [00:09,  4.66it/s]    Fetching thickness data for subject 46 out of 56: : 46it [00:09,  4.66it/s]    Fetching thickness data for subject 47 out of 56: : 46it [00:09,  4.66it/s]    Fetching thickness data for subject 47 out of 56: : 47it [00:10,  4.65it/s]    Fetching thickness data for subject 48 out of 56: : 47it [00:10,  4.65it/s]    Fetching thickness data for subject 48 out of 56: : 48it [00:10,  4.63it/s]    Fetching thickness data for subject 49 out of 56: : 48it [00:10,  4.63it/s]    Fetching thickness data for subject 49 out of 56: : 49it [00:10,  4.64it/s]    Fetching thickness data for subject 50 out of 56: : 49it [00:10,  4.64it/s]    Fetching thickness data for subject 50 out of 56: : 50it [00:10,  4.64it/s]    Fetching thickness data for subject 51 out of 56: : 50it [00:10,  4.64it/s]    Fetching thickness data for subject 51 out of 56: : 51it [00:10,  4.66it/s]    Fetching thickness data for subject 52 out of 56: : 51it [00:10,  4.66it/s]    Fetching thickness data for subject 52 out of 56: : 52it [00:11,  4.66it/s]    Fetching thickness data for subject 53 out of 56: : 52it [00:11,  4.66it/s]    Fetching thickness data for subject 53 out of 56: : 53it [00:11,  4.64it/s]    Fetching thickness data for subject 54 out of 56: : 53it [00:11,  4.64it/s]    Fetching thickness data for subject 54 out of 56: : 54it [00:11,  4.64it/s]    Fetching thickness data for subject 55 out of 56: : 54it [00:11,  4.64it/s]    Fetching thickness data for subject 55 out of 56: : 55it [00:11,  4.63it/s]    Fetching thickness data for subject 56 out of 56: : 55it [00:11,  4.63it/s]    Fetching thickness data for subject 56 out of 56: : 56it [00:12,  4.64it/s]    Fetching thickness data for subject 56 out of 56: : 56it [00:12,  4.64it/s]
 
 
 
-
-.. GENERATED FROM PYTHON SOURCE LINES 68-71
+.. GENERATED FROM PYTHON SOURCE LINES 101-104
 
 Next we can run the analysis. Note that the data, surfaces, and mask have to
 be provided seperately for each hemisphere. Also note that downloading the
 dataset and running this analysis can take several minutes.
 
-.. GENERATED FROM PYTHON SOURCE LINES 71-79
+.. GENERATED FROM PYTHON SOURCE LINES 104-113
 
 .. code-block:: default
 
-
+    t_stats = np.squeeze(slm_age.t)
     meta_analysis = surface_decoder(
         civet_surface_mid,
         civet_surface_white,
-        [thickness[: len(thickness) // 2], thickness[len(thickness) // 2 :]],
+        [t_stats[: t_stats.size // 2], t_stats[t_stats.size // 2 :]],
     )
+
     print(meta_analysis)
 
 
@@ -157,30 +208,85 @@ dataset and running this analysis can take several minutes.
 
  .. code-block:: none
 
-                    Pearson's r
-    temporal           0.389849
-    frontotemporal     0.380892
-    pole               0.363279
-    dementia           0.346113
-    empathic           0.314575
-    ...                     ...
-    visual            -0.282096
-    parieto           -0.282920
-    sighted           -0.290591
-    primary           -0.306732
-    v1                -0.371177
+                         Pearson's r
+    aphasia                 0.235517
+    temporal pole           0.228402
+    pole                    0.227191
+    stroke                  0.208452
+    silent                  0.199342
+    ...                          ...
+    cortex precuneus       -0.186913
+    precuneus posterior    -0.199448
+    virtual                -0.202732
+    retrosplenial          -0.218048
+    navigation             -0.285486
 
     [3228 rows x 1 columns]
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 80-91
+.. GENERATED FROM PYTHON SOURCE LINES 114-118
 
-meta_analysis now contains a pandas.dataFrame with the correlation values
-for each requested feature. If no feature was requested (like here) then
-the analysis is run across all features.
+meta_analysis now contains a pandas.dataFrame with the correlation values for
+each requested feature. Printing all of the terms will return many terms that
+may not be of interest (e.g. anatomical regions). Lets select a few terms of
+interest. This may be done as follows:
 
+.. GENERATED FROM PYTHON SOURCE LINES 118-137
+
+.. code-block:: default
+
+
+    terms_of_interest = [
+        "attention",
+        "emotion",
+        "language comprehension",
+        "motor",
+        "reading",
+        "semantics",
+        "social cognition",
+        "spatial attention",
+        "speech production",
+        "visual perception",
+        "visuospatial",
+    ]
+
+    meta_analysis_subset = meta_analysis.loc[terms_of_interest, :]
+    print(meta_analysis_subset.sort_values(by="Pearson's r", ascending=False))
+
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+                            Pearson's r
+    language comprehension     0.173482
+    speech production          0.157010
+    semantics                  0.128536
+    reading                    0.118342
+    motor                      0.076284
+    emotion                    0.057177
+    social cognition           0.036909
+    attention                 -0.077237
+    visuospatial              -0.081075
+    visual perception         -0.088143
+    spatial attention         -0.141980
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 138-148
+
+Here we see that language comprehension and spatial attention correlate
+moderately, in opposite directions, with our t-map. Several other correlations
+are also shown.
 
 Histological decoding
 ---------------------
@@ -189,7 +295,7 @@ as first shown by (Paquola et al, 2019, Plos Biology), computed from the
 BigBrain dataset. Firstly, lets download the MPC data and compute its
 gradients.
 
-.. GENERATED FROM PYTHON SOURCE LINES 91-104
+.. GENERATED FROM PYTHON SOURCE LINES 148-162
 
 .. code-block:: default
 
@@ -199,12 +305,13 @@ gradients.
         compute_mpc,
         read_histology_profile,
     )
-    from brainstat.datasets import fetch_parcellation
 
     # Run the analysis
+    schaefer_400 = fetch_parcellation("fsaverage5", "schaefer", 400)
     histology_profiles = read_histology_profile(template="fsaverage5")
     mpc = compute_mpc(histology_profiles, labels=schaefer_400)
     gradient_map = compute_histology_gradients(mpc)
+
 
 
 
@@ -228,7 +335,7 @@ gradients.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 105-112
+.. GENERATED FROM PYTHON SOURCE LINES 163-170
 
 The variable histology_profiles now contains histological profiles sampled at
 50 different depths across the cortex, mpc contains the covariance of these
@@ -238,7 +345,7 @@ this tutorial we'll plot the gradients to the surface with BrainSpace. For
 details on what the GradientMaps class, gm, contains please consult the
 BrainSpace documentation.
 
-.. GENERATED FROM PYTHON SOURCE LINES 112-142
+.. GENERATED FROM PYTHON SOURCE LINES 170-202
 
 .. code-block:: default
 
@@ -248,6 +355,7 @@ BrainSpace documentation.
 
     surfaces = fetch_template_surface("fsaverage5", join=False)
 
+    # Bring parcellated data to vertex data.
     vertexwise_data = []
     for i in range(0, 2):
         vertexwise_data.append(
@@ -259,6 +367,7 @@ BrainSpace documentation.
             )
         )
 
+    # Plot to surface.
     plot_hemispheres(
         surfaces[0],
         surfaces[1],
@@ -275,7 +384,7 @@ BrainSpace documentation.
 
 
 
-.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_001.png
+.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_002.png
     :alt: plot tutorial 02 context
     :class: sphx-glr-single-img
 
@@ -295,7 +404,7 @@ BrainSpace documentation.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 143-158
+.. GENERATED FROM PYTHON SOURCE LINES 203-217
 
 Note that we no longer use the y-axis regression used in (Paquola et al, 2019,
 Plos Biology), as such the first gradient becomes an anterior-posterior-
@@ -312,22 +421,21 @@ manifold of resting-state connectivity.
 As an example, lets have a look at the first functional gradient within the
 Yeo networks.
 
-
-.. GENERATED FROM PYTHON SOURCE LINES 158-173
+.. GENERATED FROM PYTHON SOURCE LINES 217-233
 
 .. code-block:: default
 
 
+
     import matplotlib.pyplot as plt
 
-    from brainstat.context.resting import yeo_networks_average
-    from brainstat.datasets import fetch_gradients, fetch_yeo_networks_metadata
+    from brainstat.context.resting import yeo_networks_associations
+    from brainstat.datasets import fetch_yeo_networks_metadata
 
-    functional_gradients = fetch_gradients("fslr32k", "margulies2016")
-    yeo_gradients = yeo_networks_average(functional_gradients, "fslr32k")
+    yeo_tstat = yeo_networks_associations(np.squeeze(slm_age.t), "civet41k")
     network_names, yeo_colormap = fetch_yeo_networks_metadata(7)
 
-    plt.bar(np.arange(7), yeo_gradients[:, 0], color=yeo_colormap)
+    plt.bar(np.arange(7), yeo_tstat[:, 0], color=yeo_colormap)
     plt.xticks(np.arange(7), network_names, rotation=90)
     plt.gcf().subplots_adjust(bottom=0.3)
     plt.show()
@@ -335,7 +443,8 @@ Yeo networks.
 
 
 
-.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_002.png
+
+.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_003.png
     :alt: plot tutorial 02 context
     :class: sphx-glr-single-img
 
@@ -343,26 +452,109 @@ Yeo networks.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 174-188
+.. GENERATED FROM PYTHON SOURCE LINES 234-239
 
-Unsurprisingly, the gradients are very similar to the Yeo networks, with
-higher gradient values in higher order networks and lower values in lower
-order networks.
+Across all networks, the mean t-statistic appears to be negative, with the
+most negative values in the dorsal attnetion and visual networks.
 
-There are many ways to compare these gradients to cortical markers such as
-cortical thickness. In general, we recommend using corrections for spatial
-autocorrelation which are implemented in BrainSpace. We'll show a correction
-with spin test in this tutorial; for other methods and further details please
-consult the BrainSpace tutorials.
+Lastly, lets plot the functional gradients and have a look at their correlation
+with our t-map.
+
+.. GENERATED FROM PYTHON SOURCE LINES 239-260
+
+.. code-block:: default
+
+
+
+    import pandas as pd
+
+    from brainstat.datasets import fetch_gradients
+
+    surfaces_civet = fetch_template_surface("civet41k", join=False)
+    functional_gradients = fetch_gradients("civet41k", "margulies2016")
+
+    plot_hemispheres(
+        surfaces_civet[0],
+        surfaces_civet[1],
+        functional_gradients[:, 0:3].T,
+        color_bar=True,
+        label_text=["Gradient 1", "Gradient 2", "Gradient 3"],
+        embed_nb=True,
+        size=(1400, 600),
+        zoom=1.45,
+        cb__labelTextProperty={"fontSize": 12},
+    )
+
+
+
+
+.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_004.png
+    :alt: plot tutorial 02 context
+    :class: sphx-glr-single-img
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+    /Users/reinder/opt/miniconda3/envs/python3.8/lib/python3.8/site-packages/brainspace/plotting/base.py:287: UserWarning:
+
+    Interactive mode requires 'panel'. Setting 'interactive=False'
+
+
+    <IPython.core.display.Image object>
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 261-266
+
+.. code-block:: default
+
+
+    r = pd.DataFrame(functional_gradients[:, 0:3]).corrwith(pd.Series(slm_age.t.flatten()))
+    print(r)
+
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+    0    0.046822
+    1    0.169228
+    2    0.107790
+    dtype: float64
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 267-280
+
+It seems the correlations are, overall quite low. However, we'll need some
+more complex tests to assess statistical significance. There are many ways to
+compare these gradients to cortical markerss. In general, we recommend using
+corrections for spatial autocorrelation which are implemented in BrainSpace.
+We'll show a correction with spin test in this tutorial; for other methods and
+further details please consult the BrainSpace tutorials.
 
 In a spin test we compare the empirical correlation between the gradient and
 the cortical marker to a distribution of correlations derived from data
 rotated across the cortical surface. The p-value then depends on the
 percentile of the empirical correlation within the permuted distribution.
+As we do not have a CIVET sphere included with BrainStat, we'll use BrainSpace's
+template data on fslr32k.
 
-.. GENERATED FROM PYTHON SOURCE LINES 188-219
+.. GENERATED FROM PYTHON SOURCE LINES 280-315
 
 .. code-block:: default
+
 
 
     from brainspace.datasets import load_conte69, load_marker
@@ -371,6 +563,7 @@ percentile of the empirical correlation within the permuted distribution.
     sphere_left, sphere_right = load_conte69(as_sphere=True)
     thickness_left, thickness_right = load_marker("thickness", join=False)
     thickness = load_marker("thickness", join=True)
+    functional_gradients_fslr = fetch_gradients("fslr32k", "margulies2016")
 
     # Run spin test with 100 permutations (note: we generally recommend >=1000)
     n_rep = 100
@@ -379,13 +572,15 @@ percentile of the empirical correlation within the permuted distribution.
     thickness_rotated = np.hstack(sp.randomize(thickness_left, thickness_right))
 
     # Compute correlation between empirical and permuted data.
-    mask = ~np.isnan(functional_gradients[:, 0]) & ~np.isnan(thickness)
-    r_empirical = np.corrcoef(functional_gradients[mask, 0], thickness[mask])[0, 1]
+    mask = ~np.isnan(functional_gradients_fslr[:, 0]) & ~np.isnan(thickness)
+    r_empirical = np.corrcoef(functional_gradients_fslr[mask, 0], thickness[mask])[0, 1]
     r_permuted = np.zeros(n_rep)
     for i in range(n_rep):
-        mask = ~np.isnan(functional_gradients[:, 0]) & ~np.isnan(thickness_rotated[i, :])
+        mask = ~np.isnan(functional_gradients_fslr[:, 0]) & ~np.isnan(
+            thickness_rotated[i, :]
+        )
         r_permuted[i] = np.corrcoef(
-            functional_gradients[mask, 0], thickness_rotated[i, mask]
+            functional_gradients_fslr[mask, 0], thickness_rotated[i, mask]
         )[1:, 0]
 
     # Significance depends on whether we do a one-tailed or two-tailed test.
@@ -410,7 +605,7 @@ percentile of the empirical correlation within the permuted distribution.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 220-224
+.. GENERATED FROM PYTHON SOURCE LINES 316-320
 
 That concludes the tutorials of BrainStat. If anything is unclear, or if you
 think you've found a bug, please post it to the Issues page of our Github.
@@ -420,7 +615,7 @@ Happy BrainStating!
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 4 minutes  1.852 seconds)
+   **Total running time of the script:** ( 4 minutes  36.575 seconds)
 
 
 .. _sphx_glr_download_python_generated_tutorials_plot_tutorial_02_context.py:
