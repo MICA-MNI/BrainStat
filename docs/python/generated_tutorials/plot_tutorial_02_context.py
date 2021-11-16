@@ -97,8 +97,8 @@ print(meta_analysis)
 
 ##########################################################################
 # meta_analysis now contains a pandas.dataFrame with the correlation values for
-# each requested feature. Next we could create a Wordcloud of the included terms, 
-# wherein larger words denote higher correlations. 
+# each requested feature. Next we could create a Wordcloud of the included terms,
+# wherein larger words denote higher correlations.
 from wordcloud import WordCloud
 
 wc = WordCloud(background_color="white", random_state=0)
@@ -110,10 +110,10 @@ plt.show()
 
 ########################################################################
 # If we broadly summarize, we see a lot of words related to language e.g.,
-# "language comprehension", "broca", "speaking", "speech production". 
-# Generally you'll also find several hits related to anatomy or clinical conditions. 
+# "language comprehension", "broca", "speaking", "speech production".
+# Generally you'll also find several hits related to anatomy or clinical conditions.
 # Depending on your research question, it may be more interesting to
-# select only those terms related to cognition or some other subset. 
+# select only those terms related to cognition or some other subset.
 #
 # Histological decoding
 # ---------------------
