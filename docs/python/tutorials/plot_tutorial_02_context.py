@@ -88,56 +88,32 @@ plt.show()
 # A simple example analysis can be run as follows. The surface decoder
 # interpolates the data from the surface to the voxels in the volume that are in
 # between the two input surfaces. We'll decode the t-statistics derived with our model
-# earlier.
+# earlier. Note that downloading the dataset and running this analysis can take several minutes.
 
+from brainstat.context.meta_analysis import meta_analytic_decoder
 
-from brainstat.context.meta_analysis import surface_decoder
-
-civet_mask = fetch_mask("civet41k")
-civet_surface_mid = fetch_template_surface("civet41k", layer="mid", join=False)
-civet_surface_white = fetch_template_surface("civet41k", layer="white", join=False)
-
-########################################################################
-# Next we can run the analysis. Note that the data, surfaces, and mask have to
-# be provided seperately for each hemisphere. Also note that downloading the
-# dataset and running this analysis can take several minutes.
-t_stats = np.squeeze(slm_age.t)
-meta_analysis = surface_decoder(
-    civet_surface_mid,
-    civet_surface_white,
-    [t_stats[: t_stats.size // 2], t_stats[t_stats.size // 2 :]],
-)
-
+meta_analysis = meta_analytic_decoder("civet41k", slm_age.t.flatten())
 print(meta_analysis)
 
 ##########################################################################
 # meta_analysis now contains a pandas.dataFrame with the correlation values for
-# each requested feature. Printing all of the terms will return many terms that
-# may not be of interest (e.g. anatomical regions). Lets select a few terms of
-# interest. This may be done as follows:
+# each requested feature. Next we could create a Wordcloud of the included terms,
+# wherein larger words denote higher correlations.
+from wordcloud import WordCloud
 
-terms_of_interest = [
-    "attention",
-    "emotion",
-    "language comprehension",
-    "motor",
-    "reading",
-    "semantics",
-    "social cognition",
-    "spatial attention",
-    "speech production",
-    "visual perception",
-    "visuospatial",
-]
-
-meta_analysis_subset = meta_analysis.loc[terms_of_interest, :]
-print(meta_analysis_subset.sort_values(by="Pearson's r", ascending=False))
+wc = WordCloud(background_color="white", random_state=0)
+wc.generate_from_frequencies(frequencies=meta_analysis.to_dict()["Pearson's r"])
+plt.imshow(wc)
+plt.axis("off")
+plt.show()
 
 
 ########################################################################
-# Here we see that language comprehension and spatial attention correlate
-# moderately, in opposite directions, with our t-map. Several other correlations
-# are also shown.
+# If we broadly summarize, we see a lot of words related to language e.g.,
+# "language comprehension", "broca", "speaking", "speech production".
+# Generally you'll also find several hits related to anatomy or clinical conditions.
+# Depending on your research question, it may be more interesting to
+# select only those terms related to cognition or some other subset.
 #
 # Histological decoding
 # ---------------------
@@ -264,18 +240,18 @@ print(r)
 
 
 ###########################################################################
-# It seems the correlations are, overall quite low. However, we'll need some
-# more complex tests to assess statistical significance. There are many ways to
-# compare these gradients to cortical markerss. In general, we recommend using
-# corrections for spatial autocorrelation which are implemented in BrainSpace.
-# We'll show a correction with spin test in this tutorial; for other methods and
-# further details please consult the BrainSpace tutorials.
+# It seems the correlations are quite low. However, we'll need some more complex
+# tests to assess statistical significance. There are many ways to compare these
+# gradients to cortical markerss. In general, we recommend using corrections for
+# spatial autocorrelation which are implemented in BrainSpace. We'll show a
+# correction with spin test in this tutorial; for other methods and further
+# details please consult the BrainSpace tutorials.
 #
 # In a spin test we compare the empirical correlation between the gradient and
 # the cortical marker to a distribution of correlations derived from data
 # rotated across the cortical surface. The p-value then depends on the
-# percentile of the empirical correlation within the permuted distribution.
-# As we do not have a CIVET sphere included with BrainStat, we'll use BrainSpace's
+# percentile of the empirical correlation within the permuted distribution. As
+# we do not have a CIVET sphere included with BrainStat, we'll use BrainSpace's
 # template data on fslr32k.
 
 
