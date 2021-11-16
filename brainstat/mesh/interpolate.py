@@ -16,6 +16,7 @@ from nilearn.datasets import load_mni152_brain_mask
 from scipy.interpolate.ndgriddata import LinearNDInterpolator, NearestNDInterpolator
 from scipy.spatial import cKDTree
 
+from brainstat._typing import ArrayLike
 from brainstat._utils import data_directories, logger
 
 
@@ -456,7 +457,7 @@ def read_surface_gz(filename: str) -> BSPolyData:
 def _surf2surf(
     source: BSPolyData,
     target: BSPolyData,
-    values: np.ndarray,
+    values: ArrayLike,
     interpolation: str = "nearest",
 ) -> np.ndarray:
     """Performs an interpolations between two surfaces.
@@ -488,3 +489,43 @@ def _surf2surf(
         ValueError("Unknown interpolation type.")
 
     return interp(target_coord)
+
+
+def _surf2vol(template: str, data: ArrayLike) -> nib.Nifti1Image:
+    """Performs a nearest neighbor interpolation between a surface and a volume.
+
+    Parameters
+    ----------
+    template : str
+        Surface template to use for the interpolation.
+    data : np.ndarray
+        Values on the surface.
+
+    Returns
+    -------
+    nib.Nifti1Image
+        Nifti image of the interpolated values in the volume.
+    """
+    template_mni = _load_surf2vol_template(template)
+    data_zero_prepend = np.concatenate((np.zeros(1), np.array(data).flatten()))
+    interpolated_data = data_zero_prepend[template_mni.get_fdata().astype(int)]
+    return nib.Nifti1Image(interpolated_data, template_mni.affine, template_mni.header)
+
+
+def _load_surf2vol_template(template: str) -> nib.Nifti1Image:
+    """Loads the template volume for a surface to volume nearest-neighbor interpolation.
+
+    Parameters
+    ----------
+    template : str
+        Surface template to use for the interpolation.
+
+    Returns
+    -------
+    nib.Nifti1Image
+        Template volume.
+    """
+    from brainstat import __file__ as brainstat_init
+
+    file = Path(brainstat_init).parents[0] / "data" / f"nn_interp_{template}.nii.gz"
+    return nib.load(file)
