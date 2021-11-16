@@ -25,6 +25,7 @@ setuptools.setup(
     license="BSD 3-Clause License",
     package_data={
         "": ["logging.conf", "data_urls.json"],
+        "data": ["*"],
     },
     classifiers=[
         "Intended Audience :: Science/Research",
