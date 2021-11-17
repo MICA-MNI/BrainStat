@@ -119,8 +119,10 @@ plt.show()
 # ---------------------
 # For histological decoding we use microstructural profile covariance gradients,
 # as first shown by (Paquola et al, 2019, Plos Biology), computed from the
-# BigBrain dataset. Firstly, lets download the MPC data and compute its
-# gradients.
+# BigBrain dataset. Firstly, lets download the MPC data, compute its
+# gradients, and correlate the first two gradients with our t-statistic map.
+
+import pandas as pd
 
 from brainstat.context.histology import (
     compute_histology_gradients,
@@ -129,25 +131,30 @@ from brainstat.context.histology import (
 )
 
 # Run the analysis
-schaefer_400 = fetch_parcellation("fsaverage5", "schaefer", 400)
-histology_profiles = read_histology_profile(template="fsaverage5")
+schaefer_400 = fetch_parcellation("civet41k", "schaefer", 400)
+histology_profiles = read_histology_profile(template="civet41k")
 mpc = compute_mpc(histology_profiles, labels=schaefer_400)
 gradient_map = compute_histology_gradients(mpc)
 
+r = pd.DataFrame(gradient_map.gradients_[:, 0:2]).corrwith(
+    pd.Series(slm_age.t.flatten())
+)
+print(r)
 
 ########################################################################
 # The variable histology_profiles now contains histological profiles sampled at
 # 50 different depths across the cortex, mpc contains the covariance of these
-# profiles, and gradient_map contains their gradients. Depending on your
-# use-case, each of these variables could be of interest, but for purposes of
-# this tutorial we'll plot the gradients to the surface with BrainSpace. For
-# details on what the GradientMaps class, gm, contains please consult the
-# BrainSpace documentation.
+# profiles, and gradient_map contains their gradients. We also see that the
+# correlations between our t-statistic map and these gradients are not very
+# high. Depending on your use-case, each of the three variables here could be of
+# interest, but for purposes of this tutorial we'll plot the gradients to the
+# surface with BrainSpace. For details on what the GradientMaps class
+# (gradient_map) contains please consult the BrainSpace documentation.
 
 from brainspace.plotting.surface_plotting import plot_hemispheres
 from brainspace.utils.parcellation import map_to_labels
 
-surfaces = fetch_template_surface("fsaverage5", join=False)
+surfaces = fetch_template_surface("civet41k", join=False)
 
 # Bring parcellated data to vertex data.
 vertexwise_data = []
@@ -177,7 +184,7 @@ plot_hemispheres(
 
 ########################################################################
 # Note that we no longer use the y-axis regression used in (Paquola et al, 2019,
-# Plos Biology), as such the first gradient becomes an anterior-posterior-
+# Plos Biology), as such the first gradient becomes an anterior-posterior
 # gradient.
 #
 # Resting-state contextualization
@@ -213,23 +220,20 @@ plt.show()
 # Lastly, lets plot the functional gradients and have a look at their correlation
 # with our t-map.
 
-
-import pandas as pd
-
 from brainstat.datasets import fetch_gradients
 
-surfaces_civet = fetch_template_surface("civet41k", join=False)
 functional_gradients = fetch_gradients("civet41k", "margulies2016")
 
 plot_hemispheres(
-    surfaces_civet[0],
-    surfaces_civet[1],
+    surfaces[0],
+    surfaces[1],
     functional_gradients[:, 0:3].T,
     color_bar=True,
     label_text=["Gradient 1", "Gradient 2", "Gradient 3"],
     embed_nb=True,
     size=(1400, 600),
     zoom=1.45,
+    nan_color=(0.7, 0.7, 0.7, 1),
     cb__labelTextProperty={"fontSize": 12},
 )
 
@@ -242,7 +246,7 @@ print(r)
 ###########################################################################
 # It seems the correlations are quite low. However, we'll need some more complex
 # tests to assess statistical significance. There are many ways to compare these
-# gradients to cortical markerss. In general, we recommend using corrections for
+# gradients to cortical markers. In general, we recommend using corrections for
 # spatial autocorrelation which are implemented in BrainSpace. We'll show a
 # correction with spin test in this tutorial; for other methods and further
 # details please consult the BrainSpace tutorials.
@@ -250,36 +254,33 @@ print(r)
 # In a spin test we compare the empirical correlation between the gradient and
 # the cortical marker to a distribution of correlations derived from data
 # rotated across the cortical surface. The p-value then depends on the
-# percentile of the empirical correlation within the permuted distribution. As
-# we do not have a CIVET sphere included with BrainStat, we'll use BrainSpace's
-# template data on fslr32k.
+# percentile of the empirical correlation within the permuted distribution.
 
 
-from brainspace.datasets import load_conte69, load_marker
 from brainspace.null_models import SpinPermutations
 
-sphere_left, sphere_right = load_conte69(as_sphere=True)
-thickness_left, thickness_right = load_marker("thickness", join=False)
-thickness = load_marker("thickness", join=True)
-functional_gradients_fslr = fetch_gradients("fslr32k", "margulies2016")
+sphere_left, sphere_right = fetch_template_surface(
+    "civet41k", layer="sphere", join=False
+)
+tstat = slm_age.t.flatten()
+tstat_left = tstat[: slm_age.t.size // 2]
+tstat_right = tstat[slm_age.t.size // 2 :]
 
-# Run spin test with 100 permutations (note: we generally recommend >=1000)
-n_rep = 100
-sp = SpinPermutations(n_rep=n_rep, random_state=2021)
+# Run spin test with 1000 permutations.
+n_rep = 1000
+sp = SpinPermutations(n_rep=n_rep, random_state=2021, surface_algorithm="CIVET")
 sp.fit(sphere_left, points_rh=sphere_right)
-thickness_rotated = np.hstack(sp.randomize(thickness_left, thickness_right))
+tstat_rotated = np.hstack(sp.randomize(tstat_left, tstat_right))
 
-# Compute correlation between empirical and permuted data.
-mask = ~np.isnan(functional_gradients_fslr[:, 0]) & ~np.isnan(thickness)
-r_empirical = np.corrcoef(functional_gradients_fslr[mask, 0], thickness[mask])[0, 1]
+# Compute correlation for empirical and permuted data.
+mask = ~np.isnan(functional_gradients[:, 0]) & ~np.isnan(tstat)
+r_empirical = np.corrcoef(functional_gradients[mask, 0], tstat[mask])[0, 1]
 r_permuted = np.zeros(n_rep)
 for i in range(n_rep):
-    mask = ~np.isnan(functional_gradients_fslr[:, 0]) & ~np.isnan(
-        thickness_rotated[i, :]
-    )
-    r_permuted[i] = np.corrcoef(
-        functional_gradients_fslr[mask, 0], thickness_rotated[i, mask]
-    )[1:, 0]
+    mask = ~np.isnan(functional_gradients[:, 0]) & ~np.isnan(tstat_rotated[i, :])
+    r_permuted[i] = np.corrcoef(functional_gradients[mask, 0], tstat_rotated[i, mask])[
+        1:, 0
+    ]
 
 # Significance depends on whether we do a one-tailed or two-tailed test.
 # If one-tailed it depends on in which direction the test is.
@@ -288,7 +289,16 @@ p_value_left_tailed = np.mean(r_empirical < r_permuted)
 p_value_two_tailed = np.minimum(p_value_right_tailed, p_value_left_tailed) * 2
 print(f"Two tailed p-value: {p_value_two_tailed}")
 
+# Plot the permuted distribution of correlations.
+plt.hist(r_permuted, bins=20, color="c", edgecolor="k", alpha=0.65)
+plt.axvline(r_empirical, color="k", linestyle="dashed", linewidth=1)
+plt.show()
+
 ###########################################################################
+# As we can see from both the p-value as well as the histogram, wherein the
+# dotted line denotes the empirical correlation, this correlation does not reach
+# significance.
+#
 # That concludes the tutorials of BrainStat. If anything is unclear, or if you
 # think you've found a bug, please post it to the Issues page of our Github.
 #

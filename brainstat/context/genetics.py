@@ -167,7 +167,7 @@ def __create_precomputed(
     # Compute expression for all parcellations.
     for params in param_grid:
         surface_files = _fetch_template_surface_files(
-            params["surfaces"], data_dir=data_dir
+            params["surfaces"], data_dir=data_dir  # type: ignore
         )
         space = "fslr" if params["surfaces"] == "fslr32k" else "fsaverage"
 

@@ -14,6 +14,8 @@ from brainstat._utils import (
     logger,
     read_data_fetcher_json,
 )
+from brainstat.datasets.base import fetch_template_surface
+from brainstat.mesh.interpolate import _surf2surf
 
 
 def compute_histology_gradients(
@@ -133,6 +135,16 @@ def read_histology_profile(
     """
 
     data_dir = Path(data_dir) if data_dir else data_directories["BIGBRAIN_DATA_DIR"]
+
+    if template[:5] == "civet":
+        logger.warn(
+            "CIVET histology profiles were not included with BigBrainWarp. Interpolating from fsaverage using nearest neighbor interpolation."
+        )
+        civet_template = template
+        template = "fsaverage"
+    else:
+        civet_template = ""
+
     histology_file = data_dir / ("histology_" + template + ".h5")
 
     if not histology_file.exists() or overwrite:
@@ -144,7 +156,13 @@ def read_histology_profile(
         )
 
     with h5py.File(histology_file, "r") as h5_file:
-        return h5_file.get(template)[...]
+        profiles = h5_file.get(template)[...]
+        if civet_template:
+            fsaverage_surface = fetch_template_surface("fsaverage")
+            civet_surface = fetch_template_surface(civet_template)
+            return _surf2surf(fsaverage_surface, civet_surface, profiles.T).T
+        else:
+            return profiles
 
 
 def download_histology_profiles(
