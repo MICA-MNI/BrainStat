@@ -3,4 +3,5 @@ sphinxcontrib-matlabdomain
 sphinx_rtd_theme
 sphinx-gallery
 plotly
+wordcloud
 -r ../requirements.txt

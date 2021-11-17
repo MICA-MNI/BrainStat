@@ -24,7 +24,7 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     license="BSD 3-Clause License",
     package_data={
-        "": ["logging.conf", "data_urls.json"],
+        "brainstat": ["data/*"],
     },
     classifiers=[
         "Intended Audience :: Science/Research",

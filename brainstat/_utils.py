@@ -10,9 +10,9 @@ from typing import Callable
 
 import brainstat
 
-json_file = Path(brainstat.__file__).parent / "data_urls.json"
+json_file = Path(brainstat.__file__).parent / "data" / "data_urls.json"
 
-logging.config.fileConfig(Path(brainstat.__file__).parent / "logging.conf")
+logging.config.fileConfig(Path(brainstat.__file__).parent / "data" / "logging.conf")
 logger = logging.getLogger("brainstat")
 
 
@@ -80,6 +80,11 @@ def generate_data_fetcher_json() -> None:
             },
             "civet164k": {
                 "url": "https://box.bic.mni.mcgill.ca/s/rei5HtTDvexlEPA/download"
+            },
+        },
+        "spheres": {
+            "civet41k": {
+                "url": "https://box.bic.mni.mcgill.ca/s/9fXWyAd7gLJu7C8/download",
             },
         },
         "abide_tutorial": {
