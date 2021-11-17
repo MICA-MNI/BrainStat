@@ -142,7 +142,7 @@ def fetch_template_surface(
     """
 
     data_dir = Path(data_dir) if data_dir else data_directories["SURFACE_DATA_DIR"]
-    surface_files = _fetch_template_surface_files(template, layer, data_dir)
+    surface_files = _fetch_template_surface_files(template, data_dir, layer)
     if template[:9] == "fsaverage":
         surfaces_fs = [read_geometry(file) for file in surface_files]
         surfaces = [build_polydata(surface[0], surface[1]) for surface in surfaces_fs]
@@ -185,7 +185,7 @@ def fetch_mask(
     """
     data_dir = Path(data_dir) if data_dir else data_directories["SURFACE_DATA_DIR"]
     data_dir.mkdir(parents=True, exist_ok=True)
-    
+
     mask_file = data_dir / f"{template}_mask.csv"
     url = read_data_fetcher_json()["masks"][template]["url"]
     _download_file(url, mask_file, overwrite=overwrite)
@@ -354,8 +354,8 @@ def fetch_yeo_networks_metadata(n: int) -> Tuple[List[str], np.ndarray]:
 
 def _fetch_template_surface_files(
     template: str,
+    data_dir: Union[str, Path],
     layer: Optional[str] = None,
-    data_dir: Optional[Union[str, Path]] = None,
 ) -> Tuple[str, str]:
     """Fetches surface files.
 
@@ -386,7 +386,7 @@ def _fetch_template_surface_files(
     elif template == "civet41k" or template == "civet164k":
         layer = layer if layer else "mid"
         if layer == "sphere":
-            return _fetch_civet_spheres(template, data_dir=data_dir)
+            return _fetch_civet_spheres(template, data_dir=Path(data_dir))
         else:
             bunch = nnt_datasets.fetch_civet(
                 density=template[5:], version="v2", data_dir=str(data_dir)
@@ -486,7 +486,7 @@ def _fetch_yeo_parcellation(
     return [nib_load(file).darrays[0].data for file in filenames]
 
 
-def _fetch_civet_spheres(template: str, data_dir: Path) -> Tuple[Path]:
+def _fetch_civet_spheres(template: str, data_dir: Path) -> Tuple[str, str]:
     """Fetches CIVET spheres
 
     Parameters
@@ -506,10 +506,10 @@ def _fetch_civet_spheres(template: str, data_dir: Path) -> Tuple[Path]:
     civet_v2_dir.mkdir(parents=True, exist_ok=True)
 
     # Uses the same sphere for L/R hemisphere.
-    filename = civet_v2_dir / f"tpl-civet_space-ICBM152_sphere.obj"
+    filename = civet_v2_dir / "tpl-civet_space-ICBM152_sphere.obj"
     if not filename.exists():
         url = read_data_fetcher_json()["spheres"][template]["url"]
         _download_file(url, filename)
 
     # Return two filenames to conform to other left/right hemisphere functions.
-    return (filename, filename)
+    return (str(filename), str(filename))

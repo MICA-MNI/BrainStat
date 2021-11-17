@@ -254,7 +254,7 @@ print(r)
 # In a spin test we compare the empirical correlation between the gradient and
 # the cortical marker to a distribution of correlations derived from data
 # rotated across the cortical surface. The p-value then depends on the
-# percentile of the empirical correlation within the permuted distribution. 
+# percentile of the empirical correlation within the permuted distribution.
 
 
 from brainspace.null_models import SpinPermutations
@@ -290,14 +290,14 @@ p_value_two_tailed = np.minimum(p_value_right_tailed, p_value_left_tailed) * 2
 print(f"Two tailed p-value: {p_value_two_tailed}")
 
 # Plot the permuted distribution of correlations.
-plt.hist(r_permuted, bins=20, color='c', edgecolor='k', alpha=0.65)
-plt.axvline(r_empirical, color='k', linestyle='dashed', linewidth=1)
+plt.hist(r_permuted, bins=20, color="c", edgecolor="k", alpha=0.65)
+plt.axvline(r_empirical, color="k", linestyle="dashed", linewidth=1)
 plt.show()
 
 ###########################################################################
 # As we can see from both the p-value as well as the histogram, wherein the
 # dotted line denotes the empirical correlation, this correlation does not reach
-# significance. 
+# significance.
 #
 # That concludes the tutorials of BrainStat. If anything is unclear, or if you
 # think you've found a bug, please post it to the Issues page of our Github.
