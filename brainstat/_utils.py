@@ -82,6 +82,11 @@ def generate_data_fetcher_json() -> None:
                 "url": "https://box.bic.mni.mcgill.ca/s/rei5HtTDvexlEPA/download"
             },
         },
+        "spheres": {
+            "civet41k": {
+                "url": "https://box.bic.mni.mcgill.ca/s/9fXWyAd7gLJu7C8/download",
+            },
+        },
         "abide_tutorial": {
             "summary_spreadsheet": {
                 "url": "https://s3.amazonaws.com/fcp-indi/data/Projects/ABIDE_Initiative/Phenotypic_V1_0b_preprocessed1.csv"

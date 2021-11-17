@@ -126,8 +126,9 @@ def fetch_template_surface(
         object per hemisphere, by default True.
     layer : str, optional
         Name of the cortical surface of interest. Valid values are "white",
-        "smoothwm", "pial", "inflated", "sphere" for fsaverage surfaces and
-        "midthickness", "inflated", "vinflated" for "fslr32k". If None,
+        "smoothwm", "pial", "inflated", "sphere" for fsaverage surfaces;
+        "midthickness", "inflated", "vinflated" for "fslr32k"; "mid", "white"
+        for CIVET surfaces; and "sphere" for "civet41k". If None,
         defaults to "pial" or "midthickness", by default None.
     data_dir : str, Path, optional
         Directory to save the data, by default
@@ -183,6 +184,8 @@ def fetch_mask(
         array.
     """
     data_dir = Path(data_dir) if data_dir else data_directories["SURFACE_DATA_DIR"]
+    data_dir.mkdir(parents=True, exist_ok=True)
+    
     mask_file = data_dir / f"{template}_mask.csv"
     url = read_data_fetcher_json()["masks"][template]["url"]
     _download_file(url, mask_file, overwrite=overwrite)
@@ -364,10 +367,10 @@ def _fetch_template_surface_files(
         "civet164k".
       layer : str, optional
         Name of the cortical surface of interest. Valid values are "white",
-        "smoothwm", "pial", "inflated", "sphere" for fsaverage surfaces,
-        "midthickness", "inflated", "vinflated" for "fslr32k", and "mid,
-        "white" for civet surfaces. If None, defaults to "pial", "midthickness",
-        or "mid", by default None.
+        "smoothwm", "pial", "inflated", "sphere" for fsaverage surfaces;
+        "midthickness", "inflated", "vinflated" for "fslr32k"; "mid, "white" for
+        civet surfaces; and "sphere" for "civet41k" If None, defaults to "pial",
+        "midthickness", or "mid", by default None.
     data_dir : str, optional
         Directory to save the data, by default None.
 
@@ -382,9 +385,12 @@ def _fetch_template_surface_files(
         bunch = nnt_datasets.fetch_conte69(data_dir=str(data_dir))
     elif template == "civet41k" or template == "civet164k":
         layer = layer if layer else "mid"
-        bunch = nnt_datasets.fetch_civet(
-            density=template[5:], version="v2", data_dir=str(data_dir)
-        )
+        if layer == "sphere":
+            return _fetch_civet_spheres(template, data_dir=data_dir)
+        else:
+            bunch = nnt_datasets.fetch_civet(
+                density=template[5:], version="v2", data_dir=str(data_dir)
+            )
     else:
         layer = layer if layer else "pial"
         bunch = nnt_datasets.fetch_fsaverage(version=template, data_dir=str(data_dir))
@@ -478,3 +484,32 @@ def _fetch_yeo_parcellation(
             downloaded_file.unlink()
 
     return [nib_load(file).darrays[0].data for file in filenames]
+
+
+def _fetch_civet_spheres(template: str, data_dir: Path) -> Tuple[Path]:
+    """Fetches CIVET spheres
+
+    Parameters
+    ----------
+    template : str
+        Template name.
+    data_dir : Path
+        Directory to save the data
+
+    Returns
+    -------
+    tuple
+        Paths to sphere files.
+    """
+
+    civet_v2_dir = data_dir / "tpl-civet" / "v2" / template
+    civet_v2_dir.mkdir(parents=True, exist_ok=True)
+
+    # Uses the same sphere for L/R hemisphere.
+    filename = civet_v2_dir / f"tpl-civet_space-ICBM152_sphere.obj"
+    if not filename.exists():
+        url = read_data_fetcher_json()["spheres"][template]["url"]
+        _download_file(url, filename)
+
+    # Return two filenames to conform to other left/right hemisphere functions.
+    return (filename, filename)
