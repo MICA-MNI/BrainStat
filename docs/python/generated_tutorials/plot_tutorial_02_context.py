@@ -134,7 +134,7 @@ from brainstat.context.histology import (
 schaefer_400 = fetch_parcellation("civet41k", "schaefer", 400)
 histology_profiles = read_histology_profile(template="civet41k")
 mpc = compute_mpc(histology_profiles, labels=schaefer_400)
-gradient_map = compute_histology_gradients(mpc)
+gradient_map = compute_histology_gradients(mpc, random_state=0)
 
 r = pd.DataFrame(gradient_map.gradients_[:, 0:2]).corrwith(
     pd.Series(slm_age.t.flatten())
