@@ -147,98 +147,32 @@ def _t_test(self) -> None:
         vf = np.divide(np.sum(np.square(np.dot(c.T, pinvX)), axis=1), self.df)
         self.sd = np.sqrt(vf * self.SSE[jj, :])
 
-        if k == 2:
-            det = np.multiply(self.SSE[0, :], self.SSE[2, :]) - np.square(
-                self.SSE[1, :]
-            )
+        # Initialize some variables
+        self.t = np.zeros(v)
+        indices_lower = np.tril_indices(self.k)
+        sse_indices = np.zeros((self.k, self.k), dtype=int)
+        sse_indices[indices_lower] = np.arange(0, self.k * (self.k + 1) / 2)
+        sse_indices += np.tril(sse_indices, -1).T
 
-            self.t = (
-                np.multiply(np.square(self.ef[0, :]), self.SSE[2, :])
-                + np.multiply(np.square(self.ef[1, :]), self.SSE[0, :])
-                - np.multiply(
-                    np.multiply(2 * self.ef[0, :], self.ef[1, :]), self.SSE[1, :]
-                )
-            )
+        M = np.zeros((self.k + 1, self.k + 1))
+        M_ef = np.zeros((self.k + 1, self.k + 1), dtype=bool)
+        M_ef[1:, 0] = True
+        M_ef[0, 1:] = True
+        M_sse = np.zeros((self.k + 1, self.k + 1), dtype=bool)
+        M_sse[1:, 1:] = True
 
-        if k == 3:
-            det = (
-                np.multiply(
-                    self.SSE[0, :],
-                    (
-                        np.multiply(self.SSE[2, :], self.SSE[5, :])
-                        - np.square(self.SSE[4, :])
-                    ),
-                )
-                - np.multiply(self.SSE[5, :], np.square(self.SSE[1, :]))
-                + np.multiply(
-                    self.SSE[3, :],
-                    (
-                        np.multiply(self.SSE[1, :], self.SSE[4, :]) * 2
-                        - np.multiply(self.SSE[2, :], self.SSE[3, :])
-                    ),
-                )
-            )
+        ef_duplicate = np.concatenate((self.ef, self.ef), axis=0)
+        for i in range(v):
+            sse_vertex = self.SSE[:, i]
+            sse_matrix = sse_vertex[sse_indices]
 
-            self.t = np.multiply(
-                np.square(self.ef[0, :]),
-                (
-                    np.multiply(self.SSE[2, :], self.SSE[5, :])
-                    - np.square(self.SSE[4, :])
-                ),
-            )
+            det_sse = np.linalg.det(sse_matrix)
+            if det_sse <= 0:
+                self.t[i] = 0
+            else:
+                M[M_ef] = ef_duplicate[:, i]
+                M[M_sse] = sse_matrix.flatten()
 
-            self.t = self.t + np.multiply(
-                np.square(self.ef[1, :]),
-                (
-                    np.multiply(self.SSE[0, :], self.SSE[5, :])
-                    - np.square(self.SSE[3, :])
-                ),
-            )
+                self.t[i] = np.sqrt(-np.linalg.det(M) / det_sse / vf)
 
-            self.t = self.t + np.multiply(
-                np.square(self.ef[2, :]),
-                (
-                    np.multiply(self.SSE[0, :], self.SSE[2, :])
-                    - np.square(self.SSE[1, :])
-                ),
-            )
-
-            self.t = self.t + np.multiply(
-                2 * self.ef[0, :],
-                np.multiply(
-                    self.ef[1, :],
-                    (
-                        np.multiply(self.SSE[3, :], self.SSE[4, :])
-                        - np.multiply(self.SSE[1, :], self.SSE[5, :])
-                    ),
-                ),
-            )
-
-            self.t = self.t + np.multiply(
-                2 * self.ef[0, :],
-                np.multiply(
-                    self.ef[2, :],
-                    (
-                        np.multiply(self.SSE[1, :], self.SSE[4, :])
-                        - np.multiply(self.SSE[2, :], self.SSE[3, :])
-                    ),
-                ),
-            )
-
-            self.t = self.t + np.multiply(
-                2 * self.ef[1, :],
-                np.multiply(
-                    self.ef[2, :],
-                    (
-                        np.multiply(self.SSE[1, :], self.SSE[3, :])
-                        - np.multiply(self.SSE[0, :], self.SSE[4, :])
-                    ),
-                ),
-            )
-
-        if k > 3:
-            sys.exit("Hotelling" "s T for k>3 not programmed yet")
-
-        self.t = np.multiply(np.divide(self.t, (det + (det <= 0))), (det > 0)) / vf
-        self.t = np.multiply(np.sqrt(self.t + (self.t <= 0)), (self.t > 0))
     self.t = np.atleast_2d(self.t)
