@@ -5,7 +5,7 @@ classdef test_datasets < matlab.unittest.TestCase
         function test_fetch_template_surface(testCase)
             import matlab.unittest.constraints.HasField
             for surface = ["fsaverage" + (3:6), "fsaverage", "fslr32k"]
-                if surface == "fsl32k"
+                if surface == "fslr32k"
                     layers = ["midthickness", "inflated", "vinflated"];
                 else
                     layers = ["pial", "white", "sphere", "smoothwm", "inflated"];

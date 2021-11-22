@@ -23,6 +23,9 @@ setuptools.setup(
     url="https://github.com/MICA-LAB/BrainStat",
     packages=setuptools.find_packages(),
     license="BSD 3-Clause License",
+    package_data={
+        "brainstat": ["data/*"],
+    },
     classifiers=[
         "Intended Audience :: Science/Research",
         "Intended Audience :: Developers",

@@ -13,10 +13,76 @@ from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 from nilearn.datasets import load_mni152_brain_mask
 from scipy.stats.stats import pearsonr
 
-from brainstat._utils import data_directories, logger, read_data_fetcher_json
-from brainstat.mesh.interpolate import multi_surface_to_volume
+from brainstat._utils import (
+    data_directories,
+    deprecated,
+    logger,
+    read_data_fetcher_json,
+)
+from brainstat.mesh.interpolate import _surf2vol, multi_surface_to_volume
 
 
+def meta_analytic_decoder(
+    template: str,
+    stat_labels: np.ndarray,
+    data_dir: Optional[Union[str, Path]] = None,
+):
+    """Meta-analytic decoding of surface maps using NeuroSynth or NeuroQuery.
+
+    Parameters
+    ----------
+    template : str
+        Path of a template volume file.
+    stat_labels : str, numpy.ndarray, sequence of str or numpy.ndarray
+        Path to a label file for the surfaces, numpy array containing the
+        labels, or a list containing multiple of the aforementioned.
+    data_dir : str, optional
+        The directory of the dataset. If none exists, a new dataset will
+        be downloaded and saved to this path. If None, the directory defaults to
+        your home directory, by default None.
+
+
+    Returns
+    -------
+    pandas.DataFrame
+        Table with correlation values for each feature.
+    """
+    data_dir = Path(data_dir) if data_dir else data_directories["NEUROSYNTH_DATA_DIR"]
+    data_dir.mkdir(exist_ok=True, parents=True)
+
+    logger.info(
+        "Fetching Neurosynth feature files. This may take several minutes if you haven't downloaded them yet."
+    )
+    feature_files = tuple(_fetch_precomputed(data_dir, database="neurosynth"))
+
+    mni152 = load_mni152_brain_mask()
+
+    stat_nii = _surf2vol(template, stat_labels.flatten())
+    mask = (stat_nii.get_fdata() != 0) & (mni152.get_fdata() != 0)
+    stat_vector = stat_nii.get_fdata()[mask]
+
+    feature_names = []
+    correlations = np.zeros(len(feature_files))
+
+    logger.info("Running correlations with all Neurosynth features.")
+    for i in range(len(feature_files)):
+        feature_names.append(re.search("__[A-Za-z0-9 ]+", feature_files[i].stem)[0][2:])  # type: ignore
+        feature_data = nib.load(feature_files[i]).get_fdata()[mask]
+        keep = np.logical_not(
+            np.isnan(feature_data)
+            | np.isinf(feature_data)
+            | np.isnan(stat_vector)
+            | np.isinf(stat_vector)
+        )
+        correlations[i], _ = pearsonr(stat_vector[keep], feature_data[keep])
+
+    df = pd.DataFrame(correlations, index=feature_names, columns=["Pearson's r"])
+    return df.sort_values(by="Pearson's r", ascending=False)
+
+
+@deprecated(
+    "surface_decoder has been deprecated in favor of meta_analytic_decoder in the same module."
+)
 def surface_decoder(
     pial: Union[str, BSPolyData, Sequence[Union[str, BSPolyData]]],
     white: Union[str, BSPolyData, Sequence[Union[str, BSPolyData]]],
@@ -39,10 +105,6 @@ def surface_decoder(
     stat_labels : str, numpy.ndarray, sequence of str or numpy.ndarray
         Path to a label file for the surfaces, numpy array containing the
         labels, or a list containing multiple of the aforementioned.
-    mask_labels : str, numpy.ndarray, sequence of str of or numpy.ndarray
-        Path to a mask file for the surfaces, numpy array containing the
-        mask, or a list containing multiple of the aforementioned. If None
-        all vertices are included in the mask. Defaults to None.
     interpolation : str, optional
         Either 'nearest' for nearest neighbor interpolation, or 'linear'
         for trilinear interpolation, by default 'linear'.
@@ -92,7 +154,7 @@ def surface_decoder(
 
     logger.info("Running correlations with all Neurosynth features.")
     for i in range(len(feature_files)):
-        feature_names.append(re.search("__[A-Za-z0-9]+", feature_files[i].stem)[0][2:])  # type: ignore
+        feature_names.append(re.search("__[A-Za-z0-9 ]+", feature_files[i].stem)[0][2:])  # type: ignore
         feature_data = nib.load(feature_files[i]).get_fdata()[mask]
         keep = np.logical_not(
             np.isnan(feature_data)

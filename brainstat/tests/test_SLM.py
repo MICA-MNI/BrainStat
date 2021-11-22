@@ -2,9 +2,10 @@
 import pickle
 
 import numpy as np
+import pandas as pd
 import pytest
 
-from brainstat.stats.SLM import SLM
+from brainstat.stats.SLM import SLM, _onetailed_to_twotailed
 from brainstat.stats.terms import FixedEffect, MixedEffect
 from brainstat.tests.testutil import datadir
 
@@ -23,20 +24,31 @@ def recursive_comparison(X1, X2):
         if len(X1) != len(X2):
             raise ValueError("Different number of elements in each list.")
         iterator = zip(X1, X2)
+    elif isinstance(X1, pd.DataFrame):
+        iterator = zip(X1.values.tolist(), X2.values.tolist())
     else:
         # Assume not iterable.
         iterator = zip([X1], [X2])
 
     output = True
     for x, y in iterator:
-        if x is None and y is None:
-            output = True
-        elif isinstance(x, list) or isinstance(x, dict):
-            output = recursive_comparison(x, y)
-        else:
-            output = np.allclose(x, y)
-        if not output:
-            return output
+        try:
+            if x is None and y is None:
+                output = True
+            elif (
+                isinstance(x, list)
+                or isinstance(x, dict)
+                or isinstance(x, pd.DataFrame)
+            ):
+                output = recursive_comparison(x, y)
+            else:
+                output = np.allclose(x, y)
+            if not output:
+                return output
+        except:
+            import pdb
+
+            pdb.set_trace()
     return output
 
 
@@ -76,9 +88,34 @@ def dummy_test(infile, expfile):
     out = pickle.load(efile)
     efile.close()
 
+    # Format of self.P changed since files were created -- alter out to match some changes.
+    # Combine the list outputs, sort with pandas, and return to list.
+    if "P" in out:
+        out["P"]["pval"]["C"] = _onetailed_to_twotailed(
+            out["P"]["pval"]["C"][0], out["P"]["pval"]["C"][1]
+        )
+
+        for key1 in ["peak", "clus"]:
+            P_tmp = []
+            none_squeeze = lambda x: np.squeeze(x) if x is not None else None
+            for i in range(len(out["P"][key1]["P"])):
+                tail_dict = {
+                    key: none_squeeze(value[i]) for key, value in out["P"][key1].items()
+                }
+                if tail_dict["P"] is not None:
+                    if tail_dict["P"].size == 1:
+                        P_tmp.append(pd.DataFrame.from_dict([tail_dict]))
+                    else:
+                        P_tmp.append(pd.DataFrame.from_dict(tail_dict))
+                        P_tmp[i].sort_values(by="P", ascending=True)
+                else:
+                    P_tmp.append(pd.DataFrame(columns=tail_dict.keys()))
+            out["P"][key1] = P_tmp
+
     testout = []
 
     skip_keys = ["model", "correction", "_tri", "surf"]
+
     for key in out.keys():
         if key in skip_keys:
             continue

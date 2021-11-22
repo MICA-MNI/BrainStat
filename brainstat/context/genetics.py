@@ -6,7 +6,6 @@ from typing import Optional, Sequence, Union
 import nibabel as nib
 import numpy as np
 import pandas as pd
-import nibabel as nib
 from abagen import check_atlas, get_expression_data
 from brainspace.mesh.mesh_io import read_surface, write_surface
 from sklearn.model_selection import ParameterGrid
@@ -168,7 +167,7 @@ def __create_precomputed(
     # Compute expression for all parcellations.
     for params in param_grid:
         surface_files = _fetch_template_surface_files(
-            params["surfaces"], data_dir=data_dir
+            params["surfaces"], data_dir=data_dir  # type: ignore
         )
         space = "fslr" if params["surfaces"] == "fslr32k" else "fsaverage"
 

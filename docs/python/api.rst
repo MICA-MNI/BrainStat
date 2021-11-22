@@ -10,6 +10,7 @@ API
    :recursive:
 
    brainstat.context
+   brainstat.datasets
    brainstat.mesh
    brainstat.stats
    brainstat.tests

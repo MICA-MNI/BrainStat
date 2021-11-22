@@ -3,19 +3,20 @@ function parcellation = fetch_parcellation(template, atlas, n_regions, options)
 %   parcellation = FETCH_PARCELLATION(template, atlas, n_regions, varargin)
 %   downloads and loads the 'cammoun', 'glasser', 'schaefer', or 'yeo',
 %   atlas on 'fsaverage5', 'fsaverage6', 'fsaverage', or 'fslr32k' (a.k.a.
-%   conte69) surface template. 
+%   conte69) surface template. Yeo-7 networks are also supported on 'civet41k' 
+%   and 'civet164k'
 %
 %   Supported number of regions for each atlas are as follows:
-%       Cammoun: 33, 60, 125, 250, 500. 
+%       Cammoun: 33, 60, 125, 250, 500.
 %       Glasser: 360 (Note fsaverage6 not supported).
-%       Schaefer: 100, 200, 300, 400, 500, 600, 800, 1000. 
+%       Schaefer: 100, 200, 300, 400, 500, 600, 800, 1000.
 %       Yeo: 7, 17
 %
 %   Valid name-value pairs are:
 %       'data_dir': a char containing the path to the location to store the
 %           data. Defaults to ${HOME_DIRECTORY}/brainstat_data/surfaces.
 %       'seven_networks': If true, uses the 7 network schaefer parcellation,
-%           otherwise uses the 17 network verison. Defaults to true. 
+%           otherwise uses the 17 network verison. Defaults to true.
 
 
 arguments
@@ -55,7 +56,7 @@ end
 end
 
 function labels = read_parcellation_from_targz(filename, template, atlas, n_regions, seven_networks)
-% Reads the requested file from a .tar.gz file. 
+% Reads the requested file from a .tar.gz file.
 
 % Get filenames
 temp_dir = tempname;
@@ -63,7 +64,7 @@ temp_dir = tempname;
 tar_file = temp_dir + string(filesep) + tar_name;
 [target_files, all_files, sub_dir] = get_label_file_names(temp_dir, template, atlas, n_regions, seven_networks);
 
-% Setup a cleanup step. 
+% Setup a cleanup step.
 mkdir(temp_dir);
 cleaner = onCleanup(@()clean_temp_dir(temp_dir, all_files, tar_file, sub_dir, template));
 
@@ -86,6 +87,8 @@ end
 end
 
 function [target_files, all_files, sub_dir] = get_label_file_names(temp_dir, template, parcellation, n_regions, seven_networks)
+% Gets the filenames of the requested parcellation.
+
 if template == "fslr32k"
     if parcellation == "schaefer"
         extension = ".dlabel.nii";
@@ -109,7 +112,7 @@ elseif parcellation == "cammoun"
 end
 
 switch parcellation
-    case {'schaefer', 'schaefer2018'}    
+    case {'schaefer', 'schaefer2018'}
         if extension == ".dlabel.nii"
             hemi = "_hemi-LR_desc-";
         else
@@ -139,6 +142,7 @@ end
 end
 
 function clean_temp_dir(temp_dir, all_files, tar_file, sub_dir, template)
+% CLeanup function for a temporary directory.
 cellfun(@delete, all_files);
 delete(tar_file)
 rmdir(string(temp_dir) + filesep + sub_dir + filesep + template)
@@ -147,32 +151,36 @@ rmdir(temp_dir);
 end
 
 function parcellation = fetch_glasser_parcellation(template, data_dir)
-    json = brainstat_utils.read_data_fetcher_json();
-    urls = json.parcellations.glasser.(template).url; 
- 
-    filenames = data_dir + filesep + "glasser_360_" + template + "_" + ["lh", "rh"] + ".label.gii";
-    if ~all(cellfun(@(x) exist(x, 'file'), filenames))
-        for ii = 1:numel(filenames)
-            websave(filenames{ii}, urls{ii});
-        end
+% Fetcher for the Glasser parcellation.
+
+json = brainstat_utils.read_data_fetcher_json();
+urls = json.parcellations.glasser.(template).url;
+
+filenames = data_dir + filesep + "glasser_360_" + template + "_" + ["lh", "rh"] + ".label.gii";
+if ~all(cellfun(@(x) exist(x, 'file'), filenames))
+    for ii = 1:numel(filenames)
+        websave(filenames{ii}, urls{ii});
     end
-    parcellations = read_surface_data(filenames);
-    parcellation = [double(parcellations{1}); double(parcellations{2}) + 180*(parcellations{2}>0)];   
+end
+parcellations = read_surface_data(filenames);
+parcellation = [double(parcellations{1}); double(parcellations{2}) + 180*(parcellations{2}>0)];
 end
 
 function parcellation = fetch_yeo_parcellation(template, n_regions, data_dir)
-    json = brainstat_utils.read_data_fetcher_json();
-    url = json.parcellations.yeo.url; 
-    
-    filenames = data_dir + filesep + template + "_" + ["lh", "rh"] + "_yeo" + num2str(n_regions) + ".label.gii";
-    if ~all(cellfun(@(x) exist(x, 'file'), filenames))
-        zipfile = tempname + ".zip";
-        cleaner = onCleanup(@(x) delete(zipfile));
-        websave(zipfile, url);
-        unzip(zipfile, data_dir);
-    end
+% Fetcher for the Yeo parcellation.
 
-    parcellations = read_surface_data(filenames);
-    parcellation = [double(parcellations{1}); double(parcellations{2})];   
+json = brainstat_utils.read_data_fetcher_json();
+url = json.parcellations.yeo.url;
+
+filenames = data_dir + filesep + template + "_" + ["lh", "rh"] + "_yeo" + num2str(n_regions) + ".label.gii";
+if ~all(cellfun(@(x) exist(x, 'file'), filenames))
+    zipfile = tempname + ".zip";
+    cleaner = onCleanup(@(x) delete(zipfile));
+    websave(zipfile, url);
+    unzip(zipfile, data_dir);
+end
+
+parcellations = read_surface_data(filenames);
+parcellation = [double(parcellations{1}); double(parcellations{2})];
 end
 
