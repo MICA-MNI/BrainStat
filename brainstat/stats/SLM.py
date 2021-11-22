@@ -133,6 +133,10 @@ class SLM:
                 raise NotImplementedError(
                     "One-tailed tests are not implemented for multivariate data."
                 )
+            if Y.shape[2] > 3 and "rft" in self.correction:
+                raise NotImplementedError(
+                    "Random Field Theory corrections are not implemented for more than three variates."
+                )
             student_t_test = Y.shape[2] == 1
         else:
             student_t_test = True
