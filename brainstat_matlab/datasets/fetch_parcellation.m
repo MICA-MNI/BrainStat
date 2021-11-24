@@ -3,8 +3,7 @@ function parcellation = fetch_parcellation(template, atlas, n_regions, options)
 %   parcellation = FETCH_PARCELLATION(template, atlas, n_regions, varargin)
 %   downloads and loads the 'cammoun', 'glasser', 'schaefer', or 'yeo',
 %   atlas on 'fsaverage5', 'fsaverage6', 'fsaverage', or 'fslr32k' (a.k.a.
-%   conte69) surface template. Yeo-7 networks are also supported on 'civet41k' 
-%   and 'civet164k'
+%   conte69), 'civet41k', and 'civet164k' surface template. 
 %
 %   Supported number of regions for each atlas are as follows:
 %       Cammoun: 33, 60, 125, 250, 500.
@@ -29,8 +28,12 @@ end
 
 atlas = lower(atlas);
 
+civet_atlas = '';
 if atlas == "conte69"
     atlas = 'fslr32k';
+elseif contains(atlas, 'civet')
+    civet_atlas = atlas;
+    atlas = 'fsaverage';
 end
 
 switch lower(atlas)
@@ -52,6 +55,11 @@ switch lower(atlas)
         parcellation = fetch_yeo_parcellation(template, n_regions, options.data_dir);
     otherwise
         error("Unknown atlas: '%s'.", atlas)
+end
+
+if ~isempty(civet_atlas)
+    warning('CIVET parcellations were not included with the toolbox, interpolating from fsaverage.');
+    parcellation = mesh_interpolate(parcellation, atlas, civet_atlas, 'data_dir', options.data_dir);
 end
 end
 

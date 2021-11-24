@@ -29,4 +29,11 @@ if ~exist(gradients_file, 'file') || options.overwrite
     websave(gradients_file, json.gradients.(name).url);
 end
 
-gradients = h5read(gradients_file, "/" + template);
+if contains(template, 'civet')
+    gradients_fs = h5read(gradients_file, "/fsaverage");
+    gradients = mesh_interpolate(gradients_fs, 'fsaverage', template);
+else
+    gradients = h5read(gradients_file, "/" + template);
+end
+
+
