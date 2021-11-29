@@ -487,13 +487,14 @@ class MixedEffect:
                 else:
                     if name_ran is None:
                         name = check_names(ran)
-                        name_ran = name[0] if name else None
-                        for i in range(1, len(name)):
-                            sm = difflib.SequenceMatcher(None, name_ran, name[i])
-                            match = sm.find_longest_match(
-                                0, len(name_ran), 0, len(name[i])
-                            )
-                            name_ran = name_ran[match.a : match.a + match.size]
+                        if name:
+                            name_ran = name[0]
+                            for i in range(1, len(name)):
+                                sm = difflib.SequenceMatcher(None, name_ran, name[i])
+                                match = sm.find_longest_match(
+                                    0, len(name_ran), 0, len(name[i])
+                                )
+                                name_ran = name_ran[match.a : match.a + match.size]
 
                 ran = ran @ ran.T
                 ran = ran.values.ravel()
