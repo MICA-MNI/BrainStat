@@ -40,4 +40,4 @@ yeo_networks = fetch_parcellation(options.template, 'yeo', n_networks, ...
 
 association = accumarray(yeo_networks+1, data, [], options.reduction_operation);
 association(1) = []; % Remove undefined (undefined = yeo_networks==0)
-
+end

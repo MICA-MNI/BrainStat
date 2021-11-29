@@ -65,7 +65,7 @@ def fetch_parcellation(
     data_dir.mkdir(parents=True, exist_ok=True)
 
     if template == "civet41k" or template == "civet164k":
-        logger.warn(
+        logger.info(
             "CIVET parcellations were not included with the toolbox. Interpolating parcellation from the fsaverage surface with a nearest neighbor interpolation."
         )
         civet_template = template
@@ -235,7 +235,7 @@ def fetch_gradients(
 
     hf = h5py.File(gradients_file, "r")
     if template == "civet41k" or template == "civet164k":
-        logger.warn(
+        logger.info(
             "CIVET gradients were not included with the toolbox. Interpolating gradients from the fsaverage surface with a nearest interpolation."
         )
         fsaverage_left, fsaverage_right = fetch_template_surface(

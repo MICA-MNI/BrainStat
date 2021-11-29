@@ -19,6 +19,7 @@ def fetch_abide_data(
     keep_control: bool = True,
     keep_patient: bool = True,
     overwrite: bool = False,
+    min_rater_ok: int = 3,
 ) -> Tuple[Bunch, Bunch]:
 
     data_dir = Path(data_dir) if data_dir else data_directories["ABIDE_DATA_DIR"]
@@ -30,7 +31,7 @@ def fetch_abide_data(
         _download_file(summary_spreadsheet, summary_url["url"])
 
     df = pd.read_csv(summary_spreadsheet)
-    _select_subjects(df, sites, keep_patient, keep_control)
+    _select_subjects(df, sites, keep_patient, keep_control, min_rater_ok)
 
     # Download subject thickeness data
     def _thickness_url(derivative, identifier):
@@ -62,7 +63,7 @@ def fetch_abide_data(
         thickness_data = np.delete(thickness_data, remove_rows, axis=0)
         df.drop(np.unique(remove_rows), inplace=True)
         df.reset_index(inplace=True)
-
+        
     return thickness_data, df
 
 
@@ -77,6 +78,7 @@ def _select_subjects(
     sites: Optional[Sequence[str]],
     keep_patient: bool,
     keep_control: bool,
+    min_rater_ok: int,
 ) -> None:
     df.drop(df[df.FILE_ID == "no_filename"].index, inplace=True)
     if not keep_patient:
@@ -87,5 +89,9 @@ def _select_subjects(
 
     if sites is not None:
         df.drop(df[~df.SITE_ID.isin(sites)].index, inplace=True)
+    
+    if min_rater_ok > 0:
+        rater_approved = df[['qc_rater_1', 'qc_anat_rater_2', 'qc_anat_rater_3']].eq("OK").sum(axis=1)
+        df.drop(df[rater_approved < min_rater_ok].index, inplace=True)
 
     df.reset_index(inplace=True)

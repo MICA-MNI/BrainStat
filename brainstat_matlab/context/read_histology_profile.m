@@ -16,6 +16,13 @@ arguments
     options.overwrite (1,1) logical = false
 end
 
+if contains(options.template, 'civet')
+    civet_template = options.template;
+    options.template = "fsaverage";
+else
+    civet_template = '';
+end
+
 if ~isfolder(options.data_dir)
     mkdir(options.data_dir)
 end
@@ -25,8 +32,13 @@ if ~isfile(histology_file) || options.overwrite
     download_histology_profiles(histology_file, options.template)
 end
 
-profiles = double(h5read(histology_file, "/" + options.template));
-
+if isempty(civet_template)
+    profiles = double(h5read(histology_file, "/" + options.template));
+else
+    warning('CIVET histology profiles were not included with BrainStat. Interpolating from fsaverage.')
+    profiles_fsaverage = double(h5read(histology_file, "/fsaverage"));
+    profiles = mesh_interpolate(profiles_fsaverage, 'fsaverage', civet_template);
+end
 end
 
 function download_histology_profiles(histology_file, template)
