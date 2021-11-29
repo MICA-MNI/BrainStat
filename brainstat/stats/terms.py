@@ -1,4 +1,5 @@
 """Classes for fixed, mixed, and random effects."""
+import difflib
 import re
 from typing import Any, List, Optional, Sequence, Union
 
@@ -484,12 +485,18 @@ class MixedEffect:
                     if v != 1:
                         name_ran += f"{v}**2"
                 else:
-                    name = check_names(ran)
-                    if name is not None and name_ran is None:
-                        name_ran = name
+                    if name_ran is None:
+                        name = check_names(ran)
+                        name_ran = name[0] if name else None
+                        for i in range(1, len(name)):
+                            sm = difflib.SequenceMatcher(None, name_ran, name[i])
+                            match = sm.find_longest_match(
+                                0, len(name_ran), 0, len(name[i])
+                            )
+                            name_ran = name_ran[match.a : match.a + match.size]
+
                 ran = ran @ ran.T
                 ran = ran.values.ravel()
-
             self.variance = FixedEffect(ran, names=name_ran, add_intercept=False)
         self.mean = FixedEffect(fix, names=name_fix, add_intercept=add_intercept)
 
