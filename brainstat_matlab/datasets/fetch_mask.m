@@ -1,6 +1,6 @@
 function varargout = fetch_mask(template, options)
-% FETCH_CIVET_MASK    fetches masks for the midline.
-%   mask = FETCH_CIVET_MASK(template, varargin) fetches a mask for the CIVET41k or
+% FETCH_MASK    fetches masks for the midline.
+%   mask = FETCH_MASK(template, varargin) fetches a mask for the CIVET41k or
 %   CIVET164k templates. Other templates are yet to be added. 
 
 arguments
