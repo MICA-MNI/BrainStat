@@ -138,7 +138,7 @@ def deprecated(message: str) -> Callable:
     return deprecated_decorator
 
 
-def _download_file(url: str, output_file: Path, overwrite: bool = False) -> None:
+def _download_file(url: str, output_file: Path, overwrite: bool = False, verbose=True) -> None:
     """Downloads a file.
 
     Parameters
@@ -149,12 +149,15 @@ def _download_file(url: str, output_file: Path, overwrite: bool = False) -> None
         Path object of the output file.
     overwrite : bool
         If true, overwrite existing files, defaults to False.
+    verbose : bool
+        If true, print a download message, defaults to True.
     """
 
     if output_file.exists() and not overwrite:
         return
 
-    logger.info("Downloading " + str(output_file) + " from " + url + ".")
+    if verbose:
+        logger.info("Downloading " + str(output_file) + " from " + url + ".")
     with urllib.request.urlopen(url) as response, open(output_file, "wb") as out_file:
         shutil.copyfileobj(response, out_file)
 
