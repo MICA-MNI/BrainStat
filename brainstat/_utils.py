@@ -138,7 +138,9 @@ def deprecated(message: str) -> Callable:
     return deprecated_decorator
 
 
-def _download_file(url: str, output_file: Path, overwrite: bool = False, verbose=True) -> None:
+def _download_file(
+    url: str, output_file: Path, overwrite: bool = False, verbose=True
+) -> None:
     """Downloads a file.
 
     Parameters
