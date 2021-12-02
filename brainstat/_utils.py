@@ -22,6 +22,7 @@ data_directories = {
     "ABIDE_DATA_DIR": BRAINSTAT_DATA_DIR / "abide_data",
     "BIGBRAIN_DATA_DIR": BRAINSTAT_DATA_DIR / "bigbrain_data",
     "GRADIENT_DATA_DIR": BRAINSTAT_DATA_DIR / "gradient_data",
+    "MICS_DATA_DIR": BRAINSTAT_DATA_DIR / "mics_data",
     "NEUROSYNTH_DATA_DIR": BRAINSTAT_DATA_DIR / "neurosynth_data",
     "PARCELLATION_DATA_DIR": BRAINSTAT_DATA_DIR / "parcellation_data",
     "SURFACE_DATA_DIR": BRAINSTAT_DATA_DIR / "surface_data",
@@ -90,6 +91,14 @@ def generate_data_fetcher_json() -> None:
         "abide_tutorial": {
             "summary_spreadsheet": {
                 "url": "https://s3.amazonaws.com/fcp-indi/data/Projects/ABIDE_Initiative/Phenotypic_V1_0b_preprocessed1.csv"
+            },
+        },
+        "mics_tutorial": {
+            "demographics": {
+                "url": "https://box.bic.mni.mcgill.ca/s/7bW9JIpvQvSJeuf/download"
+            },
+            "thickness": {
+                "url": "https://box.bic.mni.mcgill.ca/s/kMi6lU91piwdaCf/download"
             },
         },
     }
