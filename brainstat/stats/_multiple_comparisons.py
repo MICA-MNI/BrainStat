@@ -229,6 +229,8 @@ def _random_field_theory(self) -> valid_rft_output:
     )[0]
     tlim = tlim[1]
     pval["P"] = pval["P"] * (self.t[0, :] > tlim) + (self.t[0, :] <= tlim)
+    if pval["C"] is not None:
+        pval["C"] = pval["C"].flatten()
 
     return pval, peak, clus, clusid
 

@@ -30,6 +30,9 @@ def dummy_test(infile, expfile):
     efile = open(expfile, "br")
     expdic = pickle.load(efile)
     efile.close()
+    if expdic["pval"]["C"]:
+        print(expdic["pval"])
+        expdic["pval"]["C"] = expdic["pval"]["C"].flatten() # Dimensions were modified since generation of test data.
     expected_output = (expdic["pval"], expdic["peak"], expdic["clus"], expdic["clusid"])
 
     testout = []
