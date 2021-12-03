@@ -26,6 +26,15 @@
         },
         "civet41k": {
             "url": "https://box.bic.mni.mcgill.ca/s/9kzBetBCZkkqN6w/download"
+        },
+        "fsaverage": {
+            "url": "https://box.bic.mni.mcgill.ca/s/XiZx9HfHaufb4kD/download"
+        },
+        "fsaverage5": {
+            "url": "https://box.bic.mni.mcgill.ca/s/jsSDyiDcm9KEQpf/download"
+        },
+        "fslr32k": {
+            "url": "https://box.bic.mni.mcgill.ca/s/cFXCrSkfiJFjUJ0/download"
         }
     },
     "mics_tutorial": {

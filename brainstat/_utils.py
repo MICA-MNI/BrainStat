@@ -82,6 +82,15 @@ def generate_data_fetcher_json() -> None:
             "civet164k": {
                 "url": "https://box.bic.mni.mcgill.ca/s/rei5HtTDvexlEPA/download"
             },
+            "fsaverage5": {
+                "url": "https://box.bic.mni.mcgill.ca/s/jsSDyiDcm9KEQpf/download"
+            },
+            "fsaverage": {
+                "url": "https://box.bic.mni.mcgill.ca/s/XiZx9HfHaufb4kD/download"
+            },
+            "fslr32k": {
+                "url": "https://box.bic.mni.mcgill.ca/s/cFXCrSkfiJFjUJ0/download"
+            },
         },
         "spheres": {
             "civet41k": {

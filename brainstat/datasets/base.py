@@ -169,7 +169,8 @@ def fetch_mask(
     Parameters
     ----------
     template : str
-        Name of the surface template. Valid templates are "civet41k" and "civet164k".
+        Name of the surface template. Valid templates are: "fsaverage5",
+        "fsaverage", "fslr32k", "civet41k", and "civet164k".
     join : bool, optional
         If true, returns a numpy array containing the mask. If false, returns a
         tuple containing the left and right hemispheric masks, respectively, by
@@ -183,6 +184,7 @@ def fetch_mask(
         Midline mask, either as a single array or a tuple of a left and right hemispheric
         array.
     """
+
     data_dir = Path(data_dir) if data_dir else data_directories["SURFACE_DATA_DIR"]
     data_dir.mkdir(parents=True, exist_ok=True)
 
