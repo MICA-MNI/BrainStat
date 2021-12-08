@@ -10,23 +10,18 @@ we did in Tutorial 1. We'll use the results of this model later in this
 tutorial.
 """
 
-import numpy as np
-
 from brainstat.datasets import fetch_mask, fetch_template_surface
 from brainstat.stats.SLM import SLM
 from brainstat.stats.terms import FixedEffect
 from brainstat.tutorial.utils import fetch_abide_data
 
-sites = ("PITT", "OLIN", "OHSU")
+sites = ("PITT", "NYU", "USM")
 thickness, demographics = fetch_abide_data(sites=sites)
 mask = fetch_mask("civet41k")
 
-demographics.DX_GROUP[demographics.DX_GROUP == 1] = "Patient"
-demographics.DX_GROUP[demographics.DX_GROUP == 2] = "Control"
-
 term_age = FixedEffect(demographics.AGE_AT_SCAN)
-term_patient = FixedEffect(demographics.DX_GROUP)
-model = term_age + term_patient
+term_site = FixedEffect(demographics.SITE_ID)
+model = term_age + term_site
 
 contrast_age = model.AGE_AT_SCAN
 slm_age = SLM(
@@ -40,23 +35,26 @@ slm_age.fit(thickness)
 #
 # For genetic decoding we use the Allen Human Brain Atlas through the abagen
 # toolbox. Note that abagen only accepts parcellated data. Here is a minimal
-# example of how we use abagen to get the genetic expression of the 400 regions
-# of the Schaefer atlas. Please note that downloading the dataset and running this
-# analysis can take several minutes.
+# example of how we use abagen to get the genetic expression of the 100 regions
+# of the Schaefer atlas and how to plot this expression to a matrix. Please note
+# that downloading the dataset and running this analysis can take several
+# minutes.
 
 import copy
 
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
+from brainspace.utils.parcellation import reduce_by_labels
 from matplotlib.cm import get_cmap
 
 from brainstat.context.genetics import surface_genetic_expression
 from brainstat.datasets import fetch_parcellation
 
 # Get Schaefer-100 genetic expression.
-schaefer_100 = fetch_parcellation("fsaverage5", "schaefer", 100)
+schaefer_100_fs5 = fetch_parcellation("fsaverage5", "schaefer", 100)
 surfaces = fetch_template_surface("fsaverage5", join=False)
-expression = surface_genetic_expression(schaefer_100, surfaces, space="fsaverage")
+expression = surface_genetic_expression(schaefer_100_fs5, surfaces, space="fsaverage")
 
 # Plot Schaefer-100 genetic expression matrix.
 colormap = copy.copy(get_cmap())
@@ -67,6 +65,20 @@ plt.xlabel("Genetic Expression")
 plt.ylabel("Schaefer 100 Regions")
 plt.show()
 
+# Plot correlation with SYNPR gene
+schaefer_100_civet = fetch_parcellation("civet41k", "schaefer", 100)
+t_stat_schaefer_100 = reduce_by_labels(slm_age.t.flatten(), schaefer_100_civet)[1:]
+
+df = pd.DataFrame({"x": t_stat_schaefer_100, "y": expression["SYNPR"]})
+df.dropna(inplace=True)
+plt.scatter(df.x, df.y, s=5, c="k")
+plt.xlabel("t-statistic")
+plt.ylabel("SYNPR expression")
+plt.plot(np.unique(df.x), np.poly1d(np.polyfit(df.x, df.y, 1))(np.unique(df.x)), "k")
+plt.text(-4.5, 0.75, f"r={df.x.corr(df.y):.2f}", fontdict={"size": 14})
+plt.show()
+
+
 ########################################################################
 # Expression is a pandas DataFrame which shows the genetic expression of genes
 # within each region of the atlas. By default, the values will fall in the range
@@ -74,12 +86,31 @@ plt.show()
 # the normalization function then this may change. Some regions may return NaN
 # values for all genes. This occurs when there are no samples within this
 # region across all donors. We've denoted this region with the black color in the
-# matrix.
-#
-# By default, BrainStat uses all the default abagen parameters. If you wish to
+# matrix. By default, BrainStat uses all the default abagen parameters. If you wish to
 # customize these parameters then the keyword arguments can be passed directly
 # to `surface_genetic_expression`. For a full list of these arguments and their
 # function please consult the abagen documentation.
+#
+# Next, lets have a look at the correlation between one gene (SYNPR) and our
+# t-statistic map.
+
+# Plot correlation with SYNPR gene
+schaefer_100_civet = fetch_parcellation("civet41k", "schaefer", 100)
+t_stat_schaefer_100 = reduce_by_labels(slm_age.t.flatten(), schaefer_100_civet)[1:]
+
+df = pd.DataFrame({"x": t_stat_schaefer_100, "y": expression["SYNPR"]})
+df.dropna(inplace=True)
+plt.scatter(df.x, df.y, s=5, c="k")
+plt.xlabel("t-statistic")
+plt.ylabel("SYNPR expression")
+plt.plot(np.unique(df.x), np.poly1d(np.polyfit(df.x, df.y, 1))(np.unique(df.x)), "k")
+plt.text(-4.5, 0.75, f"r={df.x.corr(df.y):.2f}", fontdict={"size": 14})
+plt.show()
+
+
+########################################################################
+# We find a small correlation. To test for significance we'll have
+# to do some additional corrections, but more on that later.
 #
 # Meta-Analytic
 # -------------
@@ -120,9 +151,7 @@ plt.show()
 # For histological decoding we use microstructural profile covariance gradients,
 # as first shown by (Paquola et al, 2019, Plos Biology), computed from the
 # BigBrain dataset. Firstly, lets download the MPC data, compute its
-# gradients, and correlate the first two gradients with our t-statistic map.
-
-import pandas as pd
+# gradients, and correlate the first gradient with our t-statistic map.
 
 from brainstat.context.histology import (
     compute_histology_gradients,
@@ -136,16 +165,22 @@ histology_profiles = read_histology_profile(template="civet41k")
 mpc = compute_mpc(histology_profiles, labels=schaefer_400)
 gradient_map = compute_histology_gradients(mpc, random_state=0)
 
-r = pd.DataFrame(gradient_map.gradients_[:, 0:2]).corrwith(
-    pd.Series(slm_age.t.flatten())
-)
-print(r)
+# Plot the correlation between the t-stat
+t_stat_schaefer_400 = reduce_by_labels(slm_age.t.flatten(), schaefer_400)[1:]
+df = pd.DataFrame({"x": t_stat_schaefer_400, "y": gradient_map.gradients_[:, 0]})
+df.dropna(inplace=True)
+plt.scatter(df.x, df.y, s=5, c="k")
+plt.xlabel("t-statistic")
+plt.ylabel("MPC Gradient 1")
+plt.plot(np.unique(df.x), np.poly1d(np.polyfit(df.x, df.y, 1))(np.unique(df.x)), "k")
+plt.text(1.5, 0.05, f"r={df.x.corr(df.y):.2f}", fontdict={"size": 14})
+plt.show()
 
 ########################################################################
 # The variable histology_profiles now contains histological profiles sampled at
 # 50 different depths across the cortex, mpc contains the covariance of these
 # profiles, and gradient_map contains their gradients. We also see that the
-# correlations between our t-statistic map and these gradients are not very
+# correlation between our t-statistic map and these gradients is not very
 # high. Depending on your use-case, each of the three variables here could be of
 # interest, but for purposes of this tutorial we'll plot the gradients to the
 # surface with BrainSpace. For details on what the GradientMaps class
@@ -195,23 +230,31 @@ plot_hemispheres(
 # functional gradients (Margulies et al., 2016, PNAS), a lower dimensional
 # manifold of resting-state connectivity.
 #
-# As an example, lets have a look at the first functional gradient within the
-# Yeo networks.
+# As an example, lets have a look at the the t-statistic map within the
+# Yeo networks. We'll make a barplot showing the mean and standard error of
+# the mean within each network.
 
 
 import matplotlib.pyplot as plt
+from scipy.stats import sem
 
 from brainstat.context.resting import yeo_networks_associations
 from brainstat.datasets import fetch_yeo_networks_metadata
 
-yeo_tstat = yeo_networks_associations(np.squeeze(slm_age.t), "civet41k")
+yeo_tstat_mean = yeo_networks_associations(slm_age.t.flatten(), "civet41k")
+yeo_tstat_sem = yeo_networks_associations(
+    slm_age.t.flatten(),
+    "civet41k",
+    reduction_operation=lambda x, y: sem(x, nan_policy="omit"),
+)
 network_names, yeo_colormap = fetch_yeo_networks_metadata(7)
 
-plt.bar(np.arange(7), yeo_tstat[:, 0], color=yeo_colormap)
+plt.bar(
+    np.arange(7), yeo_tstat_mean[:, 0], yerr=yeo_tstat_sem.flatten(), color=yeo_colormap
+)
 plt.xticks(np.arange(7), network_names, rotation=90)
 plt.gcf().subplots_adjust(bottom=0.3)
 plt.show()
-
 
 ###########################################################################
 # Across all networks, the mean t-statistic appears to be negative, with the
@@ -223,6 +266,7 @@ plt.show()
 from brainstat.datasets import fetch_gradients
 
 functional_gradients = fetch_gradients("civet41k", "margulies2016")
+
 
 plot_hemispheres(
     surfaces[0],
@@ -239,8 +283,14 @@ plot_hemispheres(
 
 ###########################################################################
 
-r = pd.DataFrame(functional_gradients[:, 0:3]).corrwith(pd.Series(slm_age.t.flatten()))
-print(r)
+df = pd.DataFrame({"x": slm_age.t.flatten(), "y": functional_gradients[:, 0]})
+df.dropna(inplace=True)
+plt.scatter(df.x, df.y, s=0.01, c="k")
+plt.xlabel("t-statistic")
+plt.ylabel("Functional Gradient 1")
+plt.plot(np.unique(df.x), np.poly1d(np.polyfit(df.x, df.y, 1))(np.unique(df.x)), "k")
+plt.text(-6.5, 6, f"r={df.x.corr(df.y):.2f}", fontdict={"size": 14})
+plt.show()
 
 
 ###########################################################################
