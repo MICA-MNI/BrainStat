@@ -5,10 +5,10 @@
 
 Computation times
 =================
-**00:12.809** total execution time for **python_generated_tutorials** files:
+**03:21.918** total execution time for **python_generated_tutorials** files:
 
 +----------------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_python_generated_tutorials_plot_tutorial_01_basics.py` (``plot_tutorial_01_basics.py``)   | 00:12.809 | 0.0 MB |
+| :ref:`sphx_glr_python_generated_tutorials_plot_tutorial_02_context.py` (``plot_tutorial_02_context.py``) | 03:21.918 | 0.0 MB |
 +----------------------------------------------------------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_python_generated_tutorials_plot_tutorial_02_context.py` (``plot_tutorial_02_context.py``) | 00:00.000 | 0.0 MB |
+| :ref:`sphx_glr_python_generated_tutorials_plot_tutorial_01_basics.py` (``plot_tutorial_01_basics.py``)   | 00:00.000 | 0.0 MB |
 +----------------------------------------------------------------------------------------------------------+-----------+--------+

@@ -85,7 +85,10 @@ class SLM:
         """
         # Input arguments.
         self.model = model
-        self.contrast = contrast
+        if isinstance(contrast, FixedEffect):
+            contrast = contrast.values
+        else:
+            contrast = np.array(contrast)
 
         if isinstance(surf, str):
             self.surf_name = surf

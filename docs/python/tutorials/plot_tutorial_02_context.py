@@ -12,22 +12,22 @@ tutorial.
 
 from brainstat.datasets import fetch_mask, fetch_template_surface
 from brainstat.stats.SLM import SLM
-from brainstat.stats.terms import FixedEffect
-from brainstat.tutorial.utils import fetch_abide_data
+from brainstat.stats.terms import FixedEffect, MixedEffect
+from brainstat.tutorial.utils import fetch_mics_data
 
-sites = ("PITT", "NYU", "USM")
-thickness, demographics = fetch_abide_data(sites=sites)
-mask = fetch_mask("civet41k")
+thickness, demographics = fetch_mics_data()
+mask = fetch_mask("fsaverage5")
 
 term_age = FixedEffect(demographics.AGE_AT_SCAN)
-term_site = FixedEffect(demographics.SITE_ID)
-model = term_age + term_site
+term_sex = FixedEffect(demographics.SEX)
+term_subject = MixedEffect(demographics.SUB_ID)
+model = term_age + term_sex + term_age * term_sex + term_subject
 
-contrast_age = model.AGE_AT_SCAN
-slm_age = SLM(
-    model, contrast_age, surf="civet41k", mask=mask, correction=["fdr", "rft"]
+contrast_age = -model.mean.AGE_AT_SCAN
+slm = SLM(
+    model, contrast_age, surf="fsaverage5", mask=mask, correction=["fdr", "rft"], two_tailed=False, cluster_threshold=0.01,
 )
-slm_age.fit(thickness)
+slm.fit(thickness)
 
 ###################################################################
 # Genetics
@@ -65,20 +65,6 @@ plt.xlabel("Genetic Expression")
 plt.ylabel("Schaefer 100 Regions")
 plt.show()
 
-# Plot correlation with SYNPR gene
-schaefer_100_civet = fetch_parcellation("civet41k", "schaefer", 100)
-t_stat_schaefer_100 = reduce_by_labels(slm_age.t.flatten(), schaefer_100_civet)[1:]
-
-df = pd.DataFrame({"x": t_stat_schaefer_100, "y": expression["SYNPR"]})
-df.dropna(inplace=True)
-plt.scatter(df.x, df.y, s=5, c="k")
-plt.xlabel("t-statistic")
-plt.ylabel("SYNPR expression")
-plt.plot(np.unique(df.x), np.poly1d(np.polyfit(df.x, df.y, 1))(np.unique(df.x)), "k")
-plt.text(-4.5, 0.75, f"r={df.x.corr(df.y):.2f}", fontdict={"size": 14})
-plt.show()
-
-
 ########################################################################
 # Expression is a pandas DataFrame which shows the genetic expression of genes
 # within each region of the atlas. By default, the values will fall in the range
@@ -91,18 +77,17 @@ plt.show()
 # to `surface_genetic_expression`. For a full list of these arguments and their
 # function please consult the abagen documentation.
 #
-# Next, lets have a look at the correlation between one gene (SYNPR) and our
+# Next, lets have a look at the correlation between one gene (WFDC1) and our
 # t-statistic map.
 
 # Plot correlation with SYNPR gene
-schaefer_100_civet = fetch_parcellation("civet41k", "schaefer", 100)
-t_stat_schaefer_100 = reduce_by_labels(slm_age.t.flatten(), schaefer_100_civet)[1:]
+t_stat_schaefer_100 = reduce_by_labels(slm.t.flatten(), schaefer_100_fs5)[1:]
 
-df = pd.DataFrame({"x": t_stat_schaefer_100, "y": expression["SYNPR"]})
+df = pd.DataFrame({"x": t_stat_schaefer_100, "y": expression["WFDC1"]})
 df.dropna(inplace=True)
 plt.scatter(df.x, df.y, s=5, c="k")
 plt.xlabel("t-statistic")
-plt.ylabel("SYNPR expression")
+plt.ylabel("WFDC1 expression")
 plt.plot(np.unique(df.x), np.poly1d(np.polyfit(df.x, df.y, 1))(np.unique(df.x)), "k")
 plt.text(-4.5, 0.75, f"r={df.x.corr(df.y):.2f}", fontdict={"size": 14})
 plt.show()
@@ -123,7 +108,7 @@ plt.show()
 
 from brainstat.context.meta_analysis import meta_analytic_decoder
 
-meta_analysis = meta_analytic_decoder("civet41k", slm_age.t.flatten())
+meta_analysis = meta_analytic_decoder("fsaverage5", slm.t.flatten())
 print(meta_analysis)
 
 ##########################################################################
@@ -160,13 +145,13 @@ from brainstat.context.histology import (
 )
 
 # Run the analysis
-schaefer_400 = fetch_parcellation("civet41k", "schaefer", 400)
-histology_profiles = read_histology_profile(template="civet41k")
+schaefer_400 = fetch_parcellation("fsaverage5", "schaefer", 400)
+histology_profiles = read_histology_profile(template="fsaverage5")
 mpc = compute_mpc(histology_profiles, labels=schaefer_400)
 gradient_map = compute_histology_gradients(mpc, random_state=0)
 
 # Plot the correlation between the t-stat
-t_stat_schaefer_400 = reduce_by_labels(slm_age.t.flatten(), schaefer_400)[1:]
+t_stat_schaefer_400 = reduce_by_labels(slm.t.flatten(), schaefer_400)[1:]
 df = pd.DataFrame({"x": t_stat_schaefer_400, "y": gradient_map.gradients_[:, 0]})
 df.dropna(inplace=True)
 plt.scatter(df.x, df.y, s=5, c="k")
@@ -189,7 +174,7 @@ plt.show()
 from brainspace.plotting.surface_plotting import plot_hemispheres
 from brainspace.utils.parcellation import map_to_labels
 
-surfaces = fetch_template_surface("civet41k", join=False)
+surfaces = fetch_template_surface("fsaverage5", join=False)
 
 # Bring parcellated data to vertex data.
 vertexwise_data = []
@@ -241,10 +226,10 @@ from scipy.stats import sem
 from brainstat.context.resting import yeo_networks_associations
 from brainstat.datasets import fetch_yeo_networks_metadata
 
-yeo_tstat_mean = yeo_networks_associations(slm_age.t.flatten(), "civet41k")
+yeo_tstat_mean = yeo_networks_associations(slm.t.flatten(), "fsaverage5")
 yeo_tstat_sem = yeo_networks_associations(
-    slm_age.t.flatten(),
-    "civet41k",
+    slm.t.flatten(),
+    "fsaverage5",
     reduction_operation=lambda x, y: sem(x, nan_policy="omit"),
 )
 network_names, yeo_colormap = fetch_yeo_networks_metadata(7)
@@ -265,7 +250,7 @@ plt.show()
 
 from brainstat.datasets import fetch_gradients
 
-functional_gradients = fetch_gradients("civet41k", "margulies2016")
+functional_gradients = fetch_gradients("fsaverage5", "margulies2016")
 
 
 plot_hemispheres(
@@ -283,7 +268,7 @@ plot_hemispheres(
 
 ###########################################################################
 
-df = pd.DataFrame({"x": slm_age.t.flatten(), "y": functional_gradients[:, 0]})
+df = pd.DataFrame({"x": slm.t.flatten(), "y": functional_gradients[:, 0]})
 df.dropna(inplace=True)
 plt.scatter(df.x, df.y, s=0.01, c="k")
 plt.xlabel("t-statistic")
@@ -310,15 +295,15 @@ plt.show()
 from brainspace.null_models import SpinPermutations
 
 sphere_left, sphere_right = fetch_template_surface(
-    "civet41k", layer="sphere", join=False
+    "fsaverage5", layer="sphere", join=False
 )
-tstat = slm_age.t.flatten()
-tstat_left = tstat[: slm_age.t.size // 2]
-tstat_right = tstat[slm_age.t.size // 2 :]
+tstat = slm.t.flatten()
+tstat_left = tstat[: slm.t.size // 2]
+tstat_right = tstat[slm.t.size // 2 :]
 
 # Run spin test with 1000 permutations.
 n_rep = 1000
-sp = SpinPermutations(n_rep=n_rep, random_state=2021, surface_algorithm="CIVET")
+sp = SpinPermutations(n_rep=n_rep, random_state=2021)
 sp.fit(sphere_left, points_rh=sphere_right)
 tstat_rotated = np.hstack(sp.randomize(tstat_left, tstat_right))
 
