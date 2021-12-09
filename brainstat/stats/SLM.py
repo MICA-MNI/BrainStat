@@ -31,7 +31,7 @@ class SLM:
     def __init__(
         self,
         model: Union[FixedEffect, MixedEffect],
-        contrast: Union[ArrayLike, FixedEffect],
+        contrast: ArrayLike,
         surf: Optional[Union[str, dict, BSPolyData]] = None,
         mask: Optional[ArrayLike] = None,
         *,
@@ -49,7 +49,7 @@ class SLM:
         ----------
         model : brainstat.stats.terms.FixedEffect, brainstat.stats.terms.MixedEffect
             The linear model to be fitted of dimensions (observations, predictors).
-        contrast : array-like, brainstat.stats.terms.FixedEffect
+        contrast : array-like
             Vector of contrasts in the observations.
         surf : str, dict, BSPolyData, optional
             A surface provided as either a dictionary with keys 'tri' for its
@@ -85,10 +85,7 @@ class SLM:
         """
         # Input arguments.
         self.model = model
-        if isinstance(contrast, FixedEffect):
-            contrast = contrast.values
-        else:
-            contrast = np.array(contrast)
+        self.contrast = np.array(contrast)
 
         if isinstance(surf, str):
             self.surf_name = surf
