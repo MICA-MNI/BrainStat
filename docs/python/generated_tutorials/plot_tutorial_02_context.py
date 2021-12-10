@@ -25,7 +25,13 @@ model = term_age + term_sex + term_age * term_sex + term_subject
 
 contrast_age = -model.mean.AGE_AT_SCAN
 slm = SLM(
-    model, contrast_age, surf="fsaverage5", mask=mask, correction=["fdr", "rft"], two_tailed=False, cluster_threshold=0.01,
+    model,
+    contrast_age,
+    surf="fsaverage5",
+    mask=mask,
+    correction=["fdr", "rft"],
+    two_tailed=False,
+    cluster_threshold=0.01,
 )
 slm.fit(thickness)
 
