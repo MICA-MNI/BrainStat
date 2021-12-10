@@ -916,20 +916,27 @@ def peak_clus(
     edg = voxid[edg[np.all(excurset[edg], 1), :]]
     nf = np.arange(1, n + 1)
 
-    # Find cluster id's in nf (from Numerical Recipes in C, page 346):
-    for el in range(1, edg.shape[0] + 1):
-        j = edg[el - 1, 0]
-        k = edg[el - 1, 1]
-        while nf[j - 1] != j:
-            j = nf[j - 1]
-        while nf[k - 1] != k:
-            k = nf[k - 1]
-        if j != k:
-            nf[j - 1] = k
+    # Find cluster id's in nf
+    not_used_indexes = set(np.arange(1, n + 1))
 
-    for j in range(1, n + 1):
-        while nf[j - 1] != nf[nf[j - 1] - 1]:
-            nf[j - 1] = nf[nf[j - 1] - 1]
+    cluster_val = 1
+    while not_used_indexes:
+        in_cluster = {not_used_indexes.pop()}
+        neighbours = set(edg[np.isin(edg, list(in_cluster)).any(axis=1)].ravel()) & not_used_indexes
+        in_cluster = in_cluster | neighbours
+
+        while True:
+            neighbours = set(edg[np.isin(edg, list(neighbours)).any(axis=1)].ravel()) & not_used_indexes
+            not_used_indexes = not_used_indexes - neighbours
+            if len(neighbours) == 0:
+                break
+            else:
+                in_cluster = in_cluster | neighbours
+
+        in_cluster_idx = [x - 1 for x in list(in_cluster)]
+        nf[in_cluster_idx] = cluster_val
+
+        cluster_val = cluster_val + 1
 
     vox = np.argwhere(excurset) + 1
     ivox = np.argwhere(np.in1d(vox, lmvox)) + 1
