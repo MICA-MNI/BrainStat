@@ -920,13 +920,23 @@ def peak_clus(
     not_used_indexes = set(np.arange(1, n + 1))
 
     cluster_val = 1
-    while not_used_indexes:
-        in_cluster = {not_used_indexes.pop()}
-        neighbours = set(edg[np.isin(edg, list(in_cluster)).any(axis=1)].ravel()) & not_used_indexes
+    for i in range(1, n + 1):
+        if i not in not_used_indexes:
+            continue
+        in_cluster = set([i])
+        not_used_indexes.remove(i)
+
+        neighbours = (
+            set(edg[np.isin(edg, list(in_cluster)).any(axis=1)].ravel())
+            & not_used_indexes
+        )
         in_cluster = in_cluster | neighbours
 
         while True:
-            neighbours = set(edg[np.isin(edg, list(neighbours)).any(axis=1)].ravel()) & not_used_indexes
+            neighbours = (
+                set(edg[np.isin(edg, list(neighbours)).any(axis=1)].ravel())
+                & not_used_indexes
+            )
             not_used_indexes = not_used_indexes - neighbours
             if len(neighbours) == 0:
                 break
