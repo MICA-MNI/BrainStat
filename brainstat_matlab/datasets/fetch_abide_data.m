@@ -15,6 +15,9 @@ function [thickness, demographics] = fetch_abide_data(options)
 %       If true, keeps patients, defaults to false.
 %   'overwrite'
 %       If true, overwrites older files. Defaults to false.
+%   'min_rater_ok'
+%       Number of raters that must OK a subject's anatomical files.
+%       Defaults to 3.
 
 arguments
     options.data_dir (1,1) string = brainstat_utils.get_brainstat_directories('abide_data_dir')
@@ -22,6 +25,7 @@ arguments
     options.keep_control (1,1) logical = true
     options.keep_patient (1,1) logical = true
     options.overwrite (1,1) logical = false
+    options.min_rater_ok (1,1) uint8 = 3
 end
 
 if ~exist(options.data_dir, 'dir')
@@ -35,7 +39,8 @@ if ~exist(summary_spreadsheet, 'file') || options.overwrite
 end
 
 demographics = readtable(summary_spreadsheet, 'PreserveVariableNames', true);
-demographics = select_subjects(demographics, options.sites, options.keep_patient, options.keep_control);
+demographics = select_subjects(demographics, options.sites, ...
+    options.keep_patient, options.keep_control, options.min_rater_ok);
 
 thickness = zeros(size(demographics,1), 81924);
 keep_rows = ones(size(demographics,1), 1, 'logical'); 
@@ -59,7 +64,7 @@ for ii = 1:size(demographics,1)
                 end
             end
         end
-        thickness(ii, 1 + (jj-1) * 40962 : jj * 40962) = dlmread(filename);   
+        thickness(ii, 1 + (jj-1) * 40962 : jj * 40962) = readmatrix(filename);   
     end
 end
 
@@ -68,7 +73,7 @@ demographics = demographics(keep_rows, :);
 
 end
 
-function demographics = select_subjects(demographics, sites, keep_patient, keep_control)
+function demographics = select_subjects(demographics, sites, keep_patient, keep_control, min_rater_ok)
 % Get a subselection of subjects.
 if ~keep_patient
     demographics = demographics(demographics.DX_GROUP ~= 1, :);
@@ -78,8 +83,13 @@ if ~keep_control
     demographics = demographics(demographics.DX_GROUP ~= 2, :);
 end
 
-if ~isempty(sites)
+if ~all(sites == "")
     demographics = demographics(ismember(demographics.SITE_ID, upper(sites)), :);
+end
+
+if min_rater_ok > 0
+    rater_ok = sum([demographics.qc_rater_1, demographics.qc_anat_rater_2, demographics.qc_anat_rater_3] == "OK", 2);
+    demographics = demographics(rater_ok >= min_rater_ok, :);
 end
 end
 

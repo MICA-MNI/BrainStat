@@ -3,8 +3,6 @@ function [volume,header] = read_volume(file)
 % [volume, header] = READ_VOLUME(file) reads the nifti/minc volume in the
 % input file. Returns the image data in "volume" and header data in
 % "header".
-%
-% ADD LINK TO BRAINSTAT DOCUMENTATION. 
 
 arguments
     file (1,:) char
