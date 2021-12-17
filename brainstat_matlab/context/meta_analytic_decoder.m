@@ -31,7 +31,7 @@ function [pearsons_r_sort, feature_names_sort] = meta_analytic_decoder(stat_data
 %   these packages were integral to generating the data used here.
 
 arguments
-    stat_data {mustBeNumeric}
+    stat_data (:, 1) {mustBeNumeric}
     options.template (1,:) char = 'fsaverage5'
     options.interpolation (1,:) char = 'nearest'
     options.data_dir (1,1) string = brainstat_utils.get_brainstat_directories('neurosynth_data_dir');
@@ -51,17 +51,14 @@ end
 mask = interpolated_volume ~= 0;
     
 neurosynth_files = fetch_neurosynth_data(options.data_dir);
-feature_names = regexp(neurosynth_files, '__[0-9a-zA-Z]+', 'match', 'once');
+feature_names = regexp(neurosynth_files, '__[0-9a-zA-Z ]+', 'match', 'once');
 feature_names = cellfun(@(x) x(3:end), feature_names, 'Uniform', false);
 
 pearsons_r = zeros(numel(neurosynth_files), 1);
 for ii = 1:numel(neurosynth_files)
     neurosynth_volume = read_volume(neurosynth_files{ii});
     mask_inf = mask & ~isinf(neurosynth_volume);
-    pearsons_r(ii) = corr(interpolated_volume(mask_inf), neurosynth_volume(mask_inf));
-    if isnan(pearsons_r(ii))
-        keyboard;
-    end
+    pearsons_r(ii) = corr(interpolated_volume(mask_inf), neurosynth_volume(mask_inf), 'rows', 'pairwise');
 end
 
 if options.ascending

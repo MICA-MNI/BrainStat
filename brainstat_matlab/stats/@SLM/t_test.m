@@ -91,29 +91,41 @@ else
     jj=j.*(j+1)/2;
     vf=sum((c'*pinvX).^2,2)/obj.df;
     obj.sd=sqrt(vf*obj.SSE(jj,:));
-    if k==2
-        det=obj.SSE(1,:).*obj.SSE(3,:)-obj.SSE(2,:).^2;
-        obj.t=obj.ef(1,:).^2.*obj.SSE(3,:) + ...
-              obj.ef(2,:).^2.*obj.SSE(1,:) - ...
-              2*obj.ef(1,:).*obj.ef(2,:).*obj.SSE(2,:);
+    
+    % Initialize a bunch of stuff to increase performance.
+    % If you're reading the following, I'm sorry.
+    % Optimization isn't always the most legible.
+    % Suffice to say initializing matrices is slow. - RV
+    obj.t = zeros(1, size(obj.SSE,2));
+    
+    upper_tri = triu(ones(obj.k, 'logical'));
+    sse_indices = zeros(obj.k);
+    sse_indices(upper_tri) = 1:sum(upper_tri(:));
+    sse_indices = sse_indices + triu(sse_indices, 1)';
+
+    M = zeros(obj.k+1);
+
+    M_ef = zeros(obj.k+1, 'logical');
+    M_ef(2:end, 1) = true;
+    M_ef(1, 2:end) = true;
+
+    M_sse = zeros(obj.k+1, 'logical');
+    M_sse(2:end, 2:end) = true; 
+
+    ef_duplicate = [obj.ef; obj.ef]; % Trust me - this provides a significant speed boost.
+    for ii = 1:size(obj.SSE, 2)
+        sse_vertex = obj.SSE(:,ii);
+        sse_matrix = sse_vertex(sse_indices);
+        det_sse = det(sse_matrix);
+        if det_sse <=0
+            obj.t(ii) = 0;
+        else
+            M(M_ef) = ef_duplicate(:,ii);
+            M(M_sse) = sse_matrix; 
+
+            obj.t(ii) = sqrt(-det(M) / det_sse / vf);
+        end
     end
-    if k==3
-        det=obj.SSE(1,:).*(obj.SSE(3,:).*obj.SSE(6,:)-obj.SSE(5,:).^2) - ...
-            obj.SSE(6,:).*obj.SSE(2,:).^2 + ...
-            obj.SSE(4,:).*(obj.SSE(2,:).*obj.SSE(5,:)*2-obj.SSE(3,:).*obj.SSE(4,:));
-        obj.t=      obj.ef(1,:).^2.*(obj.SSE(3,:).*obj.SSE(6,:)-obj.SSE(5,:).^2);
-        obj.t=obj.t+obj.ef(2,:).^2.*(obj.SSE(1,:).*obj.SSE(6,:)-obj.SSE(4,:).^2);
-        obj.t=obj.t+obj.ef(3,:).^2.*(obj.SSE(1,:).*obj.SSE(3,:)-obj.SSE(2,:).^2);
-        obj.t=obj.t+2*obj.ef(1,:).*obj.ef(2,:).*(obj.SSE(4,:).*obj.SSE(5,:)-obj.SSE(2,:).*obj.SSE(6,:));
-        obj.t=obj.t+2*obj.ef(1,:).*obj.ef(3,:).*(obj.SSE(2,:).*obj.SSE(5,:)-obj.SSE(3,:).*obj.SSE(4,:));
-        obj.t=obj.t+2*obj.ef(2,:).*obj.ef(3,:).*(obj.SSE(2,:).*obj.SSE(4,:)-obj.SSE(1,:).*obj.SSE(5,:));
-    end
-    if k>3
-         warning('Hotelling''s T for k>3 not programmed yet');
-         return
-    end
-    obj.t=obj.t./(det+(det<=0)).*(det>0)/vf;
-    obj.t=sqrt(obj.t+(obj.t<=0)).*(obj.t>0);
 end
 end
 

@@ -21,71 +21,65 @@
 Tutorial 01: Linear Models
 =========================================
 In this tutorial you will set up your first linear model with BrainStat. 
-To this end, we will load some sample data from the ABIDE dataset. Note that,
-contrary to the results shown in our manuscript, we are only using a few sites
-to reduce computation time in this tutorial. As such the results shown here
-differ from those reported in our manuscript. To get identical results,
-simply set `sites` to `None`. 
+To this end, we will first load some sample data from the MICS dataset. 
 
-.. GENERATED FROM PYTHON SOURCE LINES 11-25
+.. GENERATED FROM PYTHON SOURCE LINES 7-17
 
 .. code-block:: default
 
-
-
-    import numpy as np
 
     from brainstat.datasets import fetch_mask, fetch_template_surface
-    from brainstat.tutorial.utils import fetch_abide_data
+    from brainstat.tutorial.utils import fetch_mics_data
 
     # Load behavioral markers
-    sites = ("PITT", "OLIN", "OHSU")
-    thickness, demographics = fetch_abide_data(sites=sites)
-    pial_left, pial_right = fetch_template_surface("civet41k", join=False)
-    pial_combined = fetch_template_surface("civet41k", join=True)
-    mask = fetch_mask("civet41k")
+    thickness, demographics = fetch_mics_data()
+    pial_left, pial_right = fetch_template_surface("fsaverage5", join=False)
+    pial_combined = fetch_template_surface("fsaverage5", join=True)
+    mask = fetch_mask("fsaverage5")
 
 
 
 
 
-.. rst-class:: sphx-glr-script-out
-
- Out:
-
- .. code-block:: none
-
-    0it [00:00, ?it/s]    Fetching thickness data for subject 1 out of 116: : 0it [00:00, ?it/s]    Fetching thickness data for subject 1 out of 116: : 1it [00:00,  4.33it/s]    Fetching thickness data for subject 2 out of 116: : 1it [00:00,  4.33it/s]    Fetching thickness data for subject 2 out of 116: : 2it [00:00,  4.66it/s]    Fetching thickness data for subject 3 out of 116: : 2it [00:00,  4.66it/s]    Fetching thickness data for subject 3 out of 116: : 3it [00:00,  4.69it/s]    Fetching thickness data for subject 4 out of 116: : 3it [00:00,  4.69it/s]    Fetching thickness data for subject 4 out of 116: : 4it [00:00,  4.71it/s]    Fetching thickness data for subject 5 out of 116: : 4it [00:00,  4.71it/s]    Fetching thickness data for subject 5 out of 116: : 5it [00:01,  4.80it/s]    Fetching thickness data for subject 6 out of 116: : 5it [00:01,  4.80it/s]    Fetching thickness data for subject 6 out of 116: : 6it [00:01,  4.85it/s]    Fetching thickness data for subject 7 out of 116: : 6it [00:01,  4.85it/s]    Fetching thickness data for subject 7 out of 116: : 7it [00:01,  4.83it/s]    Fetching thickness data for subject 8 out of 116: : 7it [00:01,  4.83it/s]    Fetching thickness data for subject 8 out of 116: : 8it [00:01,  4.83it/s]    Fetching thickness data for subject 9 out of 116: : 8it [00:01,  4.83it/s]    Fetching thickness data for subject 9 out of 116: : 9it [00:01,  4.80it/s]    Fetching thickness data for subject 10 out of 116: : 9it [00:01,  4.80it/s]    Fetching thickness data for subject 10 out of 116: : 10it [00:02,  4.84it/s]    Fetching thickness data for subject 11 out of 116: : 10it [00:02,  4.84it/s]    Fetching thickness data for subject 11 out of 116: : 11it [00:02,  4.86it/s]    Fetching thickness data for subject 12 out of 116: : 11it [00:02,  4.86it/s]    Fetching thickness data for subject 12 out of 116: : 12it [00:02,  4.93it/s]    Fetching thickness data for subject 13 out of 116: : 12it [00:02,  4.93it/s]    Fetching thickness data for subject 13 out of 116: : 13it [00:02,  4.53it/s]    Fetching thickness data for subject 14 out of 116: : 13it [00:02,  4.53it/s]    Fetching thickness data for subject 14 out of 116: : 14it [00:02,  4.41it/s]    Fetching thickness data for subject 15 out of 116: : 14it [00:02,  4.41it/s]    Fetching thickness data for subject 15 out of 116: : 15it [00:03,  4.57it/s]    Fetching thickness data for subject 16 out of 116: : 15it [00:03,  4.57it/s]    Fetching thickness data for subject 16 out of 116: : 16it [00:03,  4.67it/s]    Fetching thickness data for subject 17 out of 116: : 16it [00:03,  4.67it/s]    Fetching thickness data for subject 17 out of 116: : 17it [00:03,  3.39it/s]    Fetching thickness data for subject 18 out of 116: : 17it [00:03,  3.39it/s]    Fetching thickness data for subject 18 out of 116: : 18it [00:04,  3.15it/s]    Fetching thickness data for subject 19 out of 116: : 18it [00:04,  3.15it/s]    Fetching thickness data for subject 19 out of 116: : 19it [00:04,  3.02it/s]    Fetching thickness data for subject 20 out of 116: : 19it [00:04,  3.02it/s]    Fetching thickness data for subject 20 out of 116: : 20it [00:04,  3.34it/s]    Fetching thickness data for subject 21 out of 116: : 20it [00:04,  3.34it/s]    Fetching thickness data for subject 21 out of 116: : 21it [00:05,  3.66it/s]    Fetching thickness data for subject 22 out of 116: : 21it [00:05,  3.66it/s]    Fetching thickness data for subject 22 out of 116: : 22it [00:05,  3.20it/s]    Fetching thickness data for subject 23 out of 116: : 22it [00:05,  3.20it/s]    Fetching thickness data for subject 23 out of 116: : 23it [00:05,  3.29it/s]    Fetching thickness data for subject 24 out of 116: : 23it [00:05,  3.29it/s]    Fetching thickness data for subject 24 out of 116: : 24it [00:05,  3.55it/s]    Fetching thickness data for subject 25 out of 116: : 24it [00:05,  3.55it/s]    Fetching thickness data for subject 25 out of 116: : 25it [00:06,  2.44it/s]    Fetching thickness data for subject 26 out of 116: : 25it [00:06,  2.44it/s]    Fetching thickness data for subject 26 out of 116: : 26it [00:06,  2.76it/s]    Fetching thickness data for subject 27 out of 116: : 26it [00:06,  2.76it/s]    Fetching thickness data for subject 27 out of 116: : 27it [00:07,  3.11it/s]    Fetching thickness data for subject 28 out of 116: : 27it [00:07,  3.11it/s]    Fetching thickness data for subject 28 out of 116: : 28it [00:07,  3.41it/s]    Fetching thickness data for subject 29 out of 116: : 28it [00:07,  3.41it/s]    Fetching thickness data for subject 29 out of 116: : 29it [00:07,  3.47it/s]    Fetching thickness data for subject 30 out of 116: : 29it [00:07,  3.47it/s]    Fetching thickness data for subject 30 out of 116: : 30it [00:07,  3.62it/s]    Fetching thickness data for subject 31 out of 116: : 30it [00:07,  3.62it/s]    Fetching thickness data for subject 31 out of 116: : 31it [00:08,  3.77it/s]    Fetching thickness data for subject 32 out of 116: : 31it [00:08,  3.77it/s]    Fetching thickness data for subject 32 out of 116: : 32it [00:08,  3.86it/s]    Fetching thickness data for subject 33 out of 116: : 32it [00:08,  3.86it/s]    Fetching thickness data for subject 33 out of 116: : 33it [00:08,  3.91it/s]    Fetching thickness data for subject 34 out of 116: : 33it [00:08,  3.91it/s]    Fetching thickness data for subject 34 out of 116: : 34it [00:08,  3.94it/s]    Fetching thickness data for subject 35 out of 116: : 34it [00:08,  3.94it/s]    Fetching thickness data for subject 35 out of 116: : 35it [00:09,  3.35it/s]    Fetching thickness data for subject 36 out of 116: : 35it [00:09,  3.35it/s]    Fetching thickness data for subject 36 out of 116: : 36it [00:09,  3.15it/s]    Fetching thickness data for subject 37 out of 116: : 36it [00:09,  3.15it/s]    Fetching thickness data for subject 37 out of 116: : 37it [00:09,  3.29it/s]    Fetching thickness data for subject 38 out of 116: : 37it [00:09,  3.29it/s]    Fetching thickness data for subject 38 out of 116: : 38it [00:10,  3.43it/s]    Fetching thickness data for subject 39 out of 116: : 38it [00:10,  3.43it/s]    Fetching thickness data for subject 39 out of 116: : 39it [00:10,  3.65it/s]    Fetching thickness data for subject 40 out of 116: : 39it [00:10,  3.65it/s]    Fetching thickness data for subject 40 out of 116: : 40it [00:10,  3.84it/s]    Fetching thickness data for subject 41 out of 116: : 40it [00:10,  3.84it/s]    Fetching thickness data for subject 41 out of 116: : 41it [00:10,  3.96it/s]    Fetching thickness data for subject 42 out of 116: : 41it [00:10,  3.96it/s]    Fetching thickness data for subject 42 out of 116: : 42it [00:11,  3.91it/s]    Fetching thickness data for subject 43 out of 116: : 42it [00:11,  3.91it/s]    Fetching thickness data for subject 43 out of 116: : 43it [00:11,  4.00it/s]    Fetching thickness data for subject 44 out of 116: : 43it [00:11,  4.00it/s]    Fetching thickness data for subject 44 out of 116: : 44it [00:11,  4.00it/s]    Fetching thickness data for subject 45 out of 116: : 44it [00:11,  4.00it/s]    Fetching thickness data for subject 45 out of 116: : 45it [00:11,  3.87it/s]    Fetching thickness data for subject 46 out of 116: : 45it [00:11,  3.87it/s]    Fetching thickness data for subject 46 out of 116: : 46it [00:12,  3.91it/s]    Fetching thickness data for subject 47 out of 116: : 46it [00:12,  3.91it/s]    Fetching thickness data for subject 47 out of 116: : 47it [00:12,  3.82it/s]    Fetching thickness data for subject 48 out of 116: : 47it [00:12,  3.82it/s]    Fetching thickness data for subject 48 out of 116: : 48it [00:12,  3.96it/s]    Fetching thickness data for subject 49 out of 116: : 48it [00:12,  3.96it/s]    Fetching thickness data for subject 49 out of 116: : 49it [00:13,  3.40it/s]    Fetching thickness data for subject 50 out of 116: : 49it [00:13,  3.40it/s]    Fetching thickness data for subject 50 out of 116: : 50it [00:13,  3.73it/s]    Fetching thickness data for subject 51 out of 116: : 50it [00:13,  3.73it/s]    Fetching thickness data for subject 51 out of 116: : 51it [00:13,  3.73it/s]    Fetching thickness data for subject 52 out of 116: : 51it [00:13,  3.73it/s]    Fetching thickness data for subject 52 out of 116: : 52it [00:13,  3.22it/s]    Fetching thickness data for subject 53 out of 116: : 52it [00:13,  3.22it/s]    Fetching thickness data for subject 53 out of 116: : 53it [00:14,  3.55it/s]    Fetching thickness data for subject 54 out of 116: : 53it [00:14,  3.55it/s]    Fetching thickness data for subject 54 out of 116: : 54it [00:14,  3.71it/s]    Fetching thickness data for subject 55 out of 116: : 54it [00:14,  3.71it/s]    Fetching thickness data for subject 55 out of 116: : 55it [00:14,  3.88it/s]    Fetching thickness data for subject 56 out of 116: : 55it [00:14,  3.88it/s]    Fetching thickness data for subject 56 out of 116: : 56it [00:14,  4.08it/s]    Fetching thickness data for subject 57 out of 116: : 56it [00:14,  4.08it/s]    Fetching thickness data for subject 57 out of 116: : 57it [00:15,  4.25it/s]    Fetching thickness data for subject 58 out of 116: : 57it [00:15,  4.25it/s]    Fetching thickness data for subject 58 out of 116: : 58it [00:15,  4.38it/s]    Fetching thickness data for subject 59 out of 116: : 58it [00:15,  4.38it/s]    Fetching thickness data for subject 59 out of 116: : 59it [00:15,  4.46it/s]    Fetching thickness data for subject 60 out of 116: : 59it [00:15,  4.46it/s]    Fetching thickness data for subject 60 out of 116: : 60it [00:15,  4.46it/s]    Fetching thickness data for subject 61 out of 116: : 60it [00:15,  4.46it/s]    Fetching thickness data for subject 61 out of 116: : 61it [00:15,  4.53it/s]    Fetching thickness data for subject 62 out of 116: : 61it [00:15,  4.53it/s]    Fetching thickness data for subject 62 out of 116: : 62it [00:16,  4.55it/s]    Fetching thickness data for subject 63 out of 116: : 62it [00:16,  4.55it/s]    Fetching thickness data for subject 63 out of 116: : 63it [00:16,  4.54it/s]    Fetching thickness data for subject 64 out of 116: : 63it [00:16,  4.54it/s]    Fetching thickness data for subject 64 out of 116: : 64it [00:16,  4.59it/s]    Fetching thickness data for subject 65 out of 116: : 64it [00:16,  4.59it/s]    Fetching thickness data for subject 65 out of 116: : 65it [00:16,  4.51it/s]    Fetching thickness data for subject 66 out of 116: : 65it [00:16,  4.51it/s]    Fetching thickness data for subject 66 out of 116: : 66it [00:17,  4.52it/s]    Fetching thickness data for subject 67 out of 116: : 66it [00:17,  4.52it/s]    Fetching thickness data for subject 67 out of 116: : 67it [00:17,  4.55it/s]    Fetching thickness data for subject 68 out of 116: : 67it [00:17,  4.55it/s]    Fetching thickness data for subject 68 out of 116: : 68it [00:17,  4.60it/s]    Fetching thickness data for subject 69 out of 116: : 68it [00:17,  4.60it/s]    Fetching thickness data for subject 69 out of 116: : 69it [00:17,  4.61it/s]    Fetching thickness data for subject 70 out of 116: : 69it [00:17,  4.61it/s]    Fetching thickness data for subject 70 out of 116: : 70it [00:17,  4.64it/s]    Fetching thickness data for subject 71 out of 116: : 70it [00:17,  4.64it/s]    Fetching thickness data for subject 71 out of 116: : 71it [00:18,  4.65it/s]    Fetching thickness data for subject 72 out of 116: : 71it [00:18,  4.65it/s]    Fetching thickness data for subject 72 out of 116: : 72it [00:18,  4.69it/s]    Fetching thickness data for subject 73 out of 116: : 72it [00:18,  4.69it/s]    Fetching thickness data for subject 73 out of 116: : 73it [00:18,  4.70it/s]    Fetching thickness data for subject 74 out of 116: : 73it [00:18,  4.70it/s]    Fetching thickness data for subject 74 out of 116: : 74it [00:18,  4.67it/s]    Fetching thickness data for subject 75 out of 116: : 74it [00:18,  4.67it/s]    Fetching thickness data for subject 75 out of 116: : 75it [00:18,  4.67it/s]    Fetching thickness data for subject 76 out of 116: : 75it [00:18,  4.67it/s]    Fetching thickness data for subject 76 out of 116: : 76it [00:19,  4.64it/s]    Fetching thickness data for subject 77 out of 116: : 76it [00:19,  4.64it/s]    Fetching thickness data for subject 77 out of 116: : 77it [00:19,  4.57it/s]    Fetching thickness data for subject 78 out of 116: : 77it [00:19,  4.57it/s]    Fetching thickness data for subject 78 out of 116: : 78it [00:19,  4.53it/s]    Fetching thickness data for subject 79 out of 116: : 78it [00:19,  4.53it/s]    Fetching thickness data for subject 79 out of 116: : 79it [00:19,  4.50it/s]    Fetching thickness data for subject 80 out of 116: : 79it [00:19,  4.50it/s]    Fetching thickness data for subject 80 out of 116: : 80it [00:20,  4.57it/s]    Fetching thickness data for subject 81 out of 116: : 80it [00:20,  4.57it/s]    Fetching thickness data for subject 81 out of 116: : 81it [00:20,  4.55it/s]    Fetching thickness data for subject 82 out of 116: : 81it [00:20,  4.55it/s]    Fetching thickness data for subject 82 out of 116: : 82it [00:20,  4.54it/s]    Fetching thickness data for subject 83 out of 116: : 82it [00:20,  4.54it/s]    Fetching thickness data for subject 83 out of 116: : 83it [00:20,  4.58it/s]    Fetching thickness data for subject 84 out of 116: : 83it [00:20,  4.58it/s]    Fetching thickness data for subject 84 out of 116: : 84it [00:20,  4.63it/s]    Fetching thickness data for subject 85 out of 116: : 84it [00:20,  4.63it/s]    Fetching thickness data for subject 85 out of 116: : 85it [00:21,  4.67it/s]    Fetching thickness data for subject 86 out of 116: : 85it [00:21,  4.67it/s]    Fetching thickness data for subject 86 out of 116: : 86it [00:21,  4.62it/s]    Fetching thickness data for subject 87 out of 116: : 86it [00:21,  4.62it/s]    Fetching thickness data for subject 87 out of 116: : 87it [00:21,  4.59it/s]    Fetching thickness data for subject 88 out of 116: : 87it [00:21,  4.59it/s]    Fetching thickness data for subject 88 out of 116: : 88it [00:21,  4.63it/s]    Fetching thickness data for subject 89 out of 116: : 88it [00:21,  4.63it/s]    Fetching thickness data for subject 89 out of 116: : 89it [00:21,  4.65it/s]    Fetching thickness data for subject 90 out of 116: : 89it [00:21,  4.65it/s]    Fetching thickness data for subject 90 out of 116: : 90it [00:22,  4.66it/s]    Fetching thickness data for subject 91 out of 116: : 90it [00:22,  4.66it/s]    Fetching thickness data for subject 91 out of 116: : 91it [00:22,  4.61it/s]    Fetching thickness data for subject 92 out of 116: : 91it [00:22,  4.61it/s]    Fetching thickness data for subject 92 out of 116: : 92it [00:22,  4.64it/s]    Fetching thickness data for subject 93 out of 116: : 92it [00:22,  4.64it/s]    Fetching thickness data for subject 93 out of 116: : 93it [00:22,  4.65it/s]    Fetching thickness data for subject 94 out of 116: : 93it [00:22,  4.65it/s]    Fetching thickness data for subject 94 out of 116: : 94it [00:23,  4.68it/s]    Fetching thickness data for subject 95 out of 116: : 94it [00:23,  4.68it/s]    Fetching thickness data for subject 95 out of 116: : 95it [00:23,  4.70it/s]    Fetching thickness data for subject 96 out of 116: : 95it [00:23,  4.70it/s]    Fetching thickness data for subject 96 out of 116: : 96it [00:23,  4.50it/s]    Fetching thickness data for subject 97 out of 116: : 96it [00:23,  4.50it/s]    Fetching thickness data for subject 97 out of 116: : 97it [00:23,  4.40it/s]    Fetching thickness data for subject 98 out of 116: : 97it [00:23,  4.40it/s]    Fetching thickness data for subject 98 out of 116: : 98it [00:24,  4.31it/s]    Fetching thickness data for subject 99 out of 116: : 98it [00:24,  4.31it/s]    Fetching thickness data for subject 99 out of 116: : 99it [00:24,  4.35it/s]    Fetching thickness data for subject 100 out of 116: : 99it [00:24,  4.35it/s]    Fetching thickness data for subject 100 out of 116: : 100it [00:24,  4.45it/s]    Fetching thickness data for subject 101 out of 116: : 100it [00:24,  4.45it/s]    Fetching thickness data for subject 101 out of 116: : 101it [00:24,  4.44it/s]    Fetching thickness data for subject 102 out of 116: : 101it [00:24,  4.44it/s]    Fetching thickness data for subject 102 out of 116: : 102it [00:24,  4.32it/s]    Fetching thickness data for subject 103 out of 116: : 102it [00:24,  4.32it/s]    Fetching thickness data for subject 103 out of 116: : 103it [00:25,  4.39it/s]    Fetching thickness data for subject 104 out of 116: : 103it [00:25,  4.39it/s]    Fetching thickness data for subject 104 out of 116: : 104it [00:25,  4.45it/s]    Fetching thickness data for subject 105 out of 116: : 104it [00:25,  4.45it/s]    Fetching thickness data for subject 105 out of 116: : 105it [00:25,  4.50it/s]    Fetching thickness data for subject 106 out of 116: : 105it [00:25,  4.50it/s]    Fetching thickness data for subject 106 out of 116: : 106it [00:25,  4.51it/s]    Fetching thickness data for subject 107 out of 116: : 106it [00:25,  4.51it/s]    Fetching thickness data for subject 107 out of 116: : 107it [00:26,  4.54it/s]    Fetching thickness data for subject 108 out of 116: : 107it [00:26,  4.54it/s]    Fetching thickness data for subject 108 out of 116: : 108it [00:26,  4.59it/s]    Fetching thickness data for subject 109 out of 116: : 108it [00:26,  4.59it/s]    Fetching thickness data for subject 109 out of 116: : 109it [00:26,  4.61it/s]    Fetching thickness data for subject 110 out of 116: : 109it [00:26,  4.61it/s]    Fetching thickness data for subject 110 out of 116: : 110it [00:26,  4.60it/s]    Fetching thickness data for subject 111 out of 116: : 110it [00:26,  4.60it/s]    Fetching thickness data for subject 111 out of 116: : 111it [00:26,  4.64it/s]    Fetching thickness data for subject 112 out of 116: : 111it [00:26,  4.64it/s]    Fetching thickness data for subject 112 out of 116: : 112it [00:27,  4.64it/s]    Fetching thickness data for subject 113 out of 116: : 112it [00:27,  4.64it/s]    Fetching thickness data for subject 113 out of 116: : 113it [00:27,  4.65it/s]    Fetching thickness data for subject 114 out of 116: : 113it [00:27,  4.65it/s]    Fetching thickness data for subject 114 out of 116: : 114it [00:27,  4.62it/s]    Fetching thickness data for subject 115 out of 116: : 114it [00:27,  4.62it/s]    Fetching thickness data for subject 115 out of 116: : 115it [00:27,  4.56it/s]    Fetching thickness data for subject 116 out of 116: : 115it [00:27,  4.56it/s]    Fetching thickness data for subject 116 out of 116: : 116it [00:27,  4.53it/s]    Fetching thickness data for subject 116 out of 116: : 116it [00:27,  4.15it/s]
 
 
 
-
-.. GENERATED FROM PYTHON SOURCE LINES 26-29
+.. GENERATED FROM PYTHON SOURCE LINES 18-22
 
 Lets have a look at the cortical thickness data. To do this,
-we will use the surface plotter included with BrainSpace. Lets plot
-mean thickness.
+we will use the surface plotter included with BrainSpace. As we'll
+be plotting data onto these hemispheres quite often in this tutorial
+we'll create a simple function for it and plot mean thickness here.
 
-.. GENERATED FROM PYTHON SOURCE LINES 29-45
+.. GENERATED FROM PYTHON SOURCE LINES 22-47
 
 .. code-block:: default
 
+    import numpy as np
     from brainspace.plotting import plot_hemispheres
 
-    plot_hemispheres(
-        pial_left,
-        pial_right,
-        np.mean(thickness, axis=0),
-        color_bar=True,
-        color_range=(1.5, 3.5),
-        label_text=["Cortical Thickness"],
-        embed_nb=True,
-        size=(1400, 200),
-        zoom=1.45,
-        cb__labelTextProperty={"fontSize": 12},
-    )
+
+    def local_plot_hemispheres(values, label_text, color_range, cmap="viridis"):
+        # Plot cortical surfaces with values as the data, label_text as
+        # the labels, and color_range as the limits of the color bar.
+        return plot_hemispheres(
+            pial_left,
+            pial_right,
+            values,
+            color_bar=True,
+            color_range=color_range,
+            label_text=label_text,
+            cmap=cmap,
+            embed_nb=True,
+            size=(1400, 200),
+            zoom=1.45,
+            nan_color=(0.7, 0.7, 0.7, 1),
+            cb__labelTextProperty={"fontSize": 12},
+            interactive=False,
+        )
 
 
+    local_plot_hemispheres(np.mean(thickness, axis=0), ["Cortical Thickness"], (1.5, 3.5))
 
 
 
@@ -100,38 +94,70 @@ mean thickness.
 
  .. code-block:: none
 
-    /Users/reinder/opt/miniconda3/envs/python3.8/lib/python3.8/site-packages/brainspace/plotting/base.py:287: UserWarning:
-
-    Interactive mode requires 'panel'. Setting 'interactive=False'
-
 
     <IPython.core.display.Image object>
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 46-53
+.. GENERATED FROM PYTHON SOURCE LINES 48-49
 
-Next, lets see whether cortical thickness is related to age in our sample
-data. To this end we can create a linear model with BrainStat. First we
-declare the behavioral variables as FixedEffects. The FixedEffect class can be
-created in two ways: either we provide the data with pandas, as we do here, or
-we provide a numpy array and a name for the fixed effect. Once, that's done we
-can create the model by simply adding the terms together. Lets set up a model
-with age and patient status as fixed effects.
+Lets also have a look at what's inside the demographics data.
 
-.. GENERATED FROM PYTHON SOURCE LINES 53-63
+.. GENERATED FROM PYTHON SOURCE LINES 49-51
 
 .. code-block:: default
 
 
-    from brainstat.stats.terms import FixedEffect
+    print(demographics)
 
-    demographics.DX_GROUP[demographics.DX_GROUP == 1] = "Patient"
-    demographics.DX_GROUP[demographics.DX_GROUP == 2] = "Control"
 
-    term_age = FixedEffect(demographics.AGE_AT_SCAN)
-    term_patient = FixedEffect(demographics.DX_GROUP)
-    model = term_age + term_patient
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+        SUB_ID  VISIT  AGE_AT_SCAN SEX
+    0   031404      1    -0.579678   F
+    1   04a144      1    -0.812116   M
+    2   0b78f1      1     0.117636   M
+    3   0d26b9      1     0.466293   F
+    4   1988b8      1    -0.114802   M
+    ..     ...    ...          ...  ..
+    77  f25714      1    -0.231021   F
+    78  f25714      2     0.117636   F
+    79  f615a5      1    -0.695897   F
+    80  feac6b      1    -0.695897   F
+    81  feac6b      2    -0.347240   F
+
+    [82 rows x 4 columns]
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 52-55
+
+Demographics contains four variables: a subject ID, a visit number (some
+subjects visited multiple times), their age at the time of scanning and their
+sex. Lets also print some summary statistics.
+
+.. GENERATED FROM PYTHON SOURCE LINES 55-67
+
+.. code-block:: default
+
+
+    # Print demographics summary.
+    for i in range(1, 3):
+        print(
+            (
+                f"Visit {i}, N={np.sum(demographics.VISIT==i)}, "
+                f"{np.sum(demographics.SEX[demographics.VISIT == i] == 'F')} females, "
+                f"mean subject age {np.mean(demographics.AGE_AT_SCAN[demographics.VISIT == i]):.2f}, "
+                f"standard deviation of age: {np.std(demographics.AGE_AT_SCAN[demographics.VISIT==i]):.2f}."
+            )
+        )
 
 
 
@@ -143,30 +169,47 @@ with age and patient status as fixed effects.
 
  .. code-block:: none
 
-    /Users/reinder/GitHub/BrainStat/docs/python/tutorials/plot_tutorial_01_basics.py:56: SettingWithCopyWarning:
-
-
-    A value is trying to be set on a copy of a slice from a DataFrame
-
-    See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-
-    /Users/reinder/GitHub/BrainStat/docs/python/tutorials/plot_tutorial_01_basics.py:57: SettingWithCopyWarning:
-
-
-    A value is trying to be set on a copy of a slice from a DataFrame
-
-    See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+    Visit 1, N=70, 30 females, mean subject age -0.02, standard deviation of age: 1.02.
+    Visit 2, N=12, 5 females, mean subject age 0.09, standard deviation of age: 0.84.
 
 
 
 
+.. GENERATED FROM PYTHON SOURCE LINES 68-77
 
-.. GENERATED FROM PYTHON SOURCE LINES 64-66
+Next, we will assess whether a subject's age is related to their cortical
+thickness. To this end we can create a linear model with BrainStat. For our
+first model, we will only consider the effect of age, i.e. we will disregard
+the effect of sex and that some subjects visit twice. this end we can create a
+linear model with BrainStat. First we declare the age variable as a
+FixedEffect. The FixedEffect class can be created in two ways: either we
+provide the data with pandas, as we do here, or we provide a numpy array and a
+name for the fixed effect. Lets set up the model Y = intercept + B1 * age. Note
+that BrainStat includes an intercept by default.
+
+.. GENERATED FROM PYTHON SOURCE LINES 77-83
+
+.. code-block:: default
+
+
+    from brainstat.stats.terms import FixedEffect
+
+    term_age = FixedEffect(demographics.AGE_AT_SCAN)
+    model = term_age
+
+
+
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 84-86
 
 As said before, if your data is not in a pandas DataFrame (e.g. numpy), you'll
 have to provide the name of the effect as an additional parameter as follows:
 
-.. GENERATED FROM PYTHON SOURCE LINES 66-68
+.. GENERATED FROM PYTHON SOURCE LINES 86-88
 
 .. code-block:: default
 
@@ -179,34 +222,16 @@ have to provide the name of the effect as an additional parameter as follows:
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 69-72
+.. GENERATED FROM PYTHON SOURCE LINES 89-95
 
-Beside simple fixed effects, we may also be interested in interaction
-effects. We can add these to the model by multiplying terms. Lets
-create a model with an interaction between age and patient status.
-
-.. GENERATED FROM PYTHON SOURCE LINES 72-75
-
-.. code-block:: default
-
-
-    model_interaction = term_age + term_patient + term_age * term_patient
-
-
-
-
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 76-80
-
-Lets have a look at one of these models. As you can see below, the model
-is stored in a format closely resembling a pandas DataFrame. Note that an
+Lets have a look at one of these models. As you can see below, the model is
+stored in a format closely resembling a pandas DataFrame. Note that an
 intercept is automatically added to the model. This behavior can be disabled
-in the FixedEffect call, but we recommend leaving it enabled.
+in the FixedEffect call, but we recommend leaving it enabled. We can also
+access the vectors related to each effect by their name i.e. model.intercept
+and model.AGE_AT_SCAN will return the vectors of the intercept and age, respectively.
 
-.. GENERATED FROM PYTHON SOURCE LINES 80-83
+.. GENERATED FROM PYTHON SOURCE LINES 95-98
 
 .. code-block:: default
 
@@ -223,43 +248,47 @@ in the FixedEffect call, but we recommend leaving it enabled.
 
  .. code-block:: none
 
-         intercept  AGE_AT_SCAN  DX_GROUP_Control  DX_GROUP_Patient
-    0            1        24.45                 0                 1
-    1            1        19.09                 0                 1
-    2            1        13.73                 0                 1
-    3            1        13.37                 0                 1
-    4            1        17.78                 0                 1
-    ..         ...          ...               ...               ...
-    111          1        10.08                 1                 0
-    112          1         9.69                 1                 0
-    113          1        11.99                 1                 0
-    114          1        10.53                 1                 0
-    115          1        10.64                 1                 0
+        intercept  AGE_AT_SCAN
+    0           1    -0.579678
+    1           1    -0.812116
+    2           1     0.117636
+    3           1     0.466293
+    4           1    -0.114802
+    ..        ...          ...
+    77          1    -0.231021
+    78          1     0.117636
+    79          1    -0.695897
+    80          1    -0.695897
+    81          1    -0.347240
 
-    [116 rows x 4 columns]
-
-
+    [82 rows x 2 columns]
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 84-90
 
-Now, imagine we have some cortical marker (e.g. cortical thickness) for
-each subject, and we want to evaluate whether this marker changes with age
-whilst correcting for effects of patient status. To do this, we can use
-the model we defined before, and a contrast in observations (here: age).
-Then we simply initialize an SLM model and fit it to the cortical thickness
-data.
 
-.. GENERATED FROM PYTHON SOURCE LINES 90-100
+.. GENERATED FROM PYTHON SOURCE LINES 99-104
+
+Now, imagine we have some cortical marker (e.g. cortical thickness) for each
+subject, and we want to evaluate whether this marker is different across the
+the lifespan. To do this, we can use the model we defined before, and a
+contrast in observations (here: age). Then we simply initialize an SLM model
+and fit it to the cortical thickness data.
+
+.. GENERATED FROM PYTHON SOURCE LINES 104-118
 
 .. code-block:: default
 
 
     from brainstat.stats.SLM import SLM
 
-    contrast_age = model.AGE_AT_SCAN
+    contrast_age = demographics.AGE_AT_SCAN
     slm_age = SLM(
-        model, contrast_age, surf="civet41k", mask=mask, correction=["fdr", "rft"]
+        model,
+        contrast_age,
+        surf="fsaverage5",
+        mask=mask,
+        correction=["fdr", "rft"],
+        cluster_threshold=0.01,
     )
     slm_age.fit(thickness)
 
@@ -270,74 +299,48 @@ data.
 
 
 
+.. GENERATED FROM PYTHON SOURCE LINES 119-124
 
-.. GENERATED FROM PYTHON SOURCE LINES 101-103
+The resulting model, slm_age, will contain the t-statistic map, p-values
+derived with the requested corrections, and a myriad of other properties (see
+the API for more details). Lets plot the t-values and p-values on the surface.
+We'll do this a few times throughout the tutorial so lets define a function to
+do this.
 
-Next, we will plot the t-values and p-values on the surface. We'll do this a
-few times throughout the tutorial so lets define a function to do this.
-
-.. GENERATED FROM PYTHON SOURCE LINES 103-162
+.. GENERATED FROM PYTHON SOURCE LINES 124-154
 
 .. code-block:: default
 
 
 
-    def plot_slm_results(slm):
-        # Plot t-values.
-        plot_hemispheres(
-            pial_left,
-            pial_right,
-            slm.t,
-            label_text=["t-values"],
-            color_bar=True,
-            color_range=(-4, 4),
-            embed_nb=True,
-            cmap="bwr",
-            size=(1400, 200),
-            zoom=1.45,
-            nan_color=(0.7, 0.7, 0.7, 1),
-            cb__labelTextProperty={"fontSize": 12},
-        )
+    def plot_slm_results(slm, plot_peak=False, plot_fdr=False):
 
-        # Plot p-values.
-        pval = slm.P["pval"]["P"]
-        pval[pval > 0.05] = np.nan
-        pval[~mask] = np.nan
-        plot_hemispheres(
-            pial_left,
-            pial_right,
-            pval,
-            label_text=["p-values (RFT)"],
-            color_bar=True,
-            color_range=(0, 0.05),
-            embed_nb=True,
-            cmap="hot_r",
-            size=(1400, 200),
-            zoom=1.45,
-            nan_color=(0.7, 0.7, 0.7, 1),
-            cb__labelTextProperty={"fontSize": 12},
-        )
+        handles = [local_plot_hemispheres(slm.t, ["t-values"], (-4, 4), "bwr")]
 
-        pval = slm.Q
-        pval[pval > 0.05] = np.nan
-        pval[~mask] = np.nan
-        plot_hemispheres(
-            pial_left,
-            pial_right,
-            pval,
-            label_text=["p-values (FDR)"],
-            color_bar=True,
-            color_range=(0, 0.05),
-            embed_nb=True,
-            cmap="hot_r",
-            size=(1400, 200),
-            zoom=1.45,
-            nan_color=(0.7, 0.7, 0.7, 1),
-            cb__labelTextProperty={"fontSize": 12},
-        )
+        plot_pvalues = [np.copy(slm.P["pval"]["C"])]
+        labels = ["Cluster p-values"]
+
+        if plot_peak:
+            plot_pvalues.append(np.copy(slm.P["pval"]["P"]))
+            labels.append("Peak p-vales")
+
+        if plot_fdr:
+            plot_pvalues.append(np.copy(slm.Q))
+            labels.append("Vertex p-values")
+
+        [np.place(x, np.logical_or(x > 0.05, ~mask), np.nan) for x in plot_pvalues]
+
+        for i in range(len(plot_pvalues)):
+            handles.append(
+                local_plot_hemispheres(plot_pvalues[i], [labels[i]], (0, 0.05), "plasma_r")
+            )
+
+        return handles
 
 
-    plot_slm_results(slm_age)
+    plot_slm_results(slm_age, plot_peak=True, plot_fdr=True)
+
+
 
 
 
@@ -362,6 +365,12 @@ few times throughout the tutorial so lets define a function to do this.
           :alt: plot tutorial 01 basics
           :class: sphx-glr-multi-img
 
+    *
+
+      .. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_005.png
+          :alt: plot tutorial 01 basics
+          :class: sphx-glr-multi-img
+
 
 .. rst-class:: sphx-glr-script-out
 
@@ -369,26 +378,27 @@ few times throughout the tutorial so lets define a function to do this.
 
  .. code-block:: none
 
-    /Users/reinder/opt/miniconda3/envs/python3.8/lib/python3.8/site-packages/brainspace/plotting/base.py:287: UserWarning:
 
-    Interactive mode requires 'panel'. Setting 'interactive=False'
-
+    [<IPython.core.display.Image object>, <IPython.core.display.Image object>, <IPython.core.display.Image object>, <IPython.core.display.Image object>]
 
 
 
+.. GENERATED FROM PYTHON SOURCE LINES 155-167
 
-.. GENERATED FROM PYTHON SOURCE LINES 163-171
+Only clusters are significant, and not peaks. This suggests that the age
+effect covers large regions, rather than local foci. Furthermore, at the
+vertexwise level we only find a small group of significant vertices in the
+left cingulate cortex. Lets have a closer look at the clusters and their
+peaks. The data on clusters are stored in tables inside BrainStatModel.P.clus
+and information on the peaks is stored in BrainStatModel.P.peak. If a
+two-tailed test is run (BrainStat defaults to two-tailed), a table is returned
+for each tail. The first table uses the contrast as provided, the second table
+uses the inverse contrast. If a one-tailed test is performed, then only a
+single table is returned. Lets print the first 15 rows of the inverted
+contrast cluster table.
 
-BrainStat also allows for assessing significant clusters and peaks. The data
-on clusters are stored in tables inside BrainStatModel.P.clus and information
-on the peaks is stored in BrainStatModel.P.peak. If a two-tailed test is run
-(BrainStat defaults to two-tailed), a table is returned for each tail. The
-first table uses the contrast as provided, the second table uses the inverse
-contrast. If a one-tailed test is performed, then only a single table is
-returned. Lets print the inverted contrast cluster table.
 
-
-.. GENERATED FROM PYTHON SOURCE LINES 171-174
+.. GENERATED FROM PYTHON SOURCE LINES 167-170
 
 .. code-block:: default
 
@@ -405,51 +415,31 @@ returned. Lets print the inverted contrast cluster table.
 
  .. code-block:: none
 
-        clusid  nverts     resels             P
-    0        1  8738.0  20.960359  7.450214e-08
-    1        2  1088.0   1.597035  6.199703e-04
-    2        3   492.0   0.640760  3.336996e-02
-    3        4   431.0   0.548288  5.016478e-02
-    4        5    64.0   0.214293  2.163199e-01
-    5        6    24.0   0.153004  2.791494e-01
-    6        7    98.0   0.134613  3.007959e-01
-    7        8    43.0   0.115649  3.245283e-01
-    8        9     9.0   0.112452  3.286729e-01
-    9       10    21.0   0.083554  3.680015e-01
-    10      11     2.0   0.041479  4.311918e-01
-    11      12     2.0   0.039791  4.338679e-01
-    12      13    13.0   0.027494  4.536737e-01
-    13      14     1.0   0.023942  4.594935e-01
-    14      15     1.0   0.022462  4.619306e-01
-    15      16     1.0   0.020655  4.649176e-01
-    16      17     1.0   0.017212  4.706384e-01
-    17      18     1.0   0.016909  4.711429e-01
-    18      19     1.0   0.016418  4.719629e-01
-    19      20     1.0   0.015658  4.732333e-01
-    20      21     3.0   0.014520  4.751382e-01
-    21      22     1.0   0.012733  4.781393e-01
-    22      23     1.0   0.012123  4.791654e-01
-    23      24     3.0   0.007744  4.865687e-01
-    24      25     3.0   0.006308  4.890105e-01
-    25      26     2.0   0.006169  4.892463e-01
-    26      27     2.0   0.005298  4.907313e-01
-    27      28     3.0   0.004389  4.922831e-01
-    28      29     1.0   0.003401  4.939718e-01
-    29      30     1.0   0.002329  4.958073e-01
-    30      31     1.0   0.002069  4.962535e-01
-    31      32     1.0   0.001795  4.967233e-01
+        clusid  nverts    resels         P
+    0        1   141.0  6.283315  0.000033
+    1        2    82.0  3.994467  0.001858
+    2        3    69.0  3.871711  0.002362
+    3        4    61.0  3.670485  0.003517
+    4        5    82.0  3.652319  0.003648
+    ..     ...     ...       ...       ...
+    73      74     1.0  0.050811  1.000000
+    74      75     1.0  0.043958  1.000000
+    75      76     1.0  0.039022  1.000000
+    76      77     1.0  0.032002  1.000000
+    77      78     1.0  0.019503  1.000000
+
+    [78 rows x 4 columns]
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 175-179
+.. GENERATED FROM PYTHON SOURCE LINES 171-174
 
-Here, we see that cluster 1 contains 8738 vertices and is significant at a
-p-value of 7.45e-08. Clusters are sorted by p-value; later clusters will
-generally be smaller and have higher p-values. Lets now have a look at the
-peaks within these clusters.
+Here, we see that cluster 1 contains 373 vertices. Clusters are sorted by
+p-value; later clusters will generally be smaller and have higher p-values.
+Lets now have a look at the peaks within these clusters.
 
-.. GENERATED FROM PYTHON SOURCE LINES 179-182
+.. GENERATED FROM PYTHON SOURCE LINES 174-177
 
 .. code-block:: default
 
@@ -457,7 +447,6 @@ peaks within these clusters.
     print(slm_age.P["peak"][1])
 
 
-    [294 rows x 5 columns]
 
 
 
@@ -467,62 +456,84 @@ peaks within these clusters.
 
  .. code-block:: none
 
-                t  clusid  vertid         P               yeo7
-    0    6.315453       1   72883  0.000007             Visual
-    1    6.238381       1   72887  0.000010             Visual
-    2    5.872848       1   79402  0.000051             Visual
-    3    5.872033       1   79524  0.000051             Visual
-    4    5.869464       1   79387  0.000052             Visual
-    ..        ...     ...     ...       ...                ...
-    289  3.179492      29   53761  0.692415  Ventral Attention
-    290  3.177273       3   52592  0.696334       Default mode
-    291  3.174514      11   80787  0.701205          Undefined
-    292  3.172793      32   55988  0.704244             Limbic
-    293  3.165341      23   57026  0.717851             Limbic
+                t  vertid  clusid          P               yeo7
+    0    5.695420   18720      11   0.001248  Ventral Attention
+    1    5.164823    5430      12   0.009035             Limbic
+    2    4.855500   16911       6   0.027242  Ventral Attention
+    3    4.833974   19629       2   0.029335     Frontoparietal
+    4    4.628306   12603      14   0.059519       Default mode
+    ..        ...     ...     ...        ...                ...
+    109  2.403000    2276      62  23.356468  Ventral Attention
+    110  2.394788    2185      74  23.709038       Default mode
+    111  2.389922   14687      76  23.918494       Default mode
+    112  2.382012    6087      64  24.258914       Default mode
+    113  2.375295    3243      72  24.548027       Default mode
 
-    [294 rows x 5 columns]
-
-
+    [114 rows x 5 columns]
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 183-189
 
-By default BrainStat uses a two-tailed test. If you want to get a one-tailed
-test, simply specify it in the SLM model initialization with
-`two_tailed=False`. Note that the one-tailed test will test for positive
-t-values. If you want to test for negative t-values, simply invert the
-contrast. We may hypothesize based on prior research that cortical thickness
-decreases with age, so we could specify this as follows:
 
-.. GENERATED FROM PYTHON SOURCE LINES 189-203
+.. GENERATED FROM PYTHON SOURCE LINES 178-184
+
+Within cluster 1, we are able to detect several peaks. The peak with the
+highest t-statistic (t=4.3972) occurs at vertex 19629, which is inside the
+frontoparietal network as defined by the Yeo-7 networks. Note that the Yeo
+network membership is only provided if the surface is specified as a template
+name as we did here. For custom surfaces, or pre-loaded surfaces (as we will
+use below) this column is omitted.
+
+.. GENERATED FROM PYTHON SOURCE LINES 186-190
+
+Interaction effects models
+----------------------------
+
+Similarly to age, we can also test for the effect of sex on cortical thickness.
+
+.. GENERATED FROM PYTHON SOURCE LINES 190-197
 
 .. code-block:: default
 
 
-    # Note the minus in front of contrast_age to test for decreasing thickness with age.
-    slm_age_onetailed = SLM(
-        model,
-        -contrast_age,
-        surf="civet41k",
-        correction=["fdr", "rft"],
-        mask=mask,
-        two_tailed=False,
+    term_sex = FixedEffect(demographics.SEX)
+    model_sex = term_sex
+    contrast_sex = (demographics.SEX == "M").astype(int) - (demographics.SEX == "F").astype(
+        int
     )
-    slm_age_onetailed.fit(thickness)
 
-    plot_slm_results(slm_age_onetailed)
+
+
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 198-199
+
+Next we will rerrun the model and see if our results change.
+
+.. GENERATED FROM PYTHON SOURCE LINES 199-212
+
+.. code-block:: default
+
+
+    slm_sex = SLM(
+        model_sex,
+        contrast_sex,
+        surf=pial_combined,
+        mask=mask,
+        correction=["fdr", "rft"],
+        two_tailed=False,
+        cluster_threshold=0.01,
+    )
+    slm_sex.fit(thickness)
+    plot_slm_results(slm_sex)
 
 
 
 
 .. rst-class:: sphx-glr-horizontal
 
-
-    *
-
-      .. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_005.png
-          :alt: plot tutorial 01 basics
-          :class: sphx-glr-multi-img
 
     *
 
@@ -543,36 +554,52 @@ decreases with age, so we could specify this as follows:
 
  .. code-block:: none
 
-    /Users/reinder/opt/miniconda3/envs/python3.8/lib/python3.8/site-packages/brainspace/plotting/base.py:287: UserWarning:
 
-    Interactive mode requires 'panel'. Setting 'interactive=False'
-
+    [<IPython.core.display.Image object>, <IPython.core.display.Image object>]
 
 
 
+.. GENERATED FROM PYTHON SOURCE LINES 213-217
 
-.. GENERATED FROM PYTHON SOURCE LINES 204-206
+Here, we find few significant effects of sex on cortical thickness. However, as
+we've already established, age has an effect on cortical thickness. So we may
+want to correct for this effect before evaluating whether sex has an effect on
+cortical thickenss. Lets make a new model that includes the effect of age.
 
-Similarly, we could perform an analysis to assess cortical thickness
-differences across healthy and patient groups whilst correcting for age.
-
-.. GENERATED FROM PYTHON SOURCE LINES 206-220
+.. GENERATED FROM PYTHON SOURCE LINES 217-220
 
 .. code-block:: default
 
 
-    contrast_patient = model.DX_GROUP_Patient - model.DX_GROUP_Control
-    slm_patient = SLM(
-        model,
-        contrast_patient,
-        surf="civet41k",
+    model_sexage = term_age + term_sex
+
+
+
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 221-222
+
+Next we will rerrun the model and see if our results change.
+
+.. GENERATED FROM PYTHON SOURCE LINES 222-235
+
+.. code-block:: default
+
+
+    slm_sexage = SLM(
+        model_sexage,
+        contrast_sex,
+        surf=pial_combined,
         mask=mask,
         correction=["fdr", "rft"],
+        two_tailed=False,
+        cluster_threshold=0.01,
     )
-    slm_patient.fit(thickness)
-
-    plot_slm_results(slm_patient)
-
+    slm_sexage.fit(thickness)
+    plot_slm_results(slm_sexage)
 
 
 
@@ -592,9 +619,60 @@ differences across healthy and patient groups whilst correcting for age.
           :alt: plot tutorial 01 basics
           :class: sphx-glr-multi-img
 
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+
+    [<IPython.core.display.Image object>, <IPython.core.display.Image object>]
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 236-241
+
+After accounting for the effect of age, we still find only one significant
+cluster of effect of sex on cortical thickness. However, it could be that age
+affects men and women differently. To account for this, we could include an
+interaction effect into the model. Lets run the model again with an
+interaction effect.
+
+.. GENERATED FROM PYTHON SOURCE LINES 241-256
+
+.. code-block:: default
+
+
+    # Effect of sex on cortical thickness.
+    model_sexage_int = term_age + term_sex + term_age * term_sex
+
+    slm_sexage_int = SLM(
+        model_sexage_int,
+        contrast_sex,
+        surf=pial_combined,
+        mask=mask,
+        correction=["rft"],
+        cluster_threshold=0.01,
+    )
+    slm_sexage_int.fit(thickness)
+    plot_slm_results(slm_sexage_int)
+
+
+
+
+.. rst-class:: sphx-glr-horizontal
+
+
     *
 
       .. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_010.png
+          :alt: plot tutorial 01 basics
+          :class: sphx-glr-multi-img
+
+    *
+
+      .. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_011.png
           :alt: plot tutorial 01 basics
           :class: sphx-glr-multi-img
 
@@ -605,68 +683,57 @@ differences across healthy and patient groups whilst correcting for age.
 
  .. code-block:: none
 
-    /Users/reinder/opt/miniconda3/envs/python3.8/lib/python3.8/site-packages/brainspace/plotting/base.py:287: UserWarning:
 
-    Interactive mode requires 'panel'. Setting 'interactive=False'
-
-
-    Interactive mode requires 'panel'. Setting 'interactive=False'
+    [<IPython.core.display.Image object>, <IPython.core.display.Image object>]
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 221-228
+.. GENERATED FROM PYTHON SOURCE LINES 257-262
 
-It appears we do not find statistically significant results for a relationship
-between cortical thickness and patient status.
+After including the interaction effect, we no significant effects of
+sex on cortical thickness in several clusters.
 
-Now, imagine that instead of using a fixed effects model, you would prefer a
-mixed effects model wherein the scanning site is a random variable. This is
-simple to set up. All you need to do is initialize the site term with the
-MixedEffect class, all other code remains identical.
+We could also look at whether the cortex of men and women changes
+differently with age by comparing their interaction effects.
 
-.. GENERATED FROM PYTHON SOURCE LINES 228-243
+.. GENERATED FROM PYTHON SOURCE LINES 262-279
 
 .. code-block:: default
 
 
-    from brainstat.stats.terms import MixedEffect
+    # Effect of age on cortical thickness for the healthy group.
+    contrast_sex_int = demographics.AGE_AT_SCAN * (
+        demographics.SEX == "M"
+    ) - demographics.AGE_AT_SCAN * (demographics.SEX == "F")
 
-    random_site = MixedEffect(demographics.SITE_ID, name_ran="Site")
-
-    model_random = term_age + term_patient + random_site
-    slm_random = SLM(
-        model_random,
-        contrast_age,
-        surf="civet41k",
+    slm_sex_int = SLM(
+        model_sexage_int,
+        contrast_sex_int,
+        surf=pial_combined,
         mask=mask,
-        correction=["fdr", "rft"],
+        correction=["rft"],
+        cluster_threshold=0.01,
     )
-    slm_random.fit(thickness)
+    slm_sex_int.fit(thickness)
+    plot_slm_results(slm_sex_int)
 
 
 
 
+.. rst-class:: sphx-glr-horizontal
 
 
+    *
 
+      .. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_012.png
+          :alt: plot tutorial 01 basics
+          :class: sphx-glr-multi-img
 
-.. GENERATED FROM PYTHON SOURCE LINES 244-250
+    *
 
-Lets have a closer look at the mixed effect. The variable random_site contains
-two important properties: "mean", and "variance". "mean" contains any fixed effects,
-whereas "variance" contains the random effects. As we did not specify any fixed
-effects, the "mean" term is empty. The "variance" term contains the random effect as
-well as the identity term, similar to the intercept in FixedEffects. The identity term
-is added by default.
-
-.. GENERATED FROM PYTHON SOURCE LINES 250-252
-
-.. code-block:: default
-
-
-    print(random_site.variance)
-
-
+      .. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_013.png
+          :alt: plot tutorial 01 basics
+          :class: sphx-glr-multi-img
 
 
 .. rst-class:: sphx-glr-script-out
@@ -675,28 +742,179 @@ is added by default.
 
  .. code-block:: none
 
-           Site    I
-    0         1  1.0
-    1         1  0.0
-    2         1  0.0
-    3         1  0.0
-    4         1  0.0
-    ...     ...  ...
-    13451     1  0.0
-    13452     1  0.0
-    13453     1  0.0
-    13454     1  0.0
-    13455     1  1.0
 
-    [13456 rows x 2 columns]
+    [<IPython.core.display.Image object>, <IPython.core.display.Image object>]
 
 
 
+.. GENERATED FROM PYTHON SOURCE LINES 280-282
+
+Indeed, it appears that the interaction effect between sex and age is quite
+different across men and women, with stronger effects occuring in women.
+
+.. GENERATED FROM PYTHON SOURCE LINES 284-286
+
+One-tailed Test
+-----------------
+
+.. GENERATED FROM PYTHON SOURCE LINES 288-298
+
+Imagine that, based on prior research, we hypothesize that men have higher
+cortical thickness than women. In that case, we could run this same model with
+a one-tailed test, rather than a two-tailed test. By default BrainStat uses a
+two-tailed test. If you want to get a one-tailed test, simply specify it in
+the SLM model initialization with 'two_tailed', false. Note that the
+one-tailed test will test for the significance of positive t-values. If you
+want to test for the significance of negative t-values, simply change the sign
+of the contrast. We may hypothesize based on prior research that cortical
+thickness decreases with age, so we could specify this as follows. Note the
+minus in front of contrast_age to test for decreasing thickness with age.
+
+.. GENERATED FROM PYTHON SOURCE LINES 298-313
+
+.. code-block:: default
+
+
+    from brainstat.stats.SLM import SLM
+
+    slm_onetailed = SLM(
+        model_sexage_int,
+        -contrast_age,
+        surf=pial_combined,
+        mask=mask,
+        correction=["rft"],
+        cluster_threshold=0.01,
+        two_tailed=False,
+    )
+    slm_onetailed.fit(thickness)
+    plot_slm_results(slm_onetailed)
+
+
+
+
+.. rst-class:: sphx-glr-horizontal
+
+
+    *
+
+      .. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_014.png
+          :alt: plot tutorial 01 basics
+          :class: sphx-glr-multi-img
+
+    *
+
+      .. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_015.png
+          :alt: plot tutorial 01 basics
+          :class: sphx-glr-multi-img
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+
+    [<IPython.core.display.Image object>, <IPython.core.display.Image object>]
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 314-315
+
+Notice the additional clusters that we find when using a one-tailed test.
+
+.. GENERATED FROM PYTHON SOURCE LINES 317-319
+
+Mixed Effects Models
+--------------------
+
+.. GENERATED FROM PYTHON SOURCE LINES 321-326
+
+So far, we've considered multiple visits of the same subject as two separate,
+independent measurements. Clearly, however, such measurements are not
+independent of each other. To account for this, we could add subject ID as a
+random effect. Lets do this and test the effect of age on cortical thickness
+again.
+
+.. GENERATED FROM PYTHON SOURCE LINES 326-346
+
+.. code-block:: default
+
+
+
+    from brainstat.stats.terms import MixedEffect
+
+    term_subject = MixedEffect(demographics.SUB_ID)
+
+    model_mixed = term_age + term_sex + term_age * term_sex + term_subject
+
+    slm_mixed = SLM(
+        model_mixed,
+        -contrast_age,
+        surf=pial_combined,
+        mask=mask,
+        correction=["fdr", "rft"],
+        cluster_threshold=0.01,
+        two_tailed=False,
+    )
+    slm_mixed.fit(thickness)
+    plot_slm_results(slm_mixed, True, True)
+
+
+
+
+.. rst-class:: sphx-glr-horizontal
+
+
+    *
+
+      .. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_016.png
+          :alt: plot tutorial 01 basics
+          :class: sphx-glr-multi-img
+
+    *
+
+      .. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_017.png
+          :alt: plot tutorial 01 basics
+          :class: sphx-glr-multi-img
+
+    *
+
+      .. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_018.png
+          :alt: plot tutorial 01 basics
+          :class: sphx-glr-multi-img
+
+    *
+
+      .. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_019.png
+          :alt: plot tutorial 01 basics
+          :class: sphx-glr-multi-img
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+
+    [<IPython.core.display.Image object>, <IPython.core.display.Image object>, <IPython.core.display.Image object>, <IPython.core.display.Image object>]
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 347-353
+
+Compared to our first age model, we find fewer and smaller clusters,
+indicating that by not accounting for the repeated measures structure of the
+data we were overestimating the significance of effects.
+
+That concludes the basic usage of the BrainStat for statistical models. In the
+next tutorial we'll show you how to use the context decoding module.
 
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 1 minutes  43.321 seconds)
+   **Total running time of the script:** ( 0 minutes  13.555 seconds)
 
 
 .. _sphx_glr_download_python_generated_tutorials_plot_tutorial_01_basics.py:

@@ -137,7 +137,7 @@ def read_histology_profile(
     data_dir = Path(data_dir) if data_dir else data_directories["BIGBRAIN_DATA_DIR"]
 
     if template[:5] == "civet":
-        logger.warn(
+        logger.info(
             "CIVET histology profiles were not included with BigBrainWarp. Interpolating from fsaverage using nearest neighbor interpolation."
         )
         civet_template = template

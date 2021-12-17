@@ -3,7 +3,7 @@ function filename = download_OSF_files(template, options)
 
 arguments
     template (1,:) char
-    options.data_dir (1,1) string {mustBeFolder} = brainstat_utils.get_brainstat_directories('surface_data_dir');
+    options.data_dir (1,1) string = brainstat_utils.get_brainstat_directories('surface_data_dir');
     options.parcellation char = ''
 end
 

@@ -26,6 +26,23 @@
         },
         "civet41k": {
             "url": "https://box.bic.mni.mcgill.ca/s/9kzBetBCZkkqN6w/download"
+        },
+        "fsaverage": {
+            "url": "https://box.bic.mni.mcgill.ca/s/XiZx9HfHaufb4kD/download"
+        },
+        "fsaverage5": {
+            "url": "https://box.bic.mni.mcgill.ca/s/jsSDyiDcm9KEQpf/download"
+        },
+        "fslr32k": {
+            "url": "https://box.bic.mni.mcgill.ca/s/cFXCrSkfiJFjUJ0/download"
+        }
+    },
+    "mics_tutorial": {
+        "demographics": {
+            "url": "https://box.bic.mni.mcgill.ca/s/7bW9JIpvQvSJeuf/download"
+        },
+        "thickness": {
+            "url": "https://box.bic.mni.mcgill.ca/s/kMi6lU91piwdaCf/download"
         }
     },
     "neurosynth_precomputed": {

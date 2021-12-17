@@ -128,6 +128,11 @@ classdef SLM < matlab.mixin.Copyable
                     error('One-tailed tests are not implemented for multivariate data.');
                 end
             end
+
+            if size(Y, 3) > 3 && contains(obj.correction, 'rft')
+                error('RFT corrections have not been implemented for more than 3 variates.')
+            end
+
             student_t_test = size(Y,3) == 1; 
 
             obj.reset_fit_parameters();
@@ -338,7 +343,7 @@ classdef SLM < matlab.mixin.Copyable
             elseif ~isempty(fieldnames(surf))
                 surf_out = io_utils.convert_surface(surf, 'format', 'SurfStat');
             else
-                surf_out = [];
+                surf_out = struct();
             end
         end
 
