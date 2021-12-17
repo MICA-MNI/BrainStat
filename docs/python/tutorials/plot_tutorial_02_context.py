@@ -84,9 +84,9 @@ plt.show()
 # function please consult the abagen documentation.
 #
 # Next, lets have a look at the correlation between one gene (WFDC1) and our
-# t-statistic map.
+# t-statistic map. Lets also plot the expression of this gene to the surface.
 
-# Plot correlation with SYNPR gene
+# Plot correlation with WFDC1 gene
 t_stat_schaefer_100 = reduce_by_labels(slm.t.flatten(), schaefer_100_fs5)[1:]
 
 df = pd.DataFrame({"x": t_stat_schaefer_100, "y": expression["WFDC1"]})
@@ -95,9 +95,33 @@ plt.scatter(df.x, df.y, s=5, c="k")
 plt.xlabel("t-statistic")
 plt.ylabel("WFDC1 expression")
 plt.plot(np.unique(df.x), np.poly1d(np.polyfit(df.x, df.y, 1))(np.unique(df.x)), "k")
-plt.text(-4.5, 0.75, f"r={df.x.corr(df.y):.2f}", fontdict={"size": 14})
+plt.text(-1.0, 0.75, f"r={df.x.corr(df.y):.2f}", fontdict={"size": 14})
 plt.show()
 
+########################################################################
+
+# Plot WFDC1 gene to the surface.
+from brainspace.plotting.surface_plotting import plot_hemispheres
+from brainspace.utils.parcellation import map_to_labels
+
+vertexwise_WFDC1 = map_to_labels(
+    expression["WFDC1"].to_numpy(),
+    schaefer_100_fs5,
+    mask=schaefer_100_fs5 != 0,
+    fill=np.nan,
+)
+
+plot_hemispheres(
+    surfaces[0],
+    surfaces[1],
+    vertexwise_WFDC1,
+    color_bar=True,
+    embed_nb=True,
+    size=(1400, 200),
+    zoom=1.45,
+    nan_color=(0.7, 0.7, 0.7, 1),
+    cb__labelTextProperty={"fontSize": 12},
+)
 
 ########################################################################
 # We find a small correlation. To test for significance we'll have
@@ -141,7 +165,7 @@ plt.show()
 # ---------------------
 # For histological decoding we use microstructural profile covariance gradients,
 # as first shown by (Paquola et al, 2019, Plos Biology), computed from the
-# BigBrain dataset. Firstly, lets download the MPC data, compute its
+# BigBrain dataset. Firstly, lets download the MPC data, compute and plot its
 # gradients, and correlate the first gradient with our t-statistic map.
 
 from brainstat.context.histology import (
@@ -150,11 +174,32 @@ from brainstat.context.histology import (
     read_histology_profile,
 )
 
+
 # Run the analysis
 schaefer_400 = fetch_parcellation("fsaverage5", "schaefer", 400)
 histology_profiles = read_histology_profile(template="fsaverage5")
 mpc = compute_mpc(histology_profiles, labels=schaefer_400)
 gradient_map = compute_histology_gradients(mpc, random_state=0)
+
+# Bring parcellated data to vertex data.
+vertexwise_gradient = map_to_labels(
+    gradient_map.gradients_[:, 0],
+    schaefer_400,
+    mask=schaefer_400 != 0,
+    fill=np.nan,
+)
+
+plot_hemispheres(
+    surfaces[0],
+    surfaces[1],
+    vertexwise_gradient,
+    embed_nb=True,
+    nan_color=(0.7, 0.7, 0.7, 1),
+    size=(1400, 200),
+    zoom=1.45,
+)
+
+########################################################################
 
 # Plot the correlation between the t-stat
 t_stat_schaefer_400 = reduce_by_labels(slm.t.flatten(), schaefer_400)[1:]
@@ -164,7 +209,7 @@ plt.scatter(df.x, df.y, s=5, c="k")
 plt.xlabel("t-statistic")
 plt.ylabel("MPC Gradient 1")
 plt.plot(np.unique(df.x), np.poly1d(np.polyfit(df.x, df.y, 1))(np.unique(df.x)), "k")
-plt.text(1.5, 0.05, f"r={df.x.corr(df.y):.2f}", fontdict={"size": 14})
+plt.text(2.3, 0.1, f"r={df.x.corr(df.y):.2f}", fontdict={"size": 14})
 plt.show()
 
 ########################################################################
@@ -177,7 +222,6 @@ plt.show()
 # surface with BrainSpace. For details on what the GradientMaps class
 # (gradient_map) contains please consult the BrainSpace documentation.
 
-from brainspace.plotting.surface_plotting import plot_hemispheres
 from brainspace.utils.parcellation import map_to_labels
 
 surfaces = fetch_template_surface("fsaverage5", join=False)
@@ -221,16 +265,33 @@ plot_hemispheres(
 # functional gradients (Margulies et al., 2016, PNAS), a lower dimensional
 # manifold of resting-state connectivity.
 #
-# As an example, lets have a look at the the t-statistic map within the
-# Yeo networks. We'll make a barplot showing the mean and standard error of
-# the mean within each network.
+# As an example, lets have a look at the the t-statistic map within the Yeo
+# networks. We'll plot the Yeo networks as well as a barplot showing the mean
+# and standard error of the mean within each network.
 
+from brainstat.datasets import fetch_yeo_networks_metadata
+from matplotlib.colors import ListedColormap
 
+yeo_networks = fetch_parcellation("fsaverage5", "yeo", 7)
+network_names, yeo_colormap = fetch_yeo_networks_metadata(7)
+yeo_colormap_gray = np.concatenate((np.array([[0.7, 0.7, 0.7]]), yeo_colormap))
+
+plot_hemispheres(
+    surfaces[0],
+    surfaces[1],
+    yeo_networks,
+    embed_nb=True,
+    cmap=ListedColormap(yeo_colormap_gray),
+    nan_color=(0.7, 0.7, 0.7, 1),
+    size=(1400, 200),
+    zoom=1.45,
+)
+
+##########################################################################
 import matplotlib.pyplot as plt
 from scipy.stats import sem
 
 from brainstat.context.resting import yeo_networks_associations
-from brainstat.datasets import fetch_yeo_networks_metadata
 
 yeo_tstat_mean = yeo_networks_associations(slm.t.flatten(), "fsaverage5")
 yeo_tstat_sem = yeo_networks_associations(
@@ -238,7 +299,6 @@ yeo_tstat_sem = yeo_networks_associations(
     "fsaverage5",
     reduction_operation=lambda x, y: sem(x, nan_policy="omit"),
 )
-network_names, yeo_colormap = fetch_yeo_networks_metadata(7)
 
 plt.bar(
     np.arange(7), yeo_tstat_mean[:, 0], yerr=yeo_tstat_sem.flatten(), color=yeo_colormap
@@ -280,7 +340,7 @@ plt.scatter(df.x, df.y, s=0.01, c="k")
 plt.xlabel("t-statistic")
 plt.ylabel("Functional Gradient 1")
 plt.plot(np.unique(df.x), np.poly1d(np.polyfit(df.x, df.y, 1))(np.unique(df.x)), "k")
-plt.text(-6.5, 6, f"r={df.x.corr(df.y):.2f}", fontdict={"size": 14})
+plt.text(-4.0, 6, f"r={df.x.corr(df.y):.2f}", fontdict={"size": 14})
 plt.show()
 
 

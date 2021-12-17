@@ -28,7 +28,7 @@ lets run a linear model testing for the effects of age on cortical thickness as
 we did in Tutorial 1. We'll use the results of this model later in this
 tutorial.
 
-.. GENERATED FROM PYTHON SOURCE LINES 12-32
+.. GENERATED FROM PYTHON SOURCE LINES 12-38
 
 .. code-block:: default
 
@@ -48,7 +48,13 @@ tutorial.
 
     contrast_age = -model.mean.AGE_AT_SCAN
     slm = SLM(
-        model, contrast_age, surf="fsaverage5", mask=mask, correction=["fdr", "rft"], two_tailed=False, cluster_threshold=0.01,
+        model,
+        contrast_age,
+        surf="fsaverage5",
+        mask=mask,
+        correction=["fdr", "rft"],
+        two_tailed=False,
+        cluster_threshold=0.01,
     )
     slm.fit(thickness)
 
@@ -59,7 +65,7 @@ tutorial.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 33-42
+.. GENERATED FROM PYTHON SOURCE LINES 39-48
 
 Genetics
 --------
@@ -71,7 +77,7 @@ of the Schaefer atlas and how to plot this expression to a matrix. Please note
 that downloading the dataset and running this analysis can take several
 minutes.
 
-.. GENERATED FROM PYTHON SOURCE LINES 42-68
+.. GENERATED FROM PYTHON SOURCE LINES 48-74
 
 .. code-block:: default
 
@@ -112,7 +118,7 @@ minutes.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 69-82
+.. GENERATED FROM PYTHON SOURCE LINES 75-88
 
 Expression is a pandas DataFrame which shows the genetic expression of genes
 within each region of the atlas. By default, the values will fall in the range
@@ -126,14 +132,14 @@ to `surface_genetic_expression`. For a full list of these arguments and their
 function please consult the abagen documentation.
 
 Next, lets have a look at the correlation between one gene (WFDC1) and our
-t-statistic map.
+t-statistic map. Lets also plot the expression of this gene to the surface.
 
-.. GENERATED FROM PYTHON SOURCE LINES 82-96
+.. GENERATED FROM PYTHON SOURCE LINES 88-101
 
 .. code-block:: default
 
 
-    # Plot correlation with SYNPR gene
+    # Plot correlation with WFDC1 gene
     t_stat_schaefer_100 = reduce_by_labels(slm.t.flatten(), schaefer_100_fs5)[1:]
 
     df = pd.DataFrame({"x": t_stat_schaefer_100, "y": expression["WFDC1"]})
@@ -142,9 +148,8 @@ t-statistic map.
     plt.xlabel("t-statistic")
     plt.ylabel("WFDC1 expression")
     plt.plot(np.unique(df.x), np.poly1d(np.polyfit(df.x, df.y, 1))(np.unique(df.x)), "k")
-    plt.text(-4.5, 0.75, f"r={df.x.corr(df.y):.2f}", fontdict={"size": 14})
+    plt.text(-1.0, 0.75, f"r={df.x.corr(df.y):.2f}", fontdict={"size": 14})
     plt.show()
-
 
 
 
@@ -157,7 +162,58 @@ t-statistic map.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 97-108
+.. GENERATED FROM PYTHON SOURCE LINES 102-126
+
+.. code-block:: default
+
+
+    # Plot WFDC1 gene to the surface.
+    from brainspace.plotting.surface_plotting import plot_hemispheres
+    from brainspace.utils.parcellation import map_to_labels
+
+    vertexwise_WFDC1 = map_to_labels(
+        expression["WFDC1"].to_numpy(),
+        schaefer_100_fs5,
+        mask=schaefer_100_fs5 != 0,
+        fill=np.nan,
+    )
+
+    plot_hemispheres(
+        surfaces[0],
+        surfaces[1],
+        vertexwise_WFDC1,
+        color_bar=True,
+        embed_nb=True,
+        size=(1400, 200),
+        zoom=1.45,
+        nan_color=(0.7, 0.7, 0.7, 1),
+        cb__labelTextProperty={"fontSize": 12},
+    )
+
+
+
+
+.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_003.png
+    :alt: plot tutorial 02 context
+    :class: sphx-glr-single-img
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+    /Users/reinder/opt/miniconda3/envs/python3.8/lib/python3.8/site-packages/brainspace/plotting/base.py:287: UserWarning:
+
+    Interactive mode requires 'panel'. Setting 'interactive=False'
+
+
+    <IPython.core.display.Image object>
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 127-138
 
 We find a small correlation. To test for significance we'll have
 to do some additional corrections, but more on that later.
@@ -171,7 +227,7 @@ interpolates the data from the surface to the voxels in the volume that are in
 between the two input surfaces. We'll decode the t-statistics derived with our model
 earlier. Note that downloading the dataset and running this analysis can take several minutes.
 
-.. GENERATED FROM PYTHON SOURCE LINES 108-114
+.. GENERATED FROM PYTHON SOURCE LINES 138-144
 
 .. code-block:: default
 
@@ -209,13 +265,13 @@ earlier. Note that downloading the dataset and running this analysis can take se
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 115-118
+.. GENERATED FROM PYTHON SOURCE LINES 145-148
 
 meta_analysis now contains a pandas.dataFrame with the correlation values for
 each requested feature. Next we could create a Wordcloud of the included terms,
 wherein larger words denote higher correlations.
 
-.. GENERATED FROM PYTHON SOURCE LINES 118-127
+.. GENERATED FROM PYTHON SOURCE LINES 148-157
 
 .. code-block:: default
 
@@ -231,7 +287,7 @@ wherein larger words denote higher correlations.
 
 
 
-.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_003.png
+.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_004.png
     :alt: plot tutorial 02 context
     :class: sphx-glr-single-img
 
@@ -239,7 +295,7 @@ wherein larger words denote higher correlations.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 128-140
+.. GENERATED FROM PYTHON SOURCE LINES 158-170
 
 If we broadly summarize, we see a lot of words related to language e.g.,
 "language comprehension", "broca", "speaking", "speech production".
@@ -251,10 +307,10 @@ Histological decoding
 ---------------------
 For histological decoding we use microstructural profile covariance gradients,
 as first shown by (Paquola et al, 2019, Plos Biology), computed from the
-BigBrain dataset. Firstly, lets download the MPC data, compute its
+BigBrain dataset. Firstly, lets download the MPC data, compute and plot its
 gradients, and correlate the first gradient with our t-statistic map.
 
-.. GENERATED FROM PYTHON SOURCE LINES 140-164
+.. GENERATED FROM PYTHON SOURCE LINES 170-202
 
 .. code-block:: default
 
@@ -265,27 +321,35 @@ gradients, and correlate the first gradient with our t-statistic map.
         read_histology_profile,
     )
 
+
     # Run the analysis
     schaefer_400 = fetch_parcellation("fsaverage5", "schaefer", 400)
     histology_profiles = read_histology_profile(template="fsaverage5")
     mpc = compute_mpc(histology_profiles, labels=schaefer_400)
     gradient_map = compute_histology_gradients(mpc, random_state=0)
 
-    # Plot the correlation between the t-stat
-    t_stat_schaefer_400 = reduce_by_labels(slm.t.flatten(), schaefer_400)[1:]
-    df = pd.DataFrame({"x": t_stat_schaefer_400, "y": gradient_map.gradients_[:, 0]})
-    df.dropna(inplace=True)
-    plt.scatter(df.x, df.y, s=5, c="k")
-    plt.xlabel("t-statistic")
-    plt.ylabel("MPC Gradient 1")
-    plt.plot(np.unique(df.x), np.poly1d(np.polyfit(df.x, df.y, 1))(np.unique(df.x)), "k")
-    plt.text(1.5, 0.05, f"r={df.x.corr(df.y):.2f}", fontdict={"size": 14})
-    plt.show()
+    # Bring parcellated data to vertex data.
+    vertexwise_gradient = map_to_labels(
+        gradient_map.gradients_[:, 0],
+        schaefer_400,
+        mask=schaefer_400 != 0,
+        fill=np.nan,
+    )
+
+    plot_hemispheres(
+        surfaces[0],
+        surfaces[1],
+        vertexwise_gradient,
+        embed_nb=True,
+        nan_color=(0.7, 0.7, 0.7, 1),
+        size=(1400, 200),
+        zoom=1.45,
+    )
 
 
 
 
-.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_004.png
+.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_005.png
     :alt: plot tutorial 02 context
     :class: sphx-glr-single-img
 
@@ -304,11 +368,43 @@ gradients, and correlate the first gradient with our t-statistic map.
 
     invalid value encountered in log
 
+    /Users/reinder/opt/miniconda3/envs/python3.8/lib/python3.8/site-packages/brainspace/plotting/base.py:287: UserWarning:
+
+    Interactive mode requires 'panel'. Setting 'interactive=False'
+
+
+    <IPython.core.display.Image object>
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 203-215
+
+.. code-block:: default
+
+
+    # Plot the correlation between the t-stat
+    t_stat_schaefer_400 = reduce_by_labels(slm.t.flatten(), schaefer_400)[1:]
+    df = pd.DataFrame({"x": t_stat_schaefer_400, "y": gradient_map.gradients_[:, 0]})
+    df.dropna(inplace=True)
+    plt.scatter(df.x, df.y, s=5, c="k")
+    plt.xlabel("t-statistic")
+    plt.ylabel("MPC Gradient 1")
+    plt.plot(np.unique(df.x), np.poly1d(np.polyfit(df.x, df.y, 1))(np.unique(df.x)), "k")
+    plt.text(2.3, 0.1, f"r={df.x.corr(df.y):.2f}", fontdict={"size": 14})
+    plt.show()
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 165-173
+.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_006.png
+    :alt: plot tutorial 02 context
+    :class: sphx-glr-single-img
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 216-224
 
 The variable histology_profiles now contains histological profiles sampled at
 50 different depths across the cortex, mpc contains the covariance of these
@@ -319,12 +415,11 @@ interest, but for purposes of this tutorial we'll plot the gradients to the
 surface with BrainSpace. For details on what the GradientMaps class
 (gradient_map) contains please consult the BrainSpace documentation.
 
-.. GENERATED FROM PYTHON SOURCE LINES 173-205
+.. GENERATED FROM PYTHON SOURCE LINES 224-255
 
 .. code-block:: default
 
 
-    from brainspace.plotting.surface_plotting import plot_hemispheres
     from brainspace.utils.parcellation import map_to_labels
 
     surfaces = fetch_template_surface("fsaverage5", join=False)
@@ -358,7 +453,7 @@ surface with BrainSpace. For details on what the GradientMaps class
 
 
 
-.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_005.png
+.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_007.png
     :alt: plot tutorial 02 context
     :class: sphx-glr-single-img
 
@@ -378,7 +473,7 @@ surface with BrainSpace. For details on what the GradientMaps class
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 206-221
+.. GENERATED FROM PYTHON SOURCE LINES 256-271
 
 Note that we no longer use the y-axis regression used in (Paquola et al, 2019,
 Plos Biology), as such the first gradient becomes an anterior-posterior
@@ -392,21 +487,64 @@ Neurophysiology), a clustering of resting-state connectivity, and the
 functional gradients (Margulies et al., 2016, PNAS), a lower dimensional
 manifold of resting-state connectivity.
 
-As an example, lets have a look at the the t-statistic map within the
-Yeo networks. We'll make a barplot showing the mean and standard error of
-the mean within each network.
+As an example, lets have a look at the the t-statistic map within the Yeo
+networks. We'll plot the Yeo networks as well as a barplot showing the mean
+and standard error of the mean within each network.
 
-.. GENERATED FROM PYTHON SOURCE LINES 221-244
+.. GENERATED FROM PYTHON SOURCE LINES 271-290
 
 .. code-block:: default
 
 
+    from brainstat.datasets import fetch_yeo_networks_metadata
+    from matplotlib.colors import ListedColormap
+
+    yeo_networks = fetch_parcellation("fsaverage5", "yeo", 7)
+    network_names, yeo_colormap = fetch_yeo_networks_metadata(7)
+    yeo_colormap_gray = np.concatenate((np.array([[0.7, 0.7, 0.7]]), yeo_colormap))
+
+    plot_hemispheres(
+        surfaces[0],
+        surfaces[1],
+        yeo_networks,
+        embed_nb=True,
+        cmap=ListedColormap(yeo_colormap_gray),
+        nan_color=(0.7, 0.7, 0.7, 1),
+        size=(1400, 200),
+        zoom=1.45,
+    )
+
+
+
+
+.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_008.png
+    :alt: plot tutorial 02 context
+    :class: sphx-glr-single-img
+
+
+.. rst-class:: sphx-glr-script-out
+
+ Out:
+
+ .. code-block:: none
+
+    /Users/reinder/opt/miniconda3/envs/python3.8/lib/python3.8/site-packages/brainspace/plotting/base.py:287: UserWarning:
+
+    Interactive mode requires 'panel'. Setting 'interactive=False'
+
+
+    <IPython.core.display.Image object>
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 291-310
+
+.. code-block:: default
 
     import matplotlib.pyplot as plt
     from scipy.stats import sem
 
     from brainstat.context.resting import yeo_networks_associations
-    from brainstat.datasets import fetch_yeo_networks_metadata
 
     yeo_tstat_mean = yeo_networks_associations(slm.t.flatten(), "fsaverage5")
     yeo_tstat_sem = yeo_networks_associations(
@@ -414,7 +552,6 @@ the mean within each network.
         "fsaverage5",
         reduction_operation=lambda x, y: sem(x, nan_policy="omit"),
     )
-    network_names, yeo_colormap = fetch_yeo_networks_metadata(7)
 
     plt.bar(
         np.arange(7), yeo_tstat_mean[:, 0], yerr=yeo_tstat_sem.flatten(), color=yeo_colormap
@@ -426,7 +563,7 @@ the mean within each network.
 
 
 
-.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_006.png
+.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_009.png
     :alt: plot tutorial 02 context
     :class: sphx-glr-single-img
 
@@ -434,7 +571,7 @@ the mean within each network.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 245-250
+.. GENERATED FROM PYTHON SOURCE LINES 311-316
 
 Across all networks, the mean t-statistic appears to be negative, with the
 most negative values in the dorsal attnetion and visual networks.
@@ -442,7 +579,7 @@ most negative values in the dorsal attnetion and visual networks.
 Lastly, lets plot the functional gradients and have a look at their correlation
 with our t-map.
 
-.. GENERATED FROM PYTHON SOURCE LINES 250-269
+.. GENERATED FROM PYTHON SOURCE LINES 316-335
 
 .. code-block:: default
 
@@ -468,7 +605,7 @@ with our t-map.
 
 
 
-.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_007.png
+.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_010.png
     :alt: plot tutorial 02 context
     :class: sphx-glr-single-img
 
@@ -488,7 +625,7 @@ with our t-map.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 270-281
+.. GENERATED FROM PYTHON SOURCE LINES 336-347
 
 .. code-block:: default
 
@@ -499,14 +636,14 @@ with our t-map.
     plt.xlabel("t-statistic")
     plt.ylabel("Functional Gradient 1")
     plt.plot(np.unique(df.x), np.poly1d(np.polyfit(df.x, df.y, 1))(np.unique(df.x)), "k")
-    plt.text(-6.5, 6, f"r={df.x.corr(df.y):.2f}", fontdict={"size": 14})
+    plt.text(-4.0, 6, f"r={df.x.corr(df.y):.2f}", fontdict={"size": 14})
     plt.show()
 
 
 
 
 
-.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_008.png
+.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_011.png
     :alt: plot tutorial 02 context
     :class: sphx-glr-single-img
 
@@ -514,7 +651,7 @@ with our t-map.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 282-293
+.. GENERATED FROM PYTHON SOURCE LINES 348-359
 
 It seems the correlations are quite low. However, we'll need some more complex
 tests to assess statistical significance. There are many ways to compare these
@@ -528,7 +665,7 @@ the cortical marker to a distribution of correlations derived from data
 rotated across the cortical surface. The p-value then depends on the
 percentile of the empirical correlation within the permuted distribution.
 
-.. GENERATED FROM PYTHON SOURCE LINES 293-332
+.. GENERATED FROM PYTHON SOURCE LINES 359-398
 
 .. code-block:: default
 
@@ -574,7 +711,7 @@ percentile of the empirical correlation within the permuted distribution.
 
 
 
-.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_009.png
+.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_012.png
     :alt: plot tutorial 02 context
     :class: sphx-glr-single-img
 
@@ -590,7 +727,7 @@ percentile of the empirical correlation within the permuted distribution.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 333-341
+.. GENERATED FROM PYTHON SOURCE LINES 399-407
 
 As we can see from both the p-value as well as the histogram, wherein the
 dotted line denotes the empirical correlation, this correlation does not reach
@@ -604,7 +741,7 @@ Happy BrainStating!
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 3 minutes  21.918 seconds)
+   **Total running time of the script:** ( 4 minutes  12.472 seconds)
 
 
 .. _sphx_glr_download_python_generated_tutorials_plot_tutorial_02_context.py:

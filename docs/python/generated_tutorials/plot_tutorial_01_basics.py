@@ -104,7 +104,7 @@ print(model)
 
 from brainstat.stats.SLM import SLM
 
-contrast_age = model.AGE_AT_SCAN
+contrast_age = demographics.AGE_AT_SCAN
 slm_age = SLM(
     model,
     contrast_age,
@@ -124,36 +124,27 @@ slm_age.fit(thickness)
 
 
 def plot_slm_results(slm, plot_peak=False, plot_fdr=False):
-    pval_rft_c = slm.P["pval"]["C"]
-    pval_rft_c[pval_rft_c > 0.05] = np.nan
-    pval_rft_c[~mask] = np.nan
 
-    handles = [
-        local_plot_hemispheres(slm.t, ["t-values"], (-4, 4), "bwr"),
-        local_plot_hemispheres(
-            pval_rft_c, ["Cluster p-values (RFT)"], (0, 0.05), "hot_r"
-        ),
-    ]
+    handles = [local_plot_hemispheres(slm.t, ["t-values"], (-4, 4), "bwr")]
+
+    plot_pvalues = [np.copy(slm.P["pval"]["C"])]
+    labels = ["Cluster p-values"]
 
     if plot_peak:
-        pval_rft = slm.P["pval"]["P"]
-        pval_rft[pval_rft > 0.05] = np.nan
-        pval_rft[~mask] = np.nan
-        handles.append(
-            local_plot_hemispheres(
-                pval_rft, ["Peak p-values (RFT)"], (0, 0.05), "hot_r"
-            )
-        )
+        plot_pvalues.append(np.copy(slm.P["pval"]["P"]))
+        labels.append("Peak p-vales")
 
     if plot_fdr:
-        pval_fdr = slm.Q
-        pval_fdr[pval_fdr > 0.05] = np.nan
-        pval_fdr[~mask] = np.nan
+        plot_pvalues.append(np.copy(slm.Q))
+        labels.append("Vertex p-values")
+
+    [np.place(x, np.logical_or(x > 0.05, ~mask), np.nan) for x in plot_pvalues]
+
+    for i in range(len(plot_pvalues)):
         handles.append(
-            local_plot_hemispheres(
-                pval_fdr, ["Vertex p-values (FDR)"], (0, 0.05), "hot_r"
-            )
+            local_plot_hemispheres(plot_pvalues[i], [labels[i]], (0, 0.05), "plasma_r")
         )
+
     return handles
 
 
@@ -199,7 +190,9 @@ print(slm_age.P["peak"][1])
 
 term_sex = FixedEffect(demographics.SEX)
 model_sex = term_sex
-contrast_sex = model_sex.SEX_M - model_sex.SEX_F
+contrast_sex = (demographics.SEX == "M").astype(int) - (demographics.SEX == "F").astype(
+    int
+)
 
 ####################################################################
 # Next we will rerrun the model and see if our results change.
@@ -217,7 +210,7 @@ slm_sex.fit(thickness)
 plot_slm_results(slm_sex)
 
 ###################################################################
-# Here, we find no significant effects of sex on cortical thickness. However, as
+# Here, we find few significant effects of sex on cortical thickness. However, as
 # we've already established, age has an effect on cortical thickness. So we may
 # want to correct for this effect before evaluating whether sex has an effect on
 # cortical thickenss. Lets make a new model that includes the effect of age.
@@ -240,8 +233,8 @@ slm_sexage.fit(thickness)
 plot_slm_results(slm_sexage)
 
 ###################################################################
-# After accounting for the effect of age, we still don't find significant
-# clusters of effect of sex on cortical thickness. However, it could be that age
+# After accounting for the effect of age, we still find only one significant
+# cluster of effect of sex on cortical thickness. However, it could be that age
 # affects men and women differently. To account for this, we could include an
 # interaction effect into the model. Lets run the model again with an
 # interaction effect.
@@ -261,16 +254,17 @@ slm_sexage_int.fit(thickness)
 plot_slm_results(slm_sexage_int)
 
 ###################################################################
-# After including the interaction effect, we now do find significant effects of
+# After including the interaction effect, we no significant effects of
 # sex on cortical thickness in several clusters.
 #
 # We could also look at whether the cortex of men and women changes
 # differently with age by comparing their interaction effects.
 
 # Effect of age on cortical thickness for the healthy group.
-contrast_sex_int = getattr(model_sexage_int, "AGE_AT_SCAN*SEX_M") - getattr(
-    model_sexage_int, "AGE_AT_SCAN*SEX_F"
-)
+contrast_sex_int = demographics.AGE_AT_SCAN * (
+    demographics.SEX == "M"
+) - demographics.AGE_AT_SCAN * (demographics.SEX == "F")
+
 slm_sex_int = SLM(
     model_sexage_int,
     contrast_sex_int,
@@ -335,25 +329,24 @@ from brainstat.stats.terms import MixedEffect
 
 term_subject = MixedEffect(demographics.SUB_ID)
 
-model_random = term_age + term_sex + term_age * term_sex + term_subject
+model_mixed = term_age + term_sex + term_age * term_sex + term_subject
 
-slm_random = SLM(
-    model_random,
+slm_mixed = SLM(
+    model_mixed,
     -contrast_age,
     surf=pial_combined,
     mask=mask,
     correction=["fdr", "rft"],
-    two_tailed=False,
     cluster_threshold=0.01,
+    two_tailed=False,
 )
-slm_random.fit(thickness)
-plot_slm_results(slm_random)
+slm_mixed.fit(thickness)
+plot_slm_results(slm_mixed, True, True)
 
 #####################################################################
-# After inclusion of subject as a random variable into the one-tailed model
-# shown earlier, we find fewer and smaller clusters, indicating that by not
-# accounting for the repeated measures structure of the data we were
-# overestimating the significance of effects.
+# Compared to our first age model, we find fewer and smaller clusters,
+# indicating that by not accounting for the repeated measures structure of the
+# data we were overestimating the significance of effects.
 #
 # That concludes the basic usage of the BrainStat for statistical models. In the
 # next tutorial we'll show you how to use the context decoding module.

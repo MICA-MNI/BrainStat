@@ -120,17 +120,17 @@ Lets also have a look at what's inside the demographics data.
  .. code-block:: none
 
         SUB_ID  VISIT  AGE_AT_SCAN SEX
-    0   031404      1           27   F
-    1   04a144      1           25   M
-    2   0b78f1      1           33   M
-    3   0d26b9      1           36   F
-    4   1988b8      1           31   M
+    0   031404      1    -0.579678   F
+    1   04a144      1    -0.812116   M
+    2   0b78f1      1     0.117636   M
+    3   0d26b9      1     0.466293   F
+    4   1988b8      1    -0.114802   M
     ..     ...    ...          ...  ..
-    77  f25714      1           30   F
-    78  f25714      2           33   F
-    79  f615a5      1           26   F
-    80  feac6b      1           26   F
-    81  feac6b      2           29   F
+    77  f25714      1    -0.231021   F
+    78  f25714      2     0.117636   F
+    79  f615a5      1    -0.695897   F
+    80  feac6b      1    -0.695897   F
+    81  feac6b      2    -0.347240   F
 
     [82 rows x 4 columns]
 
@@ -169,8 +169,8 @@ sex. Lets also print some summary statistics.
 
  .. code-block:: none
 
-    Visit 1, N=70, 30 females, mean subject age 31.86, standard deviation of age: 8.82.
-    Visit 2, N=12, 5 females, mean subject age 32.75, standard deviation of age: 7.19.
+    Visit 1, N=70, 30 females, mean subject age -0.02, standard deviation of age: 1.02.
+    Visit 2, N=12, 5 females, mean subject age 0.09, standard deviation of age: 0.84.
 
 
 
@@ -249,17 +249,17 @@ and model.AGE_AT_SCAN will return the vectors of the intercept and age, respecti
  .. code-block:: none
 
         intercept  AGE_AT_SCAN
-    0           1           27
-    1           1           25
-    2           1           33
-    3           1           36
-    4           1           31
+    0           1    -0.579678
+    1           1    -0.812116
+    2           1     0.117636
+    3           1     0.466293
+    4           1    -0.114802
     ..        ...          ...
-    77          1           30
-    78          1           33
-    79          1           26
-    80          1           26
-    81          1           29
+    77          1    -0.231021
+    78          1     0.117636
+    79          1    -0.695897
+    80          1    -0.695897
+    81          1    -0.347240
 
     [82 rows x 2 columns]
 
@@ -281,7 +281,7 @@ and fit it to the cortical thickness data.
 
     from brainstat.stats.SLM import SLM
 
-    contrast_age = model.AGE_AT_SCAN
+    contrast_age = demographics.AGE_AT_SCAN
     slm_age = SLM(
         model,
         contrast_age,
@@ -307,43 +307,34 @@ the API for more details). Lets plot the t-values and p-values on the surface.
 We'll do this a few times throughout the tutorial so lets define a function to
 do this.
 
-.. GENERATED FROM PYTHON SOURCE LINES 124-163
+.. GENERATED FROM PYTHON SOURCE LINES 124-154
 
 .. code-block:: default
 
 
 
     def plot_slm_results(slm, plot_peak=False, plot_fdr=False):
-        pval_rft_c = slm.P["pval"]["C"]
-        pval_rft_c[pval_rft_c > 0.05] = np.nan
-        pval_rft_c[~mask] = np.nan
 
-        handles = [
-            local_plot_hemispheres(slm.t, ["t-values"], (-4, 4), "bwr"),
-            local_plot_hemispheres(
-                pval_rft_c, ["Cluster p-values (RFT)"], (0, 0.05), "hot_r"
-            ),
-        ]
+        handles = [local_plot_hemispheres(slm.t, ["t-values"], (-4, 4), "bwr")]
+
+        plot_pvalues = [np.copy(slm.P["pval"]["C"])]
+        labels = ["Cluster p-values"]
 
         if plot_peak:
-            pval_rft = slm.P["pval"]["P"]
-            pval_rft[pval_rft > 0.05] = np.nan
-            pval_rft[~mask] = np.nan
-            handles.append(
-                local_plot_hemispheres(
-                    pval_rft, ["Peak p-values (RFT)"], (0, 0.05), "hot_r"
-                )
-            )
+            plot_pvalues.append(np.copy(slm.P["pval"]["P"]))
+            labels.append("Peak p-vales")
 
         if plot_fdr:
-            pval_fdr = slm.Q
-            pval_fdr[pval_fdr > 0.05] = np.nan
-            pval_fdr[~mask] = np.nan
+            plot_pvalues.append(np.copy(slm.Q))
+            labels.append("Vertex p-values")
+
+        [np.place(x, np.logical_or(x > 0.05, ~mask), np.nan) for x in plot_pvalues]
+
+        for i in range(len(plot_pvalues)):
             handles.append(
-                local_plot_hemispheres(
-                    pval_fdr, ["Vertex p-values (FDR)"], (0, 0.05), "hot_r"
-                )
+                local_plot_hemispheres(plot_pvalues[i], [labels[i]], (0, 0.05), "plasma_r")
             )
+
         return handles
 
 
@@ -392,7 +383,7 @@ do this.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 164-176
+.. GENERATED FROM PYTHON SOURCE LINES 155-167
 
 Only clusters are significant, and not peaks. This suggests that the age
 effect covers large regions, rather than local foci. Furthermore, at the
@@ -407,7 +398,7 @@ single table is returned. Lets print the first 15 rows of the inverted
 contrast cluster table.
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 176-179
+.. GENERATED FROM PYTHON SOURCE LINES 167-170
 
 .. code-block:: default
 
@@ -442,13 +433,13 @@ contrast cluster table.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 180-183
+.. GENERATED FROM PYTHON SOURCE LINES 171-174
 
 Here, we see that cluster 1 contains 373 vertices. Clusters are sorted by
 p-value; later clusters will generally be smaller and have higher p-values.
 Lets now have a look at the peaks within these clusters.
 
-.. GENERATED FROM PYTHON SOURCE LINES 183-186
+.. GENERATED FROM PYTHON SOURCE LINES 174-177
 
 .. code-block:: default
 
@@ -483,7 +474,7 @@ Lets now have a look at the peaks within these clusters.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 187-193
+.. GENERATED FROM PYTHON SOURCE LINES 178-184
 
 Within cluster 1, we are able to detect several peaks. The peak with the
 highest t-statistic (t=4.3972) occurs at vertex 19629, which is inside the
@@ -492,21 +483,23 @@ network membership is only provided if the surface is specified as a template
 name as we did here. For custom surfaces, or pre-loaded surfaces (as we will
 use below) this column is omitted.
 
-.. GENERATED FROM PYTHON SOURCE LINES 195-199
+.. GENERATED FROM PYTHON SOURCE LINES 186-190
 
 Interaction effects models
 ----------------------------
 
 Similarly to age, we can also test for the effect of sex on cortical thickness.
 
-.. GENERATED FROM PYTHON SOURCE LINES 199-204
+.. GENERATED FROM PYTHON SOURCE LINES 190-197
 
 .. code-block:: default
 
 
     term_sex = FixedEffect(demographics.SEX)
     model_sex = term_sex
-    contrast_sex = model_sex.SEX_M - model_sex.SEX_F
+    contrast_sex = (demographics.SEX == "M").astype(int) - (demographics.SEX == "F").astype(
+        int
+    )
 
 
 
@@ -515,11 +508,11 @@ Similarly to age, we can also test for the effect of sex on cortical thickness.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 205-206
+.. GENERATED FROM PYTHON SOURCE LINES 198-199
 
 Next we will rerrun the model and see if our results change.
 
-.. GENERATED FROM PYTHON SOURCE LINES 206-219
+.. GENERATED FROM PYTHON SOURCE LINES 199-212
 
 .. code-block:: default
 
@@ -566,14 +559,14 @@ Next we will rerrun the model and see if our results change.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 220-224
+.. GENERATED FROM PYTHON SOURCE LINES 213-217
 
-Here, we find no significant effects of sex on cortical thickness. However, as
+Here, we find few significant effects of sex on cortical thickness. However, as
 we've already established, age has an effect on cortical thickness. So we may
 want to correct for this effect before evaluating whether sex has an effect on
 cortical thickenss. Lets make a new model that includes the effect of age.
 
-.. GENERATED FROM PYTHON SOURCE LINES 224-227
+.. GENERATED FROM PYTHON SOURCE LINES 217-220
 
 .. code-block:: default
 
@@ -587,11 +580,11 @@ cortical thickenss. Lets make a new model that includes the effect of age.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 228-229
+.. GENERATED FROM PYTHON SOURCE LINES 221-222
 
 Next we will rerrun the model and see if our results change.
 
-.. GENERATED FROM PYTHON SOURCE LINES 229-242
+.. GENERATED FROM PYTHON SOURCE LINES 222-235
 
 .. code-block:: default
 
@@ -638,15 +631,15 @@ Next we will rerrun the model and see if our results change.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 243-248
+.. GENERATED FROM PYTHON SOURCE LINES 236-241
 
-After accounting for the effect of age, we still don't find significant
-clusters of effect of sex on cortical thickness. However, it could be that age
+After accounting for the effect of age, we still find only one significant
+cluster of effect of sex on cortical thickness. However, it could be that age
 affects men and women differently. To account for this, we could include an
 interaction effect into the model. Lets run the model again with an
 interaction effect.
 
-.. GENERATED FROM PYTHON SOURCE LINES 248-263
+.. GENERATED FROM PYTHON SOURCE LINES 241-256
 
 .. code-block:: default
 
@@ -695,23 +688,24 @@ interaction effect.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 264-269
+.. GENERATED FROM PYTHON SOURCE LINES 257-262
 
-After including the interaction effect, we now do find significant effects of
+After including the interaction effect, we no significant effects of
 sex on cortical thickness in several clusters.
 
 We could also look at whether the cortex of men and women changes
 differently with age by comparing their interaction effects.
 
-.. GENERATED FROM PYTHON SOURCE LINES 269-285
+.. GENERATED FROM PYTHON SOURCE LINES 262-279
 
 .. code-block:: default
 
 
     # Effect of age on cortical thickness for the healthy group.
-    contrast_sex_int = getattr(model_sexage_int, "AGE_AT_SCAN*SEX_M") - getattr(
-        model_sexage_int, "AGE_AT_SCAN*SEX_F"
-    )
+    contrast_sex_int = demographics.AGE_AT_SCAN * (
+        demographics.SEX == "M"
+    ) - demographics.AGE_AT_SCAN * (demographics.SEX == "F")
+
     slm_sex_int = SLM(
         model_sexage_int,
         contrast_sex_int,
@@ -753,17 +747,17 @@ differently with age by comparing their interaction effects.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 286-288
+.. GENERATED FROM PYTHON SOURCE LINES 280-282
 
 Indeed, it appears that the interaction effect between sex and age is quite
 different across men and women, with stronger effects occuring in women.
 
-.. GENERATED FROM PYTHON SOURCE LINES 290-292
+.. GENERATED FROM PYTHON SOURCE LINES 284-286
 
 One-tailed Test
 -----------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 294-304
+.. GENERATED FROM PYTHON SOURCE LINES 288-298
 
 Imagine that, based on prior research, we hypothesize that men have higher
 cortical thickness than women. In that case, we could run this same model with
@@ -776,7 +770,7 @@ of the contrast. We may hypothesize based on prior research that cortical
 thickness decreases with age, so we could specify this as follows. Note the
 minus in front of contrast_age to test for decreasing thickness with age.
 
-.. GENERATED FROM PYTHON SOURCE LINES 304-319
+.. GENERATED FROM PYTHON SOURCE LINES 298-313
 
 .. code-block:: default
 
@@ -825,16 +819,16 @@ minus in front of contrast_age to test for decreasing thickness with age.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 320-321
+.. GENERATED FROM PYTHON SOURCE LINES 314-315
 
 Notice the additional clusters that we find when using a one-tailed test.
 
-.. GENERATED FROM PYTHON SOURCE LINES 323-325
+.. GENERATED FROM PYTHON SOURCE LINES 317-319
 
 Mixed Effects Models
 --------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 327-332
+.. GENERATED FROM PYTHON SOURCE LINES 321-326
 
 So far, we've considered multiple visits of the same subject as two separate,
 independent measurements. Clearly, however, such measurements are not
@@ -842,7 +836,7 @@ independent of each other. To account for this, we could add subject ID as a
 random effect. Lets do this and test the effect of age on cortical thickness
 again.
 
-.. GENERATED FROM PYTHON SOURCE LINES 332-352
+.. GENERATED FROM PYTHON SOURCE LINES 326-346
 
 .. code-block:: default
 
@@ -852,19 +846,19 @@ again.
 
     term_subject = MixedEffect(demographics.SUB_ID)
 
-    model_random = term_age + term_sex + term_age * term_sex + term_subject
+    model_mixed = term_age + term_sex + term_age * term_sex + term_subject
 
-    slm_random = SLM(
-        model_random,
+    slm_mixed = SLM(
+        model_mixed,
         -contrast_age,
         surf=pial_combined,
         mask=mask,
         correction=["fdr", "rft"],
-        two_tailed=False,
         cluster_threshold=0.01,
+        two_tailed=False,
     )
-    slm_random.fit(thickness)
-    plot_slm_results(slm_random)
+    slm_mixed.fit(thickness)
+    plot_slm_results(slm_mixed, True, True)
 
 
 
@@ -884,6 +878,18 @@ again.
           :alt: plot tutorial 01 basics
           :class: sphx-glr-multi-img
 
+    *
+
+      .. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_018.png
+          :alt: plot tutorial 01 basics
+          :class: sphx-glr-multi-img
+
+    *
+
+      .. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_019.png
+          :alt: plot tutorial 01 basics
+          :class: sphx-glr-multi-img
+
 
 .. rst-class:: sphx-glr-script-out
 
@@ -892,16 +898,15 @@ again.
  .. code-block:: none
 
 
-    [<IPython.core.display.Image object>, <IPython.core.display.Image object>]
+    [<IPython.core.display.Image object>, <IPython.core.display.Image object>, <IPython.core.display.Image object>, <IPython.core.display.Image object>]
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 353-360
+.. GENERATED FROM PYTHON SOURCE LINES 347-353
 
-After inclusion of subject as a random variable into the one-tailed model
-shown earlier, we find fewer and smaller clusters, indicating that by not
-accounting for the repeated measures structure of the data we were
-overestimating the significance of effects.
+Compared to our first age model, we find fewer and smaller clusters,
+indicating that by not accounting for the repeated measures structure of the
+data we were overestimating the significance of effects.
 
 That concludes the basic usage of the BrainStat for statistical models. In the
 next tutorial we'll show you how to use the context decoding module.
@@ -909,7 +914,7 @@ next tutorial we'll show you how to use the context decoding module.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  12.809 seconds)
+   **Total running time of the script:** ( 0 minutes  13.555 seconds)
 
 
 .. _sphx_glr_download_python_generated_tutorials_plot_tutorial_01_basics.py:
