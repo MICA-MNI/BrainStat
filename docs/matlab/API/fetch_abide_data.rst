@@ -32,3 +32,5 @@ sites'
     - If true, keeps patients, defaults to false.
 'overwrite'
     - If true, overwrites older files. Defaults to false.
+'min_rater_ok'
+    - Number of raters that must OK a subject's anatomical files. Defaults to 3.

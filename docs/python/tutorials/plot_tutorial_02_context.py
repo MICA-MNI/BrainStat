@@ -10,29 +10,30 @@ we did in Tutorial 1. We'll use the results of this model later in this
 tutorial.
 """
 
-import numpy as np
-
 from brainstat.datasets import fetch_mask, fetch_template_surface
 from brainstat.stats.SLM import SLM
-from brainstat.stats.terms import FixedEffect
-from brainstat.tutorial.utils import fetch_abide_data
+from brainstat.stats.terms import FixedEffect, MixedEffect
+from brainstat.tutorial.utils import fetch_mics_data
 
-sites = ("PITT", "OLIN", "OHSU")
-thickness, demographics = fetch_abide_data(sites=sites)
-mask = fetch_mask("civet41k")
-
-demographics.DX_GROUP[demographics.DX_GROUP == 1] = "Patient"
-demographics.DX_GROUP[demographics.DX_GROUP == 2] = "Control"
+thickness, demographics = fetch_mics_data()
+mask = fetch_mask("fsaverage5")
 
 term_age = FixedEffect(demographics.AGE_AT_SCAN)
-term_patient = FixedEffect(demographics.DX_GROUP)
-model = term_age + term_patient
+term_sex = FixedEffect(demographics.SEX)
+term_subject = MixedEffect(demographics.SUB_ID)
+model = term_age + term_sex + term_age * term_sex + term_subject
 
-contrast_age = model.AGE_AT_SCAN
-slm_age = SLM(
-    model, contrast_age, surf="civet41k", mask=mask, correction=["fdr", "rft"]
+contrast_age = -model.mean.AGE_AT_SCAN
+slm = SLM(
+    model,
+    contrast_age,
+    surf="fsaverage5",
+    mask=mask,
+    correction=["fdr", "rft"],
+    two_tailed=False,
+    cluster_threshold=0.01,
 )
-slm_age.fit(thickness)
+slm.fit(thickness)
 
 ###################################################################
 # Genetics
@@ -40,23 +41,26 @@ slm_age.fit(thickness)
 #
 # For genetic decoding we use the Allen Human Brain Atlas through the abagen
 # toolbox. Note that abagen only accepts parcellated data. Here is a minimal
-# example of how we use abagen to get the genetic expression of the 400 regions
-# of the Schaefer atlas. Please note that downloading the dataset and running this
-# analysis can take several minutes.
+# example of how we use abagen to get the genetic expression of the 100 regions
+# of the Schaefer atlas and how to plot this expression to a matrix. Please note
+# that downloading the dataset and running this analysis can take several
+# minutes.
 
 import copy
 
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
+from brainspace.utils.parcellation import reduce_by_labels
 from matplotlib.cm import get_cmap
 
 from brainstat.context.genetics import surface_genetic_expression
 from brainstat.datasets import fetch_parcellation
 
 # Get Schaefer-100 genetic expression.
-schaefer_100 = fetch_parcellation("fsaverage5", "schaefer", 100)
+schaefer_100_fs5 = fetch_parcellation("fsaverage5", "schaefer", 100)
 surfaces = fetch_template_surface("fsaverage5", join=False)
-expression = surface_genetic_expression(schaefer_100, surfaces, space="fsaverage")
+expression = surface_genetic_expression(schaefer_100_fs5, surfaces, space="fsaverage")
 
 # Plot Schaefer-100 genetic expression matrix.
 colormap = copy.copy(get_cmap())
@@ -74,12 +78,54 @@ plt.show()
 # the normalization function then this may change. Some regions may return NaN
 # values for all genes. This occurs when there are no samples within this
 # region across all donors. We've denoted this region with the black color in the
-# matrix.
-#
-# By default, BrainStat uses all the default abagen parameters. If you wish to
+# matrix. By default, BrainStat uses all the default abagen parameters. If you wish to
 # customize these parameters then the keyword arguments can be passed directly
 # to `surface_genetic_expression`. For a full list of these arguments and their
 # function please consult the abagen documentation.
+#
+# Next, lets have a look at the correlation between one gene (WFDC1) and our
+# t-statistic map. Lets also plot the expression of this gene to the surface.
+
+# Plot correlation with WFDC1 gene
+t_stat_schaefer_100 = reduce_by_labels(slm.t.flatten(), schaefer_100_fs5)[1:]
+
+df = pd.DataFrame({"x": t_stat_schaefer_100, "y": expression["WFDC1"]})
+df.dropna(inplace=True)
+plt.scatter(df.x, df.y, s=5, c="k")
+plt.xlabel("t-statistic")
+plt.ylabel("WFDC1 expression")
+plt.plot(np.unique(df.x), np.poly1d(np.polyfit(df.x, df.y, 1))(np.unique(df.x)), "k")
+plt.text(-1.0, 0.75, f"r={df.x.corr(df.y):.2f}", fontdict={"size": 14})
+plt.show()
+
+########################################################################
+
+# Plot WFDC1 gene to the surface.
+from brainspace.plotting.surface_plotting import plot_hemispheres
+from brainspace.utils.parcellation import map_to_labels
+
+vertexwise_WFDC1 = map_to_labels(
+    expression["WFDC1"].to_numpy(),
+    schaefer_100_fs5,
+    mask=schaefer_100_fs5 != 0,
+    fill=np.nan,
+)
+
+plot_hemispheres(
+    surfaces[0],
+    surfaces[1],
+    vertexwise_WFDC1,
+    color_bar=True,
+    embed_nb=True,
+    size=(1400, 200),
+    zoom=1.45,
+    nan_color=(0.7, 0.7, 0.7, 1),
+    cb__labelTextProperty={"fontSize": 12},
+)
+
+########################################################################
+# We find a small correlation. To test for significance we'll have
+# to do some additional corrections, but more on that later.
 #
 # Meta-Analytic
 # -------------
@@ -92,7 +138,7 @@ plt.show()
 
 from brainstat.context.meta_analysis import meta_analytic_decoder
 
-meta_analysis = meta_analytic_decoder("civet41k", slm_age.t.flatten())
+meta_analysis = meta_analytic_decoder("fsaverage5", slm.t.flatten())
 print(meta_analysis)
 
 ##########################################################################
@@ -119,10 +165,8 @@ plt.show()
 # ---------------------
 # For histological decoding we use microstructural profile covariance gradients,
 # as first shown by (Paquola et al, 2019, Plos Biology), computed from the
-# BigBrain dataset. Firstly, lets download the MPC data, compute its
-# gradients, and correlate the first two gradients with our t-statistic map.
-
-import pandas as pd
+# BigBrain dataset. Firstly, lets download the MPC data, compute and plot its
+# gradients, and correlate the first gradient with our t-statistic map.
 
 from brainstat.context.histology import (
     compute_histology_gradients,
@@ -130,31 +174,57 @@ from brainstat.context.histology import (
     read_histology_profile,
 )
 
+
 # Run the analysis
-schaefer_400 = fetch_parcellation("civet41k", "schaefer", 400)
-histology_profiles = read_histology_profile(template="civet41k")
+schaefer_400 = fetch_parcellation("fsaverage5", "schaefer", 400)
+histology_profiles = read_histology_profile(template="fsaverage5")
 mpc = compute_mpc(histology_profiles, labels=schaefer_400)
 gradient_map = compute_histology_gradients(mpc, random_state=0)
 
-r = pd.DataFrame(gradient_map.gradients_[:, 0:2]).corrwith(
-    pd.Series(slm_age.t.flatten())
+# Bring parcellated data to vertex data.
+vertexwise_gradient = map_to_labels(
+    gradient_map.gradients_[:, 0],
+    schaefer_400,
+    mask=schaefer_400 != 0,
+    fill=np.nan,
 )
-print(r)
+
+plot_hemispheres(
+    surfaces[0],
+    surfaces[1],
+    vertexwise_gradient,
+    embed_nb=True,
+    nan_color=(0.7, 0.7, 0.7, 1),
+    size=(1400, 200),
+    zoom=1.45,
+)
+
+########################################################################
+
+# Plot the correlation between the t-stat
+t_stat_schaefer_400 = reduce_by_labels(slm.t.flatten(), schaefer_400)[1:]
+df = pd.DataFrame({"x": t_stat_schaefer_400, "y": gradient_map.gradients_[:, 0]})
+df.dropna(inplace=True)
+plt.scatter(df.x, df.y, s=5, c="k")
+plt.xlabel("t-statistic")
+plt.ylabel("MPC Gradient 1")
+plt.plot(np.unique(df.x), np.poly1d(np.polyfit(df.x, df.y, 1))(np.unique(df.x)), "k")
+plt.text(2.3, 0.1, f"r={df.x.corr(df.y):.2f}", fontdict={"size": 14})
+plt.show()
 
 ########################################################################
 # The variable histology_profiles now contains histological profiles sampled at
 # 50 different depths across the cortex, mpc contains the covariance of these
 # profiles, and gradient_map contains their gradients. We also see that the
-# correlations between our t-statistic map and these gradients are not very
+# correlation between our t-statistic map and these gradients is not very
 # high. Depending on your use-case, each of the three variables here could be of
 # interest, but for purposes of this tutorial we'll plot the gradients to the
 # surface with BrainSpace. For details on what the GradientMaps class
 # (gradient_map) contains please consult the BrainSpace documentation.
 
-from brainspace.plotting.surface_plotting import plot_hemispheres
 from brainspace.utils.parcellation import map_to_labels
 
-surfaces = fetch_template_surface("civet41k", join=False)
+surfaces = fetch_template_surface("fsaverage5", join=False)
 
 # Bring parcellated data to vertex data.
 vertexwise_data = []
@@ -195,23 +265,47 @@ plot_hemispheres(
 # functional gradients (Margulies et al., 2016, PNAS), a lower dimensional
 # manifold of resting-state connectivity.
 #
-# As an example, lets have a look at the first functional gradient within the
-# Yeo networks.
+# As an example, lets have a look at the the t-statistic map within the Yeo
+# networks. We'll plot the Yeo networks as well as a barplot showing the mean
+# and standard error of the mean within each network.
 
+from brainstat.datasets import fetch_yeo_networks_metadata
+from matplotlib.colors import ListedColormap
 
+yeo_networks = fetch_parcellation("fsaverage5", "yeo", 7)
+network_names, yeo_colormap = fetch_yeo_networks_metadata(7)
+yeo_colormap_gray = np.concatenate((np.array([[0.7, 0.7, 0.7]]), yeo_colormap))
+
+plot_hemispheres(
+    surfaces[0],
+    surfaces[1],
+    yeo_networks,
+    embed_nb=True,
+    cmap=ListedColormap(yeo_colormap_gray),
+    nan_color=(0.7, 0.7, 0.7, 1),
+    size=(1400, 200),
+    zoom=1.45,
+)
+
+##########################################################################
 import matplotlib.pyplot as plt
+from scipy.stats import sem
 
 from brainstat.context.resting import yeo_networks_associations
-from brainstat.datasets import fetch_yeo_networks_metadata
 
-yeo_tstat = yeo_networks_associations(np.squeeze(slm_age.t), "civet41k")
-network_names, yeo_colormap = fetch_yeo_networks_metadata(7)
+yeo_tstat_mean = yeo_networks_associations(slm.t.flatten(), "fsaverage5")
+yeo_tstat_sem = yeo_networks_associations(
+    slm.t.flatten(),
+    "fsaverage5",
+    reduction_operation=lambda x, y: sem(x, nan_policy="omit"),
+)
 
-plt.bar(np.arange(7), yeo_tstat[:, 0], color=yeo_colormap)
+plt.bar(
+    np.arange(7), yeo_tstat_mean[:, 0], yerr=yeo_tstat_sem.flatten(), color=yeo_colormap
+)
 plt.xticks(np.arange(7), network_names, rotation=90)
 plt.gcf().subplots_adjust(bottom=0.3)
 plt.show()
-
 
 ###########################################################################
 # Across all networks, the mean t-statistic appears to be negative, with the
@@ -222,7 +316,8 @@ plt.show()
 
 from brainstat.datasets import fetch_gradients
 
-functional_gradients = fetch_gradients("civet41k", "margulies2016")
+functional_gradients = fetch_gradients("fsaverage5", "margulies2016")
+
 
 plot_hemispheres(
     surfaces[0],
@@ -239,8 +334,14 @@ plot_hemispheres(
 
 ###########################################################################
 
-r = pd.DataFrame(functional_gradients[:, 0:3]).corrwith(pd.Series(slm_age.t.flatten()))
-print(r)
+df = pd.DataFrame({"x": slm.t.flatten(), "y": functional_gradients[:, 0]})
+df.dropna(inplace=True)
+plt.scatter(df.x, df.y, s=0.01, c="k")
+plt.xlabel("t-statistic")
+plt.ylabel("Functional Gradient 1")
+plt.plot(np.unique(df.x), np.poly1d(np.polyfit(df.x, df.y, 1))(np.unique(df.x)), "k")
+plt.text(-4.0, 6, f"r={df.x.corr(df.y):.2f}", fontdict={"size": 14})
+plt.show()
 
 
 ###########################################################################
@@ -260,15 +361,15 @@ print(r)
 from brainspace.null_models import SpinPermutations
 
 sphere_left, sphere_right = fetch_template_surface(
-    "civet41k", layer="sphere", join=False
+    "fsaverage5", layer="sphere", join=False
 )
-tstat = slm_age.t.flatten()
-tstat_left = tstat[: slm_age.t.size // 2]
-tstat_right = tstat[slm_age.t.size // 2 :]
+tstat = slm.t.flatten()
+tstat_left = tstat[: slm.t.size // 2]
+tstat_right = tstat[slm.t.size // 2 :]
 
 # Run spin test with 1000 permutations.
 n_rep = 1000
-sp = SpinPermutations(n_rep=n_rep, random_state=2021, surface_algorithm="CIVET")
+sp = SpinPermutations(n_rep=n_rep, random_state=2021)
 sp.fit(sphere_left, points_rh=sphere_right)
 tstat_rotated = np.hstack(sp.randomize(tstat_left, tstat_right))
 

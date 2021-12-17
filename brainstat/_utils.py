@@ -22,6 +22,7 @@ data_directories = {
     "ABIDE_DATA_DIR": BRAINSTAT_DATA_DIR / "abide_data",
     "BIGBRAIN_DATA_DIR": BRAINSTAT_DATA_DIR / "bigbrain_data",
     "GRADIENT_DATA_DIR": BRAINSTAT_DATA_DIR / "gradient_data",
+    "MICS_DATA_DIR": BRAINSTAT_DATA_DIR / "mics_data",
     "NEUROSYNTH_DATA_DIR": BRAINSTAT_DATA_DIR / "neurosynth_data",
     "PARCELLATION_DATA_DIR": BRAINSTAT_DATA_DIR / "parcellation_data",
     "SURFACE_DATA_DIR": BRAINSTAT_DATA_DIR / "surface_data",
@@ -81,6 +82,15 @@ def generate_data_fetcher_json() -> None:
             "civet164k": {
                 "url": "https://box.bic.mni.mcgill.ca/s/rei5HtTDvexlEPA/download"
             },
+            "fsaverage5": {
+                "url": "https://box.bic.mni.mcgill.ca/s/jsSDyiDcm9KEQpf/download"
+            },
+            "fsaverage": {
+                "url": "https://box.bic.mni.mcgill.ca/s/XiZx9HfHaufb4kD/download"
+            },
+            "fslr32k": {
+                "url": "https://box.bic.mni.mcgill.ca/s/cFXCrSkfiJFjUJ0/download"
+            },
         },
         "spheres": {
             "civet41k": {
@@ -90,6 +100,14 @@ def generate_data_fetcher_json() -> None:
         "abide_tutorial": {
             "summary_spreadsheet": {
                 "url": "https://s3.amazonaws.com/fcp-indi/data/Projects/ABIDE_Initiative/Phenotypic_V1_0b_preprocessed1.csv"
+            },
+        },
+        "mics_tutorial": {
+            "demographics": {
+                "url": "https://box.bic.mni.mcgill.ca/s/7bW9JIpvQvSJeuf/download"
+            },
+            "thickness": {
+                "url": "https://box.bic.mni.mcgill.ca/s/kMi6lU91piwdaCf/download"
             },
         },
     }
@@ -129,7 +147,9 @@ def deprecated(message: str) -> Callable:
     return deprecated_decorator
 
 
-def _download_file(url: str, output_file: Path, overwrite: bool = False) -> None:
+def _download_file(
+    url: str, output_file: Path, overwrite: bool = False, verbose=True
+) -> None:
     """Downloads a file.
 
     Parameters
@@ -140,12 +160,15 @@ def _download_file(url: str, output_file: Path, overwrite: bool = False) -> None
         Path object of the output file.
     overwrite : bool
         If true, overwrite existing files, defaults to False.
+    verbose : bool
+        If true, print a download message, defaults to True.
     """
 
     if output_file.exists() and not overwrite:
         return
 
-    logger.info("Downloading " + str(output_file) + " from " + url + ".")
+    if verbose:
+        logger.info("Downloading " + str(output_file) + " from " + url + ".")
     with urllib.request.urlopen(url) as response, open(output_file, "wb") as out_file:
         shutil.copyfileobj(response, out_file)
 
