@@ -8,5 +8,9 @@ of our `FileExchange
 included with the MATLAB package. If you wish to run this tutorial inside a
 regular script, then you should comment out the :code:`pretty_plot(...)` lines.
 
+.. note::
+    This tutorial uses BrainStat version 0.3.4, released on January 21st 2022. 
+    If you are using an older version of BrainStat, please update to 0.3.4. 
+
 .. raw:: html
     :file: tutorial_1_statistics.html
