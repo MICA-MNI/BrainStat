@@ -7,8 +7,7 @@ on:
   pull_request:
 
 jobs:
-  build:
-
+  unittests:
     strategy:
       fail-fast: false
       matrix:
@@ -34,9 +33,35 @@ jobs:
       shell: bash
       run: |
         python3 -m pytest
-      
+
+  mypy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+   
+    - name: Install Dependencies
+      shell: bash
+      run: | 
+        python -m pip install -e .[dev]
+        
     - name: Test with mypy
       shell: bash
-      if: ${{ matrix.python-version == 3.9 }}
       run: |
         python3 -m mypy $(find brainstat -path "*tests*" -prune -false -o -name "*.py")
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - uses: psf/black@stable
+        with:
+          black_args: ". --check"
+
+    
