@@ -53,10 +53,10 @@ def test_mixed_init():
     mix3 = MixedEffect(random_data, random_data, ["x0"], ["y0"])
     mix4 = MixedEffect(random_data, random_data, ["x0"], ["y0"], add_intercept=False)
 
-    assert np.array_equal(mix1.variance.shape, [n ** 2, 2])
+    assert np.array_equal(mix1.variance.shape, [n**2, 2])
     assert np.array_equal(mix1.variance.names, ["x0", "I"])
 
-    assert np.array_equal(mix2.variance.shape, [n ** 2, 1])
+    assert np.array_equal(mix2.variance.shape, [n**2, 1])
     assert np.array_equal(mix2.variance.names, ["x0"])
 
     assert np.array_equal(mix3.mean.shape, [10, 2])

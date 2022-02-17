@@ -348,7 +348,7 @@ def stat_threshold(
     if search_volume.shape[1] == 1:
         radius = (search_volume / (4 / 3 * math.pi)) ** (1 / 3)
         search_volume = np.c_[
-            np.ones(radius.shape), 4 * radius, 2 * radius ** 2 * math.pi, search_volume
+            np.ones(radius.shape), 4 * radius, 2 * radius**2 * math.pi, search_volume
         ]
 
     if search_volume.shape[0] == 1:
@@ -558,8 +558,8 @@ def stat_threshold(
             if d == 0:
                 cons = np.log(scale)
             else:
-                cons = (1 - 1 / scale ** d) / d
-            tau[:, d] = rho[:, d, 1] * (1 + 1 / scale ** d) / 2 + s1 * cons
+                cons = (1 - 1 / scale**d) / d
+            tau[:, d] = rho[:, d, 1] * (1 + 1 / scale**d) / 2 + s1 * cons
         rho[:, 0 : D[1], 0] = tau
 
     if D[1] == 0:
@@ -718,7 +718,7 @@ def stat_threshold(
                 print(P_val_extent_1)
     else:
         # Find dbn of S by taking logs then using fft for convolution:
-        ny = 2 ** 12
+        ny = 2**12
         a = d / 2
         b2 = a * 10 * np.max([np.sqrt(2 / (np.min([df1 + df2, np.min(dfw1)]))), 1])
         if df2 < math.inf:
@@ -1385,7 +1385,7 @@ def compute_resels(self) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
             ue = edg2[:, 0] + m1 * (edg2[:, 1] - 1)
             e = edg2.shape[0]
             ae = np.arange(0, e)
-            if e < 2 ** 31:
+            if e < 2**31:
                 sparsedg = csr_matrix(
                     (ae, (ue, np.zeros(ue.shape, dtype=int))), dtype=np.int
                 )
@@ -1412,7 +1412,7 @@ def compute_resels(self) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
                     lkc1[1, 2] = 0
                     lkc1[2, 2] = 0
                 else:
-                    if e < 2 ** 31:
+                    if e < 2**31:
                         l12 = self.resl[
                             sparsedg[
                                 tri[masktri, 0] + m1 * (tri[masktri, 1] - 1), 0
@@ -1490,7 +1490,7 @@ def compute_resels(self) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
             masktet = np.all(mask1[tet], axis=1).flatten()
             lkc1[0, 3] = np.sum(masktet)
             if self.resl is not None and k < (K - 1):
-                if e < 2 ** 31:
+                if e < 2**31:
                     l12 = self.resl[
                         (
                             sparsedg[

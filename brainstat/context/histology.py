@@ -223,4 +223,4 @@ def partial_correlation(X: ArrayLike, covar: np.ndarray) -> np.ndarray:
     r_xy = pearson_correlation[:-1, :-1]
     r_xz = pearson_correlation[0:-1, -1][:, None]
 
-    return (r_xy - r_xz @ r_xz.T) / (np.sqrt(1 - r_xz ** 2) * np.sqrt(1 - r_xz.T ** 2))
+    return (r_xy - r_xz @ r_xz.T) / (np.sqrt(1 - r_xz**2) * np.sqrt(1 - r_xz.T**2))
