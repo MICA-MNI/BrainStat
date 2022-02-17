@@ -518,7 +518,7 @@ def f_test(slm1: SLM, slm2: SLM) -> SLM:
             a22 = SSE2[0, :] * h[2, :] - SSE2[1, :] * h[1, :]
             a0 = a11 * a22 - a12 * a21
             a1 = (a11 + a22) / 2
-            s1 = np.array([sqrt(x) for x in (a1 ** 2 - a0)]).real
+            s1 = np.array([sqrt(x) for x in (a1**2 - a0)]).real
             d = (df2 / (df1 - df2)) / (det + (det <= 0)) * (det > 0)
             slm.t[0, :] = (a1 + s1) * d
             if l == 2:
@@ -551,9 +551,9 @@ def f_test(slm1: SLM, slm2: SLM) -> SLM:
             )
             a1 = a22 * a33 - a23 * a32 + a11 * a33 - a13 * a31 + a11 * a22 - a12 * a21
             a2 = -(a11 + a22 + a33)
-            q = a1 / 3 - a2 ** 2 / 9
-            r = (a1 * a2 - 3 * a0) / 6 - a2 ** 3 / 27
-            s1 = (r + [sqrt(x) for x in (q ** 3 + r ** 2)]) ** (1 / 3)
+            q = a1 / 3 - a2**2 / 9
+            r = (a1 * a2 - 3 * a0) / 6 - a2**3 / 27
+            s1 = (r + [sqrt(x) for x in (q**3 + r**2)]) ** (1 / 3)
             z = np.zeros((3, v))
             z[0, :] = 2 * s1.real - a2 / 3
             z[1, :] = -s1.real - a2 / 3 + np.sqrt(3) * s1.imag

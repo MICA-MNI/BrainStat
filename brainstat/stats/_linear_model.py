@@ -138,7 +138,7 @@ def _model_univariate_fixed_effects(
         coef = (la.pinv(Vmh @ self.X) @ Vmh) @ Y
         residuals = Vmh @ Y - (Vmh @ self.X) @ coef
 
-    SSE = np.sum(residuals ** 2, axis=0)
+    SSE = np.sum(residuals**2, axis=0)
     SSE = SSE[None]
 
     return residuals, V, coef, SSE
@@ -202,7 +202,7 @@ def _model_univariate_mixed_effects(self, Y: np.ndarray) -> Tuple[np.ndarray, ..
     Vt = 2 * la.pinv(M)
     m1 = np.diag(Vt)
     m2 = 2 * Vt.sum(0)
-    Vr = m1[:q1] - m2[:q1] * slm_r.mean(1) + Vt.sum() * (r ** 2).mean(-1)
+    Vr = m1[:q1] - m2[:q1] * slm_r.mean(1) + Vt.sum() * (r**2).mean(-1)
     dr = np.sqrt(Vr) * self.drlim
 
     # Extra Fisher scoring iterations
@@ -364,7 +364,7 @@ def _get_mixed_design(self) -> Tuple[np.ndarray, Optional[np.ndarray]]:
     identity = np.identity(n_samples).ravel()
 
     r = identity - random_effects @ (la.pinv(random_effects) @ identity)
-    if (r ** 2).mean() > np.finfo(float).eps:
+    if (r**2).mean() > np.finfo(float).eps:
         warnings.warn("Did you forget an error term, I? :-)")
 
     if (
@@ -458,7 +458,7 @@ def _check_constant_term(X: np.ndarray) -> None:
         Design matrix.
     """
     r = 1 - X @ la.pinv(X).sum(1)
-    if (r ** 2).mean() > np.finfo(float).eps:
+    if (r**2).mean() > np.finfo(float).eps:
         warnings.warn("Did you forget an error term, I? :-)")
 
 
