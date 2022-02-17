@@ -49,6 +49,7 @@ setuptools.setup(
         "pandas",
         "scikit_learn",
         "scipy>=1.3.3",
+        "templateflow",
         "trimesh",
     ],
     extras_require={"dev": ["gitpython", "hcp-utils", "mypy", "plotly", "pytest"]},

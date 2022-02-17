@@ -77,7 +77,7 @@ of the Schaefer atlas and how to plot this expression to a matrix. Please note
 that downloading the dataset and running this analysis can take several
 minutes.
 
-.. GENERATED FROM PYTHON SOURCE LINES 48-74
+.. GENERATED FROM PYTHON SOURCE LINES 48-76
 
 .. code-block:: default
 
@@ -102,10 +102,12 @@ minutes.
     colormap = copy.copy(get_cmap())
     colormap.set_bad(color="black")
     plt.imshow(expression, aspect="auto", cmap=colormap)
-    plt.colorbar()
-    plt.xlabel("Genetic Expression")
-    plt.ylabel("Schaefer 100 Regions")
-    plt.show()
+    plt.colorbar().ax.tick_params(labelsize=14)
+    plt.xticks(fontsize=14, rotation=45)
+    plt.yticks(fontsize=14)
+    plt.xlabel("Gene Index", fontdict={"fontsize": 16})
+    plt.ylabel("Schaefer 100 Regions", fontdict={"fontsize": 16})
+    plt.gcf().subplots_adjust(bottom=0.2)
 
 
 
@@ -118,7 +120,7 @@ minutes.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 75-88
+.. GENERATED FROM PYTHON SOURCE LINES 77-90
 
 Expression is a pandas DataFrame which shows the genetic expression of genes
 within each region of the atlas. By default, the values will fall in the range
@@ -134,7 +136,7 @@ function please consult the abagen documentation.
 Next, lets have a look at the correlation between one gene (WFDC1) and our
 t-statistic map. Lets also plot the expression of this gene to the surface.
 
-.. GENERATED FROM PYTHON SOURCE LINES 88-101
+.. GENERATED FROM PYTHON SOURCE LINES 90-105
 
 .. code-block:: default
 
@@ -144,9 +146,11 @@ t-statistic map. Lets also plot the expression of this gene to the surface.
 
     df = pd.DataFrame({"x": t_stat_schaefer_100, "y": expression["WFDC1"]})
     df.dropna(inplace=True)
-    plt.scatter(df.x, df.y, s=5, c="k")
-    plt.xlabel("t-statistic")
-    plt.ylabel("WFDC1 expression")
+    plt.scatter(df.x, df.y, s=20, c="k")
+    plt.xticks(fontsize=14)
+    plt.yticks(fontsize=14)
+    plt.xlabel("t-statistic", fontdict={"fontsize": 16})
+    plt.ylabel("WFDC1 expression", fontdict={"fontsize": 16})
     plt.plot(np.unique(df.x), np.poly1d(np.polyfit(df.x, df.y, 1))(np.unique(df.x)), "k")
     plt.text(-1.0, 0.75, f"r={df.x.corr(df.y):.2f}", fontdict={"size": 14})
     plt.show()
@@ -162,7 +166,7 @@ t-statistic map. Lets also plot the expression of this gene to the surface.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 102-126
+.. GENERATED FROM PYTHON SOURCE LINES 106-130
 
 .. code-block:: default
 
@@ -213,7 +217,7 @@ t-statistic map. Lets also plot the expression of this gene to the surface.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 127-138
+.. GENERATED FROM PYTHON SOURCE LINES 131-142
 
 We find a small correlation. To test for significance we'll have
 to do some additional corrections, but more on that later.
@@ -227,7 +231,7 @@ interpolates the data from the surface to the voxels in the volume that are in
 between the two input surfaces. We'll decode the t-statistics derived with our model
 earlier. Note that downloading the dataset and running this analysis can take several minutes.
 
-.. GENERATED FROM PYTHON SOURCE LINES 138-144
+.. GENERATED FROM PYTHON SOURCE LINES 142-148
 
 .. code-block:: default
 
@@ -248,30 +252,30 @@ earlier. Note that downloading the dataset and running this analysis can take se
  .. code-block:: none
 
                         Pearson's r
-    nucleus accumbens      0.207755
-    accumbens              0.207571
-    dorsal anterior        0.201299
-    dacc                   0.197329
-    ventral striatum       0.194612
+    nucleus accumbens      0.207419
+    accumbens              0.207216
+    dorsal anterior        0.200371
+    dacc                   0.196472
+    ventral striatum       0.194027
     ...                         ...
-    selectivity           -0.225116
-    object recognition    -0.230603
-    v1                    -0.232651
-    lateral occipital     -0.232874
-    sighted               -0.249728
+    selectivity           -0.225783
+    object recognition    -0.231140
+    v1                    -0.232876
+    lateral occipital     -0.233367
+    sighted               -0.250493
 
     [3228 rows x 1 columns]
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 145-148
+.. GENERATED FROM PYTHON SOURCE LINES 149-152
 
 meta_analysis now contains a pandas.dataFrame with the correlation values for
 each requested feature. Next we could create a Wordcloud of the included terms,
 wherein larger words denote higher correlations.
 
-.. GENERATED FROM PYTHON SOURCE LINES 148-157
+.. GENERATED FROM PYTHON SOURCE LINES 152-161
 
 .. code-block:: default
 
@@ -295,7 +299,7 @@ wherein larger words denote higher correlations.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 158-170
+.. GENERATED FROM PYTHON SOURCE LINES 162-174
 
 If we broadly summarize, we see a lot of words related to language e.g.,
 "language comprehension", "broca", "speaking", "speech production".
@@ -310,7 +314,7 @@ as first shown by (Paquola et al, 2019, Plos Biology), computed from the
 BigBrain dataset. Firstly, lets download the MPC data, compute and plot its
 gradients, and correlate the first gradient with our t-statistic map.
 
-.. GENERATED FROM PYTHON SOURCE LINES 170-202
+.. GENERATED FROM PYTHON SOURCE LINES 174-205
 
 .. code-block:: default
 
@@ -320,7 +324,6 @@ gradients, and correlate the first gradient with our t-statistic map.
         compute_mpc,
         read_histology_profile,
     )
-
 
     # Run the analysis
     schaefer_400 = fetch_parcellation("fsaverage5", "schaefer", 400)
@@ -377,7 +380,7 @@ gradients, and correlate the first gradient with our t-statistic map.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 203-215
+.. GENERATED FROM PYTHON SOURCE LINES 206-221
 
 .. code-block:: default
 
@@ -387,10 +390,13 @@ gradients, and correlate the first gradient with our t-statistic map.
     df = pd.DataFrame({"x": t_stat_schaefer_400, "y": gradient_map.gradients_[:, 0]})
     df.dropna(inplace=True)
     plt.scatter(df.x, df.y, s=5, c="k")
-    plt.xlabel("t-statistic")
-    plt.ylabel("MPC Gradient 1")
+    plt.xticks(fontsize=14)
+    plt.yticks(fontsize=14)
+    plt.xlabel("t-statistic", fontdict={"fontsize": 16})
+    plt.ylabel("MPC Gradient 1", fontdict={"fontsize": 16})
     plt.plot(np.unique(df.x), np.poly1d(np.polyfit(df.x, df.y, 1))(np.unique(df.x)), "k")
     plt.text(2.3, 0.1, f"r={df.x.corr(df.y):.2f}", fontdict={"size": 14})
+    plt.gcf().subplots_adjust(left=0.15)
     plt.show()
 
 
@@ -404,7 +410,7 @@ gradients, and correlate the first gradient with our t-statistic map.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 216-224
+.. GENERATED FROM PYTHON SOURCE LINES 222-230
 
 The variable histology_profiles now contains histological profiles sampled at
 50 different depths across the cortex, mpc contains the covariance of these
@@ -415,7 +421,7 @@ interest, but for purposes of this tutorial we'll plot the gradients to the
 surface with BrainSpace. For details on what the GradientMaps class
 (gradient_map) contains please consult the BrainSpace documentation.
 
-.. GENERATED FROM PYTHON SOURCE LINES 224-255
+.. GENERATED FROM PYTHON SOURCE LINES 230-261
 
 .. code-block:: default
 
@@ -473,7 +479,7 @@ surface with BrainSpace. For details on what the GradientMaps class
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 256-271
+.. GENERATED FROM PYTHON SOURCE LINES 262-277
 
 Note that we no longer use the y-axis regression used in (Paquola et al, 2019,
 Plos Biology), as such the first gradient becomes an anterior-posterior
@@ -491,13 +497,14 @@ As an example, lets have a look at the the t-statistic map within the Yeo
 networks. We'll plot the Yeo networks as well as a barplot showing the mean
 and standard error of the mean within each network.
 
-.. GENERATED FROM PYTHON SOURCE LINES 271-290
+.. GENERATED FROM PYTHON SOURCE LINES 277-297
 
 .. code-block:: default
 
 
-    from brainstat.datasets import fetch_yeo_networks_metadata
     from matplotlib.colors import ListedColormap
+
+    from brainstat.datasets import fetch_yeo_networks_metadata
 
     yeo_networks = fetch_parcellation("fsaverage5", "yeo", 7)
     network_names, yeo_colormap = fetch_yeo_networks_metadata(7)
@@ -537,7 +544,7 @@ and standard error of the mean within each network.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 291-310
+.. GENERATED FROM PYTHON SOURCE LINES 298-323
 
 .. code-block:: default
 
@@ -554,10 +561,16 @@ and standard error of the mean within each network.
     )
 
     plt.bar(
-        np.arange(7), yeo_tstat_mean[:, 0], yerr=yeo_tstat_sem.flatten(), color=yeo_colormap
+        np.arange(7),
+        yeo_tstat_mean[:, 0],
+        yerr=yeo_tstat_sem.flatten(),
+        color=yeo_colormap,
+        error_kw={"elinewidth": 5},
     )
-    plt.xticks(np.arange(7), network_names, rotation=90)
-    plt.gcf().subplots_adjust(bottom=0.3)
+    plt.xticks(np.arange(7), network_names, rotation=90, fontsize=14)
+    plt.yticks(fontsize=14)
+    plt.ylabel("t-statistic", fontdict={"fontsize": 16})
+    plt.gcf().subplots_adjust(left=0.2, bottom=0.5)
     plt.show()
 
 
@@ -571,7 +584,7 @@ and standard error of the mean within each network.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 311-316
+.. GENERATED FROM PYTHON SOURCE LINES 324-329
 
 Across all networks, the mean t-statistic appears to be negative, with the
 most negative values in the dorsal attnetion and visual networks.
@@ -579,7 +592,7 @@ most negative values in the dorsal attnetion and visual networks.
 Lastly, lets plot the functional gradients and have a look at their correlation
 with our t-map.
 
-.. GENERATED FROM PYTHON SOURCE LINES 316-335
+.. GENERATED FROM PYTHON SOURCE LINES 329-348
 
 .. code-block:: default
 
@@ -625,7 +638,7 @@ with our t-map.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 336-347
+.. GENERATED FROM PYTHON SOURCE LINES 349-363
 
 .. code-block:: default
 
@@ -633,10 +646,13 @@ with our t-map.
     df = pd.DataFrame({"x": slm.t.flatten(), "y": functional_gradients[:, 0]})
     df.dropna(inplace=True)
     plt.scatter(df.x, df.y, s=0.01, c="k")
-    plt.xlabel("t-statistic")
-    plt.ylabel("Functional Gradient 1")
+    plt.xticks(fontsize=14)
+    plt.yticks(fontsize=14)
+    plt.xlabel("t-statistic", fontdict={"fontsize": 16})
+    plt.ylabel("Functional Gradient 1", fontdict={"fontsize": 16})
     plt.plot(np.unique(df.x), np.poly1d(np.polyfit(df.x, df.y, 1))(np.unique(df.x)), "k")
     plt.text(-4.0, 6, f"r={df.x.corr(df.y):.2f}", fontdict={"size": 14})
+    plt.gcf().subplots_adjust(left=0.2)
     plt.show()
 
 
@@ -651,7 +667,7 @@ with our t-map.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 348-359
+.. GENERATED FROM PYTHON SOURCE LINES 364-375
 
 It seems the correlations are quite low. However, we'll need some more complex
 tests to assess statistical significance. There are many ways to compare these
@@ -665,7 +681,7 @@ the cortical marker to a distribution of correlations derived from data
 rotated across the cortical surface. The p-value then depends on the
 percentile of the empirical correlation within the permuted distribution.
 
-.. GENERATED FROM PYTHON SOURCE LINES 359-398
+.. GENERATED FROM PYTHON SOURCE LINES 375-414
 
 .. code-block:: default
 
@@ -727,7 +743,7 @@ percentile of the empirical correlation within the permuted distribution.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 399-407
+.. GENERATED FROM PYTHON SOURCE LINES 415-423
 
 As we can see from both the p-value as well as the histogram, wherein the
 dotted line denotes the empirical correlation, this correlation does not reach
@@ -741,7 +757,7 @@ Happy BrainStating!
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 4 minutes  12.472 seconds)
+   **Total running time of the script:** ( 4 minutes  12.410 seconds)
 
 
 .. _sphx_glr_download_python_generated_tutorials_plot_tutorial_02_context.py:

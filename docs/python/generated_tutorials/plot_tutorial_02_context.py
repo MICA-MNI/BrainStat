@@ -66,10 +66,12 @@ expression = surface_genetic_expression(schaefer_100_fs5, surfaces, space="fsave
 colormap = copy.copy(get_cmap())
 colormap.set_bad(color="black")
 plt.imshow(expression, aspect="auto", cmap=colormap)
-plt.colorbar()
-plt.xlabel("Genetic Expression")
-plt.ylabel("Schaefer 100 Regions")
-plt.show()
+plt.colorbar().ax.tick_params(labelsize=14)
+plt.xticks(fontsize=14, rotation=45)
+plt.yticks(fontsize=14)
+plt.xlabel("Gene Index", fontdict={"fontsize": 16})
+plt.ylabel("Schaefer 100 Regions", fontdict={"fontsize": 16})
+plt.gcf().subplots_adjust(bottom=0.2)
 
 ########################################################################
 # Expression is a pandas DataFrame which shows the genetic expression of genes
@@ -91,9 +93,11 @@ t_stat_schaefer_100 = reduce_by_labels(slm.t.flatten(), schaefer_100_fs5)[1:]
 
 df = pd.DataFrame({"x": t_stat_schaefer_100, "y": expression["WFDC1"]})
 df.dropna(inplace=True)
-plt.scatter(df.x, df.y, s=5, c="k")
-plt.xlabel("t-statistic")
-plt.ylabel("WFDC1 expression")
+plt.scatter(df.x, df.y, s=20, c="k")
+plt.xticks(fontsize=14)
+plt.yticks(fontsize=14)
+plt.xlabel("t-statistic", fontdict={"fontsize": 16})
+plt.ylabel("WFDC1 expression", fontdict={"fontsize": 16})
 plt.plot(np.unique(df.x), np.poly1d(np.polyfit(df.x, df.y, 1))(np.unique(df.x)), "k")
 plt.text(-1.0, 0.75, f"r={df.x.corr(df.y):.2f}", fontdict={"size": 14})
 plt.show()
@@ -174,7 +178,6 @@ from brainstat.context.histology import (
     read_histology_profile,
 )
 
-
 # Run the analysis
 schaefer_400 = fetch_parcellation("fsaverage5", "schaefer", 400)
 histology_profiles = read_histology_profile(template="fsaverage5")
@@ -206,10 +209,13 @@ t_stat_schaefer_400 = reduce_by_labels(slm.t.flatten(), schaefer_400)[1:]
 df = pd.DataFrame({"x": t_stat_schaefer_400, "y": gradient_map.gradients_[:, 0]})
 df.dropna(inplace=True)
 plt.scatter(df.x, df.y, s=5, c="k")
-plt.xlabel("t-statistic")
-plt.ylabel("MPC Gradient 1")
+plt.xticks(fontsize=14)
+plt.yticks(fontsize=14)
+plt.xlabel("t-statistic", fontdict={"fontsize": 16})
+plt.ylabel("MPC Gradient 1", fontdict={"fontsize": 16})
 plt.plot(np.unique(df.x), np.poly1d(np.polyfit(df.x, df.y, 1))(np.unique(df.x)), "k")
 plt.text(2.3, 0.1, f"r={df.x.corr(df.y):.2f}", fontdict={"size": 14})
+plt.gcf().subplots_adjust(left=0.15)
 plt.show()
 
 ########################################################################
@@ -269,8 +275,9 @@ plot_hemispheres(
 # networks. We'll plot the Yeo networks as well as a barplot showing the mean
 # and standard error of the mean within each network.
 
-from brainstat.datasets import fetch_yeo_networks_metadata
 from matplotlib.colors import ListedColormap
+
+from brainstat.datasets import fetch_yeo_networks_metadata
 
 yeo_networks = fetch_parcellation("fsaverage5", "yeo", 7)
 network_names, yeo_colormap = fetch_yeo_networks_metadata(7)
@@ -301,10 +308,16 @@ yeo_tstat_sem = yeo_networks_associations(
 )
 
 plt.bar(
-    np.arange(7), yeo_tstat_mean[:, 0], yerr=yeo_tstat_sem.flatten(), color=yeo_colormap
+    np.arange(7),
+    yeo_tstat_mean[:, 0],
+    yerr=yeo_tstat_sem.flatten(),
+    color=yeo_colormap,
+    error_kw={"elinewidth": 5},
 )
-plt.xticks(np.arange(7), network_names, rotation=90)
-plt.gcf().subplots_adjust(bottom=0.3)
+plt.xticks(np.arange(7), network_names, rotation=90, fontsize=14)
+plt.yticks(fontsize=14)
+plt.ylabel("t-statistic", fontdict={"fontsize": 16})
+plt.gcf().subplots_adjust(left=0.2, bottom=0.5)
 plt.show()
 
 ###########################################################################
@@ -337,10 +350,13 @@ plot_hemispheres(
 df = pd.DataFrame({"x": slm.t.flatten(), "y": functional_gradients[:, 0]})
 df.dropna(inplace=True)
 plt.scatter(df.x, df.y, s=0.01, c="k")
-plt.xlabel("t-statistic")
-plt.ylabel("Functional Gradient 1")
+plt.xticks(fontsize=14)
+plt.yticks(fontsize=14)
+plt.xlabel("t-statistic", fontdict={"fontsize": 16})
+plt.ylabel("Functional Gradient 1", fontdict={"fontsize": 16})
 plt.plot(np.unique(df.x), np.poly1d(np.polyfit(df.x, df.y, 1))(np.unique(df.x)), "k")
 plt.text(-4.0, 6, f"r={df.x.corr(df.y):.2f}", fontdict={"size": 14})
+plt.gcf().subplots_adjust(left=0.2)
 plt.show()
 
 
