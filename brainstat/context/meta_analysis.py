@@ -119,6 +119,7 @@ def surface_decoder(
     pandas.DataFrame
         Table with correlation values for each feature.
     """
+    from nilearn.datasets import load_mni152_brain_mask
 
     data_dir = Path(data_dir) if data_dir else data_directories["NEUROSYNTH_DATA_DIR"]
     data_dir.mkdir(exist_ok=True, parents=True)
