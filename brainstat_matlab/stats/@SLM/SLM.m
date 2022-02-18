@@ -10,12 +10,14 @@ classdef SLM < matlab.mixin.Copyable
 %   Valid name-value pairs:
 %   surf: 
 %       A char array containing a path to a surface, a cell/string array of
-%       the aforementioned, a loaded surface in SurfStat format, or a
-%       template name. Valid template names are: fsaverage3', 'fsaverage4',
-%       'fsaverage5' (Y), 'fsaverage6',  'fsaverage' (Y), 'fslr32k' (Y),
-%       'civet41k' (Y), 'civet164k' (Y). If the template name is marked
-%       with (Y), then a list of Yeo-7 network labels is returned with the
-%       table in slm.P.peak. Defaults to struct().
+%       the aforementioned, a loaded surface in SurfStat format, a template
+%       name, or a 3D volume array containing 0s for excluded voxels and
+%       non-zero numerics otherwise. . Valid template names are:
+%       fsaverage3', 'fsaverage4', 'fsaverage5' (Y), 'fsaverage6',
+%       'fsaverage' (Y), 'fslr32k' (Y), 'civet41k' (Y), 'civet164k' (Y). If
+%       the template name is marked with (Y), then a list of Yeo-7 network
+%       labels is returned with the table in slm.P.peak. Defaults to
+%       struct().
 %   mask:  
 %       A logical vector containing true for vertices that should be kept 
 %       during the analysis. Defaults to [].
@@ -23,8 +25,6 @@ classdef SLM < matlab.mixin.Copyable
 %       A cell array containing 'rft', 'fdr', or both. If 'rft' is included, then
 %       a random field theory correction will be run. If 'fdr' is included, then a 
 %       false discovery rate correction will be run. Defaults to [].
-%   niter:
-%       Number of iterations of the fisher scoring algorithm. Defaults to 1.
 %   thetalim:
 %       Lower limit on variance coefficients, in sd's. Defaults 0.01
 %   drlim:
@@ -96,7 +96,6 @@ classdef SLM < matlab.mixin.Copyable
                 options.surf = struct()
                 options.mask logical = 1;
                 options.correction string {mustBeValidCorrection} = []
-                options.niter (1,1) double {mustBeInteger, mustBePositive} = 1
                 options.thetalim (1,1) double {mustBePositive} = 0.01
                 options.drlim (1,1) double {mustBePositive} = 0.1
                 options.two_tailed (1,1) logical = true
@@ -110,6 +109,7 @@ classdef SLM < matlab.mixin.Copyable
             for field = fieldnames(options)'
                 obj.(field{1}) = options.(field{1});
             end
+            obj.niter = 1;
            
             obj.reset_fit_parameters();
         end
@@ -338,6 +338,8 @@ classdef SLM < matlab.mixin.Copyable
                     surf_out = fetch_template_surface(surf_name, 'join', true);
                     surf_out = io_utils.convert_surface(surf_out, 'format', 'SurfStat');
                 end
+            elseif isnumeric(surf) || islogical(surf)
+                surf_out = struct('lat', surf ~= 0);
             elseif numel(surf) > 1
                 surf_out = io_utils.combine_surfaces(surf{1}, surf{2}, 'SurfStat');
             elseif ~isempty(fieldnames(surf))
