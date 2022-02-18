@@ -39,10 +39,10 @@ def mesh_edges(
 
     # Convert all inputs to a compatible dictionary, retain BSPolyData.
     if type(surf).__name__ == "SLM":
-        if surf.tri is not None: #type: ignore
-            edg = triangles_to_edges(surf.tri) #type: ignore
-        elif surf.lat is not None: #type: ignore
-            edg = lattice_to_edges(surf.lat) #type: ignore
+        if surf.tri is not None:  # type: ignore
+            edg = triangles_to_edges(surf.tri)  # type: ignore
+        elif surf.lat is not None:  # type: ignore
+            edg = lattice_to_edges(surf.lat)  # type: ignore
         else:
             ValueError("SLM object does not have triangle/lattice data.")
     elif isinstance(surf, dict):
