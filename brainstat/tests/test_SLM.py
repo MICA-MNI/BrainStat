@@ -1,5 +1,6 @@
 """Unit tests of SLM."""
 import pickle
+import sys
 
 import nibabel as nib
 import numpy as np
@@ -133,6 +134,9 @@ def test_run_all(test_number):
     dummy_test(infile, expfile)
 
 
+@pytest.mark.skipif(
+    sys.platform.startswith("win"), reason="Template flow has issues on windows."
+)
 def test_volumetric_input():
     mask_image = nib.load(
         tflow.get("MNI152Lin", resolution="02", desc="brain", suffix="mask")

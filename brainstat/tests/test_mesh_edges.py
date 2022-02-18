@@ -1,9 +1,11 @@
 """Unit tests of mesh_edges."""
 
 import pickle
+import sys
 
 import nibabel as nib
 import numpy as np
+import pytest
 import templateflow.api as tflow
 
 from brainstat.mesh.utils import mesh_edges
@@ -69,9 +71,12 @@ def test_04():
     dummy_test(infile, expfile)
 
 
+@pytest.mark.skipif(
+    sys.platform.startswith("win"), reason="Template flow has issues on windows."
+)
 def test_nifti_input():
     nifti = nib.load(
-        str(tflow.get("MNI152Lin", resolution="02", desc="brain", suffix="mask"))
+        tflow.get("MNI152Lin", resolution="02", desc="brain", suffix="mask")
     )
     edg = mesh_edges(nifti)
 
