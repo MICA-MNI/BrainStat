@@ -4,12 +4,13 @@ import warnings
 from cmath import sqrt
 from pathlib import Path
 from pprint import pformat
-from typing import Any, List, Optional, Sequence, Tuple, Union
+from typing import Any, Optional, Sequence, Tuple, Union
 
 import numpy as np
 import pandas as pd
 from brainspace.mesh.mesh_elements import get_cells, get_points
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
+from nibabel.nifti1 import Nifti1Image
 
 from brainstat._typing import ArrayLike
 from brainstat._utils import deprecated
@@ -36,7 +37,6 @@ class SLM:
         mask: Optional[ArrayLike] = None,
         *,
         correction: Optional[Union[str, Sequence[str]]] = None,
-        niter: int = 1,
         thetalim: float = 0.01,
         drlim: float = 0.1,
         two_tailed: bool = True,
@@ -49,13 +49,18 @@ class SLM:
         ----------
         model : brainstat.stats.terms.FixedEffect, brainstat.stats.terms.MixedEffect
             The linear model to be fitted of dimensions (observations, predictors).
+            Note that, for volumetric input, BrainStat follows Fortran (MATLAB)
+            convention for ordering voxels, i.e. the first dimension changes
+            first.
         contrast : array-like
             Vector of contrasts in the observations.
-        surf : str, dict, BSPolyData, optional
+        surf : str, dict, BSPolyData, Nifti1Image, optional
             A surface provided as either a dictionary with keys 'tri' for its
             faces (n-by-3 array) and 'coord' for its coordinates (3-by-n array),
-            or as a BrainSpace BSPolyData object, or a string containing a
-            template name accepted by fetch_template_surface, by default None.
+            or as a BrainSpace BSPolyData object, a string containing a template
+            name accepted by fetch_template_surface, or a Nifti1Image wherein 0
+            denotes excluded voxels and any other value denotes included voxels,
+            by default None.
         mask : array-like, optional
             A mask containing True for vertices to include in the analysis, by
             default None.
@@ -64,9 +69,6 @@ class SLM:
             theory multiple comparisons correction will be run. If it contains
             "fdr" a false discovery rate multiple comparisons correction will be
             run. Both may be provided. By default None.
-        niter : int, optional
-            Number of iterations of the Fisher scoring algorithm for fitting
-            mixed effects models, by default 1.
         thetalim : float, optional
             Lower limit on variance coefficients in standard deviations, by
             default 0.01.
@@ -96,7 +98,7 @@ class SLM:
 
         self.mask = mask
         self.correction = [correction] if isinstance(correction, str) else correction
-        self.niter = niter
+        self.niter = 1
         self.thetalim = thetalim
         self.drlim = drlim
         self.two_tailed = two_tailed
@@ -211,8 +213,6 @@ class SLM:
         self.r = None
         self.dr = None
         self.resl = None
-        self.tri = None
-        self.lat = None
         self.c = None
         self.ef = None
         self.sd = None
@@ -302,7 +302,7 @@ class SLM:
     """ Property specifications. """
 
     @property
-    def surf(self) -> Union[BSPolyData, dict, None]:
+    def surf(self) -> Union[BSPolyData, dict, Nifti1Image, None]:
         return self._surf
 
     @surf.setter
@@ -312,6 +312,8 @@ class SLM:
             if isinstance(self.surf, BSPolyData):
                 self.tri = np.array(get_cells(self.surf)) + 1
                 self.coord = np.array(get_points(self.surf)).T
+            elif isinstance(self.surf, Nifti1Image):
+                self.lat = self.surf.get_fdata() != 0
             else:
                 if "tri" in value:
                     self.tri = value["tri"]
@@ -326,7 +328,10 @@ class SLM:
 
     @property
     def tri(self) -> np.ndarray:
-        return self._tri
+        if hasattr(self, "_tri"):
+            return self._tri
+        else:
+            return None
 
     @tri.setter
     def tri(self, value):
@@ -340,7 +345,10 @@ class SLM:
 
     @property
     def lat(self) -> np.ndarray:
-        return self._lat
+        if hasattr(self, "_lat"):
+            return self._lat
+        else:
+            return None
 
     @lat.setter
     def lat(self, value):

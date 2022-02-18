@@ -427,11 +427,10 @@ def _compute_resls(self, Y: np.ndarray) -> Tuple[np.ndarray, dict]:
         format. The dictionary's sole key is 'tri' for triangle connections or
         'lat' for lattice connections.
     """
-    if isinstance(self.surf, BSPolyData):
-        mesh_connections = {"tri": np.array(get_cells(self.surf)) + 1}
+    if self.tri is not None:
+        mesh_connections = {"tri": self.tri}
     else:
-        key = "tri" if "tri" in self.surf else "lat"
-        mesh_connections = {key: self.surf[key]}
+        mesh_connections = {"lat": self.lat}
 
     edges = mesh_edges(self.surf, self.mask)
 

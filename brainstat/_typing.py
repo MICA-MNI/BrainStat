@@ -5,6 +5,7 @@ from typing import Any
 In these versions we simply accept anything. The tests in 3.8+
 should catch all errors anyway. """
 if sys.version_info[1] >= 8:
-    from numpy.typing import ArrayLike
+    from numpy.typing import ArrayLike, NDArray
 else:
     ArrayLike = Any
+    NDArray = Any

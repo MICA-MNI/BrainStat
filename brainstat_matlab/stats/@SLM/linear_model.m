@@ -7,7 +7,7 @@ check_error_term(obj.X);
 obj.df = n_samples - rank(obj.X);
 [residuals, obj.coef, obj.SSE, obj.r, obj.dr] = run_linear_model(obj, Y);
 
-if ~isempty(fieldnames(obj.surf))
+if ~isempty(obj.tri) || ~isempty(obj.lat)
     obj.resl = compute_resls(obj, residuals);
 end
 end
