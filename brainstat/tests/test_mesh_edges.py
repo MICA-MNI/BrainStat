@@ -71,7 +71,7 @@ def test_04():
 
 def test_nifti_input():
     nifti = nib.load(
-        tflow.get("MNI152Lin", resolution="02", desc="brain", suffix="mask")
+        str(tflow.get("MNI152Lin", resolution="02", desc="brain", suffix="mask"))
     )
     edg = mesh_edges(nifti)
 
