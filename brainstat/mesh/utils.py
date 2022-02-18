@@ -8,7 +8,7 @@ from brainspace.mesh.mesh_elements import get_edges
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 from nibabel.nifti1 import Nifti1Image
 
-from brainstat._typing import ArrayLike
+from brainstat._typing import ArrayLike, NDArray
 from brainstat.stats.utils import colon
 
 if TYPE_CHECKING:
@@ -39,10 +39,10 @@ def mesh_edges(
 
     # Convert all inputs to a compatible dictionary, retain BSPolyData.
     if type(surf).__name__ == "SLM":
-        if surf.tri is not None:
-            edg = triangles_to_edges(surf.tri)
-        elif surf.lat is not None:
-            edg = lattice_to_edges(surf.lat)
+        if surf.tri is not None: #type: ignore
+            edg = triangles_to_edges(surf.tri) #type: ignore
+        elif surf.lat is not None: #type: ignore
+            edg = lattice_to_edges(surf.lat) #type: ignore
         else:
             ValueError("SLM object does not have triangle/lattice data.")
     elif isinstance(surf, dict):
@@ -59,9 +59,7 @@ def mesh_edges(
     elif isinstance(surf, BSPolyData):
         edg = get_edges(surf)
     else:
-        sys.exit(
-            'Input "surf" must have "lat" or "tri" key, or be a mesh or nifti object.'
-        )
+        raise ValueError("Unknown surface format.")
 
     if mask is not None:
         edg, _ = _mask_edges(edg, mask)
@@ -143,7 +141,7 @@ def triangles_to_edges(tri: ArrayLike) -> np.ndarray:
     return edg - 1
 
 
-def lattice_to_edges(lattice: ArrayLike) -> np.ndarray:
+def lattice_to_edges(lattice: NDArray) -> np.ndarray:
     # See the comments of SurfStatResels for a full explanation.
     if lattice.ndim == 2:
         lattice = np.expand_dims(lattice, axis=2)
