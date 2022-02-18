@@ -9,8 +9,8 @@ from typing import Generator, Optional, Sequence, Union
 import nibabel as nib
 import numpy as np
 import pandas as pd
+import templateflow.api as tflow
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
-from nilearn.datasets import load_mni152_brain_mask
 from scipy.stats.stats import pearsonr
 
 from brainstat._utils import (
@@ -55,7 +55,7 @@ def meta_analytic_decoder(
     )
     feature_files = tuple(_fetch_precomputed(data_dir, database="neurosynth"))
 
-    mni152 = load_mni152_brain_mask()
+    mni152 = nib.load(tflow.get("MNI152Lin", resolution=2, desc="brain", suffix="mask"))
 
     stat_nii = _surf2vol(template, stat_labels.flatten())
     mask = (stat_nii.get_fdata() != 0) & (mni152.get_fdata() != 0)
@@ -119,6 +119,7 @@ def surface_decoder(
     pandas.DataFrame
         Table with correlation values for each feature.
     """
+    from nilearn.datasets import load_mni152_brain_mask
 
     data_dir = Path(data_dir) if data_dir else data_directories["NEUROSYNTH_DATA_DIR"]
     data_dir.mkdir(exist_ok=True, parents=True)
