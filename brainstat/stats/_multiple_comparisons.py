@@ -1728,6 +1728,7 @@ def compute_resels(self) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     # Compute resels - RV
     D1 = lkc.shape[0] - 1
     D2 = lkc.shape[1] - 1
+
     tpltz = toeplitz((-1) ** (np.arange(0, D1 + 1)), (-1) ** (np.arange(0, D2 + 1)))
     lkcs = np.sum(tpltz * lkc, axis=1).T
     lkcs = np.trim_zeros(lkcs, trim="b")

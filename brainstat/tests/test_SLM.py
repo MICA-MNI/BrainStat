@@ -1,9 +1,11 @@
 """Unit tests of SLM."""
 import pickle
 
+import nibabel as nib
 import numpy as np
 import pandas as pd
 import pytest
+import templateflow.api as tflow
 
 from brainstat.stats.SLM import SLM, _onetailed_to_twotailed
 from brainstat.stats.terms import FixedEffect, MixedEffect
@@ -32,23 +34,15 @@ def recursive_comparison(X1, X2):
 
     output = True
     for x, y in iterator:
-        try:
-            if x is None and y is None:
-                output = True
-            elif (
-                isinstance(x, list)
-                or isinstance(x, dict)
-                or isinstance(x, pd.DataFrame)
-            ):
-                output = recursive_comparison(x, y)
-            else:
-                output = np.allclose(x, y)
-            if not output:
-                return output
-        except:
-            import pdb
+        if x is None and y is None:
+            output = True
+        elif isinstance(x, list) or isinstance(x, dict) or isinstance(x, pd.DataFrame):
+            output = recursive_comparison(x, y)
+        else:
+            output = np.allclose(x, y)
+        if not output:
+            return output
 
-            pdb.set_trace()
     return output
 
 
@@ -137,3 +131,17 @@ def test_run_all(test_number):
     infile = datadir("slm_" + f"{test_number:02d}" + "_IN.pkl")
     expfile = datadir("slm_" + f"{test_number:02d}" + "_OUT.pkl")
     dummy_test(infile, expfile)
+
+
+def test_volumetric_input():
+    mask_image = nib.load(
+        tflow.get("MNI152Lin", resolution=2, desc="brain", suffix="mask")
+    )
+    n_voxels = (mask_image.get_fdata() != 0).sum()
+    n_subjects = 3
+    data = np.random.rand(n_subjects, n_voxels)
+    model = FixedEffect(1)
+    contrast = np.ones(3)
+
+    slm = SLM(model, contrast, surf=mask_image)
+    slm.fit(data)

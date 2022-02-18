@@ -2,7 +2,9 @@
 
 import pickle
 
+import nibabel as nib
 import numpy as np
+import templateflow.api as tflow
 
 from brainstat.mesh.utils import mesh_edges
 
@@ -65,3 +67,11 @@ def test_04():
     infile = datadir("xstatedg_04_IN.pkl")
     expfile = datadir("xstatedg_04_OUT.pkl")
     dummy_test(infile, expfile)
+
+
+def test_nifti_input():
+    nifti = nib.load(tflow.get("MNI152Lin", resolution=2, desc="brain", suffix="mask"))
+    edg = mesh_edges(nifti)
+
+    assert edg.shape[1] == 2
+    assert np.amax(edg) <= nifti.get_data().sum() - 1
