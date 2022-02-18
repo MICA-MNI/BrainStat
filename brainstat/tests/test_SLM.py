@@ -135,7 +135,7 @@ def test_run_all(test_number):
 
 def test_volumetric_input():
     mask_image = nib.load(
-        tflow.get("MNI152Lin", resolution=2, desc="brain", suffix="mask")
+        tflow.get("MNI152Lin", resolution="02", desc="brain", suffix="mask")
     )
     n_voxels = (mask_image.get_fdata() != 0).sum()
     n_subjects = 3
