@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 
 from brainstat._typing import ArrayLike
-from brainstat._utils import deprecated
+from brainstat._utils import deprecated, logger
 
 
 def check_names(
@@ -20,6 +20,50 @@ def check_names(
         return x.names
     else:
         return None
+
+
+def check_categorical_variables(
+    x: Union[ArrayLike, pd.DataFrame, "FixedEffect"],
+    names: Optional[Union[str, Sequence[str]]] = None,
+) -> None:
+    """Checks whether categorical variables were provided as such.
+
+    Parameters
+    ----------
+    x : ArrayLike, pandas.DataFrame
+        The input array.
+    names : str, sequence of str or None, optional
+        Names for each column in `x`. Default is None.
+    """
+    if np.isscalar(x):
+        return
+
+    if isinstance(names, str):
+        names = [names]
+
+    if isinstance(x, pd.DataFrame):
+        x_df = x
+    elif isinstance(x, FixedEffect):
+        x_df = x.m
+    else:
+        x_df = pd.DataFrame(x, columns=names)
+
+    categorical_warning_threshold = np.minimum(5, x_df.shape[0] - 1)
+
+    for i, column in enumerate(x_df):
+        if not pd.api.types.is_numeric_dtype(x_df[column]):
+            # Variable is categorical.
+            continue
+
+        unique_numbers = x_df[column].unique()
+        if 1 < unique_numbers.size < categorical_warning_threshold:
+            if names is not None:
+                name = names[i]
+            else:
+                name = f"Column {i}"
+            logger.warning(
+                f"{name} has {unique_numbers.size} unique values but was supplied as a numeric (i.e. continuous) variable. Should it be a categorical variable? If yes, the easiest way to provide categorical variables is to convert numerics to strings."
+            )
 
 
 def to_df(
@@ -252,6 +296,8 @@ class FixedEffect(object):
             self.m = pd.DataFrame()
             return
 
+        check_categorical_variables(x, names)
+
         if isinstance(x, FixedEffect):
             self.m = x.m
             return
@@ -477,6 +523,7 @@ class MixedEffect:
         if ran is None:
             self.variance = FixedEffect()
         else:
+            check_categorical_variables(ran, name_ran)
             ran = to_df(ran)
             if not ranisvar:
                 if ran.size == 1:
