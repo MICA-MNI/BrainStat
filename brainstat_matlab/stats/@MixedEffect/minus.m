@@ -21,5 +21,6 @@ if size(m2,3)==1
 end
 
 s = MixedEffect(m1.variance - m2.variance, m1.mean - m2.mean, ...
-    'ranisvar', true, 'add_identity', false, 'add_intercept', false);
+    'ranisvar', true, 'add_identity', false, 'add_intercept', false, ...
+    'run_categorical_check', false);
 s = s.set_identity_last();

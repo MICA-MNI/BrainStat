@@ -57,11 +57,12 @@ classdef FixedEffect
     end
 
     methods
-        function obj = FixedEffect(x, names, add_intercept)
+        function obj = FixedEffect(x, names, add_intercept, run_categorical_check)
             arguments
                 x = []
                 names string = ""
                 add_intercept logical = true
+                run_categorical_check logical = true
             end
             
             % If no input.
@@ -112,6 +113,9 @@ classdef FixedEffect
                 
                 % Set the matrix
                 obj.matrix = double(x); 
+                if run_categorical_check
+                    brainstat_utils.check_categorical_variables(obj.matrix, obj.names);
+                end
             
             % If x is an numeric scalar. 
             elseif isnumeric(x) && isscalar(x)
@@ -133,8 +137,9 @@ classdef FixedEffect
             
             % Add an intercept if none exists.
             if add_intercept && ~any(all(obj.matrix == 1))
-                obj = FixedEffect(1, 'intercept', false) + obj;
+                obj = FixedEffect(1, 'intercept', false, false) + obj;
             end
         end
     end
 end
+

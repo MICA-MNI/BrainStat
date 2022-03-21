@@ -41,7 +41,7 @@ m=x./repmat(sum(abs(x)),n,1);
 j=sort(k1*k2-j+1);
 jj=j(any(x(:,j)));
 
-s = FixedEffect(x(:,jj),nms(jj), false);
+s = FixedEffect(x(:,jj),nms(jj), false, false);
 
 %s.names=nms(jj);
 %s.matrix=x(:,jj);

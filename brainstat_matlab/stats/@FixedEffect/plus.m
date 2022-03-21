@@ -36,7 +36,7 @@ elseif isempty(i2)
 else
     names = [t1.names(i1), t2.names(i2)];
 end
-s = FixedEffect([t1.matrix(:,i1), t2.matrix(:,i2)], names, false);
+s = FixedEffect([t1.matrix(:,i1), t2.matrix(:,i2)], names, false, false);
 
 % s.names=[t1.names(i1), t2.names(i2)];    
 % s.matrix=[t1.matrix(:,i1), t2.matrix(:,i2)];

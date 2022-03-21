@@ -67,7 +67,8 @@ if ~isempty(N)
     variance = variance + m1.variance*t;
 end
 
-s = MixedEffect(variance,mean, 'ranisvar', true, 'add_identity', false, 'add_intercept', false);
+s = MixedEffect(variance,mean, 'ranisvar', true, 'add_identity', false, 'add_intercept', false, ...
+    'run_categorical_check', false);
 s = s.set_identity_last();
 
 return
