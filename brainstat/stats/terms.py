@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 
 from brainstat._typing import ArrayLike
-from brainstat._utils import deprecated, logger
+from brainstat._utils import logger
 
 
 def check_names(
@@ -290,6 +290,7 @@ class FixedEffect(object):
         x: Optional[Union[ArrayLike, pd.DataFrame]] = None,
         names: Optional[Union[str, Sequence[str]]] = None,
         add_intercept: bool = True,
+        _check_categorical: bool = True,
     ) -> None:
 
         if x is None:
@@ -311,7 +312,9 @@ class FixedEffect(object):
         self.m = to_df(x, names=names).reset_index(drop=True)
         if add_intercept and "intercept" not in self.names:
             self.m.insert(0, "intercept", 1)
-        check_duplicate_names(self.m)
+
+        if _check_categorical:
+            check_duplicate_names(self.m)
 
     def _broadcast(
         self, t: Union[ArrayLike, "FixedEffect"], idx: Optional[int] = None
@@ -353,7 +356,7 @@ class FixedEffect(object):
         df = pd.concat(terms, axis=1)
         df.columns = names[0] + names[1]
         cols = remove_duplicate_columns(df, tol=self.tolerance)
-        return FixedEffect(df[cols], add_intercept=False)
+        return FixedEffect(df[cols], add_intercept=False, _check_categorical=False)
 
     def __add__(
         self, t: Union[ArrayLike, "FixedEffect", "MixedEffect"]
@@ -377,7 +380,9 @@ class FixedEffect(object):
         m = self.m / self.m.abs().sum(0)
         merged = m.T.merge(df.T, how="outer", indicator=True)
         mask = (merged._merge.values == "left_only")[: self.m.shape[1]]
-        return FixedEffect(self.m[self.m.columns[mask]], add_intercept=False)
+        return FixedEffect(
+            self.m[self.m.columns[mask]], add_intercept=False, _check_categorical=False
+        )
 
     def _mul(
         self, t: Union[ArrayLike, "FixedEffect", "MixedEffect"], side: str = "left"
@@ -395,7 +400,9 @@ class FixedEffect(object):
                 names = [f"{t}*{k}" for k in self.names]
             else:
                 names = [f"{k}*{t}" for k in self.names]
-            return FixedEffect(m, names=names, add_intercept=False)
+            return FixedEffect(
+                m, names=names, add_intercept=False, _check_categorical=False
+            )
 
         df = self._broadcast(t)
         if df.empty:
@@ -412,7 +419,7 @@ class FixedEffect(object):
         df = pd.concat(prod, axis=1)
         df.columns = names
         cols = remove_duplicate_columns(df, tol=self.tolerance)
-        return FixedEffect(df[cols], add_intercept=False)
+        return FixedEffect(df[cols], add_intercept=False, _check_categorical=False)
 
     def __mul__(
         self, t: Union[ArrayLike, "FixedEffect", "MixedEffect"]
@@ -513,6 +520,7 @@ class MixedEffect:
         ranisvar: bool = False,
         add_intercept: bool = True,
         add_identity: bool = True,
+        _check_categorical: bool = True,
     ) -> None:
 
         if isinstance(ran, MixedEffect):
@@ -523,7 +531,8 @@ class MixedEffect:
         if ran is None:
             self.variance = FixedEffect()
         else:
-            check_categorical_variables(ran, name_ran)
+            if _check_categorical:
+                check_categorical_variables(ran, name_ran)
             ran = to_df(ran)
             if not ranisvar:
                 if ran.size == 1:
@@ -545,8 +554,15 @@ class MixedEffect:
 
                 ran = ran @ ran.T
                 ran = ran.values.ravel()
-            self.variance = FixedEffect(ran, names=name_ran, add_intercept=False)
-        self.mean = FixedEffect(fix, names=name_fix, add_intercept=add_intercept)
+            self.variance = FixedEffect(
+                ran, names=name_ran, add_intercept=False, _check_categorical=False
+            )
+        self.mean = FixedEffect(
+            fix,
+            names=name_fix,
+            add_intercept=add_intercept,
+            _check_categorical=_check_categorical,
+        )
 
         if add_identity:
             I = MixedEffect(1, name_ran="I", add_identity=False)
@@ -631,7 +647,7 @@ class MixedEffect:
             ran = r.variance - self.variance
             fix = r.mean - self.mean
         return MixedEffect(
-            ran=ran, fix=fix, ranisvar=True, add_intercept=False, add_identity=False
+            ran=ran, fix=fix, ranisvar=True, add_intercept=False, add_identity=False, _check_duplicates=False
         )
 
     def __sub__(self, r: Union[FixedEffect, "MixedEffect"]) -> "MixedEffect":
@@ -655,7 +671,7 @@ class MixedEffect:
             ran = r.variance * self.variance
             fix = r.mean * self.mean
         s = MixedEffect(
-            ran=ran, fix=fix, ranisvar=True, add_intercept=False, add_identity=False
+            ran=ran, fix=fix, ranisvar=True, add_intercept=False, add_identity=False, _check_duplicates=False
         )
 
         if self.mean.matrix.values.size > 0:
@@ -668,6 +684,7 @@ class MixedEffect:
                             np.outer(x[i], x[j]).T.ravel(),
                             names=self.mean.names[i],
                             add_intercept=False,
+                            _check_duplicates=False
                         )
                     else:
                         xs = x[i] + x[j]
@@ -677,11 +694,11 @@ class MixedEffect:
 
                         v = np.outer(xs, xs) / 4
                         t = t + FixedEffect(
-                            v.ravel(), names=xs_name, add_intercept=False
+                            v.ravel(), names=xs_name, add_intercept=False, _check_duplicates=False
                         )
                         v = np.outer(xd, xd) / 4
                         t = t + FixedEffect(
-                            v.ravel(), names=xd_name, add_intercept=False
+                            v.ravel(), names=xd_name, add_intercept=False, _check_duplicates=False
                         )
 
             s.variance = s.variance + t * r.variance
@@ -693,7 +710,7 @@ class MixedEffect:
                 for j in range(i + 1):
                     if i == j:
                         t = t + FixedEffect(
-                            np.outer(x[i], x[j]).ravel(), names=r.mean.names[i]
+                            np.outer(x[i], x[j]).ravel(), names=r.mean.names[i], _check_duplicates=False
                         )
                     else:
                         xs = x[i] + x[j]
@@ -703,11 +720,11 @@ class MixedEffect:
 
                         v = np.outer(xs, xs) / 4
                         t = t + FixedEffect(
-                            v.ravel(), names=xs_name, add_intercept=False
+                            v.ravel(), names=xs_name, add_intercept=False, _check_duplicates=False
                         )
                         v = np.outer(xd, xd) / 4
                         t = t + FixedEffect(
-                            v.ravel(), names=xd_name, add_intercept=False
+                            v.ravel(), names=xd_name, add_intercept=False, _check_duplicates=False
                         )
             s.variance = s.variance + self.variance * t
         s.set_identity_last()
@@ -739,22 +756,3 @@ class MixedEffect:
             + "\n\nVariance:\n"
             + self.variance._repr_html_()
         )
-
-
-## Deprecated functions
-@deprecated("Please use FixedEffect instead.")
-def Term(x=None, names=None):
-    return FixedEffect(x=x, names=names, add_intercept=False)
-
-
-@deprecated("Please use MixedEffect instead.")
-def Random(ran=None, fix=None, name_ran=None, name_fix=None, ranisvar=False):
-    return MixedEffect(
-        ran=ran,
-        fix=fix,
-        name_ran=name_ran,
-        name_fix=name_fix,
-        ranisvar=ranisvar,
-        add_intercept=False,
-        add_identity=False,
-    )
