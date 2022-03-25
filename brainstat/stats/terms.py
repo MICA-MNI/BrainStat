@@ -297,7 +297,8 @@ class FixedEffect(object):
             self.m = pd.DataFrame()
             return
 
-        check_categorical_variables(x, names)
+        if _check_categorical:
+            check_categorical_variables(x, names)
 
         if isinstance(x, FixedEffect):
             self.m = x.m
@@ -335,7 +336,7 @@ class FixedEffect(object):
             return NotImplemented
 
         if self.empty:
-            return FixedEffect(t, add_intercept=False)
+            return FixedEffect(t, add_intercept=False, _check_categorical=False)
 
         idx = None
         if check_names(t) is None:
@@ -533,6 +534,7 @@ class MixedEffect:
         else:
             if _check_categorical:
                 check_categorical_variables(ran, name_ran)
+
             ran = to_df(ran)
             if not ranisvar:
                 if ran.size == 1:
@@ -565,10 +567,11 @@ class MixedEffect:
         )
 
         if add_identity:
-            I = MixedEffect(1, name_ran="I", add_identity=False)
+            I = MixedEffect(
+                1, name_ran="I", add_identity=False, _check_categorical=False
+            )
             tmp_mixed = self + I
             self.variance = tmp_mixed.variance
-
         self.set_identity_last()
 
     def set_identity_last(self) -> None:
@@ -603,14 +606,18 @@ class MixedEffect:
     def broadcast_to(self, r1: "MixedEffect", r2: "MixedEffect") -> FixedEffect:
         if r1.variance.shape[0] == 1:
             v = np.eye(max(r2.shape[0], int(np.sqrt(r2.shape[2]))))
-            return FixedEffect(v.ravel(), names="I", add_intercept=False)
+            return FixedEffect(
+                v.ravel(), names="I", add_intercept=False, _check_categorical=False
+            )
         return r1.variance
 
     def _add(
         self, r: Union[FixedEffect, "MixedEffect"], side: str = "left"
     ) -> "MixedEffect":
         if not isinstance(r, MixedEffect):
-            r = MixedEffect(fix=r, add_intercept=False, add_identity=False)
+            r = MixedEffect(
+                fix=r, add_intercept=False, add_identity=False, _check_categorical=False
+            )
 
         r.variance = self.broadcast_to(r, self)
         self.variance = self.broadcast_to(self, r)
@@ -622,7 +629,12 @@ class MixedEffect:
             fix = r.mean + self.mean
 
         s = MixedEffect(
-            ran=ran, fix=fix, ranisvar=True, add_intercept=False, add_identity=False
+            ran=ran,
+            fix=fix,
+            ranisvar=True,
+            add_intercept=False,
+            add_identity=False,
+            _check_categorical=False,
         )
         s.set_identity_last()
         return s
