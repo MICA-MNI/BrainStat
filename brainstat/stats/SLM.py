@@ -4,7 +4,7 @@ import warnings
 from cmath import sqrt
 from pathlib import Path
 from pprint import pformat
-from typing import Any, Optional, Sequence, Tuple, Union
+from typing import Optional, Sequence, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -13,7 +13,6 @@ from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 from nibabel.nifti1 import Nifti1Image
 
 from brainstat._typing import ArrayLike
-from brainstat._utils import deprecated
 from brainstat.datasets import fetch_parcellation, fetch_template_surface
 from brainstat.datasets.base import fetch_template_surface, fetch_yeo_networks_metadata
 from brainstat.mesh.utils import _mask_edges, mesh_edges
@@ -357,30 +356,6 @@ class SLM:
     @lat.deleter
     def lat(self):
         del self._lat
-
-    @deprecated(
-        "Direct usage of this method is deprecated. Please use the `fit()` method instead."
-    )
-    def t_test(self) -> None:
-        raise NotImplementedError
-
-    @deprecated(
-        "Direct usage of this method is deprecated. Please use the `fit()` method instead."
-    )
-    def linear_model(self, Y: Any) -> None:
-        raise NotImplementedError
-
-    @deprecated(
-        "Direct usage of this method is deprecated. Please use the `fit()` method instead."
-    )
-    def fdr(self) -> None:
-        raise NotImplementedError
-
-    @deprecated(
-        "Direct usage of this method is deprecated. Please use the `fit()` method instead."
-    )
-    def random_field_theory(self) -> None:
-        raise NotImplementedError
 
 
 def _merge_rft(P1: dict, P2: dict) -> dict:

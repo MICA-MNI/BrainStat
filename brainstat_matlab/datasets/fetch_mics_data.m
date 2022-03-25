@@ -23,7 +23,7 @@ demographics_file = options.data_dir + filesep + "mics_demographics.csv";
 if ~exist(demographics_file, 'file') || options.overwrite
     json = brainstat_utils.read_data_fetcher_json();
     websave(demographics_file, json.mics_tutorial.demographics.url, ...
-        weboptions('TimeOut', 10));
+        weboptions('TimeOut', 60));
 end
 demographics = readtable(demographics_file, 'PreserveVariableNames', true);
 

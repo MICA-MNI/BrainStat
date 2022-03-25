@@ -22,7 +22,7 @@ m2=t2.matrix./repmat(sum(abs(t2.matrix)),n,1);
 [~,i1]=setdiff(m1',m2','rows');
 i1=sort(i1);
 
-s = FixedEffect(t1.matrix(:,i1), t1.names(i1), false);
+s = FixedEffect(t1.matrix(:,i1), t1.names(i1), false, false);
 
 
 % s.names=t1.names(i1);

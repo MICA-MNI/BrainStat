@@ -101,9 +101,11 @@ classdef (InferiorClasses = {?FixedEffect}) MixedEffect
             p = inputParser;
             addOptional(p,'add_identity', true, @islogical)
             addOptional(p,'add_intercept', true, @islogical);
+            addOptional(p,'run_categorical_check', true, @islogical);
             addOptional(p,'name_ran', 'ran', @(x) ischar(x) || isempty(x));
             addOptional(p,'name_fix', [], @(x) ischar(x) || iscell(x) || isstring(x) || isempty(x))
             addOptional(p,'ranisvar', [], @(x)(islogical(x) || x == 0 || x == 1) && numel(x) == 1);
+            
             parse(p, varargin{:});
             R = p.Results;
             if nargin < 2 
@@ -150,8 +152,11 @@ classdef (InferiorClasses = {?FixedEffect}) MixedEffect
                     end
                     
                     % Compute the variance and set it. 
+                    if R.run_categorical_check
+                        brainstat_utils.check_categorical_variables(ran, R.name_ran);
+                    end
                     v = double(ran)*double(ran)';
-                    obj.variance = FixedEffect(v(:), R.name_ran, false);
+                    obj.variance = FixedEffect(v(:), R.name_ran, false, false);
                 end
             end
                 

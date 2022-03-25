@@ -1,6 +1,7 @@
 """ Tests the fixed and mixed effects classes. """
 
 import numpy as np
+import pandas as pd
 
 from brainstat.stats.terms import FixedEffect, MixedEffect
 
@@ -16,6 +17,14 @@ def test_fixed_init():
 
     assert np.array_equal(fix2.m.shape, [10, 1])
     assert np.array_equal(fix2.names, ["x0"])
+
+    categorical_array = pd.DataFrame({"Sex": ["M", "M", "M", "F", "F"]})
+    fix3 = FixedEffect(categorical_array)
+    assert np.array_equal(fix3.Sex_M, [1, 1, 1, 0, 0])
+    assert np.array_equal(fix3.Sex_F, [0, 0, 0, 1, 1])
+
+    fix4 = FixedEffect(1)
+    assert np.array_equal(fix4.intercept, [1])
 
 
 def test_fixed_overload():
@@ -64,6 +73,15 @@ def test_mixed_init():
 
     assert np.array_equal(mix4.mean.shape, [10, 1])
     assert np.array_equal(mix4.mean.names, ["y0"])
+
+    categorical_array = pd.DataFrame({"Sex": ["M", "M", "M", "F", "F"]})
+    mix5 = MixedEffect(categorical_array)
+    assert np.array_equal(mix5.variance.shape, [25, 2])
+    assert np.array_equal(mix5.variance.names, ["Sex_", "I"])
+
+    mix6 = MixedEffect(1)
+    assert np.array_equal(mix6.variance.shape, [1, 1])
+    assert np.array_equal(mix6.variance.names, ["I"])
 
 
 def test_mixed_overload():

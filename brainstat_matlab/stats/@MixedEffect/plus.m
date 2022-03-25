@@ -13,13 +13,14 @@ end
 
 if size(m1,3)==1
     v=eye(max(size(m2,1),sqrt(size(m2,3))));   
-    m1.variance=FixedEffect(v(:),'I', false);
+    m1.variance=FixedEffect(v(:),'I', false, false);
 end
 if size(m2,3)==1
     v=eye(max(size(m1,1),sqrt(size(m1,3))));
-    m2.variance=FixedEffect(v(:),'I', false);
+    m2.variance=FixedEffect(v(:),'I', false, false);
 end
 
 s = MixedEffect(m1.variance + m2.variance, m1.mean + m2.mean, ...
-    'ranisvar', true, 'add_identity', false, 'add_intercept', false);
+    'ranisvar', true, 'add_identity', false, 'add_intercept', false, ...
+    'run_categorical_check', false);
 s = s.set_identity_last();
