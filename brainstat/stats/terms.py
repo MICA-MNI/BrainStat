@@ -652,7 +652,7 @@ class MixedEffect:
             ranisvar=True,
             add_intercept=False,
             add_identity=False,
-            _check_duplicates=False,
+            _check_categorical=False,
         )
 
     def __sub__(self, r: Union[FixedEffect, "MixedEffect"]) -> "MixedEffect":
@@ -681,7 +681,7 @@ class MixedEffect:
             ranisvar=True,
             add_intercept=False,
             add_identity=False,
-            _check_duplicates=False,
+            _check_categorical=False,
         )
 
         if self.mean.matrix.values.size > 0:
@@ -694,7 +694,7 @@ class MixedEffect:
                             np.outer(x[i], x[j]).T.ravel(),
                             names=self.mean.names[i],
                             add_intercept=False,
-                            _check_duplicates=False,
+                            _check_categorical=False,
                         )
                     else:
                         xs = x[i] + x[j]
@@ -707,14 +707,14 @@ class MixedEffect:
                             v.ravel(),
                             names=xs_name,
                             add_intercept=False,
-                            _check_duplicates=False,
+                            _check_categorical=False,
                         )
                         v = np.outer(xd, xd) / 4
                         t = t + FixedEffect(
                             v.ravel(),
                             names=xd_name,
                             add_intercept=False,
-                            _check_duplicates=False,
+                            _check_categorical=False,
                         )
 
             s.variance = s.variance + t * r.variance
@@ -728,7 +728,7 @@ class MixedEffect:
                         t = t + FixedEffect(
                             np.outer(x[i], x[j]).ravel(),
                             names=r.mean.names[i],
-                            _check_duplicates=False,
+                            _check_categorical=False,
                         )
                     else:
                         xs = x[i] + x[j]
@@ -741,14 +741,14 @@ class MixedEffect:
                             v.ravel(),
                             names=xs_name,
                             add_intercept=False,
-                            _check_duplicates=False,
+                            _check_categorical=False,
                         )
                         v = np.outer(xd, xd) / 4
                         t = t + FixedEffect(
                             v.ravel(),
                             names=xd_name,
                             add_intercept=False,
-                            _check_duplicates=False,
+                            _check_categorical=False,
                         )
             s.variance = s.variance + self.variance * t
         s.set_identity_last()
