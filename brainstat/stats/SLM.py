@@ -1,4 +1,3 @@
-# type: ignore
 """ Standard Linear regression models. """
 import warnings
 from cmath import sqrt
