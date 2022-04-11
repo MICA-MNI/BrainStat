@@ -1,68 +1,64 @@
 classdef FixedEffect
-%Makes a vector, matrix or structure into a term in a linear model.
+% FIXED_EFFECT    Class for fixed effects.
 %
-% Usage: t = FixedEffect( x [, str] );
+%   obj = FixedEffect(x) creates a class for fixed effects. The data,
+%   x, may be represented in several formats:
 %
-% Internally a term consists of a cell array of strings for the names of
-% the variables in the term, and a matrix with one column for each name,
-% which can be accessed by char and double (see below). 
-% 
-% If x is a matrix of numbers, t has one variable for each column of x. 
-% If x is a cell array of strings or a matrix whose rows are strings, t  
-%      is a set of indicator variables for the unique strings in x. 
-% If x is a structure, t has one variable for eaxh field of x. 
-% If x is a scalar, t is the constant term. It is expanded to the length
+%   - If x is a matrix of numbers, obj has one variable for each column of x. 
+%   - If x is a cell array of chars or a string array, obj is a set of 
+%       categorical variables for the unique strings in x. 
+%   - If x is a structure, obj has one variable for eaxh field of x. 
+%   - If x is a scalar, obj is the constant term. It is expanded to the length
 %       of the other term in a binary operator.
-% If x is a term, t=x. With no arguments, t is the empty term. 
+%   - If x is a FixedEffect, t=x. 
+%   - With no arguments, obj is the empty term. 
 % 
-% str is a cell array of strings for the names of the variables. If absent,
-% the names for the four cases above are either 'x' (followed by 1,2,... if
-% x is a matrix), the unique strings in x, the fields of x, num2str(x) if x
-% is a scalar, or '?' if x is an algebraic expression.
+%   obj = FixedEffect(x, names) creates a class for fixed effects and adds the
+%   names of the variables to the class. names is a cell array of chars or a
+%   string array containing the names of the variables. If absent, the names for
+%   the four cases above are either 'x' (followed by 1,2,... if x is a matrix),
+%   the unique strings in x, the fields of x, num2str(x) if x is a scalar, or '?'
+%   if x is an algebraic expression.
 %
-% Term t can be subscripted and returns a numeric vector or matrix, e.g.
-%    obj.f      = variable with name 'f'.
-%    t(1,3:5) = matrix whose columns are variables 1,3,4,5.
+%   The following operators are overloaded for terms obj1  and obj2:
+%       obj1  + obj2 = {variables in obj1} union {variables in obj2}.
+%       obj1  - obj2 = {variables in obj1} intersection complement {variables in obj2}.
+%       obj1  * obj2 = sum of the element-wise product of each variable in obj1  with
+%              each variable in obj2, and corresponds to the interaction 
+%              between obj1  and obj2.
+%       obj ^ k   = product of obj with itself, k times. 
 %
-% The following operators are overloaded for terms t1 and t2:
-%    t1 + t2 = {variables in t1} union {variables in t2}.
-%    t1 - t2 = {variables in t1} intersection complement {variables in t2}.
-%    t1 * t2 = sum of the element-wise product of each variable in t1 with
-%              each variable in t2, and corresponds to the interaction 
-%              between t1 and t2.
-%    t ^ k   = product of t with itself, k times. 
-%
-% Algebra: commutative, associative and distributive rules apply to terms:
-%    a + b = b + a
-%    a * b = b * a
-%    (a + b) + c = a + (b + c)
-%    (a * b) * c = a * (b * c)
-%    (a + b) * c = a * c + b * c
-%    a + 0 = a
-%    a * 1 = a
-%    a * 0 = 0
-% However note that 
-%    a + b - c =/= a + (b - c) =/= a - c + b
+%   Algebra: commutative, associative and distributive rules apply to terms:
+%       a + b = b + a
+%       a * b = b * a
+%       (a + b) + c = a + (b + c)
+%       (a * b) * c = a * (b * c)
+%       (a + b) * c = a * c + b * c
+%       a + 0 = a
+%       a * 1 = a
+%       a * 0 = 0
+%   However note that 
+%       a + b - c =/= a + (b - c) =/= a - c + b
 % 
-% The following functions are overloaded for term t:
-%    char(t)         = cell array of the names of the variables.
-%    double(t)       = matrix whose columns are the variables in t, i.e.
+%   The following functions are overloaded for term t:
+%       char(t)         = cell array of the names of the variables.
+%       double(t)       = matrix whose columns are the variables in t, i.e.
 %                      the design matrix of the linear model.
-%    size(t [, dim]) = size(double(t) [, dim]).
-%    isempty(t)      = 1 if t is empty and 0 if noobj.
+%       size(t [, dim]) = size(double(t) [, dim]).
+%       isempty(t)      = 1 if obj is empty and 0 if not.
 
     properties
-        names
-        matrix
+        names % Names of the variables.
+        matrix % Sample-by-feature data matrix. 
     end
 
     methods
         function obj = FixedEffect(x, names, add_intercept, run_categorical_check)
             arguments
-                x = []
-                names string = ""
-                add_intercept logical = true
-                run_categorical_check logical = true
+                x = [] % Input data.
+                names string = "" % Names of input variables.
+                add_intercept logical = true % If true, include an intercept term.
+                run_categorical_check logical = true % If true, check whether categorical terms are added correctly.
             end
             
             % If no input.

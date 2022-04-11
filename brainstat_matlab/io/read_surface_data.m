@@ -1,4 +1,13 @@
 function data = read_surface_data(files)
+% READ_SURFACE_DATA   Reads common surface data formats from disk. 
+%
+%   data = READ_SURFACE(files) reads the surface files and outputs a cell array
+%   containing their data. The file can be .shape.gii, .func.gii, .label.gii,
+%   .annot, .dlabel.nii, .txt., .thickness, .mgh, .asc, and .mat. The .mat files
+%   may only contain one variable. 
+%
+%   For complete documentation, please consult our <a
+%   href="https://brainstat.readthedocs.io/en/master/matlab/API/read_surface_data.html#matlab-read-surface-data">ReadTheDocs</a>.
 
 if ischar(files)
     files = {files};
