@@ -1,5 +1,4 @@
-..
-     _matlab_index:
+.. _matlab_index:
 
 ------------
 MATLAB Index
