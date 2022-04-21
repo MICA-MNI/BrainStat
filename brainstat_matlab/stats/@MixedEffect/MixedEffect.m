@@ -154,7 +154,7 @@ classdef (InferiorClasses = {?FixedEffect}) MixedEffect
                     % Compute the variance and set it. 
                     if R.run_checks
                         brainstat_utils.check_categorical_variables(ran, R.name_ran);
-                        if any(isnan(double(ran))) || any(isinf(double(ran)))
+                        if any(isnan(double(ran(:)))) || any(isinf(double(ran(:))))
                             warning('BrainStat:MixedEffect', 'Random term contains NaN or Inf values. This may cause errors in model fitting.');
                         end
                     end
