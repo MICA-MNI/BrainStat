@@ -18,10 +18,10 @@ classdef (InferiorClasses = {?FixedEffect}) MixedEffect
 %       to true. 
 %       'name_ran': Names of the random effects. Defaults to 'ran'.
 %       'name_fix': Names of the fixed effects. Defaults to [].
-%       'ranisvar': If true, assumes that input ran is already a variance term.
-%       'run_checks': If true, checks whether categorical variables were
-%       provided as string/cell arrays and whether the input data contains nans/infs. 
-%       Defaults to true. We do not recommend altering this value.
+%       'ranisvar': If true, assumes that input ran is already a variance
+%       term. 'run_checks': If true, checks whether categorical variables
+%       were provided as string/cell arrays. Defaults to true. We do not
+%       recommend altering this value.
 %
 %   Let obj.mean be the mean term, and obj.variance be the variance term.
 %   The following operators are overloaded for random models m1 and m2:
@@ -154,9 +154,6 @@ classdef (InferiorClasses = {?FixedEffect}) MixedEffect
                     % Compute the variance and set it. 
                     if R.run_checks
                         brainstat_utils.check_categorical_variables(ran, R.name_ran);
-                        if any(isnan(double(ran(:)))) || any(isinf(double(ran(:))))
-                            warning('BrainStat:MixedEffect', 'Random term contains NaN or Inf values. This may cause errors in model fitting.');
-                        end
                     end
                     v = double(ran)*double(ran)';
                     obj.variance = FixedEffect(v(:), R.name_ran, false, false);

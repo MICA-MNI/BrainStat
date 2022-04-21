@@ -112,7 +112,7 @@ classdef FixedEffect
                 if run_checks
                     brainstat_utils.check_categorical_variables(obj.matrix, obj.names);
                     if any(isnan(obj.matrix(:))) || any(isinf(obj.matrix(:)))
-                        warning('BrainStat:FixedEffect', 'The data contains NaNs or Infs. Model fitting may error.');
+                        warning('BrainStat:FixedEffect', 'Input contains NaNs or Infs. This may cause errors in model fitting.');
                     end
                 end
             
