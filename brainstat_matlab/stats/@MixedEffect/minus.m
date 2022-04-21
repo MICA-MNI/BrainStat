@@ -22,5 +22,5 @@ end
 
 s = MixedEffect(m1.variance - m2.variance, m1.mean - m2.mean, ...
     'ranisvar', true, 'add_identity', false, 'add_intercept', false, ...
-    'run_categorical_check', false);
+    'run_checks', false);
 s = s.set_identity_last();

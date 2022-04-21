@@ -53,12 +53,12 @@ classdef FixedEffect
     end
 
     methods
-        function obj = FixedEffect(x, names, add_intercept, run_categorical_check)
+        function obj = FixedEffect(x, names, add_intercept, run_checks)
             arguments
                 x = [] % Input data.
-                names string = "" % Names of input variables.
-                add_intercept logical = true % If true, include an intercept term.
-                run_categorical_check logical = true % If true, check whether categorical terms are added correctly.
+                names (1,:) string = "" % Names of input variables.
+                add_intercept (1,1) logical = true % If true, include an intercept term.
+                run_checks (1,1) logical = true % If true, check whether categorical terms are added correctly and wheter the data contains nans/infs.
             end
             
             % If no input.
@@ -109,8 +109,11 @@ classdef FixedEffect
                 
                 % Set the matrix
                 obj.matrix = double(x); 
-                if run_categorical_check
+                if run_checks
                     brainstat_utils.check_categorical_variables(obj.matrix, obj.names);
+                    if any(isnan(obj.matrix(:))) || any(isinf(obj.matrix(:)))
+                        warning('BrainStat:FixedEffect', 'Input contains NaNs or Infs. This may cause errors in model fitting.');
+                    end
                 end
             
             % If x is an numeric scalar. 

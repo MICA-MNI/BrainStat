@@ -18,10 +18,10 @@ classdef (InferiorClasses = {?FixedEffect}) MixedEffect
 %       to true. 
 %       'name_ran': Names of the random effects. Defaults to 'ran'.
 %       'name_fix': Names of the fixed effects. Defaults to [].
-%       'ranisvar': If true, assumes that input ran is already a variance term.
-%       'run_categorical_check': If true, checks whether categorical variables were
-%       provided as string/cell arrays. Defaults to true. We do not recommend altering
-%       this value.
+%       'ranisvar': If true, assumes that input ran is already a variance
+%       term. 'run_checks': If true, checks whether categorical variables
+%       were provided as string/cell arrays. Defaults to true. We do not
+%       recommend altering this value.
 %
 %   Let obj.mean be the mean term, and obj.variance be the variance term.
 %   The following operators are overloaded for random models m1 and m2:
@@ -101,7 +101,7 @@ classdef (InferiorClasses = {?FixedEffect}) MixedEffect
             p = inputParser;
             addOptional(p,'add_identity', true, @islogical)
             addOptional(p,'add_intercept', true, @islogical);
-            addOptional(p,'run_categorical_check', true, @islogical);
+            addOptional(p,'run_checks', true, @islogical);
             addOptional(p,'name_ran', 'ran', @(x) ischar(x) || isempty(x));
             addOptional(p,'name_fix', [], @(x) ischar(x) || iscell(x) || isstring(x) || isempty(x))
             addOptional(p,'ranisvar', [], @(x)(islogical(x) || x == 0 || x == 1) && numel(x) == 1);
@@ -152,7 +152,7 @@ classdef (InferiorClasses = {?FixedEffect}) MixedEffect
                     end
                     
                     % Compute the variance and set it. 
-                    if R.run_categorical_check
+                    if R.run_checks
                         brainstat_utils.check_categorical_variables(ran, R.name_ran);
                     end
                     v = double(ran)*double(ran)';

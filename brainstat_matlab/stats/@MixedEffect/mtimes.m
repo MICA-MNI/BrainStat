@@ -68,7 +68,7 @@ if ~isempty(N)
 end
 
 s = MixedEffect(variance,mean, 'ranisvar', true, 'add_identity', false, 'add_intercept', false, ...
-    'run_categorical_check', false);
+    'run_checks', false);
 s = s.set_identity_last();
 
 return
