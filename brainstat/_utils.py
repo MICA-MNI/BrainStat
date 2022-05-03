@@ -56,8 +56,8 @@ def generate_data_fetcher_json() -> None:
             "glasser": {
                 "fsaverage": {
                     "url": (
-                        "https://box.bic.mni.mcgill.ca/s/y2NMHXr47WOCtpp/download",
-                        "https://box.bic.mni.mcgill.ca/s/Y0Fmd2tIF69Mqpt/download",
+                        "https://box.bic.mni.mcgill.ca/s/j4nfMA4D7jSx3QZ/download",
+                        "https://box.bic.mni.mcgill.ca/s/qZTplkH4A4exOnF/download",
                     ),
                 },
                 "fsaverage5": {
