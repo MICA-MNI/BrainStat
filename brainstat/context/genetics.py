@@ -159,13 +159,36 @@ def __create_precomputed(
             parcellations[key].update({"seven_networks": (True,)})
 
         # We only really need to compute this for one template surface.
-        # We'll use fsaverage for all.
-        parcellations[key].update({"surfaces": ["fsaverage"]})
+        # We'll use fsaverage5 for all.
+        parcellations[key].update({"surfaces": ["fsaverage5"]})
 
     param_grid = ParameterGrid(list(parcellations.values()))
 
     # Compute expression for all parcellations.
     for params in param_grid:
+        if params["atlas"] == "schaefer":
+            network_tag = "7Networks" if params["seven_networks"] else "17Networks"
+        else:
+            network_tag = ""
+
+        filename_components = filter(
+            None,
+            (
+                "expression",
+                params["atlas"],
+                str(params["n_regions"]),
+                network_tag,
+            ),
+        )
+
+        filename = "_".join(filename_components) + ".csv.gz"
+        output_file = Path(output_dir) / filename
+        if output_file.exists():
+            print('Skipping "{}"'.format(output_file))
+            continue
+        else:
+            print('Computing "{}"'.format(output_file))
+
         surface_files = _fetch_template_surface_files(
             params["surfaces"], data_dir=data_dir  # type: ignore
         )
@@ -186,23 +209,7 @@ def __create_precomputed(
         surface_paths = [surf_lh.name, surf_rh.name]
 
         expression = surface_genetic_expression(labels, surface_paths, space=space)  # type: ignore
-
-        if params["atlas"] == "schaefer":
-            network_tag = "7Networks" if params["seven_networks"] else "17Networks"
-        else:
-            network_tag = ""
-
-        filename_components = filter(
-            None,
-            (
-                "expression",
-                params["atlas"],
-                str(params["n_regions"]),
-                network_tag,
-            ),
-        )
-        filename = "_".join(filename_components) + ".csv.gz"
-        expression.to_csv(Path(output_dir, filename))  # type: ignore
+        expression.to_csv(output_file)  # type: ignore
 
 
 def __freesurfer_to_surfgii(freesurfer_file: str, gifti_file: str) -> None:
