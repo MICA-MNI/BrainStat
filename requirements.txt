@@ -1,6 +1,7 @@
 abagen>=0.1
 brainspace>=0.1.1
 h5py
+matplotlib>=2.0.0
 netneurotools>=0.2.3
 neurosynth
 nibabel
