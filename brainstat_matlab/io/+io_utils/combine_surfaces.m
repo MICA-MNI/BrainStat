@@ -17,13 +17,13 @@ if nargin < 3
 end
 
 % Make sure all surfaces are in the same format.
-S1c = convert_surface(S1);
-S2c = convert_surface(S2);
+S1c = io_utils.convert_surface(S1);
+S2c = io_utils.convert_surface(S2);
 
 SC.coord = [S1c.coord,S2c.coord];
 SC.tri = [S1c.tri;S2c.tri + size(S1c.coord,2)];
 
 % Convert to output type
 if ~strcmp(format,'surfstat')
-    SC = convert_surface(SC, 'format', format);
+    SC = io_utils.convert_surface(SC, 'format', format);
 end
