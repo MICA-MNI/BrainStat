@@ -1238,7 +1238,7 @@ def compute_resels(self) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
             axis=0,
         )
 
-        v = np.int(np.round(np.sum(self.lat)))
+        v = int(np.round(np.sum(self.lat)))
         if self.mask is None:
             self.mask = np.ones(v, dtype=bool)
 
@@ -1387,7 +1387,7 @@ def compute_resels(self) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
             ae = np.arange(0, e)
             if e < 2**31:
                 sparsedg = csr_matrix(
-                    (ae, (ue, np.zeros(ue.shape, dtype=int))), dtype=np.int
+                    (ae, (ue, np.zeros(ue.shape, dtype=int))), dtype=int
                 )
                 sparsedg.eliminate_zeros()
             ##
