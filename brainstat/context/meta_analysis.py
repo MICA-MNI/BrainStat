@@ -12,6 +12,8 @@ import pandas as pd
 import templateflow.api as tflow
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 from scipy.stats.stats import pearsonr
+from math import pi
+import matplotlib.pyplot as plt
 
 from brainstat._utils import (
     data_directories,
@@ -224,3 +226,85 @@ def _fetch_precomputed_neurosynth(data_dir: Path) -> Generator[Path, None, None]
             (Path(name)).unlink()
 
     return data_dir.glob("Neurosynth_TFIDF__*z_desc-consistency.nii.gz")
+
+
+def radar_plot(data=None, title="", axis_range=None, label=None, color=(0, 0, 0)):
+    """Visualize data in radar plot (author: @saratheriver)
+    Parameters
+    ----------
+    data : ndarray, shape = (n_val,)
+        Data.
+    title : string, optional
+        Title of spider plot. Default is empty.
+    axis_range : tuple, optional
+        Range of spider plot axes. Default is (min, max).
+    label : list, optional
+        List of axis labels. Length = same as data.shape[0]. Default is empty.
+    color : tuple, optional
+        Color of line. Default is (0, 0, 0).
+    Returns
+    -------
+    class_mean : ndarray, shape = (data.shape[0],)
+        Values for each branch.
+    figure
+        Spider plot.
+    """
+    # Data check
+    if data is None:
+        print("Need data to plot")
+
+    # Create dataframe
+    class_mean = pd.DataFrame(data=data.T, columns=label)
+
+    # Number of variable
+    categories = list(class_mean)
+    N = len(categories)
+
+    # We are going to plot the first line of the data frame.
+    # But we need to repeat the first value to close the circular graph:
+    values = class_mean.loc[0].values.flatten().tolist()
+    values += values[:1]
+
+    # What will be the angle of each axis in the plot? (we divide the plot / number of variable)
+    angles = [n / float(N) * 2 * pi for n in range(N)]
+    angles += angles[:1]
+
+    # Initialise the spider plot
+    plt.figure(figsize=(8, 4))
+    ax = plt.subplot(111, polar=True)
+    ax.spines["polar"].set_visible(False)
+
+    # Draw one axe per variable + add labels labels yet
+    if label is None:
+        label = list(class_mean)
+
+    plt.xticks(angles[:-1], label, color="black", size=12)
+    ax.xaxis.get_majorticklabels()[0].set_horizontalalignment("left")
+    ax.xaxis.get_majorticklabels()[2].set_verticalalignment("bottom")
+    ax.xaxis.get_majorticklabels()[3].set_verticalalignment("top")
+
+    # Draw ylabels
+    ax.set_rlabel_position(0)
+    if axis_range is None:
+        axis_range = (np.min(values), np.max(values))
+
+    inc = (axis_range[1] - axis_range[0]) / 4
+    newinc = [
+        axis_range[0] + inc,
+        axis_range[0] + (inc * 2),
+        axis_range[0] + (inc * 3),
+        axis_range[0],
+    ]
+    plt.yticks(
+        newinc, [str("{:.2f}".format(elem)) for elem in newinc], color="grey", size=10
+    )
+    plt.ylim(axis_range)
+
+    # add title
+    if title:
+        plt.title(title)
+
+    # Plot data
+    ax.plot(angles, values, linewidth=3, linestyle="solid", color=color)
+
+    return class_mean
