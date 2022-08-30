@@ -75,7 +75,7 @@ classdef plot_hemispheres < handle
         %% Set methods
         % Set surface.
         function set.surface(obj,surface)
-            surface = convert_surface(surface,'Format','SurfStat');
+            surface = io_utils.convert_surface(surface,'Format','SurfStat');
             if ~iscell(surface)
                 surface = {surface};
             end
