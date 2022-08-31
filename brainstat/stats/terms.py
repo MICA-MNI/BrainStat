@@ -240,7 +240,7 @@ def remove_duplicate_columns(df: pd.DataFrame, tol: float = 1e-8) -> List[str]:
     df = df / df.abs().sum(0)
     df *= 1 / tol
     # keep = df.round().T.drop_duplicates(keep="last").T.columns  # Slow!!
-    idx = np.unique(df.round().values, axis=1, return_index=True)[-1]
+    idx = np.unique(df.round().to_numpy(dtype=float), axis=1, return_index=True)[-1]
     keep = df.columns[sorted(idx)]
     return keep
 
