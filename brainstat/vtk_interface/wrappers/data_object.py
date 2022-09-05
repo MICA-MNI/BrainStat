@@ -14,10 +14,10 @@ from vtk.numpy_interface import dataset_adapter as dsa
 from vtk.util.vtkConstants import (VTK_ID_TYPE, VTK_POLY_VERTEX, VTK_POLY_LINE,
                                    VTK_TRIANGLE, VTK_POLYGON, VTK_QUAD)
 
-from .base import BSVTKObjectWrapper
-from .misc import BSCellArray
-from .utils import generate_random_string
-from ..checks import (get_cell_types, get_number_of_cell_types, has_only_line,
+from brainstat.vtk_interface.wrappers.base import BSVTKObjectWrapper
+from brainstat.vtk_interface.wrappers.misc import BSCellArray
+from brainstat.vtk_interface.wrappers.utils import generate_random_string
+from brainstat.vtk_interface.checks import (get_cell_types, get_number_of_cell_types, has_only_line,
                       has_only_vertex, has_only_triangle, has_unique_cell_type,
                       has_only_quad)
 

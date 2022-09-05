@@ -6,9 +6,9 @@ Pipeline for VTK filters.
 # License: BSD 3 clause
 
 
-from .decorators import wrap_input
-from .wrappers.algorithm import BSAlgorithm
-from .wrappers.data_object import BSDataObject
+from brainstat.vtk_interface.decorators import wrap_input
+from brainstat.vtk_interface.wrappers.algorithm import BSAlgorithm
+from brainstat.vtk_interface.wrappers.data_object import BSDataObject
 
 
 # From https://vtk.org/Wiki/VTK/Tutorials/New_Pipeline

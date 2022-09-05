@@ -6,8 +6,8 @@ Wrappers for VTK classes needed for rendering.
 # License: BSD 3 clause
 
 
-from .base import BSVTKObjectWrapper, wrap_vtk
-from .actor import BSActor, BSActor2D, BSScalarBarActor, BSTextActor
+from brainstat.vtk_interface.wrappers.base import BSVTKObjectWrapper, wrap_vtk
+from brainstat.vtk_interface.wrappers.actor import BSActor, BSActor2D, BSScalarBarActor, BSTextActor
 
 
 ###############################################################

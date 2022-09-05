@@ -9,8 +9,8 @@ VTK read/write filters for Gifti (.surf.gii).
 from vtk import vtkPolyData
 from vtk.util.vtkAlgorithm import VTKPythonAlgorithmBase
 
-from ..decorators import wrap_input
-from ...mesh.mesh_creation import build_polydata
+from brainstat.vtk_interface.decorators import wrap_input
+from brainstat.mesh.mesh_creation import build_polydata
 
 
 try:

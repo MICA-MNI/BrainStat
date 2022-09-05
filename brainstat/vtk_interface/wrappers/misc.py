@@ -8,8 +8,8 @@ Misc wrappers for some VTK classes.
 
 from vtk.util.vtkConstants import VTK_ID_TYPE
 
-from .base import BSVTKObjectWrapper
-from ..decorators import unwrap_input, wrap_output
+from brainstat.vtk_interface.wrappers.base import BSVTKObjectWrapper
+from brainstat.vtk_interface.decorators import unwrap_input, wrap_output
 
 
 class BSCollection(BSVTKObjectWrapper):

@@ -6,7 +6,7 @@ Wrappers for some VTK properties.
 # License: BSD 3 clause
 
 
-from .base import BSVTKObjectWrapper
+from brainstat.vtk_interface.wrappers.base import BSVTKObjectWrapper
 
 
 class BSProperty(BSVTKObjectWrapper):

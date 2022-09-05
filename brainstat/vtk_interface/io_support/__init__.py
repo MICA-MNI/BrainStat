@@ -1,5 +1,5 @@
-from .freesurfer_support import vtkFSReader, vtkFSWriter
-from .gifti_support import vtkGIFTIReader, vtkGIFTIWriter
+from brainstat.vtk_interface.io_support.freesurfer_support import vtkFSReader, vtkFSWriter
+from brainstat.vtk_interface.io_support.gifti_support import vtkGIFTIReader, vtkGIFTIWriter
 
 
 __all__ = ['vtkFSReader',

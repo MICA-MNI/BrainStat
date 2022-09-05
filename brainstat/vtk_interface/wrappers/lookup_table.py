@@ -8,8 +8,8 @@ Wrappers for VTK lookup tables.
 
 from vtk.util.vtkConstants import VTK_STRING, VTK_UNSIGNED_CHAR
 
-from .base import BSVTKObjectWrapper
-from ..decorators import unwrap_input
+from brainstat.vtk_interface.wrappers.base import BSVTKObjectWrapper
+from brainstat.vtk_interface.decorators import unwrap_input
 
 
 class BSScalarsToColors(BSVTKObjectWrapper):

@@ -47,7 +47,7 @@ try:
     from PyQt5 import QtGui
     from PyQt5.QtWidgets import QVBoxLayout, QFrame
     from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
-    from .utils_qt import MainWindow
+    from brainstat.plotting.utils_qt import MainWindow
     has_pyqt = True
 except ImportError:
     has_pyqt = False

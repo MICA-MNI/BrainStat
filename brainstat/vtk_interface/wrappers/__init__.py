@@ -1,20 +1,20 @@
-from .base import BSVTKObjectWrapper
-from .data_object import BSTable, BSPolyData, BSUnstructuredGrid
-from .algorithm import (BSDataSetMapper, BSPolyDataMapper,
+from brainstat.vtk_interface.wrappers.base import BSVTKObjectWrapper
+from brainstat.vtk_interface.wrappers.data_object import BSTable, BSPolyData, BSUnstructuredGrid
+from brainstat.vtk_interface.wrappers.algorithm import (BSDataSetMapper, BSPolyDataMapper,
                         BSLabeledContourMapper, BSLabeledDataMapper,
                         BSLabelPlacementMapper, BSPolyDataMapper2D,
                         BSTextMapper2D, BSWindowToImageFilter, BSPNGWriter,
                         BSBMPWriter, BSJPEGWriter, BSPostScriptWriter,
                         BSTIFFWriter)
-from .actor import (BSActor2D, BSScalarBarActor, BSTexturedActor2D,
+from brainstat.vtk_interface.wrappers.actor import (BSActor2D, BSScalarBarActor, BSTexturedActor2D,
                     BSTextActor, BSActor)
 
-from .property import BSProperty, BSProperty2D, BSTextProperty
-from .lookup_table import (BSLookupTable, BSLookupTableWithEnabling,
+from brainstat.vtk_interface.wrappers.property import BSProperty, BSProperty2D, BSTextProperty
+from brainstat.vtk_interface.wrappers.lookup_table import (BSLookupTable, BSLookupTableWithEnabling,
                            BSWindowLevelLookupTable, BSColorTransferFunction,
                            BSDiscretizableColorTransferFunction)
 
-from .renderer import (BSRenderer, BSInteractorStyle, BSInteractorStyleImage,
+from brainstat.vtk_interface.wrappers.renderer import (BSRenderer, BSInteractorStyle, BSInteractorStyleImage,
                        BSInteractorStyleJoystickActor,
                        BSInteractorStyleJoystickCamera,
                        BSInteractorStyleRubberBandPick,
@@ -26,7 +26,7 @@ from .renderer import (BSRenderer, BSInteractorStyle, BSInteractorStyleImage,
                        BSGenericRenderWindowInteractor,
                        BSRenderWindow, BSCamera)
 
-from .misc import BSCellArray, BSGL2PSExporter
+from brainstat.vtk_interface.wrappers.misc import BSCellArray, BSGL2PSExporter
 
 
 __all__ = ['BSVTKObjectWrapper',

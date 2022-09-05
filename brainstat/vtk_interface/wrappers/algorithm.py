@@ -8,12 +8,12 @@ Wrappers for VTK algorithms and mappers.
 
 from vtk.util.vtkConstants import VTK_DOUBLE
 
-from .base import BSVTKObjectWrapper, wrap_vtk
-from .property import BSTextProperty
-from .lookup_table import (BSLookupTable, BSLookupTableWithEnabling,
+from brainstat.vtk_interface.wrappers.base import BSVTKObjectWrapper, wrap_vtk
+from brainstat.vtk_interface.wrappers.property import BSTextProperty
+from brainstat.vtk_interface.wrappers.lookup_table import (BSLookupTable, BSLookupTableWithEnabling,
                            BSWindowLevelLookupTable, BSColorTransferFunction,
                            BSDiscretizableColorTransferFunction)
-from ..decorators import unwrap_input
+from brainstat.vtk_interface.decorators import unwrap_input
 
 
 class BSAlgorithm(BSVTKObjectWrapper):

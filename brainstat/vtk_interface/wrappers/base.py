@@ -14,7 +14,7 @@ from vtk import (vtkAbstractArray, vtkStringArray, vtkIdList, vtkVariantArray,
 from vtk.numpy_interface import dataset_adapter as dsa
 from vtk.util.vtkConstants import VTK_STRING
 
-from .utils import call_vtk, get_vtk_methods, is_numpy_string, is_vtk_string
+from brainstat.vtk_interface.wrappers.utils import call_vtk, get_vtk_methods, is_numpy_string, is_vtk_string
 
 
 try:

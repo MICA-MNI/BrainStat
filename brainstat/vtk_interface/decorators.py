@@ -9,8 +9,10 @@ Decorators for wrapping/unwrapping vtk objects passed/returned by a function.
 import inspect
 import functools
 
-from .wrappers.base import (wrap_vtk, _wrap_input_data, _wrap_output_data,
-                            _unwrap_input_data, _unwrap_output_data)
+from brainstat.vtk_interface.wrappers.base import (wrap_vtk, _wrap_input_data,
+                                                   _wrap_output_data,
+                                                   _unwrap_input_data, 
+                                                   _unwrap_output_data)
 
 
 def wrap_input(*xargs, skip=False):

@@ -12,9 +12,9 @@ import numpy as np
 from vtk import vtkPolyData
 from vtk.util.vtkAlgorithm import VTKPythonAlgorithmBase
 
-from ..checks import has_only_triangle
-from ..decorators import wrap_input
-from ...mesh.mesh_creation import build_polydata
+from brainstat.vtk_interface.checks import has_only_triangle
+from brainstat.vtk_interface.decorators import wrap_input
+from brainstat.mesh.mesh_creation import build_polydata
 
 
 TRIANGLE_MAGIC = 16777214

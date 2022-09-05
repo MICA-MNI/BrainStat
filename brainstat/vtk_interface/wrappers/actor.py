@@ -6,9 +6,9 @@ Wrappers for VTK actors.
 # License: BSD 3 clause
 
 
-from .base import BSVTKObjectWrapper, wrap_vtk
-from .property import BSProperty, BSProperty2D, BSTextProperty
-from .algorithm import (BSPolyDataMapper, BSDataSetMapper,
+from brainstat.vtk_interface.wrappers.base import BSVTKObjectWrapper, wrap_vtk
+from brainstat.vtk_interface.wrappers.property import BSProperty, BSProperty2D, BSTextProperty
+from brainstat.vtk_interface.wrappers.algorithm import (BSPolyDataMapper, BSDataSetMapper,
                         BSLabeledContourMapper)
 
 
