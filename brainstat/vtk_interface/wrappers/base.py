@@ -103,10 +103,10 @@ class BSVTKObjectWrapper(dsa.VTKObjectWrapper,
     Examples
     --------
     >>> from vtkmodules.vtkRenderingCorePython import vtkPolyDataMapper
-    >>> from brainspace.vtk_interface.wrappers import BSVTKObjectWrapper
+    >>> from brainstat.vtk_interface.wrappers import BSVTKObjectWrapper
     >>> m1 = BSVTKObjectWrapper(vtkPolyDataMapper())
     >>> m1
-    <brainspace.vtk_interface.base.BSVTKObjectWrapper at 0x7f38a4b70198>
+    <brainstat.vtk_interface.base.BSVTKObjectWrapper at 0x7f38a4b70198>
     >>> m1.VTKObject
     (vtkRenderingOpenGL2Python.vtkOpenGLPolyDataMapper)0x7f38a4bee888
 
@@ -194,7 +194,7 @@ class BSVTKObjectWrapper(dsa.VTKObjectWrapper,
         Examples
         --------
         >>> import vtk
-        >>> from brainspace.vtk_interface.wrappers import BSVTKObjectWrapper
+        >>> from brainstat.vtk_interface.wrappers import BSVTKObjectWrapper
         >>> m1 = BSVTKObjectWrapper(vtk.vtkPolyDataMapper())
         >>> m1.GetArrayId()  # same as self.VTKObject.GetArrayId()
         -1
@@ -218,7 +218,7 @@ class BSVTKObjectWrapper(dsa.VTKObjectWrapper,
         Examples
         --------
         >>> import vtk
-        >>> from brainspace.vtk_interface.wrappers import BSVTKObjectWrapper
+        >>> from brainstat.vtk_interface.wrappers import BSVTKObjectWrapper
         >>> m1 = BSVTKObjectWrapper(vtk.vtkPolyDataMapper())
         >>> m1.GetArrayId()
         -1
@@ -256,10 +256,10 @@ class BSVTKObjectWrapper(dsa.VTKObjectWrapper,
         Examples
         --------
         >>> import vtk
-        >>> from brainspace.vtk_interface.wrappers import BSVTKObjectWrapper
+        >>> from brainstat.vtk_interface.wrappers import BSVTKObjectWrapper
         >>> m1 = BSVTKObjectWrapper(vtk.vtkPolyDataMapper())
         >>> m1.setVTK(arrayId=3, colorMode='mapScalars')
-        <brainspace.vtk_interface.base.BSVTKObjectWrapper at 0x7f38a4ace320>
+        <brainstat.vtk_interface.base.BSVTKObjectWrapper at 0x7f38a4ace320>
         >>> m1.arrayId
         3
         >>> m1.colorModeAsString
@@ -295,7 +295,7 @@ class BSVTKObjectWrapper(dsa.VTKObjectWrapper,
         Examples
         --------
         >>> import vtk
-        >>> from brainspace.vtk_interface.wrappers import BSVTKObjectWrapper
+        >>> from brainstat.vtk_interface.wrappers import BSVTKObjectWrapper
         >>> m1 = BSVTKObjectWrapper(vtk.vtkPolyDataMapper())
         >>> m1.getVTK('arrayId', colorModeAsString=None)
         {'arrayId': -1, 'colorModeAsString': 'Default'}

@@ -312,7 +312,7 @@ def serial_connect(*filters, as_data=True, update=True, port=0):
 
     With `serial_connect` function:
 
-    >>> from brainspace.vtk_interface.pipeline import serial_connect
+    >>> from brainstat.vtk_interface.pipeline import serial_connect
     >>> # point source
     >>> ps = vtk.vtkPointSource()
     >>> ps.SetNumberOfPoints(100)
@@ -325,17 +325,17 @@ def serial_connect(*filters, as_data=True, update=True, port=0):
     >>> # Connection
     >>> serial_connect((ps, 0), (None, 0, dn, 0), (None, 0, sf), as_data=True,
     ...                port=0)
-    <brainspace.vtk_interface.wrappers.BSPolyData at 0x7f0134efb048>
+    <brainstat.vtk_interface.wrappers.BSPolyData at 0x7f0134efb048>
     >>> # This can be shortened, since no input connection is needed
     >>> serial_connect((ps, 0), (0, dn, 0), (0, sf), as_data=True, port=0)
-    <brainspace.vtk_interface.wrappers.BSPolyData at 0x7f0134ee9128>
+    <brainstat.vtk_interface.wrappers.BSPolyData at 0x7f0134ee9128>
     >>> # And shortened even further since the default input and output
     >>> # ports are 0
     >>> serial_connect((ps,), (dn,), (sf,), as_data=True, port=0)
-    <brainspace.vtk_interface.wrappers.BSPolyData at 0x7f0134ee92b0>
+    <brainstat.vtk_interface.wrappers.BSPolyData at 0x7f0134ee92b0>
     >>> # This is the same
     >>> serial_connect(ps, dn, sf)
-    <brainspace.vtk_interface.wrappers.BSPolyData at 0x7f0134eee898>
+    <brainstat.vtk_interface.wrappers.BSPolyData at 0x7f0134eee898>
     """
 
     prev_f, prev_op = _map_input_filter(filters[0])

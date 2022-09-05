@@ -216,7 +216,7 @@ class BSActor(BSProp3D):
 
     Examples
     --------
-    >>> from brainspace.vtk_interface.wrappers import BSActor
+    >>> from brainstat.vtk_interface.wrappers import BSActor
     >>> a = BSActor()
     >>> a.GetProperty().GetOpacity()
     1.0

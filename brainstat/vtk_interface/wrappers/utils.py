@@ -48,7 +48,7 @@ def get_vtk_methods(obj):
     Examples
     --------
     >>> import vtk
-    >>> from brainspace.vtk_interface.wrappers.base import get_vtk_methods
+    >>> from brainstat.vtk_interface.wrappers.base import get_vtk_methods
     >>> vtk_map = get_vtk_methods(vtk.vtkPolyDataMapper)
     >>> vtk_map.keys()
     dict_keys(['set', 'get'])
@@ -121,7 +121,7 @@ def call_vtk(obj, method, args=None):
     Examples
     --------
     >>> import vtk
-    >>> from brainspace.vtk_interface.wrappers.base import call_vtk
+    >>> from brainstat.vtk_interface.wrappers.base import call_vtk
     >>> m = vtk.vtkPolyDataMapper()
 
     Get array id of the mapper:
