@@ -16,9 +16,9 @@ from numpy.lib.stride_tricks import as_strided
 from vtk import vtkCommand
 import vtk.qt as vtk_qt
 
-from brainspace import OFF_SCREEN
-from ..vtk_interface.pipeline import serial_connect, get_output
-from ..vtk_interface.wrappers import (BSWindowToImageFilter, BSPNGWriter,
+from brainstat import OFF_SCREEN
+from brainstat.vtk_interface.pipeline import serial_connect, get_output
+from brainstat.vtk_interface.wrappers import (BSWindowToImageFilter, BSPNGWriter,
                                       BSBMPWriter, BSJPEGWriter, BSTIFFWriter,
                                       BSRenderWindow, BSRenderWindowInteractor,
                                       BSGenericRenderWindowInteractor,

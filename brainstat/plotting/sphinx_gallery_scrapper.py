@@ -5,8 +5,8 @@ Scrapper for sphinx-gallery to capture vtk figures.
 
 # This is shamelessly copied from PyVista
 
-from .base import Plotter
-from ..vtk_interface.wrappers import BSScalarBarActor
+from brainstat.plotting.base import Plotter
+from brainstat.vtk_interface.wrappers import BSScalarBarActor
 
 
 def _get_sg_image_scraper():

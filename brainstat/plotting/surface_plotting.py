@@ -13,12 +13,12 @@ from itertools import product as iter_prod
 import matplotlib.pyplot as plt
 import numpy as np
 
-from .base import Plotter
-from .colormaps import colormaps
-from . import defaults_plotting as dp
-from .utils import _broadcast, _expand_arg, _grep_args, _gen_grid, _get_ranges
+from brainstat.plotting.base import Plotter
+from brainstat.plotting.colormaps import colormaps
+from brainstat.plotting import defaults_plotting as dp
+from brainstat.plotting.utils import _broadcast, _expand_arg, _grep_args, _gen_grid, _get_ranges
 
-from ..vtk_interface.decorators import wrap_input
+from brainstat.vtk_interface.decorators import wrap_input
 
 
 orientations = {'medial': (0, -90, -90),
