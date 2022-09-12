@@ -44,6 +44,8 @@ addParameter(p, 'background', [1 1 1], @isnumeric);
 parse(p, varargin{:});
 in = p.Results;
 
+f = figure; 
+
 % If label is empty
 if isempty(in.label)
     in.label = cell(size(data, 1), 1);

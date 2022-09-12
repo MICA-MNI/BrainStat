@@ -153,6 +153,14 @@ wc = wordcloud(feature(correlation>0), correlation(correlation>0));
 % words be related to anatomy. Looking past anatomical terms, we see several words 
 % related to motivation and risk taking behavior e.g. reward, motivation, additction, 
 % gambling, punishment.
+%% 
+% Hello 
+
+numFeat = 8;
+data = correlation(1:numFeat);
+label = feature(1:numFeat);
+radar_plot(data, 'label', label, 'axis_range', [0.18 0.22]);
+
 % Histology
 % For histological decoding we use microstructural profile covariance gradients, 
 % as first shown by <https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.3000284 
