@@ -157,6 +157,15 @@ plt.imshow(wc)
 plt.axis("off")
 plt.show()
 
+########################################################################
+# Alternatively, we can visualize the top correlation values and associated terms 
+# in a radar plot, as follows:
+from brainstat.context.meta_analysis import radar_plot
+
+numFeat = 8
+data = meta_analysis.to_numpy()[:numFeat]
+label = meta_analysis.index[:numFeat]
+radar_plot(data, label=label, axis_range=(0.18, 0.22))
 
 ########################################################################
 # If we broadly summarize, we see a lot of words related to language e.g.,
@@ -164,7 +173,8 @@ plt.show()
 # Generally you'll also find several hits related to anatomy or clinical conditions.
 # Depending on your research question, it may be more interesting to
 # select only those terms related to cognition or some other subset.
-#
+
+########################################################################
 # Histological decoding
 # ---------------------
 # For histological decoding we use microstructural profile covariance gradients,
@@ -274,21 +284,17 @@ plot_hemispheres(
 # As an example, lets have a look at the the t-statistic map within the Yeo
 # networks. We'll plot the Yeo networks as well as a barplot showing the mean
 # and standard error of the mean within each network.
-
-from matplotlib.colors import ListedColormap
-
 from brainstat.datasets import fetch_yeo_networks_metadata
 
 yeo_networks = fetch_parcellation("fsaverage5", "yeo", 7)
 network_names, yeo_colormap = fetch_yeo_networks_metadata(7)
-yeo_colormap_gray = np.concatenate((np.array([[0.7, 0.7, 0.7]]), yeo_colormap))
 
 plot_hemispheres(
     surfaces[0],
     surfaces[1],
     yeo_networks,
     embed_nb=True,
-    cmap=ListedColormap(yeo_colormap_gray),
+    cmap='yeo7',
     nan_color=(0.7, 0.7, 0.7, 1),
     size=(1400, 200),
     zoom=1.45,
