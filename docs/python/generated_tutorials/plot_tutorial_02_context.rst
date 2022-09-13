@@ -71,6 +71,8 @@ minutes.
 
     import copy
 
+    import matplotlib
+    matplotlib.use('TkAgg')
     import matplotlib.pyplot as plt
     import numpy as np
     import pandas as pd
@@ -98,10 +100,6 @@ minutes.
 
 
 
-
-.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_001.png
-    :alt: plot tutorial 02 context
-    :class: sphx-glr-single-img
 
 
 
@@ -142,7 +140,7 @@ t-statistic map. Lets also plot the expression of this gene to the surface.
 
 
 
-.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_002.png
+.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_001.png
     :alt: plot tutorial 02 context
     :class: sphx-glr-single-img
 
@@ -153,7 +151,7 @@ t-statistic map. Lets also plot the expression of this gene to the surface.
 
  .. code-block:: none
 
-    /Users/saratheriver/Desktop/McGill_PhD/BrainStat/docs/python/tutorials/plot_tutorial_02_context.py:103: UserWarning:
+    /Users/saratheriver/Desktop/McGill_PhD/BrainStat/docs/python/tutorials/plot_tutorial_02_context.py:105: UserWarning:
 
     Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
 
@@ -191,7 +189,7 @@ t-statistic map. Lets also plot the expression of this gene to the surface.
 
 
 
-.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_003.png
+.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_002.png
     :alt: plot tutorial 02 context
     :class: sphx-glr-single-img
 
@@ -274,7 +272,7 @@ wherein larger words denote higher correlations.
 
 
 
-.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_004.png
+.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_003.png
     :alt: plot tutorial 02 context
     :class: sphx-glr-single-img
 
@@ -285,7 +283,7 @@ wherein larger words denote higher correlations.
 
  .. code-block:: none
 
-    /Users/saratheriver/Desktop/McGill_PhD/BrainStat/docs/python/tutorials/plot_tutorial_02_context.py:158: UserWarning:
+    /Users/saratheriver/Desktop/McGill_PhD/BrainStat/docs/python/tutorials/plot_tutorial_02_context.py:160: UserWarning:
 
     Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
 
@@ -309,7 +307,7 @@ in a radar plot, as follows:
 
 
 
-.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_005.png
+.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_004.png
     :alt: plot tutorial 02 context
     :class: sphx-glr-single-img
 
@@ -415,7 +413,7 @@ gradients, and correlate the first gradient with our t-statistic map.
 
 
 
-.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_006.png
+.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_005.png
     :alt: plot tutorial 02 context
     :class: sphx-glr-single-img
 
@@ -460,7 +458,7 @@ gradients, and correlate the first gradient with our t-statistic map.
 
 
 
-.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_007.png
+.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_006.png
     :alt: plot tutorial 02 context
     :class: sphx-glr-single-img
 
@@ -471,7 +469,7 @@ gradients, and correlate the first gradient with our t-statistic map.
 
  .. code-block:: none
 
-    /Users/saratheriver/Desktop/McGill_PhD/BrainStat/docs/python/tutorials/plot_tutorial_02_context.py:229: UserWarning:
+    /Users/saratheriver/Desktop/McGill_PhD/BrainStat/docs/python/tutorials/plot_tutorial_02_context.py:231: UserWarning:
 
     Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
 
@@ -525,7 +523,7 @@ surface with BrainSpace. For details on what the GradientMaps class
 
 
 
-.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_008.png
+.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_007.png
     :alt: plot tutorial 02 context
     :class: sphx-glr-single-img
 
@@ -579,7 +577,7 @@ and standard error of the mean within each network.
 
 
 
-.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_009.png
+.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_008.png
     :alt: plot tutorial 02 context
     :class: sphx-glr-single-img
 
@@ -626,7 +624,7 @@ and standard error of the mean within each network.
 
 
 
-.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_010.png
+.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_009.png
     :alt: plot tutorial 02 context
     :class: sphx-glr-single-img
 
@@ -637,7 +635,7 @@ and standard error of the mean within each network.
 
  .. code-block:: none
 
-    /Users/saratheriver/Desktop/McGill_PhD/BrainStat/docs/python/tutorials/plot_tutorial_02_context.py:327: UserWarning:
+    /Users/saratheriver/Desktop/McGill_PhD/BrainStat/docs/python/tutorials/plot_tutorial_02_context.py:329: UserWarning:
 
     Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
 
@@ -676,7 +674,7 @@ with our t-map.
 
 
 
-.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_011.png
+.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_010.png
     :alt: plot tutorial 02 context
     :class: sphx-glr-single-img
 
@@ -712,7 +710,7 @@ with our t-map.
 
 
 
-.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_012.png
+.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_011.png
     :alt: plot tutorial 02 context
     :class: sphx-glr-single-img
 
@@ -723,7 +721,7 @@ with our t-map.
 
  .. code-block:: none
 
-    /Users/saratheriver/Desktop/McGill_PhD/BrainStat/docs/python/tutorials/plot_tutorial_02_context.py:366: UserWarning:
+    /Users/saratheriver/Desktop/McGill_PhD/BrainStat/docs/python/tutorials/plot_tutorial_02_context.py:368: UserWarning:
 
     Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
 
@@ -788,7 +786,7 @@ percentile of the empirical correlation within the permuted distribution.
 
 
 
-.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_013.png
+.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_02_context_012.png
     :alt: plot tutorial 02 context
     :class: sphx-glr-single-img
 
@@ -800,7 +798,7 @@ percentile of the empirical correlation within the permuted distribution.
  .. code-block:: none
 
     Two tailed p-value: 0.094
-    /Users/saratheriver/Desktop/McGill_PhD/BrainStat/docs/python/tutorials/plot_tutorial_02_context.py:418: UserWarning:
+    /Users/saratheriver/Desktop/McGill_PhD/BrainStat/docs/python/tutorials/plot_tutorial_02_context.py:420: UserWarning:
 
     Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
 
@@ -820,7 +818,7 @@ Happy BrainStating!
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 3 minutes  41.004 seconds)
+   **Total running time of the script:** ( 3 minutes  21.368 seconds)
 
 
 .. _sphx_glr_download_python_generated_tutorials_plot_tutorial_02_context.py:
