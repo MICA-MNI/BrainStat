@@ -49,7 +49,8 @@ slm.fit(thickness)
 import copy
 
 import matplotlib
-matplotlib.use('TkAgg')
+
+matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -160,7 +161,7 @@ plt.axis("off")
 plt.show()
 
 ########################################################################
-# Alternatively, we can visualize the top correlation values and associated terms 
+# Alternatively, we can visualize the top correlation values and associated terms
 # in a radar plot, as follows:
 from brainstat.context.meta_analysis import radar_plot
 
@@ -296,7 +297,7 @@ plot_hemispheres(
     surfaces[1],
     yeo_networks,
     embed_nb=True,
-    cmap='yeo7',
+    cmap="yeo7",
     nan_color=(0.7, 0.7, 0.7, 1),
     size=(1400, 200),
     zoom=1.45,
