@@ -1,9 +1,5 @@
 :orphan:
 
-
-
-.. _sphx_glr_python_generated_tutorials:
-
 .. _examples_index:
 
 Tutorials
@@ -16,14 +12,42 @@ Tutorials
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbnails">
+
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="Tutorial 01: Linear Models">
 
 .. only:: html
 
- .. figure:: /python/generated_tutorials/images/thumb/sphx_glr_plot_tutorial_01_basics_thumb.png
-     :alt: Tutorial 01: Linear Models
+  .. image:: /python/generated_tutorials/images/thumb/sphx_glr_plot_tutorial_01_basics_thumb.png
+    :alt: Tutorial 01: Linear Models
 
-     :ref:`sphx_glr_python_generated_tutorials_plot_tutorial_01_basics.py`
+  :ref:`sphx_glr_python_generated_tutorials_plot_tutorial_01_basics.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Tutorial 01: Linear Models</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="In this tutorial you will learn about the context decoding tools included with BrainStat. The c...">
+
+.. only:: html
+
+  .. image:: /python/generated_tutorials/images/thumb/sphx_glr_plot_tutorial_02_context_thumb.png
+    :alt: Tutorial 02: Context Decoding
+
+  :ref:`sphx_glr_python_generated_tutorials_plot_tutorial_02_context.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Tutorial 02: Context Decoding</div>
+    </div>
+
 
 .. raw:: html
 
@@ -34,30 +58,7 @@ Tutorials
    :hidden:
 
    /python/generated_tutorials/plot_tutorial_01_basics
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="In this tutorial you will learn about the context decoding tools included with BrainStat. The c...">
-
-.. only:: html
-
- .. figure:: /python/generated_tutorials/images/thumb/sphx_glr_plot_tutorial_02_context_thumb.png
-     :alt: Tutorial 02: Context Decoding
-
-     :ref:`sphx_glr_python_generated_tutorials_plot_tutorial_02_context.py`
-
-.. raw:: html
-
-    </div>
-
-
-.. toctree::
-   :hidden:
-
    /python/generated_tutorials/plot_tutorial_02_context
-.. raw:: html
-
-    <div class="sphx-glr-clear"></div>
 
 
 
