@@ -4,4 +4,5 @@ sphinx_rtd_theme
 sphinx-gallery
 plotly
 wordcloud
+jinja2<3.1
 -r ../requirements.txt
