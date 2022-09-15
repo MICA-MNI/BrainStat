@@ -4,13 +4,13 @@
 # In[1]:
 
 
-get_ipython().run_line_magic('matplotlib', 'inline')
+get_ipython().run_line_magic("matplotlib", "inline")
 
 
 # ## Figure 2: Statistics Module
-# 
+#
 # This figure displays the statistics module. First, we'll set up and run a linear model on the MICS dataset. This model contains fixed effects for age and sex, their interaction effect, and a random effect for subject (to account for multiple measurements per subject).
-# 
+#
 
 # In[2]:
 
@@ -41,7 +41,7 @@ slm.fit(thickness)
 
 
 # Next, we will plot the t-values and the p-values of clusters, peaks and vertices. To that end we'll first define a plotting function.
-# 
+#
 
 # In[3]:
 
@@ -72,7 +72,7 @@ def local_plot_hemispheres(
 
 
 # Lets plot the t-values
-# 
+#
 
 # In[4]:
 
@@ -81,7 +81,7 @@ local_plot_hemispheres(slm.t.flatten(), ["t-values"], (-4, 4), cmap="bwr")
 
 
 # Before we plot the p-values lets set those in the midline and above 0.05 to nan as this helps make the plots prettier.
-# 
+#
 
 # In[5]:
 
@@ -107,9 +107,9 @@ local_plot_hemispheres(
 
 
 # ## Figure 3: Meta-Analytic Decoding
-# 
+#
 # Here we decode our t-statistic map using Neurosynth, and plot it in a wordcloud.
-# 
+#
 
 # In[7]:
 
@@ -140,12 +140,12 @@ radar_plot(data, label=label, axis_range=(0.18, 0.22))
 
 
 # ## Figure 4: Functional Hierarchy
-# 
+#
 # BrainStat provides contextualization using resting-state functional gradients (Margulies et al., 2016, PNAS), a lower dimensional
 # manifold of resting-state connectivity.
-# 
+#
 # Lets have a look at the functional gradients and their correlation with the t-statistic map.
-# 
+#
 
 # In[9]:
 
@@ -184,13 +184,13 @@ plt.gcf().subplots_adjust(left=0.2)
 ax.set_xlim(-4.0, 4.0)
 ax.set_ylim(-0.13, 0.15)
 plt.xticks([-4.0, 4.0], fontsize=20)
-plt.yticks([-12, 13], fontsize=20);
+plt.yticks([-12, 13], fontsize=20)
 
 
 # ## Figure 5: Transcriptomics
-# 
+#
 # First, we'll fetch the genetic expression data in the Allen Human Brain atlas for the schaefer 100 parcellation.
-# 
+#
 
 # In[11]:
 
@@ -204,7 +204,7 @@ surfaces = fetch_template_surface("fsaverage5", join=False)
 expression = surface_genetic_expression(schaefer_100_fs5, surfaces, space="fsaverage")
 
 
-# Next, we can plot the figures shown in the manuscript. 
+# Next, we can plot the figures shown in the manuscript.
 
 # In[12]:
 
@@ -228,10 +228,10 @@ plt.gcf().subplots_adjust(bottom=0.2)
 
 
 # Next we'll plot the genetic expression matrix.
-# 
+#
 
 # Lets also plot the spatial expression pattern of a single gene: WFDC1. Note that we have to transform the parcellated data back to vertex data before we can plot it.
-# 
+#
 
 # In[13]:
 
@@ -245,7 +245,7 @@ local_plot_hemispheres(vertex_wfdc1, ["WFDC1 Expression"], (0, 0.8), cmap="virid
 
 
 # Lastly, lets inspect the relationship between our previously derived t-values and this expression map. Recall that our t-values were vertexwise, so we'll have to parcellate these first.
-# 
+#
 
 # In[14]:
 
@@ -280,16 +280,18 @@ plt.yticks([0, 0.9])
 
 # Add a best fit line.
 plt.plot(np.unique(df.x), np.poly1d(np.polyfit(df.x, df.y, 1))(np.unique(df.x)), "k")
-plt.text(-1.0, 0.75, f"ρ={df.x.corr(df.y, method='spearman'):.2f}", fontdict={"size": 20});
+plt.text(
+    -1.0, 0.75, f"ρ={df.x.corr(df.y, method='spearman'):.2f}", fontdict={"size": 20}
+)
 
 
 # ## Figure 6: Histological decoding
-# 
+#
 # For histological decoding we use microstructural profile covariance gradients,
 # as first shown by (Paquola et al, 2019, Plos Biology), computed from the
 # BigBrain dataset. Lets download the MPC data, compute and plot its
 # gradients, and correlate the first gradient with our t-statistic map.
-# 
+#
 
 # In[15]:
 
@@ -314,7 +316,9 @@ vertexwise_gradient = map_to_labels(
     fill=np.nan,
 )
 
-local_plot_hemispheres(vertexwise_gradient, ["Histology\nGradient 1"], (-0.13, 0.15), cmap="viridis")
+local_plot_hemispheres(
+    vertexwise_gradient, ["Histology\nGradient 1"], (-0.13, 0.15), cmap="viridis"
+)
 
 
 # In[16]:
@@ -345,5 +349,6 @@ plt.yticks([-0.13, 0.15])
 
 # Add a best fit line.
 plt.plot(np.unique(df.x), np.poly1d(np.polyfit(df.x, df.y, 1))(np.unique(df.x)), "k")
-plt.text(1.8, 0.12, f"ρ={df.x.corr(df.y, method='spearman'):.2f}", fontdict={"size": 20});
-
+plt.text(
+    1.8, 0.12, f"ρ={df.x.corr(df.y, method='spearman'):.2f}", fontdict={"size": 20}
+)
