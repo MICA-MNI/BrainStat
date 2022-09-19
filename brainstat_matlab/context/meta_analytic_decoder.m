@@ -10,6 +10,10 @@ function [pearsons_r_sort, feature_names_sort] = meta_analytic_decoder(stat_data
 %   derived with a whole brain map. 
 %
 %   Valid name-value pairs are:
+%       corrtype
+%           'Pearson' (the default) to compute Pearson's linear
+%           correlation coefficient, 'Kendall' to compute Kendall's
+%           tau, or 'Spearman' to compute Spearman's rho.
 %       template
 %           The template surface to use, either 'fsaverage5' or
 %           'fsaverage', or 'fslr32k', defaults to 'fsaverage5'.
@@ -32,6 +36,7 @@ function [pearsons_r_sort, feature_names_sort] = meta_analytic_decoder(stat_data
 
 arguments
     stat_data (:, 1) {mustBeNumeric}
+    options.corrtype (1,:) char = 'Pearson'
     options.template (1,:) char = 'fsaverage5'
     options.interpolation (1,:) char = 'nearest'
     options.data_dir (1,1) string = brainstat_utils.get_brainstat_directories('neurosynth_data_dir');
@@ -58,7 +63,8 @@ pearsons_r = zeros(numel(neurosynth_files), 1);
 for ii = 1:numel(neurosynth_files)
     neurosynth_volume = read_volume(neurosynth_files{ii});
     mask_inf = mask & ~isinf(neurosynth_volume);
-    pearsons_r(ii) = corr(interpolated_volume(mask_inf), neurosynth_volume(mask_inf), 'rows', 'pairwise');
+    pearsons_r(ii) = corr(interpolated_volume(mask_inf), neurosynth_volume(mask_inf), ...
+        'rows', 'pairwise', 'type', options.corrtype);
 end
 
 if options.ascending

@@ -34,7 +34,7 @@ Context Decoding
 ----------------
 - :ref:`matlab_compute_histology_gradients`
 - :ref:`matlab_compute_mpc`
-- :ref:`matlab_fetch_genetic_expression`
+- :ref:`matlab_surface_genetic_expression`
 - :ref:`matlab_read_histology_profile`
 - :ref:`matlab_surface_decoder`
 
