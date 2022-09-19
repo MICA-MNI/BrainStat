@@ -27,7 +27,7 @@ from brainstat.mesh.interpolate import _surf2vol, multi_surface_to_volume
 def meta_analytic_decoder(
     template: str,
     stat_labels: np.ndarray,
-    corrtype: Optional[str] = 'pearson',
+    corrtype: Optional[str] = "pearson",
     data_dir: Optional[Union[str, Path]] = None,
 ):
     """Meta-analytic decoding of surface maps using NeuroSynth or NeuroQuery.
