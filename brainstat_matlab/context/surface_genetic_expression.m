@@ -1,6 +1,6 @@
-function [expression, gene_names] = fetch_genetic_expression(atlas, n_regions, options)
-% FETCH_GENETIC_EXPRESSION    fetches genetic expression data
-%    [expression, gene_names] = FETCH_GENETIC_EXPRESSION(atlas, n_regions,
+function [expression, gene_names] = surface_genetic_expression(atlas, n_regions, options)
+% SURFACE_GENETIC_EXPRESSION    fetches genetic expression data
+%    [expression, gene_names] = SURFACE_GENETIC_EXPRESSION(atlas, n_regions,
 %    varargin) returns the genetic expression for the given atlas at the
 %    resolution n_regions. gene_names contains the name of the gene
 %    associated with each collumn. Genetic expression was computed using

@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 import templateflow.api as tflow
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
-from scipy.stats.stats import pearsonr
+from scipy.stats.stats import pearsonr, spearmanr
 from math import pi
 import matplotlib.pyplot as plt
 
@@ -27,6 +27,7 @@ from brainstat.mesh.interpolate import _surf2vol, multi_surface_to_volume
 def meta_analytic_decoder(
     template: str,
     stat_labels: np.ndarray,
+    corrtype: Optional[str] = 'pearson',
     data_dir: Optional[Union[str, Path]] = None,
 ):
     """Meta-analytic decoding of surface maps using NeuroSynth or NeuroQuery.
@@ -38,6 +39,8 @@ def meta_analytic_decoder(
     stat_labels : str, numpy.ndarray, sequence of str or numpy.ndarray
         Path to a label file for the surfaces, numpy array containing the
         labels, or a list containing multiple of the aforementioned.
+    corrtype : str, optional
+        Correlation type {'pearson', 'spearman'}. Default is 'pearson'.
     data_dir : str, optional
         The directory of the dataset. If none exists, a new dataset will
         be downloaded and saved to this path. If None, the directory defaults to
@@ -76,9 +79,14 @@ def meta_analytic_decoder(
             | np.isnan(stat_vector)
             | np.isinf(stat_vector)
         )
-        correlations[i], _ = pearsonr(stat_vector[keep], feature_data[keep])
+        if corrtype == "pearson":
+            correlations[i], _ = pearsonr(stat_vector[keep], feature_data[keep])
+            colname = "Pearson's r"
+        elif corrtype == "spearman":
+            correlations[i], _ = spearmanr(stat_vector[keep], feature_data[keep])
+            colname = "Spearman's r"
 
-    df = pd.DataFrame(correlations, index=feature_names, columns=["Pearson's r"])
+    df = pd.DataFrame(correlations, index=feature_names, columns=[colname])
     return df.sort_values(by="Pearson's r", ascending=False)
 
 

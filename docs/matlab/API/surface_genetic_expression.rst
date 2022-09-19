@@ -1,20 +1,20 @@
-.. _matlab_fetch_genetic_expression:
+.. _matlab_surface_genetic_expression:
 
 ==============================
-fetch_genetic_expression
+surface_genetic_expression
 ==============================
 
 Synopsis
 =============
 
 Downloads and reads genetic expression profiles (`source code
-<https://github.com/MICA-MNI/BrainStat/blob/master/brainstat_matlab/context/fetch_genetic_expression.m>`_).
+<https://github.com/MICA-MNI/BrainStat/blob/master/brainstat_matlab/context/surface_genetic_expression.m>`_).
 
 Usage 
 =====
 ::
 
-    profiles = fetch_genetic_expression(atlas, n_regions, varargin);
+    profiles = surface_genetic_expression(atlas, n_regions, varargin);
 
 - *profiles*: Histological profiles. 
 - *atlas*: Name of a surface parcellation. Valid names are: 'schaefer', 'cammoun', 'glasser'.
