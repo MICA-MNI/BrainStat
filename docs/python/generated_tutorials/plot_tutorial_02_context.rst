@@ -122,30 +122,27 @@ minutes.
 
  .. code-block:: none
 
-    Downloading data from https://files.osf.io/v1/resources/mb37e/providers/osfstorage/5dbc8d7daf84c3000eebffb2 ...
-     ...done. (1 seconds, 0 min)
-    Extracting data from /Users/boris/brainstat_data/parcellation_data/3209672cc6bb68fc4399aea2c986fd11/atl-schaefer2018.tar.gz..... done.
-    /usr/local/lib/python3.9/site-packages/abagen/samples_.py:404: FutureWarning:
+    /Users/saratheriver/opt/anaconda3/envs/py3.8/lib/python3.8/site-packages/abagen/samples_.py:404: FutureWarning:
 
     The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
 
-    /usr/local/lib/python3.9/site-packages/abagen/samples_.py:404: FutureWarning:
+    /Users/saratheriver/opt/anaconda3/envs/py3.8/lib/python3.8/site-packages/abagen/samples_.py:404: FutureWarning:
 
     The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
 
-    /usr/local/lib/python3.9/site-packages/abagen/samples_.py:404: FutureWarning:
+    /Users/saratheriver/opt/anaconda3/envs/py3.8/lib/python3.8/site-packages/abagen/samples_.py:404: FutureWarning:
 
     The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
 
-    /usr/local/lib/python3.9/site-packages/abagen/samples_.py:404: FutureWarning:
+    /Users/saratheriver/opt/anaconda3/envs/py3.8/lib/python3.8/site-packages/abagen/samples_.py:404: FutureWarning:
 
     The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
 
-    /usr/local/lib/python3.9/site-packages/abagen/samples_.py:404: FutureWarning:
+    /Users/saratheriver/opt/anaconda3/envs/py3.8/lib/python3.8/site-packages/abagen/samples_.py:404: FutureWarning:
 
     The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
 
-    /usr/local/lib/python3.9/site-packages/abagen/samples_.py:404: FutureWarning:
+    /Users/saratheriver/opt/anaconda3/envs/py3.8/lib/python3.8/site-packages/abagen/samples_.py:404: FutureWarning:
 
     The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
 
@@ -240,10 +237,6 @@ t-statistic map. Lets also plot the expression of this gene to the surface.
 .. rst-class:: sphx-glr-script-out
 
  .. code-block:: none
-
-    /usr/local/lib/python3.9/site-packages/brainspace/plotting/base.py:287: UserWarning:
-
-    Interactive mode requires 'panel'. Setting 'interactive=False'
 
 
     <IPython.core.display.Image object>
@@ -471,17 +464,13 @@ gradients, and correlate the first gradient with our t-statistic map.
 
  .. code-block:: none
 
-    /Users/boris/Documents/1_github/BrainStat/brainstat/context/histology.py:105: RuntimeWarning:
+    /Users/saratheriver/Desktop/McGill_PhD/BrainStat/brainstat/context/histology.py:105: RuntimeWarning:
 
     divide by zero encountered in divide
 
-    /Users/boris/Documents/1_github/BrainStat/brainstat/context/histology.py:105: RuntimeWarning:
+    /Users/saratheriver/Desktop/McGill_PhD/BrainStat/brainstat/context/histology.py:105: RuntimeWarning:
 
     invalid value encountered in log
-
-    /usr/local/lib/python3.9/site-packages/brainspace/plotting/base.py:287: UserWarning:
-
-    Interactive mode requires 'panel'. Setting 'interactive=False'
 
 
     <IPython.core.display.Image object>
@@ -578,10 +567,6 @@ surface with BrainSpace. For details on what the GradientMaps class
 
  .. code-block:: none
 
-    /usr/local/lib/python3.9/site-packages/brainspace/plotting/base.py:287: UserWarning:
-
-    Interactive mode requires 'panel'. Setting 'interactive=False'
-
 
     <IPython.core.display.Image object>
 
@@ -637,10 +622,6 @@ and standard error of the mean within each network.
 .. rst-class:: sphx-glr-script-out
 
  .. code-block:: none
-
-    /usr/local/lib/python3.9/site-packages/brainspace/plotting/base.py:287: UserWarning:
-
-    Interactive mode requires 'panel'. Setting 'interactive=False'
 
 
     <IPython.core.display.Image object>
@@ -731,10 +712,6 @@ with our t-map.
 .. rst-class:: sphx-glr-script-out
 
  .. code-block:: none
-
-    /usr/local/lib/python3.9/site-packages/brainspace/plotting/base.py:287: UserWarning:
-
-    Interactive mode requires 'panel'. Setting 'interactive=False'
 
 
     <IPython.core.display.Image object>
@@ -911,38 +888,47 @@ Decoding without statistics module - decoding nilearn results
 It is equally possible to run context decoding on maps derived from e.g.
 nilearn. In the example below, we decode task-fmri results from nilearn
 
-.. GENERATED FROM PYTHON SOURCE LINES 445-538
+.. GENERATED FROM PYTHON SOURCE LINES 445-551
 
 .. code-block:: default
 
     from nilearn.datasets import fetch_language_localizer_demo_dataset
+
     data_dir, _ = fetch_language_localizer_demo_dataset()
 
     from nilearn.glm.first_level import first_level_from_bids
-    task_label = 'languagelocalizer'
-    _, models_run_imgs, models_events, models_confounds = \
-        first_level_from_bids(
-            data_dir, task_label,
-            img_filters=[('desc', 'preproc')])
+
+    task_label = "languagelocalizer"
+    _, models_run_imgs, models_events, models_confounds = first_level_from_bids(
+        data_dir, task_label, img_filters=[("desc", "preproc")]
+    )
 
     # obtain first level Model objects and arguments
     from nilearn.glm.first_level import first_level_from_bids
-    task_label = 'languagelocalizer'
-    _, models_run_imgs, models_events, models_confounds = \
-        first_level_from_bids(
-            data_dir, task_label,
-            img_filters=[('desc', 'preproc')])
+
+    task_label = "languagelocalizer"
+    _, models_run_imgs, models_events, models_confounds = first_level_from_bids(
+        data_dir, task_label, img_filters=[("desc", "preproc")]
+    )
 
     import os
-    json_file = os.path.join(data_dir, 'derivatives', 'sub-01', 'func',
-                             'sub-01_task-languagelocalizer_desc-preproc_bold.json')
+
+    json_file = os.path.join(
+        data_dir,
+        "derivatives",
+        "sub-01",
+        "func",
+        "sub-01_task-languagelocalizer_desc-preproc_bold.json",
+    )
     import json
-    with open(json_file, 'r') as f:
-        t_r = json.load(f)['RepetitionTime']
+
+    with open(json_file, "r") as f:
+        t_r = json.load(f)["RepetitionTime"]
 
     # project onto fsaverage
     from nilearn.datasets import fetch_surf_fsaverage
-    fsa = fetch_surf_fsaverage(mesh='fsaverage5')
+
+    fsa = fetch_surf_fsaverage(mesh="fsaverage5")
 
     import numpy as np
     from nilearn import surface
@@ -953,22 +939,27 @@ nilearn. In the example below, we decode task-fmri results from nilearn
     z_scores_right = []
     z_scores_left = []
     for (fmri_img, confound, events) in zip(
-            models_run_imgs, models_confounds, models_events):
+        models_run_imgs, models_confounds, models_events
+    ):
         texture = surface.vol_to_surf(fmri_img[0], fsa.pial_right)
         n_scans = texture.shape[1]
-        frame_times = t_r * (np.arange(n_scans) + .5)
+        frame_times = t_r * (np.arange(n_scans) + 0.5)
 
         # Create the design matrix
         #
         # We specify an hrf model containing Glover model and its time derivative.
         # The drift model is implicitly a cosine basis with period cutoff 128s.
         design_matrix = make_first_level_design_matrix(
-            frame_times, events=events[0], hrf_model='glover + derivative',
-            add_regs=confound[0])
+            frame_times,
+            events=events[0],
+            hrf_model="glover + derivative",
+            add_regs=confound[0],
+        )
 
         # Contrast specification
-        contrast_values = (design_matrix.columns == 'language') * 1.0 -\
-                          (design_matrix.columns == 'string')
+        contrast_values = (design_matrix.columns == "language") * 1.0 - (
+            design_matrix.columns == "string"
+        )
 
         # Setup and fit GLM.
         # Note that the output consists in 2 variables: `labels` and `fit`
@@ -976,8 +967,7 @@ nilearn. In the example below, we decode task-fmri results from nilearn
         # `estimates` contains the parameter estimates.
         # We input them for contrast computation.
         labels, estimates = run_glm(texture.T, design_matrix.values)
-        contrast = compute_contrast(labels, estimates, contrast_values,
-                                    contrast_type='t')
+        contrast = compute_contrast(labels, estimates, contrast_values, contrast_type="t")
         # We present the Z-transform of the t map.
         z_score = contrast.z_score()
         z_scores_right.append(z_score)
@@ -985,11 +975,11 @@ nilearn. In the example below, we decode task-fmri results from nilearn
         # Do the left hemisphere exactly the same way.
         texture = surface.vol_to_surf(fmri_img, fsa.pial_left)
         labels, estimates = run_glm(texture.T, design_matrix.values)
-        contrast = compute_contrast(labels, estimates, contrast_values,
-                                    contrast_type='t')
+        contrast = compute_contrast(labels, estimates, contrast_values, contrast_type="t")
         z_scores_left.append(contrast.z_score())
 
     from scipy.stats import ttest_1samp, norm
+
     t_left, pval_left = ttest_1samp(np.array(z_scores_left), 0)
     t_right, pval_right = ttest_1samp(np.array(z_scores_right), 0)
 
@@ -997,7 +987,7 @@ nilearn. In the example below, we decode task-fmri results from nilearn
     z_val_right = norm.isf(pval_right)
 
     # and then do a similar decoding on the z_val vectors
-    map = np.concatenate([z_val_left,z_val_right])
+    map = np.concatenate([z_val_left, z_val_right])
     meta_analysis = meta_analytic_decoder("fsaverage5", map)
     print(meta_analysis)
 
@@ -1021,37 +1011,37 @@ nilearn. In the example below, we decode task-fmri results from nilearn
 
  .. code-block:: none
 
-    /usr/local/lib/python3.9/site-packages/nilearn/glm/__init__.py:55: FutureWarning:
+    /Users/saratheriver/opt/anaconda3/envs/py3.8/lib/python3.8/site-packages/nilearn/glm/__init__.py:55: FutureWarning:
 
     The nilearn.glm module is experimental. It may change in any future release of Nilearn.
 
-    /usr/local/lib/python3.9/site-packages/nilearn/glm/first_level/first_level.py:901: UserWarning:
+    /Users/saratheriver/opt/anaconda3/envs/py3.8/lib/python3.8/site-packages/nilearn/glm/first_level/first_level.py:940: UserWarning:
 
-    SliceTimingRef not found in file /Users/boris/nilearn_data/fMRI-language-localizer-demo-dataset/derivatives/sub-01/func/sub-01_task-languagelocalizer_desc-preproc_bold.json. It will be assumed that the slice timing reference is 0.0 percent of the repetition time. If it is not the case it will need to be set manually in the generated list of models
+    SliceTimingRef not found in file /Users/saratheriver/nilearn_data/fMRI-language-localizer-demo-dataset/derivatives/sub-01/func/sub-01_task-languagelocalizer_desc-preproc_bold.json. It will be assumed that the slice timing reference is 0.0 percent of the repetition time. If it is not the case it will need to be set manually in the generated list of models
 
-    /usr/local/lib/python3.9/site-packages/nilearn/glm/first_level/first_level.py:901: UserWarning:
+    /Users/saratheriver/opt/anaconda3/envs/py3.8/lib/python3.8/site-packages/nilearn/glm/first_level/first_level.py:940: UserWarning:
 
-    SliceTimingRef not found in file /Users/boris/nilearn_data/fMRI-language-localizer-demo-dataset/derivatives/sub-01/func/sub-01_task-languagelocalizer_desc-preproc_bold.json. It will be assumed that the slice timing reference is 0.0 percent of the repetition time. If it is not the case it will need to be set manually in the generated list of models
+    SliceTimingRef not found in file /Users/saratheriver/nilearn_data/fMRI-language-localizer-demo-dataset/derivatives/sub-01/func/sub-01_task-languagelocalizer_desc-preproc_bold.json. It will be assumed that the slice timing reference is 0.0 percent of the repetition time. If it is not the case it will need to be set manually in the generated list of models
 
-                       Pearson's r
-    lateral parietal      0.080602
-    beliefs               0.073906
-    self referential      0.073376
-    mind tom              0.070317
-    thoughts              0.069109
-    ...                        ...
-    ipsilateral          -0.147033
-    image                -0.147979
-    primary secondary    -0.148536
-    primary              -0.150825
-    vermis               -0.159230
+                          Pearson's r
+    lateral parietal         0.081785
+    beliefs                  0.074709
+    mind tom                 0.071689
+    tom                      0.069605
+    thoughts                 0.069035
+    ...                           ...
+    image                   -0.142583
+    inducing                -0.143279
+    amygdala hippocampus    -0.143314
+    periaqueductal          -0.146763
+    vermis                  -0.151222
 
     [3228 rows x 1 columns]
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 539-543
+.. GENERATED FROM PYTHON SOURCE LINES 552-556
 
 That concludes the tutorials of BrainStat. If anything is unclear, or if you
 think you've found a bug, please post it to the Issues page of our Github.
@@ -1061,7 +1051,7 @@ Happy BrainStating!
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 108 minutes  31.224 seconds)
+   **Total running time of the script:** ( 9 minutes  17.845 seconds)
 
 
 .. _sphx_glr_download_python_generated_tutorials_plot_tutorial_02_context.py:
