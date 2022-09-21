@@ -83,14 +83,13 @@ we'll create a simple function for it and plot mean thickness here.
 
 
 
-.. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_001.png
-    :alt: plot tutorial 01 basics
-    :class: sphx-glr-single-img
+.. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_001.png
+   :alt: plot tutorial 01 basics
+   :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_001.png
+   :class: sphx-glr-single-img
 
 
 .. rst-class:: sphx-glr-script-out
-
- Out:
 
  .. code-block:: none
 
@@ -115,22 +114,20 @@ Lets also have a look at what's inside the demographics data.
 
 .. rst-class:: sphx-glr-script-out
 
- Out:
-
  .. code-block:: none
 
         SUB_ID  VISIT  AGE_AT_SCAN SEX
-    0   031404      1    -0.579678   F
-    1   04a144      1    -0.812116   M
-    2   0b78f1      1     0.117636   M
-    3   0d26b9      1     0.466293   F
-    4   1988b8      1    -0.114802   M
+    0   031404      1           27   F
+    1   04a144      1           25   M
+    2   0b78f1      1           33   M
+    3   0d26b9      1           36   F
+    4   1988b8      1           31   M
     ..     ...    ...          ...  ..
-    77  f25714      1    -0.231021   F
-    78  f25714      2     0.117636   F
-    79  f615a5      1    -0.695897   F
-    80  feac6b      1    -0.695897   F
-    81  feac6b      2    -0.347240   F
+    77  f25714      1           30   F
+    78  f25714      2           33   F
+    79  f615a5      1           26   F
+    80  feac6b      1           26   F
+    81  feac6b      2           29   F
 
     [82 rows x 4 columns]
 
@@ -165,12 +162,10 @@ sex. Lets also print some summary statistics.
 
 .. rst-class:: sphx-glr-script-out
 
- Out:
-
  .. code-block:: none
 
-    Visit 1, N=70, 30 females, mean subject age -0.02, standard deviation of age: 1.02.
-    Visit 2, N=12, 5 females, mean subject age 0.09, standard deviation of age: 0.84.
+    Visit 1, N=70, 30 females, mean subject age 31.86, standard deviation of age: 8.82.
+    Visit 2, N=12, 5 females, mean subject age 32.75, standard deviation of age: 7.19.
 
 
 
@@ -244,22 +239,20 @@ and model.AGE_AT_SCAN will return the vectors of the intercept and age, respecti
 
 .. rst-class:: sphx-glr-script-out
 
- Out:
-
  .. code-block:: none
 
         intercept  AGE_AT_SCAN
-    0           1    -0.579678
-    1           1    -0.812116
-    2           1     0.117636
-    3           1     0.466293
-    4           1    -0.114802
+    0           1           27
+    1           1           25
+    2           1           33
+    3           1           36
+    4           1           31
     ..        ...          ...
-    77          1    -0.231021
-    78          1     0.117636
-    79          1    -0.695897
-    80          1    -0.695897
-    81          1    -0.347240
+    77          1           30
+    78          1           33
+    79          1           26
+    80          1           26
+    81          1           29
 
     [82 rows x 2 columns]
 
@@ -349,32 +342,34 @@ do this.
 
     *
 
-      .. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_002.png
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_002.png
           :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_002.png
           :class: sphx-glr-multi-img
 
     *
 
-      .. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_003.png
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_003.png
           :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_003.png
           :class: sphx-glr-multi-img
 
     *
 
-      .. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_004.png
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_004.png
           :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_004.png
           :class: sphx-glr-multi-img
 
     *
 
-      .. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_005.png
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_005.png
           :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_005.png
           :class: sphx-glr-multi-img
 
 
 .. rst-class:: sphx-glr-script-out
-
- Out:
 
  .. code-block:: none
 
@@ -410,8 +405,6 @@ contrast cluster table.
 
 
 .. rst-class:: sphx-glr-script-out
-
- Out:
 
  .. code-block:: none
 
@@ -451,8 +444,6 @@ Lets now have a look at the peaks within these clusters.
 
 
 .. rst-class:: sphx-glr-script-out
-
- Out:
 
  .. code-block:: none
 
@@ -537,20 +528,20 @@ Next we will rerrun the model and see if our results change.
 
     *
 
-      .. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_006.png
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_006.png
           :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_006.png
           :class: sphx-glr-multi-img
 
     *
 
-      .. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_007.png
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_007.png
           :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_007.png
           :class: sphx-glr-multi-img
 
 
 .. rst-class:: sphx-glr-script-out
-
- Out:
 
  .. code-block:: none
 
@@ -609,20 +600,20 @@ Next we will rerrun the model and see if our results change.
 
     *
 
-      .. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_008.png
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_008.png
           :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_008.png
           :class: sphx-glr-multi-img
 
     *
 
-      .. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_009.png
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_009.png
           :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_009.png
           :class: sphx-glr-multi-img
 
 
 .. rst-class:: sphx-glr-script-out
-
- Out:
 
  .. code-block:: none
 
@@ -666,20 +657,20 @@ interaction effect.
 
     *
 
-      .. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_010.png
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_010.png
           :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_010.png
           :class: sphx-glr-multi-img
 
     *
 
-      .. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_011.png
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_011.png
           :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_011.png
           :class: sphx-glr-multi-img
 
 
 .. rst-class:: sphx-glr-script-out
-
- Out:
 
  .. code-block:: none
 
@@ -725,20 +716,20 @@ differently with age by comparing their interaction effects.
 
     *
 
-      .. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_012.png
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_012.png
           :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_012.png
           :class: sphx-glr-multi-img
 
     *
 
-      .. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_013.png
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_013.png
           :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_013.png
           :class: sphx-glr-multi-img
 
 
 .. rst-class:: sphx-glr-script-out
-
- Out:
 
  .. code-block:: none
 
@@ -797,20 +788,20 @@ minus in front of contrast_age to test for decreasing thickness with age.
 
     *
 
-      .. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_014.png
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_014.png
           :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_014.png
           :class: sphx-glr-multi-img
 
     *
 
-      .. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_015.png
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_015.png
           :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_015.png
           :class: sphx-glr-multi-img
 
 
 .. rst-class:: sphx-glr-script-out
-
- Out:
 
  .. code-block:: none
 
@@ -868,32 +859,34 @@ again.
 
     *
 
-      .. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_016.png
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_016.png
           :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_016.png
           :class: sphx-glr-multi-img
 
     *
 
-      .. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_017.png
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_017.png
           :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_017.png
           :class: sphx-glr-multi-img
 
     *
 
-      .. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_018.png
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_018.png
           :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_018.png
           :class: sphx-glr-multi-img
 
     *
 
-      .. image:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_019.png
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_019.png
           :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_019.png
           :class: sphx-glr-multi-img
 
 
 .. rst-class:: sphx-glr-script-out
-
- Out:
 
  .. code-block:: none
 
@@ -914,28 +907,23 @@ next tutorial we'll show you how to use the context decoding module.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  17.641 seconds)
+   **Total running time of the script:** ( 0 minutes  14.376 seconds)
 
 
 .. _sphx_glr_download_python_generated_tutorials_plot_tutorial_01_basics.py:
 
+.. only:: html
 
-.. only :: html
-
- .. container:: sphx-glr-footer
-    :class: sphx-glr-footer-example
+  .. container:: sphx-glr-footer sphx-glr-footer-example
 
 
+    .. container:: sphx-glr-download sphx-glr-download-python
 
-  .. container:: sphx-glr-download sphx-glr-download-python
+      :download:`Download Python source code: plot_tutorial_01_basics.py <plot_tutorial_01_basics.py>`
 
-     :download:`Download Python source code: plot_tutorial_01_basics.py <plot_tutorial_01_basics.py>`
+    .. container:: sphx-glr-download sphx-glr-download-jupyter
 
-
-
-  .. container:: sphx-glr-download sphx-glr-download-jupyter
-
-     :download:`Download Jupyter notebook: plot_tutorial_01_basics.ipynb <plot_tutorial_01_basics.ipynb>`
+      :download:`Download Jupyter notebook: plot_tutorial_01_basics.ipynb <plot_tutorial_01_basics.ipynb>`
 
 
 .. only:: html
