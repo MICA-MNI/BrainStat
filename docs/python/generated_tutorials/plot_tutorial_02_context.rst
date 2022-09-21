@@ -28,7 +28,7 @@ lets run a linear model testing for the effects of age on cortical thickness as
 we did in Tutorial 1. We'll use the results of this model later in this
 tutorial.
 
-.. GENERATED FROM PYTHON SOURCE LINES 12-38
+.. GENERATED FROM PYTHON SOURCE LINES 12-41
 
 .. code-block:: default
 
@@ -37,6 +37,9 @@ tutorial.
     from brainstat.stats.SLM import SLM
     from brainstat.stats.terms import FixedEffect, MixedEffect
     from brainstat.tutorial.utils import fetch_mics_data
+
+    import warnings
+    warnings.filterwarnings('ignore')
 
     thickness, demographics = fetch_mics_data()
     mask = fetch_mask("fsaverage5")
@@ -62,10 +65,18 @@ tutorial.
 
 
 
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    Downloading data from https://files.osf.io/v1/resources/mb37e/providers/osfstorage/5d9f83b6f6b03e00101c932f ...
+     ...done. (3 seconds, 0 min)
+    Extracting data from /Users/saratheriver/brainstat_data/surface_data/febf4124525ba216b061a4c71348c702/tpl-fsaverage.tar.gz..... done.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 39-48
+
+.. GENERATED FROM PYTHON SOURCE LINES 42-51
 
 Genetics
 --------
@@ -77,7 +88,7 @@ of the Schaefer atlas and how to plot this expression to a matrix. Please note
 that downloading the dataset and running this analysis can take several
 minutes.
 
-.. GENERATED FROM PYTHON SOURCE LINES 48-76
+.. GENERATED FROM PYTHON SOURCE LINES 51-79
 
 .. code-block:: default
 
@@ -123,37 +134,13 @@ minutes.
  .. code-block:: none
 
     Downloading data from https://files.osf.io/v1/resources/mb37e/providers/osfstorage/5dbc8d7daf84c3000eebffb2 ...
-     ...done. (1 seconds, 0 min)
-    Extracting data from /Users/boris/brainstat_data/parcellation_data/3209672cc6bb68fc4399aea2c986fd11/atl-schaefer2018.tar.gz..... done.
-    /usr/local/lib/python3.9/site-packages/abagen/samples_.py:404: FutureWarning:
-
-    The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
-
-    /usr/local/lib/python3.9/site-packages/abagen/samples_.py:404: FutureWarning:
-
-    The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
-
-    /usr/local/lib/python3.9/site-packages/abagen/samples_.py:404: FutureWarning:
-
-    The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
-
-    /usr/local/lib/python3.9/site-packages/abagen/samples_.py:404: FutureWarning:
-
-    The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
-
-    /usr/local/lib/python3.9/site-packages/abagen/samples_.py:404: FutureWarning:
-
-    The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
-
-    /usr/local/lib/python3.9/site-packages/abagen/samples_.py:404: FutureWarning:
-
-    The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+     ...done. (2 seconds, 0 min)
+    Extracting data from /Users/saratheriver/brainstat_data/parcellation_data/3209672cc6bb68fc4399aea2c986fd11/atl-schaefer2018.tar.gz..... done.
 
 
 
 
-
-.. GENERATED FROM PYTHON SOURCE LINES 77-90
+.. GENERATED FROM PYTHON SOURCE LINES 80-93
 
 Expression is a pandas DataFrame which shows the genetic expression of genes
 within each region of the atlas. By default, the values will fall in the range
@@ -169,7 +156,7 @@ function please consult the abagen documentation.
 Next, lets have a look at the correlation between one gene (WFDC1) and our
 t-statistic map. Lets also plot the expression of this gene to the surface.
 
-.. GENERATED FROM PYTHON SOURCE LINES 90-105
+.. GENERATED FROM PYTHON SOURCE LINES 93-108
 
 .. code-block:: default
 
@@ -200,7 +187,7 @@ t-statistic map. Lets also plot the expression of this gene to the surface.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 106-130
+.. GENERATED FROM PYTHON SOURCE LINES 109-133
 
 .. code-block:: default
 
@@ -241,16 +228,12 @@ t-statistic map. Lets also plot the expression of this gene to the surface.
 
  .. code-block:: none
 
-    /usr/local/lib/python3.9/site-packages/brainspace/plotting/base.py:287: UserWarning:
-
-    Interactive mode requires 'panel'. Setting 'interactive=False'
-
 
     <IPython.core.display.Image object>
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 131-142
+.. GENERATED FROM PYTHON SOURCE LINES 134-145
 
 We find a small correlation. To test for significance we'll have
 to do some additional corrections, but more on that later.
@@ -264,7 +247,7 @@ interpolates the data from the surface to the voxels in the volume that are in
 between the two input surfaces. We'll decode the t-statistics derived with our model
 earlier. Note that downloading the dataset and running this analysis can take several minutes.
 
-.. GENERATED FROM PYTHON SOURCE LINES 142-148
+.. GENERATED FROM PYTHON SOURCE LINES 145-151
 
 .. code-block:: default
 
@@ -300,13 +283,13 @@ earlier. Note that downloading the dataset and running this analysis can take se
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 149-152
+.. GENERATED FROM PYTHON SOURCE LINES 152-155
 
 meta_analysis now contains a pandas.dataFrame with the correlation values for
 each requested feature. Next we could create a Wordcloud of the included terms,
 wherein larger words denote higher correlations.
 
-.. GENERATED FROM PYTHON SOURCE LINES 152-160
+.. GENERATED FROM PYTHON SOURCE LINES 155-163
 
 .. code-block:: default
 
@@ -330,12 +313,12 @@ wherein larger words denote higher correlations.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 161-163
+.. GENERATED FROM PYTHON SOURCE LINES 164-166
 
 Alternatively, we can visualize the top correlation values and associated terms
 in a radar plot, as follows:
 
-.. GENERATED FROM PYTHON SOURCE LINES 163-170
+.. GENERATED FROM PYTHON SOURCE LINES 166-173
 
 .. code-block:: default
 
@@ -406,7 +389,7 @@ in a radar plot, as follows:
     <br />
     <br />
 
-.. GENERATED FROM PYTHON SOURCE LINES 171-176
+.. GENERATED FROM PYTHON SOURCE LINES 174-179
 
 If we broadly summarize, we see a lot of words related to language e.g.,
 "language comprehension", "broca", "speaking", "speech production".
@@ -414,7 +397,7 @@ Generally you'll also find several hits related to anatomy or clinical condition
 Depending on your research question, it may be more interesting to
 select only those terms related to cognition or some other subset.
 
-.. GENERATED FROM PYTHON SOURCE LINES 178-184
+.. GENERATED FROM PYTHON SOURCE LINES 181-187
 
 Histological decoding
 ---------------------
@@ -423,7 +406,7 @@ as first shown by (Paquola et al, 2019, Plos Biology), computed from the
 BigBrain dataset. Firstly, lets download the MPC data, compute and plot its
 gradients, and correlate the first gradient with our t-statistic map.
 
-.. GENERATED FROM PYTHON SOURCE LINES 184-215
+.. GENERATED FROM PYTHON SOURCE LINES 187-218
 
 .. code-block:: default
 
@@ -471,24 +454,12 @@ gradients, and correlate the first gradient with our t-statistic map.
 
  .. code-block:: none
 
-    /Users/boris/Documents/1_github/BrainStat/brainstat/context/histology.py:105: RuntimeWarning:
-
-    divide by zero encountered in divide
-
-    /Users/boris/Documents/1_github/BrainStat/brainstat/context/histology.py:105: RuntimeWarning:
-
-    invalid value encountered in log
-
-    /usr/local/lib/python3.9/site-packages/brainspace/plotting/base.py:287: UserWarning:
-
-    Interactive mode requires 'panel'. Setting 'interactive=False'
-
 
     <IPython.core.display.Image object>
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 216-231
+.. GENERATED FROM PYTHON SOURCE LINES 219-234
 
 .. code-block:: default
 
@@ -519,7 +490,7 @@ gradients, and correlate the first gradient with our t-statistic map.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 232-240
+.. GENERATED FROM PYTHON SOURCE LINES 235-243
 
 The variable histology_profiles now contains histological profiles sampled at
 50 different depths across the cortex, mpc contains the covariance of these
@@ -530,7 +501,7 @@ interest, but for purposes of this tutorial we'll plot the gradients to the
 surface with BrainSpace. For details on what the GradientMaps class
 (gradient_map) contains please consult the BrainSpace documentation.
 
-.. GENERATED FROM PYTHON SOURCE LINES 240-271
+.. GENERATED FROM PYTHON SOURCE LINES 243-274
 
 .. code-block:: default
 
@@ -578,16 +549,12 @@ surface with BrainSpace. For details on what the GradientMaps class
 
  .. code-block:: none
 
-    /usr/local/lib/python3.9/site-packages/brainspace/plotting/base.py:287: UserWarning:
-
-    Interactive mode requires 'panel'. Setting 'interactive=False'
-
 
     <IPython.core.display.Image object>
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 272-287
+.. GENERATED FROM PYTHON SOURCE LINES 275-290
 
 Note that we no longer use the y-axis regression used in (Paquola et al, 2019,
 Plos Biology), as such the first gradient becomes an anterior-posterior
@@ -605,7 +572,7 @@ As an example, lets have a look at the the t-statistic map within the Yeo
 networks. We'll plot the Yeo networks as well as a barplot showing the mean
 and standard error of the mean within each network.
 
-.. GENERATED FROM PYTHON SOURCE LINES 287-303
+.. GENERATED FROM PYTHON SOURCE LINES 290-306
 
 .. code-block:: default
 
@@ -638,16 +605,12 @@ and standard error of the mean within each network.
 
  .. code-block:: none
 
-    /usr/local/lib/python3.9/site-packages/brainspace/plotting/base.py:287: UserWarning:
-
-    Interactive mode requires 'panel'. Setting 'interactive=False'
-
 
     <IPython.core.display.Image object>
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 304-329
+.. GENERATED FROM PYTHON SOURCE LINES 307-332
 
 .. code-block:: default
 
@@ -688,7 +651,7 @@ and standard error of the mean within each network.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 330-335
+.. GENERATED FROM PYTHON SOURCE LINES 333-338
 
 Across all networks, the mean t-statistic appears to be negative, with the
 most negative values in the dorsal attnetion and visual networks.
@@ -696,7 +659,7 @@ most negative values in the dorsal attnetion and visual networks.
 Lastly, lets plot the functional gradients and have a look at their correlation
 with our t-map.
 
-.. GENERATED FROM PYTHON SOURCE LINES 335-354
+.. GENERATED FROM PYTHON SOURCE LINES 338-357
 
 .. code-block:: default
 
@@ -732,16 +695,12 @@ with our t-map.
 
  .. code-block:: none
 
-    /usr/local/lib/python3.9/site-packages/brainspace/plotting/base.py:287: UserWarning:
-
-    Interactive mode requires 'panel'. Setting 'interactive=False'
-
 
     <IPython.core.display.Image object>
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 355-369
+.. GENERATED FROM PYTHON SOURCE LINES 358-372
 
 .. code-block:: default
 
@@ -771,7 +730,7 @@ with our t-map.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 370-381
+.. GENERATED FROM PYTHON SOURCE LINES 373-384
 
 It seems the correlations are quite low. However, we'll need some more complex
 tests to assess statistical significance. There are many ways to compare these
@@ -785,7 +744,7 @@ the cortical marker to a distribution of correlations derived from data
 rotated across the cortical surface. The p-value then depends on the
 percentile of the empirical correlation within the permuted distribution.
 
-.. GENERATED FROM PYTHON SOURCE LINES 381-420
+.. GENERATED FROM PYTHON SOURCE LINES 384-423
 
 .. code-block:: default
 
@@ -846,13 +805,13 @@ percentile of the empirical correlation within the permuted distribution.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 421-424
+.. GENERATED FROM PYTHON SOURCE LINES 424-427
 
 As we can see from both the p-value as well as the histogram, wherein the
 dotted line denotes the empirical correlation, this correlation does not reach
 significance.
 
-.. GENERATED FROM PYTHON SOURCE LINES 426-431
+.. GENERATED FROM PYTHON SOURCE LINES 429-434
 
 Decoding without statistics module - mean thickness
 ---------------------
@@ -860,7 +819,7 @@ It is fully possible to also run context decoding on maps that do not per se
 come from the statistics module of brainstat. In example below, we decode
 the mean cortical thickness map of our participants
 
-.. GENERATED FROM PYTHON SOURCE LINES 431-440
+.. GENERATED FROM PYTHON SOURCE LINES 434-443
 
 .. code-block:: default
 
@@ -904,45 +863,54 @@ the mean cortical thickness map of our participants
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 441-445
+.. GENERATED FROM PYTHON SOURCE LINES 444-448
 
 Decoding without statistics module - decoding nilearn results
 ---------------------
 It is equally possible to run context decoding on maps derived from e.g.
 nilearn. In the example below, we decode task-fmri results from nilearn
 
-.. GENERATED FROM PYTHON SOURCE LINES 445-538
+.. GENERATED FROM PYTHON SOURCE LINES 448-554
 
 .. code-block:: default
 
     from nilearn.datasets import fetch_language_localizer_demo_dataset
+
     data_dir, _ = fetch_language_localizer_demo_dataset()
 
     from nilearn.glm.first_level import first_level_from_bids
-    task_label = 'languagelocalizer'
-    _, models_run_imgs, models_events, models_confounds = \
-        first_level_from_bids(
-            data_dir, task_label,
-            img_filters=[('desc', 'preproc')])
+
+    task_label = "languagelocalizer"
+    _, models_run_imgs, models_events, models_confounds = first_level_from_bids(
+        data_dir, task_label, img_filters=[("desc", "preproc")]
+    )
 
     # obtain first level Model objects and arguments
     from nilearn.glm.first_level import first_level_from_bids
-    task_label = 'languagelocalizer'
-    _, models_run_imgs, models_events, models_confounds = \
-        first_level_from_bids(
-            data_dir, task_label,
-            img_filters=[('desc', 'preproc')])
+
+    task_label = "languagelocalizer"
+    _, models_run_imgs, models_events, models_confounds = first_level_from_bids(
+        data_dir, task_label, img_filters=[("desc", "preproc")]
+    )
 
     import os
-    json_file = os.path.join(data_dir, 'derivatives', 'sub-01', 'func',
-                             'sub-01_task-languagelocalizer_desc-preproc_bold.json')
+
+    json_file = os.path.join(
+        data_dir,
+        "derivatives",
+        "sub-01",
+        "func",
+        "sub-01_task-languagelocalizer_desc-preproc_bold.json",
+    )
     import json
-    with open(json_file, 'r') as f:
-        t_r = json.load(f)['RepetitionTime']
+
+    with open(json_file, "r") as f:
+        t_r = json.load(f)["RepetitionTime"]
 
     # project onto fsaverage
     from nilearn.datasets import fetch_surf_fsaverage
-    fsa = fetch_surf_fsaverage(mesh='fsaverage5')
+
+    fsa = fetch_surf_fsaverage(mesh="fsaverage5")
 
     import numpy as np
     from nilearn import surface
@@ -953,22 +921,27 @@ nilearn. In the example below, we decode task-fmri results from nilearn
     z_scores_right = []
     z_scores_left = []
     for (fmri_img, confound, events) in zip(
-            models_run_imgs, models_confounds, models_events):
+        models_run_imgs, models_confounds, models_events
+    ):
         texture = surface.vol_to_surf(fmri_img[0], fsa.pial_right)
         n_scans = texture.shape[1]
-        frame_times = t_r * (np.arange(n_scans) + .5)
+        frame_times = t_r * (np.arange(n_scans) + 0.5)
 
         # Create the design matrix
         #
         # We specify an hrf model containing Glover model and its time derivative.
         # The drift model is implicitly a cosine basis with period cutoff 128s.
         design_matrix = make_first_level_design_matrix(
-            frame_times, events=events[0], hrf_model='glover + derivative',
-            add_regs=confound[0])
+            frame_times,
+            events=events[0],
+            hrf_model="glover + derivative",
+            add_regs=confound[0],
+        )
 
         # Contrast specification
-        contrast_values = (design_matrix.columns == 'language') * 1.0 -\
-                          (design_matrix.columns == 'string')
+        contrast_values = (design_matrix.columns == "language") * 1.0 - (
+            design_matrix.columns == "string"
+        )
 
         # Setup and fit GLM.
         # Note that the output consists in 2 variables: `labels` and `fit`
@@ -976,8 +949,7 @@ nilearn. In the example below, we decode task-fmri results from nilearn
         # `estimates` contains the parameter estimates.
         # We input them for contrast computation.
         labels, estimates = run_glm(texture.T, design_matrix.values)
-        contrast = compute_contrast(labels, estimates, contrast_values,
-                                    contrast_type='t')
+        contrast = compute_contrast(labels, estimates, contrast_values, contrast_type="t")
         # We present the Z-transform of the t map.
         z_score = contrast.z_score()
         z_scores_right.append(z_score)
@@ -985,11 +957,11 @@ nilearn. In the example below, we decode task-fmri results from nilearn
         # Do the left hemisphere exactly the same way.
         texture = surface.vol_to_surf(fmri_img, fsa.pial_left)
         labels, estimates = run_glm(texture.T, design_matrix.values)
-        contrast = compute_contrast(labels, estimates, contrast_values,
-                                    contrast_type='t')
+        contrast = compute_contrast(labels, estimates, contrast_values, contrast_type="t")
         z_scores_left.append(contrast.z_score())
 
     from scipy.stats import ttest_1samp, norm
+
     t_left, pval_left = ttest_1samp(np.array(z_scores_left), 0)
     t_right, pval_right = ttest_1samp(np.array(z_scores_right), 0)
 
@@ -997,7 +969,7 @@ nilearn. In the example below, we decode task-fmri results from nilearn
     z_val_right = norm.isf(pval_right)
 
     # and then do a similar decoding on the z_val vectors
-    map = np.concatenate([z_val_left,z_val_right])
+    map = np.concatenate([z_val_left, z_val_right])
     meta_analysis = meta_analytic_decoder("fsaverage5", map)
     print(meta_analysis)
 
@@ -1021,37 +993,25 @@ nilearn. In the example below, we decode task-fmri results from nilearn
 
  .. code-block:: none
 
-    /usr/local/lib/python3.9/site-packages/nilearn/glm/__init__.py:55: FutureWarning:
-
-    The nilearn.glm module is experimental. It may change in any future release of Nilearn.
-
-    /usr/local/lib/python3.9/site-packages/nilearn/glm/first_level/first_level.py:901: UserWarning:
-
-    SliceTimingRef not found in file /Users/boris/nilearn_data/fMRI-language-localizer-demo-dataset/derivatives/sub-01/func/sub-01_task-languagelocalizer_desc-preproc_bold.json. It will be assumed that the slice timing reference is 0.0 percent of the repetition time. If it is not the case it will need to be set manually in the generated list of models
-
-    /usr/local/lib/python3.9/site-packages/nilearn/glm/first_level/first_level.py:901: UserWarning:
-
-    SliceTimingRef not found in file /Users/boris/nilearn_data/fMRI-language-localizer-demo-dataset/derivatives/sub-01/func/sub-01_task-languagelocalizer_desc-preproc_bold.json. It will be assumed that the slice timing reference is 0.0 percent of the repetition time. If it is not the case it will need to be set manually in the generated list of models
-
-                       Pearson's r
-    lateral parietal      0.080602
-    beliefs               0.073906
-    self referential      0.073376
-    mind tom              0.070317
-    thoughts              0.069109
-    ...                        ...
-    ipsilateral          -0.147033
-    image                -0.147979
-    primary secondary    -0.148536
-    primary              -0.150825
-    vermis               -0.159230
+                          Pearson's r
+    lateral parietal         0.081785
+    beliefs                  0.074709
+    mind tom                 0.071689
+    tom                      0.069605
+    thoughts                 0.069035
+    ...                           ...
+    image                   -0.142583
+    inducing                -0.143279
+    amygdala hippocampus    -0.143314
+    periaqueductal          -0.146763
+    vermis                  -0.151222
 
     [3228 rows x 1 columns]
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 539-543
+.. GENERATED FROM PYTHON SOURCE LINES 555-559
 
 That concludes the tutorials of BrainStat. If anything is unclear, or if you
 think you've found a bug, please post it to the Issues page of our Github.
@@ -1061,7 +1021,7 @@ Happy BrainStating!
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 108 minutes  31.224 seconds)
+   **Total running time of the script:** ( 13 minutes  16.890 seconds)
 
 
 .. _sphx_glr_download_python_generated_tutorials_plot_tutorial_02_context.py:

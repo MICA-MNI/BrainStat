@@ -15,6 +15,10 @@ from brainstat.stats.SLM import SLM
 from brainstat.stats.terms import FixedEffect, MixedEffect
 from brainstat.tutorial.utils import fetch_mics_data
 
+import warnings
+
+warnings.filterwarnings("ignore")
+
 thickness, demographics = fetch_mics_data()
 mask = fetch_mask("fsaverage5")
 
