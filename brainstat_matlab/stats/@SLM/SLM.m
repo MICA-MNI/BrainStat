@@ -149,6 +149,66 @@ classdef SLM < matlab.mixin.Copyable
             end
         end
 
+        function [sk, ku] = qc(obj, Y, options)
+            % QC    Quality check. 
+            % qc(obj, Y) runs quality check of the data. Y is a
+            % (observation, region, variate) data matrix. feat is dimension 
+            % of variate to qc - default 1 (univariate), if multivariate 
+            % must specify. v is to specify vertex or parcel number - 
+            % default to all. If true (default), histo will output a 
+            % histogram of the residuals for vertices v. 
+            %
+            % Outputs vertexwise kurtosis and skewness 
+
+            % Options
+            arguments
+                obj
+                Y
+                options.feat (1,1) double {mustBePositive} = 1
+                options.v (1,:) double {mustBeNumeric} = [1:size(Y, 2)]
+                options.histo (1,1) logical = true
+                options.qq (1,1) logical = true
+            end
+
+            if numel(obj.mask) == 1
+                obj.mask = ones(size(Y,2), 1, 'logical');
+            end
+            
+            % Histogram of the residuals
+            if options.histo 
+                f = figure;
+                    histogram(Y(:, options.v) - ...
+                        (obj.X*obj.coef(:, options.v)));
+                    set(gca,'box','off');
+                    title('Histogram of the residuals');
+            end
+
+            % qqplot of the residuals
+            if options.qq 
+                f = figure;
+                    qq = qqplot(Y(:, options.v) - ...
+                        (obj.X*obj.coef(:, options.v)));
+                    qq(1).Marker = 'o';
+                    qq(1).MarkerFaceColor = 'black';
+                    qq(1).MarkerEdgeColor = 'white';
+                    qq(1).MarkerSize = 8.88;
+                    qq(3).LineStyle = '-';
+                    qq(3).LineWidth = 2.8;
+                    qq(3).Color = 'black';
+            end
+
+            % Characterize distribution based on two statistical 
+            % moments at each vertex
+            sk = zeros(size(Y, 2), 1);
+            ku = zeros(size(Y, 2), 1);
+            
+            for ii = 1:size(Y, 2)
+                sk(ii) = skewness(Y(:, ii) - (obj.X*obj.coef(:, ii)));
+                ku(ii) = kurtosis(Y(:, ii) - (obj.X*obj.coef(:, ii)));
+            end
+            sk(isnan(sk)) = -inf; ku(isnan(ku)) = -inf; 
+        end
+
         %% Special set/get functions.
         function set.tri(obj, value)
             obj.surf.tri = value;
