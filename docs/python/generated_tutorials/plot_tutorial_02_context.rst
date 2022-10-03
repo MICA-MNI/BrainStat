@@ -28,7 +28,7 @@ lets run a linear model testing for the effects of age on cortical thickness as
 we did in Tutorial 1. We'll use the results of this model later in this
 tutorial.
 
-.. GENERATED FROM PYTHON SOURCE LINES 12-41
+.. GENERATED FROM PYTHON SOURCE LINES 12-42
 
 .. code-block:: default
 
@@ -39,7 +39,8 @@ tutorial.
     from brainstat.tutorial.utils import fetch_mics_data
 
     import warnings
-    warnings.filterwarnings('ignore')
+
+    warnings.filterwarnings("ignore")
 
     thickness, demographics = fetch_mics_data()
     mask = fetch_mask("fsaverage5")
@@ -65,18 +66,10 @@ tutorial.
 
 
 
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-    Downloading data from https://files.osf.io/v1/resources/mb37e/providers/osfstorage/5d9f83b6f6b03e00101c932f ...
-     ...done. (3 seconds, 0 min)
-    Extracting data from /Users/saratheriver/brainstat_data/surface_data/febf4124525ba216b061a4c71348c702/tpl-fsaverage.tar.gz..... done.
 
 
 
-
-.. GENERATED FROM PYTHON SOURCE LINES 42-51
+.. GENERATED FROM PYTHON SOURCE LINES 43-52
 
 Genetics
 --------
@@ -88,7 +81,7 @@ of the Schaefer atlas and how to plot this expression to a matrix. Please note
 that downloading the dataset and running this analysis can take several
 minutes.
 
-.. GENERATED FROM PYTHON SOURCE LINES 51-79
+.. GENERATED FROM PYTHON SOURCE LINES 52-80
 
 .. code-block:: default
 
@@ -129,18 +122,10 @@ minutes.
    :class: sphx-glr-single-img
 
 
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-    Downloading data from https://files.osf.io/v1/resources/mb37e/providers/osfstorage/5dbc8d7daf84c3000eebffb2 ...
-     ...done. (2 seconds, 0 min)
-    Extracting data from /Users/saratheriver/brainstat_data/parcellation_data/3209672cc6bb68fc4399aea2c986fd11/atl-schaefer2018.tar.gz..... done.
 
 
 
-
-.. GENERATED FROM PYTHON SOURCE LINES 80-93
+.. GENERATED FROM PYTHON SOURCE LINES 81-94
 
 Expression is a pandas DataFrame which shows the genetic expression of genes
 within each region of the atlas. By default, the values will fall in the range
@@ -156,7 +141,7 @@ function please consult the abagen documentation.
 Next, lets have a look at the correlation between one gene (WFDC1) and our
 t-statistic map. Lets also plot the expression of this gene to the surface.
 
-.. GENERATED FROM PYTHON SOURCE LINES 93-108
+.. GENERATED FROM PYTHON SOURCE LINES 94-109
 
 .. code-block:: default
 
@@ -187,7 +172,7 @@ t-statistic map. Lets also plot the expression of this gene to the surface.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 109-133
+.. GENERATED FROM PYTHON SOURCE LINES 110-134
 
 .. code-block:: default
 
@@ -233,7 +218,7 @@ t-statistic map. Lets also plot the expression of this gene to the surface.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 134-145
+.. GENERATED FROM PYTHON SOURCE LINES 135-146
 
 We find a small correlation. To test for significance we'll have
 to do some additional corrections, but more on that later.
@@ -247,7 +232,7 @@ interpolates the data from the surface to the voxels in the volume that are in
 between the two input surfaces. We'll decode the t-statistics derived with our model
 earlier. Note that downloading the dataset and running this analysis can take several minutes.
 
-.. GENERATED FROM PYTHON SOURCE LINES 145-151
+.. GENERATED FROM PYTHON SOURCE LINES 146-152
 
 .. code-block:: default
 
@@ -283,13 +268,13 @@ earlier. Note that downloading the dataset and running this analysis can take se
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 152-155
+.. GENERATED FROM PYTHON SOURCE LINES 153-156
 
 meta_analysis now contains a pandas.dataFrame with the correlation values for
 each requested feature. Next we could create a Wordcloud of the included terms,
 wherein larger words denote higher correlations.
 
-.. GENERATED FROM PYTHON SOURCE LINES 155-163
+.. GENERATED FROM PYTHON SOURCE LINES 156-164
 
 .. code-block:: default
 
@@ -313,12 +298,12 @@ wherein larger words denote higher correlations.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 164-166
+.. GENERATED FROM PYTHON SOURCE LINES 165-167
 
 Alternatively, we can visualize the top correlation values and associated terms
 in a radar plot, as follows:
 
-.. GENERATED FROM PYTHON SOURCE LINES 166-173
+.. GENERATED FROM PYTHON SOURCE LINES 167-174
 
 .. code-block:: default
 
@@ -389,7 +374,7 @@ in a radar plot, as follows:
     <br />
     <br />
 
-.. GENERATED FROM PYTHON SOURCE LINES 174-179
+.. GENERATED FROM PYTHON SOURCE LINES 175-180
 
 If we broadly summarize, we see a lot of words related to language e.g.,
 "language comprehension", "broca", "speaking", "speech production".
@@ -397,7 +382,7 @@ Generally you'll also find several hits related to anatomy or clinical condition
 Depending on your research question, it may be more interesting to
 select only those terms related to cognition or some other subset.
 
-.. GENERATED FROM PYTHON SOURCE LINES 181-187
+.. GENERATED FROM PYTHON SOURCE LINES 182-188
 
 Histological decoding
 ---------------------
@@ -406,7 +391,7 @@ as first shown by (Paquola et al, 2019, Plos Biology), computed from the
 BigBrain dataset. Firstly, lets download the MPC data, compute and plot its
 gradients, and correlate the first gradient with our t-statistic map.
 
-.. GENERATED FROM PYTHON SOURCE LINES 187-218
+.. GENERATED FROM PYTHON SOURCE LINES 188-219
 
 .. code-block:: default
 
@@ -459,7 +444,7 @@ gradients, and correlate the first gradient with our t-statistic map.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 219-234
+.. GENERATED FROM PYTHON SOURCE LINES 220-235
 
 .. code-block:: default
 
@@ -490,7 +475,7 @@ gradients, and correlate the first gradient with our t-statistic map.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 235-243
+.. GENERATED FROM PYTHON SOURCE LINES 236-244
 
 The variable histology_profiles now contains histological profiles sampled at
 50 different depths across the cortex, mpc contains the covariance of these
@@ -501,7 +486,7 @@ interest, but for purposes of this tutorial we'll plot the gradients to the
 surface with BrainSpace. For details on what the GradientMaps class
 (gradient_map) contains please consult the BrainSpace documentation.
 
-.. GENERATED FROM PYTHON SOURCE LINES 243-274
+.. GENERATED FROM PYTHON SOURCE LINES 244-275
 
 .. code-block:: default
 
@@ -554,7 +539,7 @@ surface with BrainSpace. For details on what the GradientMaps class
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 275-290
+.. GENERATED FROM PYTHON SOURCE LINES 276-291
 
 Note that we no longer use the y-axis regression used in (Paquola et al, 2019,
 Plos Biology), as such the first gradient becomes an anterior-posterior
@@ -572,7 +557,7 @@ As an example, lets have a look at the the t-statistic map within the Yeo
 networks. We'll plot the Yeo networks as well as a barplot showing the mean
 and standard error of the mean within each network.
 
-.. GENERATED FROM PYTHON SOURCE LINES 290-306
+.. GENERATED FROM PYTHON SOURCE LINES 291-307
 
 .. code-block:: default
 
@@ -610,7 +595,7 @@ and standard error of the mean within each network.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 307-332
+.. GENERATED FROM PYTHON SOURCE LINES 308-333
 
 .. code-block:: default
 
@@ -651,7 +636,7 @@ and standard error of the mean within each network.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 333-338
+.. GENERATED FROM PYTHON SOURCE LINES 334-339
 
 Across all networks, the mean t-statistic appears to be negative, with the
 most negative values in the dorsal attnetion and visual networks.
@@ -659,7 +644,7 @@ most negative values in the dorsal attnetion and visual networks.
 Lastly, lets plot the functional gradients and have a look at their correlation
 with our t-map.
 
-.. GENERATED FROM PYTHON SOURCE LINES 338-357
+.. GENERATED FROM PYTHON SOURCE LINES 339-358
 
 .. code-block:: default
 
@@ -700,7 +685,7 @@ with our t-map.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 358-372
+.. GENERATED FROM PYTHON SOURCE LINES 359-373
 
 .. code-block:: default
 
@@ -730,7 +715,7 @@ with our t-map.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 373-384
+.. GENERATED FROM PYTHON SOURCE LINES 374-385
 
 It seems the correlations are quite low. However, we'll need some more complex
 tests to assess statistical significance. There are many ways to compare these
@@ -744,7 +729,7 @@ the cortical marker to a distribution of correlations derived from data
 rotated across the cortical surface. The p-value then depends on the
 percentile of the empirical correlation within the permuted distribution.
 
-.. GENERATED FROM PYTHON SOURCE LINES 384-423
+.. GENERATED FROM PYTHON SOURCE LINES 385-424
 
 .. code-block:: default
 
@@ -805,13 +790,13 @@ percentile of the empirical correlation within the permuted distribution.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 424-427
+.. GENERATED FROM PYTHON SOURCE LINES 425-428
 
 As we can see from both the p-value as well as the histogram, wherein the
 dotted line denotes the empirical correlation, this correlation does not reach
 significance.
 
-.. GENERATED FROM PYTHON SOURCE LINES 429-434
+.. GENERATED FROM PYTHON SOURCE LINES 430-435
 
 Decoding without statistics module - mean thickness
 ---------------------
@@ -819,7 +804,7 @@ It is fully possible to also run context decoding on maps that do not per se
 come from the statistics module of brainstat. In example below, we decode
 the mean cortical thickness map of our participants
 
-.. GENERATED FROM PYTHON SOURCE LINES 434-443
+.. GENERATED FROM PYTHON SOURCE LINES 435-444
 
 .. code-block:: default
 
@@ -863,14 +848,14 @@ the mean cortical thickness map of our participants
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 444-448
+.. GENERATED FROM PYTHON SOURCE LINES 445-449
 
 Decoding without statistics module - decoding nilearn results
 ---------------------
 It is equally possible to run context decoding on maps derived from e.g.
 nilearn. In the example below, we decode task-fmri results from nilearn
 
-.. GENERATED FROM PYTHON SOURCE LINES 448-554
+.. GENERATED FROM PYTHON SOURCE LINES 449-555
 
 .. code-block:: default
 
@@ -993,25 +978,25 @@ nilearn. In the example below, we decode task-fmri results from nilearn
 
  .. code-block:: none
 
-                          Pearson's r
-    lateral parietal         0.081785
-    beliefs                  0.074709
-    mind tom                 0.071689
-    tom                      0.069605
-    thoughts                 0.069035
-    ...                           ...
-    image                   -0.142583
-    inducing                -0.143279
-    amygdala hippocampus    -0.143314
-    periaqueductal          -0.146763
-    vermis                  -0.151222
+                       Pearson's r
+    lateral parietal      0.080602
+    beliefs               0.073906
+    self referential      0.073376
+    mind tom              0.070317
+    thoughts              0.069109
+    ...                        ...
+    ipsilateral          -0.147033
+    image                -0.147979
+    primary secondary    -0.148536
+    primary              -0.150825
+    vermis               -0.159230
 
     [3228 rows x 1 columns]
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 555-559
+.. GENERATED FROM PYTHON SOURCE LINES 556-560
 
 That concludes the tutorials of BrainStat. If anything is unclear, or if you
 think you've found a bug, please post it to the Issues page of our Github.
@@ -1021,7 +1006,7 @@ Happy BrainStating!
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 13 minutes  16.890 seconds)
+   **Total running time of the script:** ( 9 minutes  51.897 seconds)
 
 
 .. _sphx_glr_download_python_generated_tutorials_plot_tutorial_02_context.py:
