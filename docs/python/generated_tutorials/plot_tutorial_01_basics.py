@@ -126,11 +126,20 @@ slm_age.fit(thickness)
 # distribution) across the cortex.
 skwn, krts = slm_age.qc(thickness, v=87)
 ###################################################################
-plot_hemispheres(pial_left, pial_right, np.vstack([skwn.T, krts.T]),
-                 cmap='viridis', embed_nb=True, size=(1400, 200),
-                 zoom=1.8, nan_color=(0.7, 0.7, 0.7, 1), interactive=False,
-                 color_bar=True, label_text=["Skewness", "Kurtosis"],
-                 cb__labelTextProperty={"fontSize": 12})
+plot_hemispheres(
+    pial_left,
+    pial_right,
+    np.vstack([skwn.T, krts.T]),
+    cmap="viridis",
+    embed_nb=True,
+    size=(1400, 200),
+    zoom=1.8,
+    nan_color=(0.7, 0.7, 0.7, 1),
+    interactive=False,
+    color_bar=True,
+    label_text=["Skewness", "Kurtosis"],
+    cb__labelTextProperty={"fontSize": 12},
+)
 
 ###################################################################
 # The resulting model, slm_age, will contain the t-statistic map, p-values

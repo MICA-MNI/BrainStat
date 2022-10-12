@@ -157,7 +157,7 @@ class SLM:
         if self.correction is not None:
             self.multiple_comparison_corrections(student_t_test)
 
-    def qc(self,  Y=None, feat=None, v=None, histo=True, qq=True):
+    def qc(self, Y=None, feat=None, v=None, histo=True, qq=True):
         """Quality check of the data (author: @saratheriver)
         Parameters
         ----------
@@ -192,19 +192,25 @@ class SLM:
 
         # Histogram of the residuals
         if histo:
-            fig, ax = plt.subplots(1, figsize=(8,6))
-            plt.hist(Y[:, v] - np.dot(self.X, self.coef[:, v]), edgecolor='k')
-            ax.spines['top'].set_visible(False)
-            ax.spines['right'].set_visible(False)
+            fig, ax = plt.subplots(1, figsize=(8, 6))
+            plt.hist(Y[:, v] - np.dot(self.X, self.coef[:, v]), edgecolor="k")
+            ax.spines["top"].set_visible(False)
+            ax.spines["right"].set_visible(False)
             plt.title("Histogram of the residuals")
 
         # qqplot of the residuals
         if qq:
-            fig, ax = plt.subplots(1, figsize=(8,6))
-            sm.qqplot(Y[:, v] - np.dot(self.X, self.coef[:, v]), line='q', ax=ax,
-                      markerfacecolor='k', markeredgecolor='w', markersize=8.88)
-            ax.spines['top'].set_visible(False)
-            ax.spines['right'].set_visible(False)
+            fig, ax = plt.subplots(1, figsize=(8, 6))
+            sm.qqplot(
+                Y[:, v] - np.dot(self.X, self.coef[:, v]),
+                line="q",
+                ax=ax,
+                markerfacecolor="k",
+                markeredgecolor="w",
+                markersize=8.88,
+            )
+            ax.spines["top"].set_visible(False)
+            ax.spines["right"].set_visible(False)
             ax.get_lines()[1].set_color("black")
             ax.get_lines()[1].set_linewidth("2.8")
             plt.title("QQ plot of sample data versus standard normal")
