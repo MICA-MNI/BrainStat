@@ -250,6 +250,7 @@ def radar_plot(data=None, title="", axis_range=None, label=None, color=(0, 0, 0)
         List of axis labels. Length = same as data.shape[0]. Default is empty.
     color : tuple, optional
         Color of line. Default is (0, 0, 0).
+
     Returns
     -------
     class_mean : ndarray, shape = (data.shape[0],)

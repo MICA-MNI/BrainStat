@@ -116,6 +116,32 @@ slm_age = SLM(
 slm_age.fit(thickness)
 
 ###################################################################
+# Before we go any further, we can quickly assess the quality and
+# robustness of the fitted model. We can do this for every vertex/parcel
+# on the cortex (default), for one vertex (see example below for the 88th
+# vertex), or for a set of specific vertices. Our function slm.qc outputs
+# a histogram of the residuals and a qq plot of the residuals versus the
+# theoretical quantile values from a normal distribution. We can also map
+# vertexwise measures of skewness and kurtosis (characterizing the residuals
+# distribution) across the cortex.
+skwn, krts = slm_age.qc(thickness, v=87)
+###################################################################
+plot_hemispheres(
+    pial_left,
+    pial_right,
+    np.vstack([skwn.T, krts.T]),
+    cmap="viridis",
+    embed_nb=True,
+    size=(1400, 200),
+    zoom=1.8,
+    nan_color=(0.7, 0.7, 0.7, 1),
+    interactive=False,
+    color_bar=True,
+    label_text=["Skewness", "Kurtosis"],
+    cb__labelTextProperty={"fontSize": 12},
+)
+
+###################################################################
 # The resulting model, slm_age, will contain the t-statistic map, p-values
 # derived with the requested corrections, and a myriad of other properties (see
 # the API for more details). Lets plot the t-values and p-values on the surface.

@@ -292,7 +292,75 @@ and fit it to the cortical thickness data.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 119-124
+.. GENERATED FROM PYTHON SOURCE LINES 119-127
+
+Before we go any further, we can quickly assess the quality and
+robustness of the fitted model. We can do this for every vertex/parcel
+on the cortex (default), for one vertex (see example below for the 88th
+vertex), or for a set of specific vertices. Our function slm.qc outputs
+a histogram of the residuals and a qq plot of the residuals versus the
+theoretical quantile values from a normal distribution. We can also map
+vertexwise measures of skewness and kurtosis (characterizing the residuals
+distribution) across the cortex.
+
+.. GENERATED FROM PYTHON SOURCE LINES 127-128
+
+.. code-block:: default
+
+    skwn, krts = slm_age.qc(thickness, v=87)
+
+
+
+.. rst-class:: sphx-glr-horizontal
+
+
+    *
+
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_002.png
+         :alt: Histogram of the residuals
+         :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_002.png
+         :class: sphx-glr-multi-img
+
+    *
+
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_003.png
+         :alt: QQ plot of sample data versus standard normal
+         :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_003.png
+         :class: sphx-glr-multi-img
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 129-135
+
+.. code-block:: default
+
+    plot_hemispheres(pial_left, pial_right, np.vstack([skwn.T, krts.T]),
+                     cmap='viridis', embed_nb=True, size=(1400, 200),
+                     zoom=1.8, nan_color=(0.7, 0.7, 0.7, 1), interactive=False,
+                     color_bar=True, label_text=["Skewness", "Kurtosis"],
+                     cb__labelTextProperty={"fontSize": 12})
+
+
+
+
+.. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_004.png
+   :alt: plot tutorial 01 basics
+   :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_004.png
+   :class: sphx-glr-single-img
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+
+    <IPython.core.display.Image object>
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 136-141
 
 The resulting model, slm_age, will contain the t-statistic map, p-values
 derived with the requested corrections, and a myriad of other properties (see
@@ -300,7 +368,7 @@ the API for more details). Lets plot the t-values and p-values on the surface.
 We'll do this a few times throughout the tutorial so lets define a function to
 do this.
 
-.. GENERATED FROM PYTHON SOURCE LINES 124-154
+.. GENERATED FROM PYTHON SOURCE LINES 141-171
 
 .. code-block:: default
 
@@ -342,30 +410,54 @@ do this.
 
     *
 
-      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_002.png
-          :alt: plot tutorial 01 basics
-          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_002.png
-          :class: sphx-glr-multi-img
-
-    *
-
-      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_003.png
-          :alt: plot tutorial 01 basics
-          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_003.png
-          :class: sphx-glr-multi-img
-
-    *
-
-      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_004.png
-          :alt: plot tutorial 01 basics
-          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_004.png
-          :class: sphx-glr-multi-img
-
-    *
-
+<<<<<<< HEAD
       .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_005.png
           :alt: plot tutorial 01 basics
           :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_005.png
+=======
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_002.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_002.png
+>>>>>>> 5872deb6d0b8a444a50f8a6f50fbdc64980a4a71
+          :class: sphx-glr-multi-img
+
+    *
+
+<<<<<<< HEAD
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_006.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_006.png
+=======
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_003.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_003.png
+>>>>>>> 5872deb6d0b8a444a50f8a6f50fbdc64980a4a71
+          :class: sphx-glr-multi-img
+
+    *
+
+<<<<<<< HEAD
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_007.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_007.png
+=======
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_004.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_004.png
+>>>>>>> 5872deb6d0b8a444a50f8a6f50fbdc64980a4a71
+          :class: sphx-glr-multi-img
+
+    *
+
+<<<<<<< HEAD
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_008.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_008.png
+=======
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_005.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_005.png
+>>>>>>> 5872deb6d0b8a444a50f8a6f50fbdc64980a4a71
           :class: sphx-glr-multi-img
 
 
@@ -378,7 +470,7 @@ do this.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 155-167
+.. GENERATED FROM PYTHON SOURCE LINES 172-184
 
 Only clusters are significant, and not peaks. This suggests that the age
 effect covers large regions, rather than local foci. Furthermore, at the
@@ -393,7 +485,7 @@ single table is returned. Lets print the first 15 rows of the inverted
 contrast cluster table.
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 167-170
+.. GENERATED FROM PYTHON SOURCE LINES 184-187
 
 .. code-block:: default
 
@@ -426,13 +518,13 @@ contrast cluster table.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 171-174
+.. GENERATED FROM PYTHON SOURCE LINES 188-191
 
 Here, we see that cluster 1 contains 373 vertices. Clusters are sorted by
 p-value; later clusters will generally be smaller and have higher p-values.
 Lets now have a look at the peaks within these clusters.
 
-.. GENERATED FROM PYTHON SOURCE LINES 174-177
+.. GENERATED FROM PYTHON SOURCE LINES 191-194
 
 .. code-block:: default
 
@@ -465,7 +557,7 @@ Lets now have a look at the peaks within these clusters.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 178-184
+.. GENERATED FROM PYTHON SOURCE LINES 195-201
 
 Within cluster 1, we are able to detect several peaks. The peak with the
 highest t-statistic (t=4.3972) occurs at vertex 19629, which is inside the
@@ -474,14 +566,14 @@ network membership is only provided if the surface is specified as a template
 name as we did here. For custom surfaces, or pre-loaded surfaces (as we will
 use below) this column is omitted.
 
-.. GENERATED FROM PYTHON SOURCE LINES 186-190
+.. GENERATED FROM PYTHON SOURCE LINES 203-207
 
 Interaction effects models
 ----------------------------
 
 Similarly to age, we can also test for the effect of sex on cortical thickness.
 
-.. GENERATED FROM PYTHON SOURCE LINES 190-197
+.. GENERATED FROM PYTHON SOURCE LINES 207-214
 
 .. code-block:: default
 
@@ -499,11 +591,11 @@ Similarly to age, we can also test for the effect of sex on cortical thickness.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 198-199
+.. GENERATED FROM PYTHON SOURCE LINES 215-216
 
 Next we will rerrun the model and see if our results change.
 
-.. GENERATED FROM PYTHON SOURCE LINES 199-212
+.. GENERATED FROM PYTHON SOURCE LINES 216-229
 
 .. code-block:: default
 
@@ -528,16 +620,28 @@ Next we will rerrun the model and see if our results change.
 
     *
 
+<<<<<<< HEAD
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_009.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_009.png
+=======
       .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_006.png
           :alt: plot tutorial 01 basics
           :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_006.png
+>>>>>>> 5872deb6d0b8a444a50f8a6f50fbdc64980a4a71
           :class: sphx-glr-multi-img
 
     *
 
+<<<<<<< HEAD
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_010.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_010.png
+=======
       .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_007.png
           :alt: plot tutorial 01 basics
           :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_007.png
+>>>>>>> 5872deb6d0b8a444a50f8a6f50fbdc64980a4a71
           :class: sphx-glr-multi-img
 
 
@@ -550,14 +654,14 @@ Next we will rerrun the model and see if our results change.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 213-217
+.. GENERATED FROM PYTHON SOURCE LINES 230-234
 
 Here, we find few significant effects of sex on cortical thickness. However, as
 we've already established, age has an effect on cortical thickness. So we may
 want to correct for this effect before evaluating whether sex has an effect on
 cortical thickenss. Lets make a new model that includes the effect of age.
 
-.. GENERATED FROM PYTHON SOURCE LINES 217-220
+.. GENERATED FROM PYTHON SOURCE LINES 234-237
 
 .. code-block:: default
 
@@ -571,11 +675,11 @@ cortical thickenss. Lets make a new model that includes the effect of age.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 221-222
+.. GENERATED FROM PYTHON SOURCE LINES 238-239
 
 Next we will rerrun the model and see if our results change.
 
-.. GENERATED FROM PYTHON SOURCE LINES 222-235
+.. GENERATED FROM PYTHON SOURCE LINES 239-252
 
 .. code-block:: default
 
@@ -600,16 +704,28 @@ Next we will rerrun the model and see if our results change.
 
     *
 
+<<<<<<< HEAD
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_011.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_011.png
+=======
       .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_008.png
           :alt: plot tutorial 01 basics
           :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_008.png
+>>>>>>> 5872deb6d0b8a444a50f8a6f50fbdc64980a4a71
           :class: sphx-glr-multi-img
 
     *
 
+<<<<<<< HEAD
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_012.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_012.png
+=======
       .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_009.png
           :alt: plot tutorial 01 basics
           :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_009.png
+>>>>>>> 5872deb6d0b8a444a50f8a6f50fbdc64980a4a71
           :class: sphx-glr-multi-img
 
 
@@ -622,7 +738,7 @@ Next we will rerrun the model and see if our results change.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 236-241
+.. GENERATED FROM PYTHON SOURCE LINES 253-258
 
 After accounting for the effect of age, we still find only one significant
 cluster of effect of sex on cortical thickness. However, it could be that age
@@ -630,7 +746,7 @@ affects men and women differently. To account for this, we could include an
 interaction effect into the model. Lets run the model again with an
 interaction effect.
 
-.. GENERATED FROM PYTHON SOURCE LINES 241-256
+.. GENERATED FROM PYTHON SOURCE LINES 258-273
 
 .. code-block:: default
 
@@ -657,16 +773,28 @@ interaction effect.
 
     *
 
+<<<<<<< HEAD
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_013.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_013.png
+=======
       .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_010.png
           :alt: plot tutorial 01 basics
           :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_010.png
+>>>>>>> 5872deb6d0b8a444a50f8a6f50fbdc64980a4a71
           :class: sphx-glr-multi-img
 
     *
 
+<<<<<<< HEAD
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_014.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_014.png
+=======
       .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_011.png
           :alt: plot tutorial 01 basics
           :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_011.png
+>>>>>>> 5872deb6d0b8a444a50f8a6f50fbdc64980a4a71
           :class: sphx-glr-multi-img
 
 
@@ -679,7 +807,7 @@ interaction effect.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 257-262
+.. GENERATED FROM PYTHON SOURCE LINES 274-279
 
 After including the interaction effect, we no significant effects of
 sex on cortical thickness in several clusters.
@@ -687,7 +815,7 @@ sex on cortical thickness in several clusters.
 We could also look at whether the cortex of men and women changes
 differently with age by comparing their interaction effects.
 
-.. GENERATED FROM PYTHON SOURCE LINES 262-279
+.. GENERATED FROM PYTHON SOURCE LINES 279-296
 
 .. code-block:: default
 
@@ -716,16 +844,28 @@ differently with age by comparing their interaction effects.
 
     *
 
+<<<<<<< HEAD
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_015.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_015.png
+=======
       .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_012.png
           :alt: plot tutorial 01 basics
           :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_012.png
+>>>>>>> 5872deb6d0b8a444a50f8a6f50fbdc64980a4a71
           :class: sphx-glr-multi-img
 
     *
 
+<<<<<<< HEAD
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_016.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_016.png
+=======
       .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_013.png
           :alt: plot tutorial 01 basics
           :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_013.png
+>>>>>>> 5872deb6d0b8a444a50f8a6f50fbdc64980a4a71
           :class: sphx-glr-multi-img
 
 
@@ -738,17 +878,17 @@ differently with age by comparing their interaction effects.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 280-282
+.. GENERATED FROM PYTHON SOURCE LINES 297-299
 
 Indeed, it appears that the interaction effect between sex and age is quite
 different across men and women, with stronger effects occuring in women.
 
-.. GENERATED FROM PYTHON SOURCE LINES 284-286
+.. GENERATED FROM PYTHON SOURCE LINES 301-303
 
 One-tailed Test
 -----------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 288-298
+.. GENERATED FROM PYTHON SOURCE LINES 305-315
 
 Imagine that, based on prior research, we hypothesize that men have higher
 cortical thickness than women. In that case, we could run this same model with
@@ -761,7 +901,7 @@ of the contrast. We may hypothesize based on prior research that cortical
 thickness decreases with age, so we could specify this as follows. Note the
 minus in front of contrast_age to test for decreasing thickness with age.
 
-.. GENERATED FROM PYTHON SOURCE LINES 298-313
+.. GENERATED FROM PYTHON SOURCE LINES 315-330
 
 .. code-block:: default
 
@@ -788,16 +928,28 @@ minus in front of contrast_age to test for decreasing thickness with age.
 
     *
 
+<<<<<<< HEAD
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_017.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_017.png
+=======
       .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_014.png
           :alt: plot tutorial 01 basics
           :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_014.png
+>>>>>>> 5872deb6d0b8a444a50f8a6f50fbdc64980a4a71
           :class: sphx-glr-multi-img
 
     *
 
+<<<<<<< HEAD
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_018.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_018.png
+=======
       .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_015.png
           :alt: plot tutorial 01 basics
           :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_015.png
+>>>>>>> 5872deb6d0b8a444a50f8a6f50fbdc64980a4a71
           :class: sphx-glr-multi-img
 
 
@@ -810,16 +962,16 @@ minus in front of contrast_age to test for decreasing thickness with age.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 314-315
+.. GENERATED FROM PYTHON SOURCE LINES 331-332
 
 Notice the additional clusters that we find when using a one-tailed test.
 
-.. GENERATED FROM PYTHON SOURCE LINES 317-319
+.. GENERATED FROM PYTHON SOURCE LINES 334-336
 
 Mixed Effects Models
 --------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 321-326
+.. GENERATED FROM PYTHON SOURCE LINES 338-343
 
 So far, we've considered multiple visits of the same subject as two separate,
 independent measurements. Clearly, however, such measurements are not
@@ -827,7 +979,7 @@ independent of each other. To account for this, we could add subject ID as a
 random effect. Lets do this and test the effect of age on cortical thickness
 again.
 
-.. GENERATED FROM PYTHON SOURCE LINES 326-346
+.. GENERATED FROM PYTHON SOURCE LINES 343-363
 
 .. code-block:: default
 
@@ -859,30 +1011,54 @@ again.
 
     *
 
-      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_016.png
-          :alt: plot tutorial 01 basics
-          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_016.png
-          :class: sphx-glr-multi-img
-
-    *
-
-      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_017.png
-          :alt: plot tutorial 01 basics
-          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_017.png
-          :class: sphx-glr-multi-img
-
-    *
-
-      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_018.png
-          :alt: plot tutorial 01 basics
-          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_018.png
-          :class: sphx-glr-multi-img
-
-    *
-
+<<<<<<< HEAD
       .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_019.png
           :alt: plot tutorial 01 basics
           :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_019.png
+=======
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_016.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_016.png
+>>>>>>> 5872deb6d0b8a444a50f8a6f50fbdc64980a4a71
+          :class: sphx-glr-multi-img
+
+    *
+
+<<<<<<< HEAD
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_020.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_020.png
+=======
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_017.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_017.png
+>>>>>>> 5872deb6d0b8a444a50f8a6f50fbdc64980a4a71
+          :class: sphx-glr-multi-img
+
+    *
+
+<<<<<<< HEAD
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_021.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_021.png
+=======
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_018.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_018.png
+>>>>>>> 5872deb6d0b8a444a50f8a6f50fbdc64980a4a71
+          :class: sphx-glr-multi-img
+
+    *
+
+<<<<<<< HEAD
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_022.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_022.png
+=======
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_019.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_019.png
+>>>>>>> 5872deb6d0b8a444a50f8a6f50fbdc64980a4a71
           :class: sphx-glr-multi-img
 
 
@@ -895,7 +1071,7 @@ again.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 347-353
+.. GENERATED FROM PYTHON SOURCE LINES 364-370
 
 Compared to our first age model, we find fewer and smaller clusters,
 indicating that by not accounting for the repeated measures structure of the
@@ -907,7 +1083,11 @@ next tutorial we'll show you how to use the context decoding module.
 
 .. rst-class:: sphx-glr-timing
 
+<<<<<<< HEAD
+   **Total running time of the script:** ( 0 minutes  28.806 seconds)
+=======
    **Total running time of the script:** ( 0 minutes  14.376 seconds)
+>>>>>>> 5872deb6d0b8a444a50f8a6f50fbdc64980a4a71
 
 
 .. _sphx_glr_download_python_generated_tutorials_plot_tutorial_01_basics.py:

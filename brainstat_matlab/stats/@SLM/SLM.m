@@ -174,6 +174,10 @@ classdef SLM < matlab.mixin.Copyable
                 obj.mask = ones(size(Y,2), 1, 'logical');
             end
             
+            if ndims(Y) > 2
+                Y = squeeze(Y(:, :, feat));
+            end
+            
             % Histogram of the residuals
             if options.histo 
                 f = figure;
