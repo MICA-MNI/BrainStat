@@ -410,30 +410,54 @@ do this.
 
     *
 
+<<<<<<< HEAD
       .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_005.png
           :alt: plot tutorial 01 basics
           :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_005.png
+=======
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_002.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_002.png
+>>>>>>> 5872deb6d0b8a444a50f8a6f50fbdc64980a4a71
           :class: sphx-glr-multi-img
 
     *
 
+<<<<<<< HEAD
       .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_006.png
           :alt: plot tutorial 01 basics
           :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_006.png
+=======
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_003.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_003.png
+>>>>>>> 5872deb6d0b8a444a50f8a6f50fbdc64980a4a71
           :class: sphx-glr-multi-img
 
     *
 
+<<<<<<< HEAD
       .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_007.png
           :alt: plot tutorial 01 basics
           :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_007.png
+=======
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_004.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_004.png
+>>>>>>> 5872deb6d0b8a444a50f8a6f50fbdc64980a4a71
           :class: sphx-glr-multi-img
 
     *
 
+<<<<<<< HEAD
       .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_008.png
           :alt: plot tutorial 01 basics
           :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_008.png
+=======
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_005.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_005.png
+>>>>>>> 5872deb6d0b8a444a50f8a6f50fbdc64980a4a71
           :class: sphx-glr-multi-img
 
 
@@ -596,16 +620,28 @@ Next we will rerrun the model and see if our results change.
 
     *
 
+<<<<<<< HEAD
       .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_009.png
           :alt: plot tutorial 01 basics
           :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_009.png
+=======
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_006.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_006.png
+>>>>>>> 5872deb6d0b8a444a50f8a6f50fbdc64980a4a71
           :class: sphx-glr-multi-img
 
     *
 
+<<<<<<< HEAD
       .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_010.png
           :alt: plot tutorial 01 basics
           :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_010.png
+=======
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_007.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_007.png
+>>>>>>> 5872deb6d0b8a444a50f8a6f50fbdc64980a4a71
           :class: sphx-glr-multi-img
 
 
@@ -668,16 +704,28 @@ Next we will rerrun the model and see if our results change.
 
     *
 
+<<<<<<< HEAD
       .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_011.png
           :alt: plot tutorial 01 basics
           :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_011.png
+=======
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_008.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_008.png
+>>>>>>> 5872deb6d0b8a444a50f8a6f50fbdc64980a4a71
           :class: sphx-glr-multi-img
 
     *
 
+<<<<<<< HEAD
       .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_012.png
           :alt: plot tutorial 01 basics
           :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_012.png
+=======
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_009.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_009.png
+>>>>>>> 5872deb6d0b8a444a50f8a6f50fbdc64980a4a71
           :class: sphx-glr-multi-img
 
 
@@ -725,16 +773,28 @@ interaction effect.
 
     *
 
+<<<<<<< HEAD
       .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_013.png
           :alt: plot tutorial 01 basics
           :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_013.png
+=======
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_010.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_010.png
+>>>>>>> 5872deb6d0b8a444a50f8a6f50fbdc64980a4a71
           :class: sphx-glr-multi-img
 
     *
 
+<<<<<<< HEAD
       .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_014.png
           :alt: plot tutorial 01 basics
           :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_014.png
+=======
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_011.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_011.png
+>>>>>>> 5872deb6d0b8a444a50f8a6f50fbdc64980a4a71
           :class: sphx-glr-multi-img
 
 
@@ -784,16 +844,28 @@ differently with age by comparing their interaction effects.
 
     *
 
+<<<<<<< HEAD
       .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_015.png
           :alt: plot tutorial 01 basics
           :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_015.png
+=======
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_012.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_012.png
+>>>>>>> 5872deb6d0b8a444a50f8a6f50fbdc64980a4a71
           :class: sphx-glr-multi-img
 
     *
 
+<<<<<<< HEAD
       .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_016.png
           :alt: plot tutorial 01 basics
           :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_016.png
+=======
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_013.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_013.png
+>>>>>>> 5872deb6d0b8a444a50f8a6f50fbdc64980a4a71
           :class: sphx-glr-multi-img
 
 
@@ -856,16 +928,28 @@ minus in front of contrast_age to test for decreasing thickness with age.
 
     *
 
+<<<<<<< HEAD
       .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_017.png
           :alt: plot tutorial 01 basics
           :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_017.png
+=======
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_014.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_014.png
+>>>>>>> 5872deb6d0b8a444a50f8a6f50fbdc64980a4a71
           :class: sphx-glr-multi-img
 
     *
 
+<<<<<<< HEAD
       .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_018.png
           :alt: plot tutorial 01 basics
           :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_018.png
+=======
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_015.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_015.png
+>>>>>>> 5872deb6d0b8a444a50f8a6f50fbdc64980a4a71
           :class: sphx-glr-multi-img
 
 
@@ -927,30 +1011,54 @@ again.
 
     *
 
+<<<<<<< HEAD
       .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_019.png
           :alt: plot tutorial 01 basics
           :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_019.png
+=======
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_016.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_016.png
+>>>>>>> 5872deb6d0b8a444a50f8a6f50fbdc64980a4a71
           :class: sphx-glr-multi-img
 
     *
 
+<<<<<<< HEAD
       .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_020.png
           :alt: plot tutorial 01 basics
           :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_020.png
+=======
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_017.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_017.png
+>>>>>>> 5872deb6d0b8a444a50f8a6f50fbdc64980a4a71
           :class: sphx-glr-multi-img
 
     *
 
+<<<<<<< HEAD
       .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_021.png
           :alt: plot tutorial 01 basics
           :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_021.png
+=======
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_018.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_018.png
+>>>>>>> 5872deb6d0b8a444a50f8a6f50fbdc64980a4a71
           :class: sphx-glr-multi-img
 
     *
 
+<<<<<<< HEAD
       .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_022.png
           :alt: plot tutorial 01 basics
           :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_022.png
+=======
+      .. image-sg:: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_019.png
+          :alt: plot tutorial 01 basics
+          :srcset: /python/generated_tutorials/images/sphx_glr_plot_tutorial_01_basics_019.png
+>>>>>>> 5872deb6d0b8a444a50f8a6f50fbdc64980a4a71
           :class: sphx-glr-multi-img
 
 
@@ -975,7 +1083,11 @@ next tutorial we'll show you how to use the context decoding module.
 
 .. rst-class:: sphx-glr-timing
 
+<<<<<<< HEAD
    **Total running time of the script:** ( 0 minutes  28.806 seconds)
+=======
+   **Total running time of the script:** ( 0 minutes  14.376 seconds)
+>>>>>>> 5872deb6d0b8a444a50f8a6f50fbdc64980a4a71
 
 
 .. _sphx_glr_download_python_generated_tutorials_plot_tutorial_01_basics.py:
