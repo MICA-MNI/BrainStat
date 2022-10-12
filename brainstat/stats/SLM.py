@@ -8,6 +8,9 @@ from typing import Optional, Sequence, Tuple, Union
 
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+import statsmodels.api as sm
+from scipy.stats import skew, kurtosis
 from brainspace.mesh.mesh_elements import get_cells, get_points
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 from nibabel.nifti1 import Nifti1Image
@@ -153,6 +156,71 @@ class SLM:
             self._unmask()
         if self.correction is not None:
             self.multiple_comparison_corrections(student_t_test)
+
+    def qc(self,  Y=None, feat=None, v=None, histo=True, qq=True):
+        """Quality check of the data (author: @saratheriver)
+        Parameters
+        ----------
+        Y : numpy.array
+            Input data (observation, vertex, variate)
+        feat : numpy.array, optional
+            Dimension of variate to qc. Default is 0 - assuming 2D matrix.
+        v : numpy.array, optional
+            specify vertex or parcel number. Default to all.
+        histo : bool, optional
+            Outputs histogram of the residuals. Default is True.
+        qq : bool, optional
+            Outputs qq plot of the residuals. Default is True.
+
+        Returns
+        -------
+        sk : ndarray
+            Skewness of residuals distribution
+        ku : ndarray
+            Kurtosis of residuals distribution
+        """
+        if Y is None:
+            raise ValueError("Input data must be provided.")
+        elif Y.ndim < 2 or Y.ndim > 3:
+            raise ValueError("Input data must be two or three dimensional.")
+
+        if feat is not None and Y.ndim == 3:
+            Y = np.squeeze(Y[:, :, feat])
+
+        if v is None:
+            v = list(range(Y.shape[1]))
+
+        # Histogram of the residuals
+        if histo:
+            fig, ax = plt.subplots(1, figsize=(8,6))
+            plt.hist(Y[:, v] - np.dot(self.X, self.coef[:, v]), edgecolor='k')
+            ax.spines['top'].set_visible(False)
+            ax.spines['right'].set_visible(False)
+            plt.title("Histogram of the residuals")
+
+        # qqplot of the residuals
+        if qq:
+            fig, ax = plt.subplots(1, figsize=(8,6))
+            sm.qqplot(Y[:, v] - np.dot(self.X, self.coef[:, v]), line='q', ax=ax,
+                      markerfacecolor='k', markeredgecolor='w', markersize=8.88)
+            ax.spines['top'].set_visible(False)
+            ax.spines['right'].set_visible(False)
+            ax.get_lines()[1].set_color("black")
+            ax.get_lines()[1].set_linewidth("2.8")
+            plt.title("QQ plot of sample data versus standard normal")
+
+        # Characterize distribution based on two statistical moments at each vertex
+        sk = np.empty((Y.shape[1], 1))
+        ku = np.empty_like(sk)
+
+        for ii in range(Y.shape[1]):
+            sk[ii] = skew(Y[:, ii] - np.dot(self.X, self.coef[:, ii]))
+            ku[ii] = kurtosis(Y[:, ii] - np.dot(self.X, self.coef[:, ii]))
+
+        np.nan_to_num(sk, nan=-np.inf)
+        np.nan_to_num(ku, nan=-np.inf)
+
+        return sk, ku
 
     def multiple_comparison_corrections(self, student_t_test: bool) -> None:
         """Performs multiple comparisons corrections. If a (one-sided) student-t
