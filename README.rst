@@ -36,11 +36,12 @@ Developers
 ----------
 .. |seyma_s|   unicode:: U+015E .. CEDILLA S
 
-- Reinder Vos de Wael - MICA Lab, Montreal Neurological Institute
-- |seyma_s|\ eyma Bayrak - Max Planck Institute for Human Cognitive and Brain Sciences 
-- Oualid Benkarim - MICA Lab, Montreal Neurological Institute
 - Sara Lariviere - MICA Lab, Montreal Neurological Institute
+- |seyma_s|\ eyma Bayrak - Max Planck Institute for Human Cognitive and Brain Sciences 
+- Reinder Vos de Wael - MICA Lab, Montreal Neurological Institute
+- Oualid Benkarim - MICA Lab, Montreal Neurological Institute
 - Raul Cruces - MICA Lab, Montreal Neurological Institute
+- Jessica Royer - MICA Lab, Montreal Neurological Institute
 - Peer Herholz - Montreal Neurological Institute 
 - Seok-Jun Hong - Sungkyunkwan University
 - Sofie Valk - Max Planck Institute for Human Cognitive and Brain Sciences
