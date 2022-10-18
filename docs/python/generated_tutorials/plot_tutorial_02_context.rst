@@ -33,10 +33,10 @@ tutorial.
 .. code-block:: default
 
 
+    from brainstat.tutorial.utils import fetch_mics_data
     from brainstat.datasets import fetch_mask, fetch_template_surface
     from brainstat.stats.SLM import SLM
     from brainstat.stats.terms import FixedEffect, MixedEffect
-    from brainstat.tutorial.utils import fetch_mics_data
 
     thickness, demographics = fetch_mics_data()
     mask = fetch_mask("fsaverage5")
@@ -1079,7 +1079,7 @@ Happy BrainStating!
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 9 minutes  54.275 seconds)
+   **Total running time of the script:** ( 8 minutes  45.841 seconds)
 
 
 .. _sphx_glr_download_python_generated_tutorials_plot_tutorial_02_context.py:
