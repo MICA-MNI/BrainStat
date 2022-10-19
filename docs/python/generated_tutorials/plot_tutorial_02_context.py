@@ -10,10 +10,10 @@ we did in Tutorial 1. We'll use the results of this model later in this
 tutorial.
 """
 
+from brainstat.tutorial.utils import fetch_mics_data
 from brainstat.datasets import fetch_mask, fetch_template_surface
 from brainstat.stats.SLM import SLM
 from brainstat.stats.terms import FixedEffect, MixedEffect
-from brainstat.tutorial.utils import fetch_mics_data
 
 thickness, demographics = fetch_mics_data()
 mask = fetch_mask("fsaverage5")
