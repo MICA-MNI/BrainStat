@@ -492,11 +492,11 @@ gradients, and correlate the first gradient with our t-statistic map.
 
  .. code-block:: none
 
-    /Users/saratheriver/Desktop/McGill_PhD/BrainStat/brainstat/context/histology.py:105: RuntimeWarning:
+    /Users/saratheriver/Desktop/BrainStat/brainstat/context/histology.py:105: RuntimeWarning:
 
     divide by zero encountered in divide
 
-    /Users/saratheriver/Desktop/McGill_PhD/BrainStat/brainstat/context/histology.py:105: RuntimeWarning:
+    /Users/saratheriver/Desktop/BrainStat/brainstat/context/histology.py:105: RuntimeWarning:
 
     invalid value encountered in log
 
@@ -1079,7 +1079,7 @@ Happy BrainStating!
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 8 minutes  45.841 seconds)
+   **Total running time of the script:** ( 8 minutes  26.894 seconds)
 
 
 .. _sphx_glr_download_python_generated_tutorials_plot_tutorial_02_context.py:
