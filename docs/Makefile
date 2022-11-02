@@ -18,7 +18,7 @@ help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 clean:
-	rm -rf $(BUILDDIR)/* python/generated_tutorials/* 
+	rm -rf $(BUILDDIR)/* python/generated_tutorials/*.*py*
 
 .PHONY: help Makefile
 

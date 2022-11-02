@@ -16,34 +16,14 @@ mask = fetch_mask("fsaverage5")
 
 ###################################################################
 # Lets have a look at the cortical thickness data. To do this,
-# we will use the surface plotter included with BrainSpace. As we'll
-# be plotting data onto these hemispheres quite often in this tutorial
-# we'll create a simple function for it and plot mean thickness here.
+# we will use the surface plotter included with BrainSpace. 
 import numpy as np
 from brainspace.plotting import plot_hemispheres
 
+plot_hemispheres(pial_left, pial_right, np.mean(thickness, axis=0), color_bar=True, color_range=(1.5, 3.5),
+        label_text=["Cortical Thickness"], cmap="viridis", embed_nb=True, size=(1400, 200), zoom=1.45,
+        nan_color=(0.7, 0.7, 0.7, 1), cb__labelTextProperty={"fontSize": 12}, interactive=False)
 
-def local_plot_hemispheres(values, label_text, color_range, cmap="viridis"):
-    # Plot cortical surfaces with values as the data, label_text as
-    # the labels, and color_range as the limits of the color bar.
-    return plot_hemispheres(
-        pial_left,
-        pial_right,
-        values,
-        color_bar=True,
-        color_range=color_range,
-        label_text=label_text,
-        cmap=cmap,
-        embed_nb=True,
-        size=(1400, 200),
-        zoom=1.45,
-        nan_color=(0.7, 0.7, 0.7, 1),
-        cb__labelTextProperty={"fontSize": 12},
-        interactive=False,
-    )
-
-
-local_plot_hemispheres(np.mean(thickness, axis=0), ["Cortical Thickness"], (1.5, 3.5))
 ###################################################################
 # Lets also have a look at what's inside the demographics data.
 
@@ -144,38 +124,29 @@ plot_hemispheres(
 ###################################################################
 # The resulting model, slm_age, will contain the t-statistic map, p-values
 # derived with the requested corrections, and a myriad of other properties (see
-# the API for more details). Lets plot the t-values and p-values on the surface.
-# We'll do this a few times throughout the tutorial so lets define a function to
-# do this.
+# the API for more details). Let's plot the t-values and p-values on the surface.
 
+plot_hemispheres(pial_left, pial_right, slm_age.t, color_bar=True, color_range=(-4, 4),
+        label_text=["t-values"], cmap="viridis", embed_nb=True, size=(1400, 200), zoom=1.45,
+        nan_color=(0.7, 0.7, 0.7, 1), cb__labelTextProperty={"fontSize": 12}, interactive=False)
 
-def plot_slm_results(slm, plot_peak=False, plot_fdr=False):
+###################################################################
 
-    handles = [local_plot_hemispheres(slm.t, ["t-values"], (-4, 4), "bwr")]
+cp = [np.copy(slm_age.P["pval"]["C"])]
+[np.place(x, np.logical_or(x > 0.05, ~mask), np.nan) for x in cp]
 
-    plot_pvalues = [np.copy(slm.P["pval"]["C"])]
-    labels = ["Cluster p-values"]
+pp = [np.copy(slm_age.P["pval"]["P"])]
+[np.place(x, np.logical_or(x > 0.05, ~mask), np.nan) for x in pp]
 
-    if plot_peak:
-        plot_pvalues.append(np.copy(slm.P["pval"]["P"]))
-        labels.append("Peak p-vales")
+qp = [np.copy(slm_age.Q)]
+[np.place(x, np.logical_or(x > 0.05, ~mask), np.nan) for x in qp]
 
-    if plot_fdr:
-        plot_pvalues.append(np.copy(slm.Q))
-        labels.append("Vertex p-values")
+vals = np.vstack([cp[0].T, pp[0].T, qp[0].T])
 
-    [np.place(x, np.logical_or(x > 0.05, ~mask), np.nan) for x in plot_pvalues]
-
-    for i in range(len(plot_pvalues)):
-        handles.append(
-            local_plot_hemispheres(plot_pvalues[i], [labels[i]], (0, 0.05), "plasma_r")
-        )
-
-    return handles
-
-
-plot_slm_results(slm_age, plot_peak=True, plot_fdr=True)
-
+plot_hemispheres(pial_left, pial_right, vals, color_bar=True, color_range=(0, 0.05),
+        label_text=["Cluster p-values", "Peak p-values", "Vertex p-values"], cmap="autumn_r", 
+        embed_nb=True, size=(1400, 400), zoom=1.8, nan_color=(0.7, 0.7, 0.7, 1), 
+        cb__labelTextProperty={"fontSize": 12}, interactive=False)
 
 ###################################################################
 # Only clusters are significant, and not peaks. This suggests that the age
@@ -221,7 +192,7 @@ contrast_sex = (demographics.SEX == "M").astype(int) - (demographics.SEX == "F")
 )
 
 ####################################################################
-# Next we will rerrun the model and see if our results change.
+# Next we will rerun the model and see if our results change.
 
 slm_sex = SLM(
     model_sex,
@@ -233,7 +204,22 @@ slm_sex = SLM(
     cluster_threshold=0.01,
 )
 slm_sex.fit(thickness)
-plot_slm_results(slm_sex)
+
+###################################################################
+
+plot_hemispheres(pial_left, pial_right, slm_sex.t, color_bar=True, color_range=(-4, 4),
+        label_text=["t-values"], cmap="viridis", embed_nb=True, size=(1400, 200), zoom=1.45,
+        nan_color=(0.7, 0.7, 0.7, 1), cb__labelTextProperty={"fontSize": 12}, interactive=False)
+
+###################################################################
+
+cp = [np.copy(slm_sex.P["pval"]["C"])]
+[np.place(x, np.logical_or(x > 0.05, ~mask), np.nan) for x in cp]
+
+plot_hemispheres(pial_left, pial_right, cp[0].T, color_bar=True, color_range=(0, 0.05),
+        label_text=["Cluster p-values"], cmap="autumn_r", embed_nb=True, size=(1400, 200), 
+        zoom=1.45, nan_color=(0.7, 0.7, 0.7, 1), cb__labelTextProperty={"fontSize": 12}, 
+        interactive=False)
 
 ###################################################################
 # Here, we find few significant effects of sex on cortical thickness. However, as
@@ -256,7 +242,22 @@ slm_sexage = SLM(
     cluster_threshold=0.01,
 )
 slm_sexage.fit(thickness)
-plot_slm_results(slm_sexage)
+
+###################################################################
+
+plot_hemispheres(pial_left, pial_right, slm_sexage.t, color_bar=True, color_range=(-4, 4),
+        label_text=["t-values"], cmap="viridis", embed_nb=True, size=(1400, 200), zoom=1.45,
+        nan_color=(0.7, 0.7, 0.7, 1), cb__labelTextProperty={"fontSize": 12}, interactive=False)
+
+###################################################################
+
+cp = [np.copy(slm_sexage.P["pval"]["C"])]
+[np.place(x, np.logical_or(x > 0.05, ~mask), np.nan) for x in cp]
+
+plot_hemispheres(pial_left, pial_right, cp[0].T, color_bar=True, color_range=(0, 0.05),
+        label_text=["Cluster p-values"], cmap="autumn_r", embed_nb=True, size=(1400, 200), 
+        zoom=1.45, nan_color=(0.7, 0.7, 0.7, 1), cb__labelTextProperty={"fontSize": 12}, 
+        interactive=False)
 
 ###################################################################
 # After accounting for the effect of age, we still find only one significant
@@ -277,7 +278,22 @@ slm_sexage_int = SLM(
     cluster_threshold=0.01,
 )
 slm_sexage_int.fit(thickness)
-plot_slm_results(slm_sexage_int)
+
+###################################################################
+
+plot_hemispheres(pial_left, pial_right, slm_sexage_int.t, color_bar=True, color_range=(-4, 4),
+        label_text=["t-values"], cmap="viridis", embed_nb=True, size=(1400, 200), zoom=1.45,
+        nan_color=(0.7, 0.7, 0.7, 1), cb__labelTextProperty={"fontSize": 12}, interactive=False)
+
+###################################################################
+
+cp = [np.copy(slm_sexage_int.P["pval"]["C"])]
+[np.place(x, np.logical_or(x > 0.05, ~mask), np.nan) for x in cp]
+
+plot_hemispheres(pial_left, pial_right, cp[0].T, color_bar=True, color_range=(0, 0.05),
+        label_text=["Cluster p-values"], cmap="autumn_r", embed_nb=True, size=(1400, 200), 
+        zoom=1.45, nan_color=(0.7, 0.7, 0.7, 1), cb__labelTextProperty={"fontSize": 12}, 
+        interactive=False)
 
 ###################################################################
 # After including the interaction effect, we no significant effects of
@@ -300,7 +316,22 @@ slm_sex_int = SLM(
     cluster_threshold=0.01,
 )
 slm_sex_int.fit(thickness)
-plot_slm_results(slm_sex_int)
+
+###################################################################
+
+plot_hemispheres(pial_left, pial_right, slm_sex_int.t, color_bar=True, color_range=(-4, 4),
+        label_text=["t-values"], cmap="viridis", embed_nb=True, size=(1400, 200), zoom=1.45,
+        nan_color=(0.7, 0.7, 0.7, 1), cb__labelTextProperty={"fontSize": 12}, interactive=False)
+
+###################################################################
+
+cp = [np.copy(slm_sex_int.P["pval"]["C"])]
+[np.place(x, np.logical_or(x > 0.05, ~mask), np.nan) for x in cp]
+
+plot_hemispheres(pial_left, pial_right, cp[0].T, color_bar=True, color_range=(0, 0.05),
+        label_text=["Cluster p-values"], cmap="autumn_r", embed_nb=True, size=(1400, 200), 
+        zoom=1.45, nan_color=(0.7, 0.7, 0.7, 1), cb__labelTextProperty={"fontSize": 12}, 
+        interactive=False)
 
 ###################################################################
 # Indeed, it appears that the interaction effect between sex and age is quite
@@ -334,7 +365,22 @@ slm_onetailed = SLM(
     two_tailed=False,
 )
 slm_onetailed.fit(thickness)
-plot_slm_results(slm_onetailed)
+
+###################################################################
+
+plot_hemispheres(pial_left, pial_right, slm_onetailed.t, color_bar=True, color_range=(-4, 4),
+        label_text=["t-values"], cmap="viridis", embed_nb=True, size=(1400, 200), zoom=1.45,
+        nan_color=(0.7, 0.7, 0.7, 1), cb__labelTextProperty={"fontSize": 12}, interactive=False)
+
+###################################################################
+
+cp = [np.copy(slm_onetailed.P["pval"]["C"])]
+[np.place(x, np.logical_or(x > 0.05, ~mask), np.nan) for x in cp]
+
+plot_hemispheres(pial_left, pial_right, cp[0].T, color_bar=True, color_range=(0, 0.05),
+        label_text=["Cluster p-values"], cmap="autumn_r", embed_nb=True, size=(1400, 200), 
+        zoom=1.45, nan_color=(0.7, 0.7, 0.7, 1), cb__labelTextProperty={"fontSize": 12}, 
+        interactive=False)
 
 ###################################################################
 # Notice the additional clusters that we find when using a one-tailed test.
@@ -367,7 +413,22 @@ slm_mixed = SLM(
     two_tailed=False,
 )
 slm_mixed.fit(thickness)
-plot_slm_results(slm_mixed, True, True)
+
+###################################################################
+
+plot_hemispheres(pial_left, pial_right, slm_mixed.t, color_bar=True, color_range=(-4, 4),
+        label_text=["t-values"], cmap="viridis", embed_nb=True, size=(1400, 200), zoom=1.45,
+        nan_color=(0.7, 0.7, 0.7, 1), cb__labelTextProperty={"fontSize": 12}, interactive=False)
+
+###################################################################
+
+cp = [np.copy(slm_mixed.P["pval"]["C"])]
+[np.place(x, np.logical_or(x > 0.05, ~mask), np.nan) for x in cp]
+
+plot_hemispheres(pial_left, pial_right, cp[0].T, color_bar=True, color_range=(0, 0.05),
+        label_text=["Cluster p-values"], cmap="autumn_r", embed_nb=True, size=(1400, 200), 
+        zoom=1.45, nan_color=(0.7, 0.7, 0.7, 1), cb__labelTextProperty={"fontSize": 12}, 
+        interactive=False)
 
 #####################################################################
 # Compared to our first age model, we find fewer and smaller clusters,
