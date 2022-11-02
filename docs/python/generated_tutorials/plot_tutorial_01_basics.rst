@@ -1140,7 +1140,15 @@ next tutorial we'll show you how to use the context decoding module.
 
 .. rst-class:: sphx-glr-timing
 
+<<<<<<< HEAD
    **Total running time of the script:** ( 0 minutes  16.963 seconds)
+=======
+<<<<<<< HEAD
+   **Total running time of the script:** ( 0 minutes  29.270 seconds)
+=======
+   **Total running time of the script:** ( 0 minutes  28.835 seconds)
+>>>>>>> master
+>>>>>>> master
 
 
 .. _sphx_glr_download_python_generated_tutorials_plot_tutorial_01_basics.py:
