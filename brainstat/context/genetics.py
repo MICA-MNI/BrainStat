@@ -23,7 +23,7 @@ def surface_genetic_expression(
     surfaces: Optional[Union[str, Sequence[str]]] = None,
     space: Optional[str] = None,
     *,
-    atlas_info: str = None,
+    atlas_info: Optional[str] = None,
     ibf_threshold: float = 0.5,
     probe_selection: str = "diff_stability",
     donor_probes: str = "aggregate",

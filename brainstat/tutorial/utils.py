@@ -56,7 +56,7 @@ def fetch_mics_data(
 
 def fetch_abide_data(
     data_dir: Optional[Union[str, Path]] = None,
-    sites: Sequence[str] = None,
+    sites: Optional[Sequence[str]] = None,
     keep_control: bool = True,
     keep_patient: bool = True,
     overwrite: bool = False,
