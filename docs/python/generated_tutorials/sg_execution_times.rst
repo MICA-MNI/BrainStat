@@ -6,6 +6,14 @@
 Computation times
 =================
 <<<<<<< HEAD
+**09:20.576** total execution time for **python_generated_tutorials** files:
+
++----------------------------------------------------------------------------------------------------------+-----------+--------+
+| :ref:`sphx_glr_python_generated_tutorials_plot_tutorial_02_context.py` (``plot_tutorial_02_context.py``) | 08:50.506 | 0.0 MB |
++----------------------------------------------------------------------------------------------------------+-----------+--------+
+| :ref:`sphx_glr_python_generated_tutorials_plot_tutorial_01_basics.py` (``plot_tutorial_01_basics.py``)   | 00:30.070 | 0.0 MB |
+=======
+<<<<<<< HEAD
 **09:23.908** total execution time for **python_generated_tutorials** files:
 =======
 <<<<<<< HEAD
@@ -33,6 +41,7 @@ Computation times
 | :ref:`sphx_glr_python_generated_tutorials_plot_tutorial_01_basics.py` (``plot_tutorial_01_basics.py``)   | 00:16.963 | 0.0 MB |
 =======
 | :ref:`sphx_glr_python_generated_tutorials_plot_tutorial_01_basics.py` (``plot_tutorial_01_basics.py``)   | 00:28.835 | 0.0 MB |
+>>>>>>> master
 >>>>>>> master
 >>>>>>> master
 >>>>>>> master
