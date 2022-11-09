@@ -1079,7 +1079,23 @@ Happy BrainStating!
 
 .. rst-class:: sphx-glr-timing
 
+<<<<<<< HEAD
    **Total running time of the script:** ( 8 minutes  50.506 seconds)
+=======
+<<<<<<< HEAD
+   **Total running time of the script:** ( 8 minutes  54.343 seconds)
+=======
+<<<<<<< HEAD
+   **Total running time of the script:** ( 9 minutes  4.491 seconds)
+=======
+<<<<<<< HEAD
+   **Total running time of the script:** ( 8 minutes  50.424 seconds)
+=======
+   **Total running time of the script:** ( 8 minutes  26.894 seconds)
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
 
 
 .. _sphx_glr_download_python_generated_tutorials_plot_tutorial_02_context.py:
