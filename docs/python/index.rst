@@ -1,13 +1,11 @@
 .. _python_index:
 
+------------
 Python Index
-=============
+------------
 
-.. toctree::
-    :maxdepth: 1
-    :caption: Table of Contents:
+Python Tutorials
+================
 
-    generated_tutorials/index
-    api
-
-
+- :ref:`python_tutorial1`
+- :ref:`python_tutorial2`
