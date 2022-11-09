@@ -47,18 +47,30 @@ To this end, we will first load some sample data from the MICS dataset.
 .. GENERATED FROM PYTHON SOURCE LINES 18-20
 
 Lets have a look at the cortical thickness data. To do this,
-we will use the surface plotter included with BrainSpace. 
+we will use the surface plotter included with BrainSpace.
 
-.. GENERATED FROM PYTHON SOURCE LINES 20-27
+.. GENERATED FROM PYTHON SOURCE LINES 20-39
 
 .. code-block:: default
 
     import numpy as np
     from brainspace.plotting import plot_hemispheres
 
-    plot_hemispheres(pial_left, pial_right, np.mean(thickness, axis=0), color_bar=True, color_range=(1.5, 3.5),
-            label_text=["Cortical Thickness"], cmap="viridis", embed_nb=True, size=(1400, 200), zoom=1.45,
-            nan_color=(0.7, 0.7, 0.7, 1), cb__labelTextProperty={"fontSize": 12}, interactive=False)
+    plot_hemispheres(
+        pial_left,
+        pial_right,
+        np.mean(thickness, axis=0),
+        color_bar=True,
+        color_range=(1.5, 3.5),
+        label_text=["Cortical Thickness"],
+        cmap="viridis",
+        embed_nb=True,
+        size=(1400, 200),
+        zoom=1.45,
+        nan_color=(0.7, 0.7, 0.7, 1),
+        cb__labelTextProperty={"fontSize": 12},
+        interactive=False,
+    )
 
 
 
@@ -78,11 +90,11 @@ we will use the surface plotter included with BrainSpace.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 28-29
+.. GENERATED FROM PYTHON SOURCE LINES 40-41
 
 Lets also have a look at what's inside the demographics data.
 
-.. GENERATED FROM PYTHON SOURCE LINES 29-31
+.. GENERATED FROM PYTHON SOURCE LINES 41-43
 
 .. code-block:: default
 
@@ -114,13 +126,13 @@ Lets also have a look at what's inside the demographics data.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 32-35
+.. GENERATED FROM PYTHON SOURCE LINES 44-47
 
 Demographics contains four variables: a subject ID, a visit number (some
 subjects visited multiple times), their age at the time of scanning and their
 sex. Lets also print some summary statistics.
 
-.. GENERATED FROM PYTHON SOURCE LINES 35-47
+.. GENERATED FROM PYTHON SOURCE LINES 47-59
 
 .. code-block:: default
 
@@ -150,7 +162,7 @@ sex. Lets also print some summary statistics.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 48-57
+.. GENERATED FROM PYTHON SOURCE LINES 60-69
 
 Next, we will assess whether a subject's age is related to their cortical
 thickness. To this end we can create a linear model with BrainStat. For our
@@ -162,7 +174,7 @@ provide the data with pandas, as we do here, or we provide a numpy array and a
 name for the fixed effect. Lets set up the model Y = intercept + B1 * age. Note
 that BrainStat includes an intercept by default.
 
-.. GENERATED FROM PYTHON SOURCE LINES 57-63
+.. GENERATED FROM PYTHON SOURCE LINES 69-75
 
 .. code-block:: default
 
@@ -179,12 +191,12 @@ that BrainStat includes an intercept by default.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 64-66
+.. GENERATED FROM PYTHON SOURCE LINES 76-78
 
 As said before, if your data is not in a pandas DataFrame (e.g. numpy), you'll
 have to provide the name of the effect as an additional parameter as follows:
 
-.. GENERATED FROM PYTHON SOURCE LINES 66-68
+.. GENERATED FROM PYTHON SOURCE LINES 78-80
 
 .. code-block:: default
 
@@ -197,7 +209,7 @@ have to provide the name of the effect as an additional parameter as follows:
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 69-75
+.. GENERATED FROM PYTHON SOURCE LINES 81-87
 
 Lets have a look at one of these models. As you can see below, the model is
 stored in a format closely resembling a pandas DataFrame. Note that an
@@ -206,7 +218,7 @@ in the FixedEffect call, but we recommend leaving it enabled. We can also
 access the vectors related to each effect by their name i.e. model.intercept
 and model.AGE_AT_SCAN will return the vectors of the intercept and age, respectively.
 
-.. GENERATED FROM PYTHON SOURCE LINES 75-78
+.. GENERATED FROM PYTHON SOURCE LINES 87-90
 
 .. code-block:: default
 
@@ -239,7 +251,7 @@ and model.AGE_AT_SCAN will return the vectors of the intercept and age, respecti
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 79-84
+.. GENERATED FROM PYTHON SOURCE LINES 91-96
 
 Now, imagine we have some cortical marker (e.g. cortical thickness) for each
 subject, and we want to evaluate whether this marker is different across the
@@ -247,7 +259,7 @@ the lifespan. To do this, we can use the model we defined before, and a
 contrast in observations (here: age). Then we simply initialize an SLM model
 and fit it to the cortical thickness data.
 
-.. GENERATED FROM PYTHON SOURCE LINES 84-98
+.. GENERATED FROM PYTHON SOURCE LINES 96-110
 
 .. code-block:: default
 
@@ -272,7 +284,7 @@ and fit it to the cortical thickness data.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 99-107
+.. GENERATED FROM PYTHON SOURCE LINES 111-119
 
 Before we go any further, we can quickly assess the quality and
 robustness of the fitted model. We can do this for every vertex/parcel
@@ -283,7 +295,7 @@ theoretical quantile values from a normal distribution. We can also map
 vertexwise measures of skewness and kurtosis (characterizing the residuals
 distribution) across the cortex.
 
-.. GENERATED FROM PYTHON SOURCE LINES 107-108
+.. GENERATED FROM PYTHON SOURCE LINES 119-120
 
 .. code-block:: default
 
@@ -312,7 +324,7 @@ distribution) across the cortex.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 109-124
+.. GENERATED FROM PYTHON SOURCE LINES 121-136
 
 .. code-block:: default
 
@@ -349,20 +361,32 @@ distribution) across the cortex.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 125-128
+.. GENERATED FROM PYTHON SOURCE LINES 137-140
 
 The resulting model, slm_age, will contain the t-statistic map, p-values
 derived with the requested corrections, and a myriad of other properties (see
 the API for more details). Let's plot the t-values and p-values on the surface.
 
-.. GENERATED FROM PYTHON SOURCE LINES 128-133
+.. GENERATED FROM PYTHON SOURCE LINES 140-157
 
 .. code-block:: default
 
 
-    plot_hemispheres(pial_left, pial_right, slm_age.t, color_bar=True, color_range=(-4, 4),
-            label_text=["t-values"], cmap="viridis", embed_nb=True, size=(1400, 200), zoom=1.45,
-            nan_color=(0.7, 0.7, 0.7, 1), cb__labelTextProperty={"fontSize": 12}, interactive=False)
+    plot_hemispheres(
+        pial_left,
+        pial_right,
+        slm_age.t,
+        color_bar=True,
+        color_range=(-4, 4),
+        label_text=["t-values"],
+        cmap="viridis",
+        embed_nb=True,
+        size=(1400, 200),
+        zoom=1.45,
+        nan_color=(0.7, 0.7, 0.7, 1),
+        cb__labelTextProperty={"fontSize": 12},
+        interactive=False,
+    )
 
 
 
@@ -382,7 +406,7 @@ the API for more details). Let's plot the t-values and p-values on the surface.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 134-151
+.. GENERATED FROM PYTHON SOURCE LINES 158-186
 
 .. code-block:: default
 
@@ -398,10 +422,21 @@ the API for more details). Let's plot the t-values and p-values on the surface.
 
     vals = np.vstack([cp[0].T, pp[0].T, qp[0].T])
 
-    plot_hemispheres(pial_left, pial_right, vals, color_bar=True, color_range=(0, 0.05),
-            label_text=["Cluster p-values", "Peak p-values", "Vertex p-values"], cmap="autumn_r", 
-            embed_nb=True, size=(1400, 400), zoom=1.8, nan_color=(0.7, 0.7, 0.7, 1), 
-            cb__labelTextProperty={"fontSize": 12}, interactive=False)
+    plot_hemispheres(
+        pial_left,
+        pial_right,
+        vals,
+        color_bar=True,
+        color_range=(0, 0.05),
+        label_text=["Cluster p-values", "Peak p-values", "Vertex p-values"],
+        cmap="autumn_r",
+        embed_nb=True,
+        size=(1400, 400),
+        zoom=1.8,
+        nan_color=(0.7, 0.7, 0.7, 1),
+        cb__labelTextProperty={"fontSize": 12},
+        interactive=False,
+    )
 
 
 
@@ -421,7 +456,7 @@ the API for more details). Let's plot the t-values and p-values on the surface.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 152-164
+.. GENERATED FROM PYTHON SOURCE LINES 187-199
 
 Only clusters are significant, and not peaks. This suggests that the age
 effect covers large regions, rather than local foci. Furthermore, at the
@@ -436,7 +471,7 @@ single table is returned. Lets print the first 15 rows of the inverted
 contrast cluster table.
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 164-167
+.. GENERATED FROM PYTHON SOURCE LINES 199-202
 
 .. code-block:: default
 
@@ -469,13 +504,13 @@ contrast cluster table.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 168-171
+.. GENERATED FROM PYTHON SOURCE LINES 203-206
 
 Here, we see that cluster 1 contains 373 vertices. Clusters are sorted by
 p-value; later clusters will generally be smaller and have higher p-values.
 Lets now have a look at the peaks within these clusters.
 
-.. GENERATED FROM PYTHON SOURCE LINES 171-174
+.. GENERATED FROM PYTHON SOURCE LINES 206-209
 
 .. code-block:: default
 
@@ -508,7 +543,7 @@ Lets now have a look at the peaks within these clusters.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 175-181
+.. GENERATED FROM PYTHON SOURCE LINES 210-216
 
 Within cluster 1, we are able to detect several peaks. The peak with the
 highest t-statistic (t=4.3972) occurs at vertex 19629, which is inside the
@@ -517,14 +552,14 @@ network membership is only provided if the surface is specified as a template
 name as we did here. For custom surfaces, or pre-loaded surfaces (as we will
 use below) this column is omitted.
 
-.. GENERATED FROM PYTHON SOURCE LINES 183-187
+.. GENERATED FROM PYTHON SOURCE LINES 218-222
 
 Interaction effects models
 ----------------------------
 
 Similarly to age, we can also test for the effect of sex on cortical thickness.
 
-.. GENERATED FROM PYTHON SOURCE LINES 187-194
+.. GENERATED FROM PYTHON SOURCE LINES 222-229
 
 .. code-block:: default
 
@@ -542,11 +577,11 @@ Similarly to age, we can also test for the effect of sex on cortical thickness.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 195-196
+.. GENERATED FROM PYTHON SOURCE LINES 230-231
 
 Next we will rerun the model and see if our results change.
 
-.. GENERATED FROM PYTHON SOURCE LINES 196-208
+.. GENERATED FROM PYTHON SOURCE LINES 231-243
 
 .. code-block:: default
 
@@ -569,14 +604,26 @@ Next we will rerun the model and see if our results change.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 209-214
+.. GENERATED FROM PYTHON SOURCE LINES 244-261
 
 .. code-block:: default
 
 
-    plot_hemispheres(pial_left, pial_right, slm_sex.t, color_bar=True, color_range=(-4, 4),
-            label_text=["t-values"], cmap="viridis", embed_nb=True, size=(1400, 200), zoom=1.45,
-            nan_color=(0.7, 0.7, 0.7, 1), cb__labelTextProperty={"fontSize": 12}, interactive=False)
+    plot_hemispheres(
+        pial_left,
+        pial_right,
+        slm_sex.t,
+        color_bar=True,
+        color_range=(-4, 4),
+        label_text=["t-values"],
+        cmap="viridis",
+        embed_nb=True,
+        size=(1400, 200),
+        zoom=1.45,
+        nan_color=(0.7, 0.7, 0.7, 1),
+        cb__labelTextProperty={"fontSize": 12},
+        interactive=False,
+    )
 
 
 
@@ -596,7 +643,7 @@ Next we will rerun the model and see if our results change.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 215-224
+.. GENERATED FROM PYTHON SOURCE LINES 262-282
 
 .. code-block:: default
 
@@ -604,10 +651,21 @@ Next we will rerun the model and see if our results change.
     cp = [np.copy(slm_sex.P["pval"]["C"])]
     [np.place(x, np.logical_or(x > 0.05, ~mask), np.nan) for x in cp]
 
-    plot_hemispheres(pial_left, pial_right, cp[0].T, color_bar=True, color_range=(0, 0.05),
-            label_text=["Cluster p-values"], cmap="autumn_r", embed_nb=True, size=(1400, 200), 
-            zoom=1.45, nan_color=(0.7, 0.7, 0.7, 1), cb__labelTextProperty={"fontSize": 12}, 
-            interactive=False)
+    plot_hemispheres(
+        pial_left,
+        pial_right,
+        cp[0].T,
+        color_bar=True,
+        color_range=(0, 0.05),
+        label_text=["Cluster p-values"],
+        cmap="autumn_r",
+        embed_nb=True,
+        size=(1400, 200),
+        zoom=1.45,
+        nan_color=(0.7, 0.7, 0.7, 1),
+        cb__labelTextProperty={"fontSize": 12},
+        interactive=False,
+    )
 
 
 
@@ -627,14 +685,14 @@ Next we will rerun the model and see if our results change.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 225-229
+.. GENERATED FROM PYTHON SOURCE LINES 283-287
 
 Here, we find few significant effects of sex on cortical thickness. However, as
 we've already established, age has an effect on cortical thickness. So we may
 want to correct for this effect before evaluating whether sex has an effect on
 cortical thickenss. Lets make a new model that includes the effect of age.
 
-.. GENERATED FROM PYTHON SOURCE LINES 229-232
+.. GENERATED FROM PYTHON SOURCE LINES 287-290
 
 .. code-block:: default
 
@@ -648,11 +706,11 @@ cortical thickenss. Lets make a new model that includes the effect of age.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 233-234
+.. GENERATED FROM PYTHON SOURCE LINES 291-292
 
 Next we will rerrun the model and see if our results change.
 
-.. GENERATED FROM PYTHON SOURCE LINES 234-246
+.. GENERATED FROM PYTHON SOURCE LINES 292-304
 
 .. code-block:: default
 
@@ -675,14 +733,26 @@ Next we will rerrun the model and see if our results change.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 247-252
+.. GENERATED FROM PYTHON SOURCE LINES 305-322
 
 .. code-block:: default
 
 
-    plot_hemispheres(pial_left, pial_right, slm_sexage.t, color_bar=True, color_range=(-4, 4),
-            label_text=["t-values"], cmap="viridis", embed_nb=True, size=(1400, 200), zoom=1.45,
-            nan_color=(0.7, 0.7, 0.7, 1), cb__labelTextProperty={"fontSize": 12}, interactive=False)
+    plot_hemispheres(
+        pial_left,
+        pial_right,
+        slm_sexage.t,
+        color_bar=True,
+        color_range=(-4, 4),
+        label_text=["t-values"],
+        cmap="viridis",
+        embed_nb=True,
+        size=(1400, 200),
+        zoom=1.45,
+        nan_color=(0.7, 0.7, 0.7, 1),
+        cb__labelTextProperty={"fontSize": 12},
+        interactive=False,
+    )
 
 
 
@@ -702,7 +772,7 @@ Next we will rerrun the model and see if our results change.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 253-262
+.. GENERATED FROM PYTHON SOURCE LINES 323-343
 
 .. code-block:: default
 
@@ -710,10 +780,21 @@ Next we will rerrun the model and see if our results change.
     cp = [np.copy(slm_sexage.P["pval"]["C"])]
     [np.place(x, np.logical_or(x > 0.05, ~mask), np.nan) for x in cp]
 
-    plot_hemispheres(pial_left, pial_right, cp[0].T, color_bar=True, color_range=(0, 0.05),
-            label_text=["Cluster p-values"], cmap="autumn_r", embed_nb=True, size=(1400, 200), 
-            zoom=1.45, nan_color=(0.7, 0.7, 0.7, 1), cb__labelTextProperty={"fontSize": 12}, 
-            interactive=False)
+    plot_hemispheres(
+        pial_left,
+        pial_right,
+        cp[0].T,
+        color_bar=True,
+        color_range=(0, 0.05),
+        label_text=["Cluster p-values"],
+        cmap="autumn_r",
+        embed_nb=True,
+        size=(1400, 200),
+        zoom=1.45,
+        nan_color=(0.7, 0.7, 0.7, 1),
+        cb__labelTextProperty={"fontSize": 12},
+        interactive=False,
+    )
 
 
 
@@ -733,7 +814,7 @@ Next we will rerrun the model and see if our results change.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 263-268
+.. GENERATED FROM PYTHON SOURCE LINES 344-349
 
 After accounting for the effect of age, we still find only one significant
 cluster of effect of sex on cortical thickness. However, it could be that age
@@ -741,7 +822,7 @@ affects men and women differently. To account for this, we could include an
 interaction effect into the model. Lets run the model again with an
 interaction effect.
 
-.. GENERATED FROM PYTHON SOURCE LINES 268-282
+.. GENERATED FROM PYTHON SOURCE LINES 349-363
 
 .. code-block:: default
 
@@ -766,14 +847,26 @@ interaction effect.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 283-288
+.. GENERATED FROM PYTHON SOURCE LINES 364-381
 
 .. code-block:: default
 
 
-    plot_hemispheres(pial_left, pial_right, slm_sexage_int.t, color_bar=True, color_range=(-4, 4),
-            label_text=["t-values"], cmap="viridis", embed_nb=True, size=(1400, 200), zoom=1.45,
-            nan_color=(0.7, 0.7, 0.7, 1), cb__labelTextProperty={"fontSize": 12}, interactive=False)
+    plot_hemispheres(
+        pial_left,
+        pial_right,
+        slm_sexage_int.t,
+        color_bar=True,
+        color_range=(-4, 4),
+        label_text=["t-values"],
+        cmap="viridis",
+        embed_nb=True,
+        size=(1400, 200),
+        zoom=1.45,
+        nan_color=(0.7, 0.7, 0.7, 1),
+        cb__labelTextProperty={"fontSize": 12},
+        interactive=False,
+    )
 
 
 
@@ -793,7 +886,7 @@ interaction effect.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 289-298
+.. GENERATED FROM PYTHON SOURCE LINES 382-402
 
 .. code-block:: default
 
@@ -801,10 +894,21 @@ interaction effect.
     cp = [np.copy(slm_sexage_int.P["pval"]["C"])]
     [np.place(x, np.logical_or(x > 0.05, ~mask), np.nan) for x in cp]
 
-    plot_hemispheres(pial_left, pial_right, cp[0].T, color_bar=True, color_range=(0, 0.05),
-            label_text=["Cluster p-values"], cmap="autumn_r", embed_nb=True, size=(1400, 200), 
-            zoom=1.45, nan_color=(0.7, 0.7, 0.7, 1), cb__labelTextProperty={"fontSize": 12}, 
-            interactive=False)
+    plot_hemispheres(
+        pial_left,
+        pial_right,
+        cp[0].T,
+        color_bar=True,
+        color_range=(0, 0.05),
+        label_text=["Cluster p-values"],
+        cmap="autumn_r",
+        embed_nb=True,
+        size=(1400, 200),
+        zoom=1.45,
+        nan_color=(0.7, 0.7, 0.7, 1),
+        cb__labelTextProperty={"fontSize": 12},
+        interactive=False,
+    )
 
 
 
@@ -824,7 +928,7 @@ interaction effect.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 299-304
+.. GENERATED FROM PYTHON SOURCE LINES 403-408
 
 After including the interaction effect, we no significant effects of
 sex on cortical thickness in several clusters.
@@ -832,7 +936,7 @@ sex on cortical thickness in several clusters.
 We could also look at whether the cortex of men and women changes
 differently with age by comparing their interaction effects.
 
-.. GENERATED FROM PYTHON SOURCE LINES 304-320
+.. GENERATED FROM PYTHON SOURCE LINES 408-424
 
 .. code-block:: default
 
@@ -859,14 +963,26 @@ differently with age by comparing their interaction effects.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 321-326
+.. GENERATED FROM PYTHON SOURCE LINES 425-442
 
 .. code-block:: default
 
 
-    plot_hemispheres(pial_left, pial_right, slm_sex_int.t, color_bar=True, color_range=(-4, 4),
-            label_text=["t-values"], cmap="viridis", embed_nb=True, size=(1400, 200), zoom=1.45,
-            nan_color=(0.7, 0.7, 0.7, 1), cb__labelTextProperty={"fontSize": 12}, interactive=False)
+    plot_hemispheres(
+        pial_left,
+        pial_right,
+        slm_sex_int.t,
+        color_bar=True,
+        color_range=(-4, 4),
+        label_text=["t-values"],
+        cmap="viridis",
+        embed_nb=True,
+        size=(1400, 200),
+        zoom=1.45,
+        nan_color=(0.7, 0.7, 0.7, 1),
+        cb__labelTextProperty={"fontSize": 12},
+        interactive=False,
+    )
 
 
 
@@ -886,7 +1002,7 @@ differently with age by comparing their interaction effects.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 327-336
+.. GENERATED FROM PYTHON SOURCE LINES 443-463
 
 .. code-block:: default
 
@@ -894,10 +1010,21 @@ differently with age by comparing their interaction effects.
     cp = [np.copy(slm_sex_int.P["pval"]["C"])]
     [np.place(x, np.logical_or(x > 0.05, ~mask), np.nan) for x in cp]
 
-    plot_hemispheres(pial_left, pial_right, cp[0].T, color_bar=True, color_range=(0, 0.05),
-            label_text=["Cluster p-values"], cmap="autumn_r", embed_nb=True, size=(1400, 200), 
-            zoom=1.45, nan_color=(0.7, 0.7, 0.7, 1), cb__labelTextProperty={"fontSize": 12}, 
-            interactive=False)
+    plot_hemispheres(
+        pial_left,
+        pial_right,
+        cp[0].T,
+        color_bar=True,
+        color_range=(0, 0.05),
+        label_text=["Cluster p-values"],
+        cmap="autumn_r",
+        embed_nb=True,
+        size=(1400, 200),
+        zoom=1.45,
+        nan_color=(0.7, 0.7, 0.7, 1),
+        cb__labelTextProperty={"fontSize": 12},
+        interactive=False,
+    )
 
 
 
@@ -917,17 +1044,17 @@ differently with age by comparing their interaction effects.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 337-339
+.. GENERATED FROM PYTHON SOURCE LINES 464-466
 
 Indeed, it appears that the interaction effect between sex and age is quite
 different across men and women, with stronger effects occuring in women.
 
-.. GENERATED FROM PYTHON SOURCE LINES 341-343
+.. GENERATED FROM PYTHON SOURCE LINES 468-470
 
 One-tailed Test
 -----------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 345-355
+.. GENERATED FROM PYTHON SOURCE LINES 472-482
 
 Imagine that, based on prior research, we hypothesize that men have higher
 cortical thickness than women. In that case, we could run this same model with
@@ -940,7 +1067,7 @@ of the contrast. We may hypothesize based on prior research that cortical
 thickness decreases with age, so we could specify this as follows. Note the
 minus in front of contrast_age to test for decreasing thickness with age.
 
-.. GENERATED FROM PYTHON SOURCE LINES 355-369
+.. GENERATED FROM PYTHON SOURCE LINES 482-496
 
 .. code-block:: default
 
@@ -965,14 +1092,26 @@ minus in front of contrast_age to test for decreasing thickness with age.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 370-375
+.. GENERATED FROM PYTHON SOURCE LINES 497-514
 
 .. code-block:: default
 
 
-    plot_hemispheres(pial_left, pial_right, slm_onetailed.t, color_bar=True, color_range=(-4, 4),
-            label_text=["t-values"], cmap="viridis", embed_nb=True, size=(1400, 200), zoom=1.45,
-            nan_color=(0.7, 0.7, 0.7, 1), cb__labelTextProperty={"fontSize": 12}, interactive=False)
+    plot_hemispheres(
+        pial_left,
+        pial_right,
+        slm_onetailed.t,
+        color_bar=True,
+        color_range=(-4, 4),
+        label_text=["t-values"],
+        cmap="viridis",
+        embed_nb=True,
+        size=(1400, 200),
+        zoom=1.45,
+        nan_color=(0.7, 0.7, 0.7, 1),
+        cb__labelTextProperty={"fontSize": 12},
+        interactive=False,
+    )
 
 
 
@@ -992,7 +1131,7 @@ minus in front of contrast_age to test for decreasing thickness with age.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 376-385
+.. GENERATED FROM PYTHON SOURCE LINES 515-535
 
 .. code-block:: default
 
@@ -1000,10 +1139,21 @@ minus in front of contrast_age to test for decreasing thickness with age.
     cp = [np.copy(slm_onetailed.P["pval"]["C"])]
     [np.place(x, np.logical_or(x > 0.05, ~mask), np.nan) for x in cp]
 
-    plot_hemispheres(pial_left, pial_right, cp[0].T, color_bar=True, color_range=(0, 0.05),
-            label_text=["Cluster p-values"], cmap="autumn_r", embed_nb=True, size=(1400, 200), 
-            zoom=1.45, nan_color=(0.7, 0.7, 0.7, 1), cb__labelTextProperty={"fontSize": 12}, 
-            interactive=False)
+    plot_hemispheres(
+        pial_left,
+        pial_right,
+        cp[0].T,
+        color_bar=True,
+        color_range=(0, 0.05),
+        label_text=["Cluster p-values"],
+        cmap="autumn_r",
+        embed_nb=True,
+        size=(1400, 200),
+        zoom=1.45,
+        nan_color=(0.7, 0.7, 0.7, 1),
+        cb__labelTextProperty={"fontSize": 12},
+        interactive=False,
+    )
 
 
 
@@ -1023,16 +1173,16 @@ minus in front of contrast_age to test for decreasing thickness with age.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 386-387
+.. GENERATED FROM PYTHON SOURCE LINES 536-537
 
 Notice the additional clusters that we find when using a one-tailed test.
 
-.. GENERATED FROM PYTHON SOURCE LINES 389-391
+.. GENERATED FROM PYTHON SOURCE LINES 539-541
 
 Mixed Effects Models
 --------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 393-398
+.. GENERATED FROM PYTHON SOURCE LINES 543-548
 
 So far, we've considered multiple visits of the same subject as two separate,
 independent measurements. Clearly, however, such measurements are not
@@ -1040,7 +1190,7 @@ independent of each other. To account for this, we could add subject ID as a
 random effect. Lets do this and test the effect of age on cortical thickness
 again.
 
-.. GENERATED FROM PYTHON SOURCE LINES 398-417
+.. GENERATED FROM PYTHON SOURCE LINES 548-567
 
 .. code-block:: default
 
@@ -1070,14 +1220,26 @@ again.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 418-423
+.. GENERATED FROM PYTHON SOURCE LINES 568-585
 
 .. code-block:: default
 
 
-    plot_hemispheres(pial_left, pial_right, slm_mixed.t, color_bar=True, color_range=(-4, 4),
-            label_text=["t-values"], cmap="viridis", embed_nb=True, size=(1400, 200), zoom=1.45,
-            nan_color=(0.7, 0.7, 0.7, 1), cb__labelTextProperty={"fontSize": 12}, interactive=False)
+    plot_hemispheres(
+        pial_left,
+        pial_right,
+        slm_mixed.t,
+        color_bar=True,
+        color_range=(-4, 4),
+        label_text=["t-values"],
+        cmap="viridis",
+        embed_nb=True,
+        size=(1400, 200),
+        zoom=1.45,
+        nan_color=(0.7, 0.7, 0.7, 1),
+        cb__labelTextProperty={"fontSize": 12},
+        interactive=False,
+    )
 
 
 
@@ -1097,7 +1259,7 @@ again.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 424-433
+.. GENERATED FROM PYTHON SOURCE LINES 586-606
 
 .. code-block:: default
 
@@ -1105,10 +1267,21 @@ again.
     cp = [np.copy(slm_mixed.P["pval"]["C"])]
     [np.place(x, np.logical_or(x > 0.05, ~mask), np.nan) for x in cp]
 
-    plot_hemispheres(pial_left, pial_right, cp[0].T, color_bar=True, color_range=(0, 0.05),
-            label_text=["Cluster p-values"], cmap="autumn_r", embed_nb=True, size=(1400, 200), 
-            zoom=1.45, nan_color=(0.7, 0.7, 0.7, 1), cb__labelTextProperty={"fontSize": 12}, 
-            interactive=False)
+    plot_hemispheres(
+        pial_left,
+        pial_right,
+        cp[0].T,
+        color_bar=True,
+        color_range=(0, 0.05),
+        label_text=["Cluster p-values"],
+        cmap="autumn_r",
+        embed_nb=True,
+        size=(1400, 200),
+        zoom=1.45,
+        nan_color=(0.7, 0.7, 0.7, 1),
+        cb__labelTextProperty={"fontSize": 12},
+        interactive=False,
+    )
 
 
 
@@ -1128,7 +1301,7 @@ again.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 434-440
+.. GENERATED FROM PYTHON SOURCE LINES 607-613
 
 Compared to our first age model, we find fewer and smaller clusters,
 indicating that by not accounting for the repeated measures structure of the
@@ -1140,15 +1313,7 @@ next tutorial we'll show you how to use the context decoding module.
 
 .. rst-class:: sphx-glr-timing
 
-<<<<<<< HEAD
-   **Total running time of the script:** ( 0 minutes  16.963 seconds)
-=======
-<<<<<<< HEAD
-   **Total running time of the script:** ( 0 minutes  29.270 seconds)
-=======
-   **Total running time of the script:** ( 0 minutes  28.835 seconds)
->>>>>>> master
->>>>>>> master
+   **Total running time of the script:** ( 0 minutes  29.565 seconds)
 
 
 .. _sphx_glr_download_python_generated_tutorials_plot_tutorial_01_basics.py:
