@@ -122,7 +122,7 @@ intersphinx_mapping = {
 autodoc_typehints = "none"
 
 # Autosummary settings
-autosummary_generate = True
+autosummary_generate = False
 
 # MATLAB documentation settings
 this_dir = os.path.dirname(os.path.abspath(__file__))
