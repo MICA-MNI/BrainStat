@@ -118,63 +118,6 @@ minutes.
    :class: sphx-glr-single-img
 
 
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-    /Users/saratheriver/opt/anaconda3/envs/bs/lib/python3.8/site-packages/abagen/probes_.py:66: FutureWarning:
-
-    In a future version, `df.iloc[:, i] = newvals` will attempt to set the values inplace instead of always setting a new array. To retain the old behavior, use either `df[df.columns[i]] = newvals` or, if columns are non-unique, `df.isetitem(i, newvals)`
-
-    /Users/saratheriver/opt/anaconda3/envs/bs/lib/python3.8/site-packages/abagen/probes_.py:757: FutureWarning:
-
-    DataFrame.set_axis 'inplace' keyword is deprecated and will be removed in a future version. Use `obj = obj.set_axis(..., copy=False)` instead
-
-    /Users/saratheriver/opt/anaconda3/envs/bs/lib/python3.8/site-packages/abagen/probes_.py:757: FutureWarning:
-
-    DataFrame.set_axis 'inplace' keyword is deprecated and will be removed in a future version. Use `obj = obj.set_axis(..., copy=False)` instead
-
-    /Users/saratheriver/opt/anaconda3/envs/bs/lib/python3.8/site-packages/abagen/probes_.py:757: FutureWarning:
-
-    DataFrame.set_axis 'inplace' keyword is deprecated and will be removed in a future version. Use `obj = obj.set_axis(..., copy=False)` instead
-
-    /Users/saratheriver/opt/anaconda3/envs/bs/lib/python3.8/site-packages/abagen/probes_.py:757: FutureWarning:
-
-    DataFrame.set_axis 'inplace' keyword is deprecated and will be removed in a future version. Use `obj = obj.set_axis(..., copy=False)` instead
-
-    /Users/saratheriver/opt/anaconda3/envs/bs/lib/python3.8/site-packages/abagen/probes_.py:757: FutureWarning:
-
-    DataFrame.set_axis 'inplace' keyword is deprecated and will be removed in a future version. Use `obj = obj.set_axis(..., copy=False)` instead
-
-    /Users/saratheriver/opt/anaconda3/envs/bs/lib/python3.8/site-packages/abagen/probes_.py:757: FutureWarning:
-
-    DataFrame.set_axis 'inplace' keyword is deprecated and will be removed in a future version. Use `obj = obj.set_axis(..., copy=False)` instead
-
-    /Users/saratheriver/opt/anaconda3/envs/bs/lib/python3.8/site-packages/abagen/samples_.py:404: FutureWarning:
-
-    The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
-
-    /Users/saratheriver/opt/anaconda3/envs/bs/lib/python3.8/site-packages/abagen/samples_.py:404: FutureWarning:
-
-    The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
-
-    /Users/saratheriver/opt/anaconda3/envs/bs/lib/python3.8/site-packages/abagen/samples_.py:404: FutureWarning:
-
-    The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
-
-    /Users/saratheriver/opt/anaconda3/envs/bs/lib/python3.8/site-packages/abagen/samples_.py:404: FutureWarning:
-
-    The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
-
-    /Users/saratheriver/opt/anaconda3/envs/bs/lib/python3.8/site-packages/abagen/samples_.py:404: FutureWarning:
-
-    The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
-
-    /Users/saratheriver/opt/anaconda3/envs/bs/lib/python3.8/site-packages/abagen/samples_.py:404: FutureWarning:
-
-    The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
-
-
 
 
 
@@ -494,7 +437,7 @@ gradients, and correlate the first gradient with our t-statistic map.
 
     /Users/saratheriver/Desktop/BrainStat/brainstat/context/histology.py:105: RuntimeWarning:
 
-    divide by zero encountered in divide
+    divide by zero encountered in true_divide
 
     /Users/saratheriver/Desktop/BrainStat/brainstat/context/histology.py:105: RuntimeWarning:
 
@@ -1039,15 +982,11 @@ nilearn. In the example below, we decode task-fmri results from nilearn
 
  .. code-block:: none
 
-    /Users/saratheriver/opt/anaconda3/envs/bs/lib/python3.8/site-packages/nilearn/glm/__init__.py:55: FutureWarning:
+    /Users/saratheriver/opt/anaconda3/envs/bsreal/lib/python3.7/site-packages/nilearn/glm/__init__.py:56: FutureWarning:
 
     The nilearn.glm module is experimental. It may change in any future release of Nilearn.
 
-    /Users/saratheriver/opt/anaconda3/envs/bs/lib/python3.8/site-packages/nilearn/glm/first_level/first_level.py:940: UserWarning:
-
-    SliceTimingRef not found in file /Users/saratheriver/nilearn_data/fMRI-language-localizer-demo-dataset/derivatives/sub-01/func/sub-01_task-languagelocalizer_desc-preproc_bold.json. It will be assumed that the slice timing reference is 0.0 percent of the repetition time. If it is not the case it will need to be set manually in the generated list of models
-
-    /Users/saratheriver/opt/anaconda3/envs/bs/lib/python3.8/site-packages/nilearn/glm/first_level/first_level.py:940: UserWarning:
+    /Users/saratheriver/opt/anaconda3/envs/bsreal/lib/python3.7/site-packages/nilearn/glm/first_level/first_level.py:944: UserWarning:
 
     SliceTimingRef not found in file /Users/saratheriver/nilearn_data/fMRI-language-localizer-demo-dataset/derivatives/sub-01/func/sub-01_task-languagelocalizer_desc-preproc_bold.json. It will be assumed that the slice timing reference is 0.0 percent of the repetition time. If it is not the case it will need to be set manually in the generated list of models
 
@@ -1079,7 +1018,19 @@ Happy BrainStating!
 
 .. rst-class:: sphx-glr-timing
 
+<<<<<<< HEAD
    **Total running time of the script:** ( 8 minutes  54.343 seconds)
+=======
+<<<<<<< HEAD
+   **Total running time of the script:** ( 9 minutes  4.491 seconds)
+=======
+<<<<<<< HEAD
+   **Total running time of the script:** ( 8 minutes  50.424 seconds)
+=======
+   **Total running time of the script:** ( 8 minutes  26.894 seconds)
+>>>>>>> master
+>>>>>>> master
+>>>>>>> master
 
 
 .. _sphx_glr_download_python_generated_tutorials_plot_tutorial_02_context.py:
