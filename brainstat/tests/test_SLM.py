@@ -123,6 +123,7 @@ def dummy_test(infile, expfile):
 
     assert all(flag == True for (flag) in testout)
 
+
 """
 def dummy_test2(thickness, demographics):
 
@@ -156,6 +157,7 @@ def test_run_all(test_number):
 thickness, demographics = fetch_mics_data()
 dummy_test2(thickness, demographics)
 """
+
 
 @pytest.mark.skipif(
     sys.platform.startswith("win"), reason="Template flow has issues on windows."
