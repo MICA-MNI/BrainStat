@@ -123,7 +123,7 @@ def dummy_test(infile, expfile):
 
     assert all(flag == True for (flag) in testout)
 
-
+"""
 def dummy_test2(thickness, demographics):
 
     # load input test data
@@ -138,7 +138,7 @@ def dummy_test2(thickness, demographics):
         cluster_threshold=0.01,
     )
     slm_age.fit(thickness)
-
+"""
 
 expected_number_of_tests = 22
 parametrize = pytest.mark.parametrize
@@ -151,10 +151,11 @@ def test_run_all(test_number):
     dummy_test(infile, expfile)
 
 
+"""
 # Test against scikit learn
 thickness, demographics = fetch_mics_data()
 dummy_test2(thickness, demographics)
-
+"""
 
 @pytest.mark.skipif(
     sys.platform.startswith("win"), reason="Template flow has issues on windows."
