@@ -123,6 +123,7 @@ def dummy_test(infile, expfile):
 
     assert all(flag == True for (flag) in testout)
 
+
 def dummy_test2(thickness, demographics):
 
     # load input test data
@@ -148,6 +149,7 @@ def test_run_all(test_number):
     infile = datadir("slm_" + f"{test_number:02d}" + "_IN.pkl")
     expfile = datadir("slm_" + f"{test_number:02d}" + "_OUT.pkl")
     dummy_test(infile, expfile)
+
 
 # Test against scikit learn
 thickness, demographics = fetch_mics_data()
