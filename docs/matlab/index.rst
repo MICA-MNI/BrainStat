@@ -22,6 +22,9 @@ MATLAB API
 ==========
 
 Below are links to descriptions of the important MATLAB functions used in BrainStat.
+The API for the surface visualization function ``plot_hemispheres`` can be found 
+`here <https://brainspace.readthedocs.io/en/latest/pages/matlab_doc/visualization/plot_hemispheres.html>`_.
+
 
 Statistics
 ----------

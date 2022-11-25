@@ -11,6 +11,7 @@ import templateflow.api as tflow
 from brainstat.stats.SLM import SLM, _onetailed_to_twotailed
 from brainstat.stats.terms import FixedEffect, MixedEffect
 from brainstat.tests.testutil import datadir
+from brainstat.tutorial.utils import fetch_mics_data
 
 
 def recursive_comparison(X1, X2):
@@ -122,6 +123,21 @@ def dummy_test(infile, expfile):
 
     assert all(flag == True for (flag) in testout)
 
+def dummy_test2(thickness, demographics):
+
+    # load input test data
+    term_age = FixedEffect(demographics.AGE_AT_SCAN)
+    model = term_age
+    slm_age = SLM(
+        model,
+        contrast_age,
+        surf="fsaverage5",
+        mask=mask,
+        correction=["fdr", "rft"],
+        cluster_threshold=0.01,
+    )
+    slm_age.fit(thickness)
+
 
 expected_number_of_tests = 22
 parametrize = pytest.mark.parametrize
@@ -132,6 +148,10 @@ def test_run_all(test_number):
     infile = datadir("slm_" + f"{test_number:02d}" + "_IN.pkl")
     expfile = datadir("slm_" + f"{test_number:02d}" + "_OUT.pkl")
     dummy_test(infile, expfile)
+
+# Test against scikit learn
+thickness, demographics = fetch_mics_data()
+dummy_test2(thickness, demographics)
 
 
 @pytest.mark.skipif(
