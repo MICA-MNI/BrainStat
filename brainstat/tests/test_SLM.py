@@ -144,7 +144,7 @@ def dummy_test2():
 
     # Compare
     comp2 = np.allclose(
-        np.squeeze(model.coef_), slm_age.coef[1, :], rtol=1e-05, equal_nan=True
+        np.squeeze(model_age.coef_), slm_age.coef[1, :], rtol=1e-05, equal_nan=True
     )
 
     assert comp2 == True
@@ -162,7 +162,6 @@ def test_run_all(test_number):
 
 
 # Test against scikit learn
-thickness, demographics = fetch_mics_data()
 dummy_test2()
 
 
