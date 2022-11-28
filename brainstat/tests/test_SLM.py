@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 import pytest
 import templateflow.api as tflow
+from sklearn.linear_model import LinearRegression
 
 from brainstat.stats.SLM import SLM, _onetailed_to_twotailed
 from brainstat.stats.terms import FixedEffect, MixedEffect
@@ -124,22 +125,30 @@ def dummy_test(infile, expfile):
     assert all(flag == True for (flag) in testout)
 
 
-"""
-def dummy_test2(thickness, demographics):
+def dummy_test2():
 
-    # load input test data
+    # BrainStat
+    thickness, demographics = fetch_mics_data()
     term_age = FixedEffect(demographics.AGE_AT_SCAN)
     model = term_age
     slm_age = SLM(
         model,
-        contrast_age,
+        np.ones(thickness.shape[0]),
         surf="fsaverage5",
-        mask=mask,
-        correction=["fdr", "rft"],
-        cluster_threshold=0.01,
     )
     slm_age.fit(thickness)
-"""
+
+    # Scikit Learn
+    model_age = LinearRegression()
+    model_age.fit(demographics.AGE_AT_SCAN.to_numpy().reshape(-1, 1), thickness)
+
+    # Compare
+    comp2 = np.allclose(
+        np.squeeze(model_age.coef_), slm_age.coef[1, :], rtol=1e-05, equal_nan=True
+    )
+
+    assert comp2 == True
+
 
 expected_number_of_tests = 22
 parametrize = pytest.mark.parametrize
@@ -152,11 +161,8 @@ def test_run_all(test_number):
     dummy_test(infile, expfile)
 
 
-"""
 # Test against scikit learn
-thickness, demographics = fetch_mics_data()
-dummy_test2(thickness, demographics)
-"""
+dummy_test2()
 
 
 @pytest.mark.skipif(
