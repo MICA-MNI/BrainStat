@@ -13,7 +13,7 @@ from brainspace.mesh.mesh_elements import get_cells, get_points
 from brainspace.mesh.mesh_io import read_surface
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 from nilearn.datasets import load_mni152_brain_mask
-from scipy.interpolate.ndgriddata import LinearNDInterpolator, NearestNDInterpolator
+from scipy.interpolate import LinearNDInterpolator, NearestNDInterpolator
 from scipy.spatial import cKDTree
 
 from brainstat._typing import ArrayLike
