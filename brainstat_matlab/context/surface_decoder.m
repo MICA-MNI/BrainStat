@@ -30,6 +30,7 @@ function [pearsons_r_sort, feature_names_sort] = surface_decoder(stat_data, opti
 %   and Nimare (consult their documentations for up-to-date referencing) as
 %   these packages were integral to generating the data used here.
 
+
 warning('surface_decoder has been renamed to meta_analytic_decoder. Calls through surface_decoder will be removed in a future version.')
 
 [pearsons_r_sort, feature_names_sort] = meta_analytic_decoder(stat_data, options{:});
