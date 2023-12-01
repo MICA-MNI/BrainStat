@@ -7,10 +7,12 @@ import numpy as np
 import pandas as pd
 import pytest
 import templateflow.api as tflow
+from sklearn.linear_model import LinearRegression
 
 from brainstat.stats.SLM import SLM, _onetailed_to_twotailed
 from brainstat.stats.terms import FixedEffect, MixedEffect
 from brainstat.tests.testutil import datadir
+from brainstat.tutorial.utils import fetch_mics_data
 
 
 def recursive_comparison(X1, X2):
@@ -123,6 +125,31 @@ def dummy_test(infile, expfile):
     assert all(flag == True for (flag) in testout)
 
 
+def dummy_test2():
+
+    # BrainStat
+    thickness, demographics = fetch_mics_data()
+    term_age = FixedEffect(demographics.AGE_AT_SCAN)
+    model = term_age
+    slm_age = SLM(
+        model,
+        np.ones(thickness.shape[0]),
+        surf="fsaverage5",
+    )
+    slm_age.fit(thickness)
+
+    # Scikit Learn
+    model_age = LinearRegression()
+    model_age.fit(demographics.AGE_AT_SCAN.to_numpy().reshape(-1, 1), thickness)
+
+    # Compare
+    comp2 = np.allclose(
+        np.squeeze(model_age.coef_), slm_age.coef[1, :], rtol=1e-05, equal_nan=True
+    )
+
+    assert comp2 == True
+
+
 expected_number_of_tests = 22
 parametrize = pytest.mark.parametrize
 
@@ -132,6 +159,10 @@ def test_run_all(test_number):
     infile = datadir("slm_" + f"{test_number:02d}" + "_IN.pkl")
     expfile = datadir("slm_" + f"{test_number:02d}" + "_OUT.pkl")
     dummy_test(infile, expfile)
+
+
+# Test against scikit learn
+dummy_test2()
 
 
 @pytest.mark.skipif(

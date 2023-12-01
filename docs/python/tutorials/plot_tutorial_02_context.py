@@ -128,8 +128,49 @@ plot_hemispheres(
 )
 
 ########################################################################
-# We find a small correlation. To test for significance we'll have
-# to do some additional corrections, but more on that later.
+# We find a small correlation. To test for significance, we can use spin
+# permutation tests from the `ENIGMA Toolbox
+# <https://enigma-toolbox.readthedocs.io/en/latest/pages/08.spintest/index.html>`_.
+from enigmatoolbox.permutation_testing import spin_test
+
+# Spin permutation testing for two cortical maps
+spin_p, spin_d = spin_test(
+    t_stat_schaefer_100,
+    expression["WFDC1"],
+    surface_name="fsa5",
+    parcellation_name="schaefer_100",
+    type="pearson",
+    n_rot=10000,
+    null_dist=True,
+)
+
+# Store p-value and null distribution
+p_and_d = {"wfdc1": [spin_p, spin_d]}
+
+# Plot null distributions
+fig, axs = plt.subplots(1, figsize=(10, 5))
+
+# Plot null distribution
+for k, (fn, dd) in enumerate(p_and_d.items()):
+    axs.hist(dd[1], bins=50, density=True, color="#A8221C", edgecolor="white", lw=0.5)
+    axs.axvline(
+        df.x.corr(df.y),
+        lw=1.5,
+        ls="--",
+        color="k",
+        dashes=(2, 3),
+        label="$r$={:.2f}".format(df.x.corr(df.y)) + "\n$p$={:.4f}".format(dd[0]),
+    )
+    axs.set_xlabel("Null correlations \n ({})".format("wfdc1"))
+    axs.set_ylabel("Density")
+    axs.spines["top"].set_visible(False)
+    axs.spines["right"].set_visible(False)
+    axs.legend(loc=1, frameon=False)
+    axs.set_xlim((-1, 1))
+
+fig.tight_layout()
+plt.show()
+
 #
 # Meta-Analytic
 # -------------

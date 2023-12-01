@@ -80,28 +80,8 @@ extensions = [
     "sphinx.ext.intersphinx",  # Links code to other packages
     "sphinx.ext.doctest",  # Runs doctests
     "sphinxcontrib.matlab",  # MATLAB plugin
-    "sphinx_gallery.gen_gallery",  # Example gallery
 ]
 
-import plotly.io as pio
-from plotly.io._sg_scraper import plotly_sg_scraper
-from sphinx_gallery.sorting import FileNameSortKey
-
-pio.renderers.default = "sphinx_gallery_png"
-
-sphinx_gallery_conf = {
-    "examples_dirs": "python/tutorials",
-    "gallery_dirs": "python/generated_tutorials",
-    "thumbnail_size": (250, 250),
-    "image_scrapers": (
-        "matplotlib",
-        _get_sg_image_scraper(),
-        plotly_sg_scraper,
-    ),
-    "within_subsection_order": FileNameSortKey,
-    "download_all_examples": False,
-    "remove_config_comments": True,
-}
 
 # Napoleon settings
 napoleon_google_docstring = False

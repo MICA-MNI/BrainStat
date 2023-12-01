@@ -8,7 +8,7 @@ on:
 jobs:
   tagged-release:
     name: "Tagged Release"
-    runs-on: "ubuntu-18.04"
+    runs-on: "ubuntu-latest"
 
     steps:
     - uses: actions/checkout@v2
@@ -34,13 +34,13 @@ jobs:
       run: |
         current_release=$(cat brainstat/__init__.py | grep "__version__ =" | grep -Eo "[0-9]\.[0-9]\.[0-9]")
         brainstat_dir=$(pwd)
-        sed -i "s:<param\.version>.*</param\.version>:<param\.version>${current_release}</param\.version>:" .github/matlab_toolbox/BrainStat.prj
-        sed -i "s:BRAINSTAT_DIR/:${brainstat_dir}/:g" .github/matlab_toolbox/BrainStat.prj
+        #sed -i "s:<param\.version>.*</param\.version>:<param\.version>${current_release}</param\.version>:" .github/matlab_toolbox/BrainStat.prj
+        #sed -i "s:BRAINSTAT_DIR/:${brainstat_dir}/:g" .github/matlab_toolbox/BrainStat.prj
         
-    - name: Create MATLAB Toolbox
-      uses: matlab-actions/run-command@v0
-      with:
-        command: addpath('.github/matlab_toolbox'); package_brainstat;
+   # - name: Create MATLAB Toolbox
+      #uses: matlab-actions/run-command@v0
+      #with:
+        #command: addpath('.github/matlab_toolbox'); package_brainstat;
 
     - name: Create Github release. 
       uses: "marvinpinto/action-automatic-releases@latest"
@@ -49,7 +49,7 @@ jobs:
         prerelease: false
         files: |
           LICENSE
-          .github/matlab_toolbox/BrainStat.mltbx
+          #.github/matlab_toolbox/BrainStat.mltbx
           dist/*
 
     - name: Publish to PyPi.
