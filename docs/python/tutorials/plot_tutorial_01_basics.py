@@ -19,6 +19,7 @@ mask = fetch_mask("fsaverage5")
 # we will use the surface plotter included with BrainSpace. As we'll
 # be plotting data onto these hemispheres quite often in this tutorial
 # we'll create a simple function for it and plot mean thickness here.
+
 import numpy as np
 from brainspace.plotting import plot_hemispheres
 
