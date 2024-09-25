@@ -156,7 +156,10 @@ def read_histology_profile(
         )
 
     with h5py.File(histology_file, "r") as h5_file:
-        profiles = h5_file.get(template)[...]
+        if template == "fslr32k":
+            profiles = h5_file.get("fs_LR_64k")[...]
+        else:
+            profiles = h5_file.get(template)[...]
         if civet_template:
             fsaverage_surface = fetch_template_surface("fsaverage")
             civet_surface = fetch_template_surface(civet_template)
@@ -191,7 +194,10 @@ def download_histology_profiles(
 
     data_dir = Path(data_dir) if data_dir else data_directories["BIGBRAIN_DATA_DIR"]
     data_dir.mkdir(parents=True, exist_ok=True)
-    output_file = data_dir / ("histology_" + template + ".h5")
+    if template == "fslr32k":
+        output_file = data_dir / "histology_fslr32k.h5"
+    else:
+        output_file = data_dir / ("histology_" + template + ".h5")
 
     url = read_data_fetcher_json()["bigbrain_profiles"][template]["url"]
 

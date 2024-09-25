@@ -81,4 +81,4 @@ def test_nifti_input():
     edg = mesh_edges(nifti)
 
     assert edg.shape[1] == 2
-    assert np.amax(edg) <= nifti.get_data().sum() - 1
+    assert np.amax(edg) <= nifti.get_fdata().sum() - 1
