@@ -47,10 +47,10 @@ def test_fixed_overload():
     assert np.array_equal(fix_add_intercept.m, expected)
 
     # fix_sub = fix01 - fix12
-    # assert np.array_equal(fix_sub.m, random_data[:, 0][:, None])
+    # assert np.array_equal(fix_sub.m.to_numpy(), random_data[:, 0][:, None])
 
     # fix_mul = fix01 * fix2
-    # assert np.array_equal(fix_mul.m, random_data[:, :2] * random_data[:, 2][:, None])
+    # assert np.array_equal(fix_mul.m.to_numpy(), random_data[:, :2] * random_data[:, 2][:, None])
 
 
 def test_mixed_init():
