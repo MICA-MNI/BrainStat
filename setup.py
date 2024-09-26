@@ -35,7 +35,7 @@ setuptools.setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
     ],
-    python_requires=">=3.7.*",
+    python_requires=">=3.7",
     install_requires=[
         "abagen>=0.1",
         "brainspace>=0.1.2",
