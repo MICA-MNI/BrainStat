@@ -377,12 +377,16 @@ class FixedEffect(object):
             return self
         df /= df.abs().sum(0)
         df.index = self.m.index
-
         m = self.m / self.m.abs().sum(0)
-        merged = m.T.merge(df.T, how="outer", indicator=True)
-        mask = (merged._merge.values == "left_only")[: self.m.shape[1]]
+
+        m_normalized_T = m.T
+        df_normalized_T = df.T
+
+        merged = m_normalized_T.merge(df_normalized_T, how="outer", indicator=True)
+        merged_index = m_normalized_T.iloc[:, [1]].reset_index().merge(merged, how="left")
+        mask = merged_index.loc[merged_index['_merge'] == 'left_only','index']
         return FixedEffect(
-            self.m[self.m.columns[mask]], add_intercept=False, _check_categorical=False
+            self.m[mask], add_intercept=False, _check_categorical=False
         )
 
     def _mul(

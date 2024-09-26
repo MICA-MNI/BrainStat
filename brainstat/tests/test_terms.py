@@ -29,8 +29,10 @@ def test_fixed_init():
 
 def test_fixed_overload():
     """Tests the overloads of the FixedEffect class."""
+    np.random.seed(2)
     random_data = np.random.random_sample((10, 3))
     fix01 = FixedEffect(random_data[:, :2], ["x0", "x1"], add_intercept=False)
+    fix012 = FixedEffect(random_data, ["x0", "x1", "x2"], add_intercept=False)
     fix12 = FixedEffect(random_data[:, 1:], ["x2", "x3"], add_intercept=False)
     fix2 = FixedEffect(random_data[:, 2], ["x2"], add_intercept=False)
     fixi0 = FixedEffect(random_data[:, 0], ["x0"], add_intercept=True)
@@ -46,11 +48,24 @@ def test_fixed_overload():
     expected = np.concatenate((np.ones((10, 1)), random_data[:, 0:2]), axis=1)
     assert np.array_equal(fix_add_intercept.m, expected)
 
-    # fix_sub = fix01 - fix12
-    # assert np.array_equal(fix_sub.m.to_numpy(), random_data[:, 0][:, None])
+    fix_sub = fix01 - fix12
+    np.testing.assert_allclose(
+        fix_sub.m,
+        random_data[:, 0][:, None],
+        atol=1e-8,
+        rtol=1e-5,
+    )
 
-    # fix_mul = fix01 * fix2
-    # assert np.array_equal(fix_mul.m.to_numpy(), random_data[:, :2] * random_data[:, 2][:, None])
+    fix_sub2 = fix012 - fix2
+    np.testing.assert_allclose(
+        fix_sub2.m,
+        random_data[:, :2],
+        atol=1e-8,
+        rtol=1e-5,
+    )
+
+    fix_mul = fix01 * fix2
+    assert np.array_equal(fix_mul.m, random_data[:, :2] * random_data[:, 2][:, None])
 
 
 def test_mixed_init():
