@@ -4,7 +4,13 @@ on:
   push:
     branches:
       - master
+    paths:
+      - brainstat_matlab/*
+      - '**.m'
   pull_request:
+    paths:
+      - brainstat_matlab/*
+      - '**.m'
 
 jobs:
   matlab_unit_test:
