@@ -97,7 +97,7 @@ def surface_genetic_expression(
                 with tempfile.NamedTemporaryFile(suffix=".gii", delete=False) as f:
                     name = f.name
                     write_surface(surface, name, otype="gii")
-                surfaces_gii.append(nib.load(name))
+                    surfaces_gii.append(nib.load(name))
             finally:
                 Path(name).unlink()
         else:
