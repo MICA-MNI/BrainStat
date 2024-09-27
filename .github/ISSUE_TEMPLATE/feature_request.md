@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest an idea for BrainSpace
+about: Suggest an idea for BrainStat
 title: ''
 labels: ''
 assignees: ''
