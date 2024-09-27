@@ -365,9 +365,14 @@ class FixedEffect(object):
         return self._add(t)
 
     def __radd__(
-        self, t: Union[ArrayLike, "FixedEffect", "MixedEffect"]
+        self, t: Union[int, ArrayLike, "FixedEffect", "MixedEffect"]
     ) -> "FixedEffect":
-        return self._add(t, side="right")
+        if isinstance(t, int) and t == 0:
+            # When t is 0, return self without adding an extra intercept
+            return self
+        else:
+            # For other cases, proceed with the addition
+            return self._add(t, side="right")
 
     def __sub__(self, t: Union[ArrayLike, "FixedEffect"]) -> "FixedEffect":
         if self.empty:
