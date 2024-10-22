@@ -2,13 +2,15 @@
 import tempfile
 from pathlib import Path
 from typing import Optional, Sequence, Union
-
+import os
 import nibabel as nib
 import numpy as np
 import pandas as pd
+import collections
 from abagen import check_atlas, get_expression_data
 from brainspace.mesh.mesh_io import read_surface, write_surface
 from sklearn.model_selection import ParameterGrid
+from nibabel.gifti import GiftiImage, GiftiDataArray
 
 from brainstat._utils import data_directories, logger
 from brainstat.datasets.base import (
@@ -89,6 +91,28 @@ def surface_genetic_expression(
     elif surfaces is None:
         surfaces = []
 
+    if isinstance(labels, np.ndarray):
+        # Assuming 'labels' is a 1D NumPy array of length 20484
+        num_vertices = len(labels)  # Should be 20484
+        half_size = num_vertices // 2  # Half of 20484, which is 10242
+
+        # Split the array into two halves
+        labels_left = labels[:half_size]  # First half for the left hemisphere
+        labels_right = labels[half_size:]  # Second half for the right hemisphere
+
+        # Create GiftiDataArrays for each hemisphere
+        data_array_left = GiftiDataArray(data=labels_left)
+        data_array_right = GiftiDataArray(data=labels_right)
+
+        # Create separate GiftiImages for each hemisphere
+        labels_left_gii = GiftiImage(darrays=[data_array_left])
+        labels_right_gii = GiftiImage(darrays=[data_array_right])
+        
+        assert isinstance(labels_left_gii, nib.GiftiImage)
+        assert isinstance(labels_right_gii, nib.GiftiImage)
+        # Store as a tuple or a list
+        labels = (labels_left_gii, labels_right_gii)
+ 
     surfaces_gii = []
     for surface in surfaces:
         if not isinstance(surface, str) and not isinstance(surface, Path):
