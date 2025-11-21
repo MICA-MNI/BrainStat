@@ -1,6 +1,8 @@
 """ Load external datasets. """
+import json
 import tempfile
 import zipfile
+from collections import namedtuple
 from pathlib import Path
 from typing import List, Optional, Tuple, Union
 
@@ -13,6 +15,17 @@ from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 from netneurotools import datasets as nnt_datasets
 from nibabel import load as nib_load
 from nibabel.freesurfer.io import read_annot, read_geometry
+from sklearn.utils import Bunch
+
+try:
+    from netneurotools.datasets.utils import _get_data_dir, _get_dataset_info
+except ImportError:
+    from netneurotools.datasets.datasets_utils import _get_data_dir, _get_dataset_info
+
+try:
+    from nilearn.datasets._utils import fetch_files as _fetch_files
+except ImportError:
+    from nilearn.datasets.utils import fetch_files as _fetch_files
 
 from brainstat._utils import (
     _download_file,
@@ -442,7 +455,7 @@ def _fetch_template_surface_files(
 
     if template == "fslr32k":
         layer = layer if layer else "midthickness"
-        bunch = nnt_datasets.fetch_conte69(data_dir=str(data_dir))
+        bunch = _fetch_conte69_fixed(data_dir=str(data_dir))
     elif template == "civet41k" or template == "civet164k":
         layer = layer if layer else "mid"
         if layer == "sphere":
@@ -573,3 +586,43 @@ def _fetch_civet_spheres(template: str, data_dir: Path) -> Tuple[str, str]:
 
     # Return two filenames to conform to other left/right hemisphere functions.
     return (str(filename), str(filename))
+
+
+SURFACE = namedtuple('Surface', ('lh', 'rh'))
+
+
+def _fetch_conte69_fixed(data_dir=None, url=None, resume=True, verbose=1):
+    """
+    Download files for Van Essen et al., 2012 Conte69 template.
+    Fixed version to handle encoding on Windows.
+    """
+    dataset_name = 'tpl-conte69'
+    keys = ['midthickness', 'inflated', 'vinflated']
+
+    data_dir = _get_data_dir(data_dir=data_dir)
+    info = _get_dataset_info(dataset_name)
+    if url is None:
+        url = info['url']
+
+    opts = {
+        'uncompress': True,
+        'md5sum': info['md5'],
+        'move': '{}.tar.gz'.format(dataset_name)
+    }
+
+    filenames = [
+        'tpl-conte69/tpl-conte69_space-MNI305_variant-fsLR32k_{}.{}.surf.gii'
+        .format(res, hemi) for res in keys for hemi in ['L', 'R']
+    ] + ['tpl-conte69/template_description.json']
+
+    data = _fetch_files(data_dir, files=[(f, url, opts) for f in filenames],
+                        resume=resume, verbose=verbose)
+
+    # Fix: Specify encoding='utf-8'
+    with open(data[-1], 'r', encoding='utf-8') as src:
+        data[-1] = json.load(src)
+
+    # bundle hemispheres together
+    data = [SURFACE(*data[:-1][i:i + 2]) for i in range(0, 6, 2)] + [data[-1]]
+
+    return Bunch(**dict(zip(keys + ['info'], data)))

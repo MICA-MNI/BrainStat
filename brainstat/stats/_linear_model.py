@@ -442,10 +442,9 @@ def _compute_resls(self, Y: np.ndarray) -> Tuple[np.ndarray, dict]:
     for j in range(Y.shape[2]):
         normr = np.sqrt(self.SSE[((j + 1) * (j + 2) // 2) - 1])
         for i in range(Y.shape[0]):
-            if normr == 0:
-                u = np.zeros_like(Y[i, :, j])
-            else:
-                u = Y[i, :, j] / normr
+            u = np.divide(
+                Y[i, :, j], normr, out=np.zeros_like(Y[i, :, j]), where=normr != 0
+            )
             resl[:, j] += np.diff(u[edges], axis=1).ravel() ** 2
 
     return resl, mesh_connections
