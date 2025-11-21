@@ -101,7 +101,7 @@ def ismember(
 
     else:
         # Get values of A that are in B.
-        bool_vector = np.in1d(A, B)
+        bool_vector = np.isin(A, B)
         bool_array = np.reshape(bool_vector, A.shape)
 
         # Get location of elements in B. Transpose B and A to get MATLAB behavior (i.e. column first)
@@ -110,7 +110,9 @@ def ismember(
         locations = np.zeros(A.size) + np.nan
         Aflat = A.T.flat
         for i in range(0, idx.size):
-            locations[idx[i]] = locB[np.argwhere(val == Aflat[idx[i]])]
+            matches = np.argwhere(val == Aflat[idx[i]])
+            if len(matches) > 0:
+                locations[idx[i]] = locB[matches[0, 0]]
         locations = np.reshape(locations, A.shape)
     return bool_array, locations
 
