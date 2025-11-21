@@ -205,7 +205,7 @@ def fetch_template_surface(
         surfaces_fs = [read_geometry(file) for file in surface_files]
         surfaces = [build_polydata(surface[0], surface[1]) for surface in surfaces_fs]
     elif template == "fslr32k":
-        surfaces = [read_surface(file) for file in surface_files]
+        surfaces = [read_surface(str(file)) for file in surface_files]
     else:
         surfaces_obj = [read_civet(file) for file in surface_files]
         surfaces = [build_polydata(surface[0], surface[1]) for surface in surfaces_obj]

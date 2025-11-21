@@ -39,7 +39,7 @@ setuptools.setup(
         "brainspace>=0.1.2",
         "h5py",
         "matplotlib>=3.4",
-        "netneurotools>=0.3.0",
+        "netneurotools<0.3.0",
         "neurosynth",
         "nibabel",
         "nilearn>=0.7.0",

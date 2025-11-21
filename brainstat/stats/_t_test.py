@@ -173,6 +173,6 @@ def _t_test(self) -> None:
                 M[M_ef] = ef_duplicate[:, i]
                 M[M_sse] = sse_matrix.flatten()
 
-                self.t[i] = np.sqrt(-np.linalg.det(M) / det_sse / vf)
+                self.t[i] = float(np.sqrt(-np.linalg.det(M) / det_sse / vf))
 
     self.t = np.atleast_2d(self.t)

@@ -951,7 +951,7 @@ def peak_clus(
         cluster_val = cluster_val + 1
 
     vox = np.argwhere(excurset) + 1
-    ivox = np.argwhere(np.in1d(vox, lmvox)) + 1
+    ivox = np.argwhere(np.isin(vox, lmvox)) + 1
     clmid = nf[ivox - 1]
     uclmid, iclmid, jclmid = np.unique(clmid, return_index=True, return_inverse=True)
     iclmid = iclmid + 1
