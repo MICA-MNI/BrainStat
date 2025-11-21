@@ -959,7 +959,7 @@ def peak_clus(
     ucid = np.unique(nf)
     nclus = len(ucid)
     # implementing matlab's histc function ###
-    bin_edges = np.r_[-np.Inf, 0.5 * (ucid[:-1] + ucid[1:]), np.Inf]
+    bin_edges = np.r_[-np.inf, 0.5 * (ucid[:-1] + ucid[1:]), np.inf]
     ucvol, ucvol_edges = np.histogram(nf, bin_edges)
 
     if reselspvert is None:

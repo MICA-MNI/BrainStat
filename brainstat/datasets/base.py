@@ -11,7 +11,6 @@ from brainspace.mesh.mesh_io import read_surface
 from brainspace.mesh.mesh_operations import combine_surfaces
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 from netneurotools import datasets as nnt_datasets
-from netneurotools.civet import read_civet
 from nibabel import load as nib_load
 from nibabel.freesurfer.io import read_annot, read_geometry
 
@@ -22,6 +21,65 @@ from brainstat._utils import (
     read_data_fetcher_json,
 )
 from brainstat.mesh.interpolate import _surf2surf
+
+
+def read_civet(fname: Union[str, Path]) -> Tuple[np.ndarray, np.ndarray]:
+    """
+    Reads a CIVET surface file (MNI OBJ format).
+
+    Parameters
+    ----------
+    fname : str or Path
+        Path to the CIVET surface file.
+
+    Returns
+    -------
+    vertices : numpy.ndarray
+        (N, 3) array of vertex coordinates.
+    faces : numpy.ndarray
+        (M, 3) array of face indices.
+    """
+    fname = str(fname)
+    with open(fname, "rb") as f:
+        first_char = f.read(1)
+
+    if first_char == b"P":
+        with open(fname, "r") as f:
+            content = f.read().split()
+
+        n_vertices = int(content[6])
+
+        idx = 7
+        # Vertices
+        vertices = np.array(content[idx : idx + n_vertices * 3], dtype=float).reshape(
+            -1, 3
+        )
+        idx += n_vertices * 3
+
+        # Normals
+        idx += n_vertices * 3
+
+        n_triangles = int(content[idx])
+        idx += 1
+
+        color_flag = int(content[idx])
+        idx += 1
+
+        if color_flag == 0:
+            idx += 4
+        else:
+            idx += n_vertices * 4
+
+        # Check remaining items to decide if we need to skip
+        remaining = len(content) - idx
+        if remaining == n_triangles * 3 + n_triangles:
+            idx += n_triangles
+
+        triangles = np.array(content[idx:], dtype=int).reshape(-1, 3)
+
+        return vertices, triangles
+    else:
+        raise NotImplementedError("Binary CIVET files are not supported yet.")
 
 
 def fetch_parcellation(
