@@ -157,6 +157,15 @@ def read_histology_profile(
 
     with h5py.File(histology_file, "r") as h5_file:
         if template == "fslr32k":
+            # Known issue #369: The fslr32k data file on the server actually contains
+            # fs_LR_64k resolution data (64984 vertices) instead of fs_LR_32k (32492 vertices).
+            # This is a data hosting issue. Users expecting 32k resolution data should be aware
+            # that they will receive 64k resolution data until this is fixed on the server.
+            logger.warning(
+                "Known issue: The fslr32k histology profile data currently contains "
+                "fs_LR_64k resolution (64984 vertices) instead of fs_LR_32k (32492 vertices). "
+                "See https://github.com/MICA-MNI/BrainStat/issues/369 for details."
+            )
             profiles = h5_file.get("fs_LR_64k")[...]
         else:
             profiles = h5_file.get(template)[...]
@@ -196,6 +205,12 @@ def download_histology_profiles(
     data_dir.mkdir(parents=True, exist_ok=True)
     if template == "fslr32k":
         output_file = data_dir / "histology_fslr32k.h5"
+        # Known issue #369: warn users about data resolution mismatch
+        logger.warning(
+            "Note: The fslr32k histology profile data currently contains "
+            "fs_LR_64k resolution (64984 vertices) instead of fs_LR_32k. "
+            "See https://github.com/MICA-MNI/BrainStat/issues/369 for details."
+        )
     else:
         output_file = data_dir / ("histology_" + template + ".h5")
 

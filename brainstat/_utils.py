@@ -150,7 +150,7 @@ def deprecated(message: str) -> Callable:
 def _download_file(
     url: str, output_file: Path, overwrite: bool = False, verbose=True
 ) -> None:
-    """Downloads a file.
+    """Downloads a file with retry logic for network failures.
 
     Parameters
     ----------
@@ -163,14 +163,36 @@ def _download_file(
     verbose : bool
         If true, print a download message, defaults to True.
     """
+    import time
+    from http.client import RemoteDisconnected
+    from urllib.error import URLError
 
     if output_file.exists() and not overwrite:
         return
 
     if verbose:
         logger.info("Downloading " + str(output_file) + " from " + url + ".")
-    with urllib.request.urlopen(url) as response, open(output_file, "wb") as out_file:
-        shutil.copyfileobj(response, out_file)
+    
+    # Retry logic for intermittent network failures
+    max_retries = 3
+    retry_delay = 2  # seconds
+    
+    for attempt in range(max_retries):
+        try:
+            with urllib.request.urlopen(url, timeout=30) as response, open(output_file, "wb") as out_file:
+                shutil.copyfileobj(response, out_file)
+            return  # Success, exit function
+        except (RemoteDisconnected, URLError, TimeoutError) as e:
+            if attempt < max_retries - 1:
+                logger.warning(
+                    f"Download attempt {attempt + 1}/{max_retries} failed: {e}. "
+                    f"Retrying in {retry_delay} seconds..."
+                )
+                time.sleep(retry_delay)
+                retry_delay *= 2  # Exponential backoff
+            else:
+                logger.error(f"Download failed after {max_retries} attempts.")
+                raise  # Re-raise the exception after all retries fail
 
 
 
