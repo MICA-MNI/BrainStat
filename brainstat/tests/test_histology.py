@@ -18,9 +18,6 @@ def test_urls(template):
     template : list
         Template names.
     """
-    if template == "fslr32k":
-        pytest.skip("Skipping fslr32k due to known netneurotools 0.3.0 Unicode bug")
-    
     try:
         r = requests.head(json["bigbrain_profiles"][template]["url"], timeout=10)
         assert r.status_code == 200
