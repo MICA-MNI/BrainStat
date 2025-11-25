@@ -2,7 +2,8 @@
 
 import numpy as np
 import pandas as pd
-
+from functools import reduce
+from brainstat.tutorial.utils import fetch_mics_data
 from brainstat.stats.terms import FixedEffect, MixedEffect
 
 
@@ -144,3 +145,11 @@ def test_identity_detection():
 def as_variance(M):
     var = [np.reshape(x[:, None] @ x[None, :], (-1, 1)) for x in M.T]
     return np.squeeze(var, axis=2).T
+
+
+def test_sum():
+    _, demographics = fetch_mics_data()
+    model = []
+    term_age = FixedEffect(demographics.AGE_AT_SCAN)
+    model.append(term_age)
+    assert reduce(lambda x, y: x + y, model) == sum(model)

@@ -18,8 +18,11 @@ def test_urls(template):
     template : list
         Template names.
     """
-    r = requests.head(json["bigbrain_profiles"][template]["url"])
-    assert r.status_code == 200
+    try:
+        r = requests.head(json["bigbrain_profiles"][template]["url"], timeout=10)
+        assert r.status_code == 200
+    except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
+        pytest.skip(f"Network connection issue when testing URL for {template}")
 
 
 def test_histology_profiles_is_ndarray():

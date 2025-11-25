@@ -951,7 +951,7 @@ def peak_clus(
         cluster_val = cluster_val + 1
 
     vox = np.argwhere(excurset) + 1
-    ivox = np.argwhere(np.in1d(vox, lmvox)) + 1
+    ivox = np.argwhere(np.isin(vox.flatten(), lmvox)) + 1
     clmid = nf[ivox - 1]
     uclmid, iclmid, jclmid = np.unique(clmid, return_index=True, return_inverse=True)
     iclmid = iclmid + 1
@@ -959,7 +959,7 @@ def peak_clus(
     ucid = np.unique(nf)
     nclus = len(ucid)
     # implementing matlab's histc function ###
-    bin_edges = np.r_[-np.Inf, 0.5 * (ucid[:-1] + ucid[1:]), np.Inf]
+    bin_edges = np.r_[-np.inf, 0.5 * (ucid[:-1] + ucid[1:]), np.inf]
     ucvol, ucvol_edges = np.histogram(nf, bin_edges)
 
     if reselspvert is None:

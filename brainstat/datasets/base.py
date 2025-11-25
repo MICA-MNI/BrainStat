@@ -1,6 +1,8 @@
 """ Load external datasets. """
+import json
 import tempfile
 import zipfile
+from collections import namedtuple
 from pathlib import Path
 from typing import List, Optional, Tuple, Union
 
@@ -11,9 +13,19 @@ from brainspace.mesh.mesh_io import read_surface
 from brainspace.mesh.mesh_operations import combine_surfaces
 from brainspace.vtk_interface.wrappers.data_object import BSPolyData
 from netneurotools import datasets as nnt_datasets
-from netneurotools.civet import read_civet
 from nibabel import load as nib_load
 from nibabel.freesurfer.io import read_annot, read_geometry
+from sklearn.utils import Bunch
+
+try:
+    from netneurotools.datasets.utils import _get_data_dir, _get_dataset_info
+except ImportError:
+    from netneurotools.datasets.datasets_utils import _get_data_dir, _get_dataset_info
+
+try:
+    from nilearn.datasets._utils import fetch_files as _fetch_files
+except ImportError:
+    from nilearn.datasets.utils import fetch_files as _fetch_files
 
 from brainstat._utils import (
     _download_file,
@@ -22,6 +34,65 @@ from brainstat._utils import (
     read_data_fetcher_json,
 )
 from brainstat.mesh.interpolate import _surf2surf
+
+
+def read_civet(fname: Union[str, Path]) -> Tuple[np.ndarray, np.ndarray]:
+    """
+    Reads a CIVET surface file (MNI OBJ format).
+
+    Parameters
+    ----------
+    fname : str or Path
+        Path to the CIVET surface file.
+
+    Returns
+    -------
+    vertices : numpy.ndarray
+        (N, 3) array of vertex coordinates.
+    faces : numpy.ndarray
+        (M, 3) array of face indices.
+    """
+    fname = str(fname)
+    with open(fname, "rb") as f:
+        first_char = f.read(1)
+
+    if first_char == b"P":
+        with open(fname, "r") as f:
+            content = f.read().split()
+
+        n_vertices = int(content[6])
+
+        idx = 7
+        # Vertices
+        vertices = np.array(content[idx : idx + n_vertices * 3], dtype=float).reshape(
+            -1, 3
+        )
+        idx += n_vertices * 3
+
+        # Normals
+        idx += n_vertices * 3
+
+        n_triangles = int(content[idx])
+        idx += 1
+
+        color_flag = int(content[idx])
+        idx += 1
+
+        if color_flag == 0:
+            idx += 4
+        else:
+            idx += n_vertices * 4
+
+        # Check remaining items to decide if we need to skip
+        remaining = len(content) - idx
+        if remaining == n_triangles * 3 + n_triangles:
+            idx += n_triangles
+
+        triangles = np.array(content[idx:], dtype=int).reshape(-1, 3)
+
+        return vertices, triangles
+    else:
+        raise NotImplementedError("Binary CIVET files are not supported yet.")
 
 
 def fetch_parcellation(
@@ -147,7 +218,7 @@ def fetch_template_surface(
         surfaces_fs = [read_geometry(file) for file in surface_files]
         surfaces = [build_polydata(surface[0], surface[1]) for surface in surfaces_fs]
     elif template == "fslr32k":
-        surfaces = [read_surface(file) for file in surface_files]
+        surfaces = [read_surface(str(file)) for file in surface_files]
     else:
         surfaces_obj = [read_civet(file) for file in surface_files]
         surfaces = [build_polydata(surface[0], surface[1]) for surface in surfaces_obj]
@@ -384,7 +455,7 @@ def _fetch_template_surface_files(
 
     if template == "fslr32k":
         layer = layer if layer else "midthickness"
-        bunch = nnt_datasets.fetch_conte69(data_dir=str(data_dir))
+        bunch = _fetch_conte69_fixed(data_dir=str(data_dir))
     elif template == "civet41k" or template == "civet164k":
         layer = layer if layer else "mid"
         if layer == "sphere":
@@ -515,3 +586,43 @@ def _fetch_civet_spheres(template: str, data_dir: Path) -> Tuple[str, str]:
 
     # Return two filenames to conform to other left/right hemisphere functions.
     return (str(filename), str(filename))
+
+
+SURFACE = namedtuple('Surface', ('lh', 'rh'))
+
+
+def _fetch_conte69_fixed(data_dir=None, url=None, resume=True, verbose=1):
+    """
+    Download files for Van Essen et al., 2012 Conte69 template.
+    Fixed version to handle encoding on Windows.
+    """
+    dataset_name = 'tpl-conte69'
+    keys = ['midthickness', 'inflated', 'vinflated']
+
+    data_dir = _get_data_dir(data_dir=data_dir)
+    info = _get_dataset_info(dataset_name)
+    if url is None:
+        url = info['url']
+
+    opts = {
+        'uncompress': True,
+        'md5sum': info['md5'],
+        'move': '{}.tar.gz'.format(dataset_name)
+    }
+
+    filenames = [
+        'tpl-conte69/tpl-conte69_space-MNI305_variant-fsLR32k_{}.{}.surf.gii'
+        .format(res, hemi) for res in keys for hemi in ['L', 'R']
+    ] + ['tpl-conte69/template_description.json']
+
+    data = _fetch_files(data_dir, files=[(f, url, opts) for f in filenames],
+                        resume=resume, verbose=verbose)
+
+    # Fix: Specify encoding='utf-8'
+    with open(data[-1], 'r', encoding='utf-8') as src:
+        data[-1] = json.load(src)
+
+    # bundle hemispheres together
+    data = [SURFACE(*data[:-1][i:i + 2]) for i in range(0, 6, 2)] + [data[-1]]
+
+    return Bunch(**dict(zip(keys + ['info'], data)))

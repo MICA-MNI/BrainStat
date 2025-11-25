@@ -19,6 +19,7 @@ parametrize = pytest.mark.parametrize
 def test_load_surfaces(template):
     """Test loading surface templates. For now this only tests whether it runs
     without error and whether the output type is correct."""
+    
     surface = fetch_template_surface(template, join=True)
     assert isinstance(surface, BSPolyData)
 
