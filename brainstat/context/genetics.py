@@ -116,6 +116,12 @@ def surface_genetic_expression(
     surfaces_gii = []
     for surface in surfaces:
         if not isinstance(surface, str) and not isinstance(surface, Path):
+            # Cast surface data to float32 to comply with GIFTI standard
+            # GIFTI only supports uint8, int32, and float32 datatypes
+            if hasattr(surface, 'Points') and surface.Points.dtype != np.float32:
+                surface = surface.copy()
+                surface.Points = surface.Points.astype(np.float32)
+            
             # Rather roundabout deletion of the temporary file for Windows compatibility.
             try:
                 with tempfile.NamedTemporaryFile(suffix=".gii", delete=False) as f:
