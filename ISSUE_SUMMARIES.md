@@ -72,17 +72,24 @@ This is a **server-side data issue** - the file on `box.bic.mni.mcgill.ca` for `
 
 ### Summary
 Fixed the float64 to float32 dtype issue that was causing GIFTI writing to fail.
+Also fixed compatibility issues with `abagen` 0.1.3 running on Python 3.13 with `pandas` 2.x and `nibabel` 5.x.
 
 ### Changes
 - Cast surface `Points` to `float32` before writing to GIFTI format
 - Added dtype check to avoid unnecessary conversions
 - Make a copy of the surface to avoid modifying the original data
+- **New**: Modified `surface_genetic_expression` to pass file paths instead of `GiftiImage` objects to `abagen` (fixes `nibabel` 5.x compatibility).
+- **New**: Added monkeypatches for `pandas.DataFrame.append` and `set_axis(inplace=...)` (fixes `pandas` 2.0 compatibility).
+- **New**: Patched `abagen.utils.labeltable_to_df` to handle missing background label (fixes `KeyError: [0]`).
 
 ### Why
-The `surface_genetic_expression` function was failing because surface coordinate data was in float64 format, but the GIFTI standard only supports uint8, int32, and float32 datatypes. This caused a `ValueError` when writing surfaces to GIFTI format.
+The `surface_genetic_expression` function was failing because:
+1. Surface coordinate data was in float64 format (GIFTI requires float32).
+2. `abagen` 0.1.3 is incompatible with `nibabel` 5.x when passing `GiftiImage` objects directly.
+3. `abagen` 0.1.3 uses `pandas.DataFrame.append` and `set_axis(inplace=...)` which were removed in `pandas` 2.0.
 
 ### Testing
-The fix ensures that surface data is properly converted to GIFTI-compatible format before writing.
+The fix ensures that surface data is properly converted to GIFTI-compatible format before writing, and that `abagen` runs correctly with modern pandas/nibabel versions.
 
 ### Branch
 `351-surface_genetic_expression-is-broken-with-current-versions-of`
