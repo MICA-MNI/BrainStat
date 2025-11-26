@@ -81,15 +81,17 @@ Also fixed compatibility issues with `abagen` 0.1.3 running on Python 3.13 with 
 - **New**: Modified `surface_genetic_expression` to pass file paths instead of `GiftiImage` objects to `abagen` (fixes `nibabel` 5.x compatibility).
 - **New**: Added monkeypatches for `pandas.DataFrame.append` and `set_axis(inplace=...)` (fixes `pandas` 2.0 compatibility).
 - **New**: Patched `abagen.utils.labeltable_to_df` to handle missing background label (fixes `KeyError: [0]`).
+- **New**: Added HTTPError 503 handling in test to gracefully skip when Allen Brain Institute servers are unavailable.
 
 ### Why
 The `surface_genetic_expression` function was failing because:
 1. Surface coordinate data was in float64 format (GIFTI requires float32).
 2. `abagen` 0.1.3 is incompatible with `nibabel` 5.x when passing `GiftiImage` objects directly.
 3. `abagen` 0.1.3 uses `pandas.DataFrame.append` and `set_axis(inplace=...)` which were removed in `pandas` 2.0.
+4. CI tests were failing intermittently due to external service unavailability (503 errors from Allen Brain Institute).
 
 ### Testing
-The fix ensures that surface data is properly converted to GIFTI-compatible format before writing, and that `abagen` runs correctly with modern pandas/nibabel versions.
+The fix ensures that surface data is properly converted to GIFTI-compatible format before writing, and that `abagen` runs correctly with modern pandas/nibabel versions. The test now gracefully skips when external data services are unavailable.
 
 ### Branch
 `351-surface_genetic_expression-is-broken-with-current-versions-of`
