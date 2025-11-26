@@ -2,13 +2,59 @@
 import tempfile
 from pathlib import Path
 from typing import Optional, Sequence, Union
-
+import os
 import nibabel as nib
 import numpy as np
 import pandas as pd
+
+# Monkeypatch for abagen compatibility with pandas 2.0+
+if not hasattr(pd.DataFrame, 'append'):
+    def _append(self, other, ignore_index=False, verify_integrity=False, sort=False):
+        from pandas import concat
+        if isinstance(other, (list, tuple)):
+            to_concat = [self] + list(other)
+        else:
+            to_concat = [self, other]
+        return concat(to_concat, ignore_index=ignore_index, verify_integrity=verify_integrity, sort=sort)
+    pd.DataFrame.append = _append
+
+# Monkeypatch for abagen compatibility with pandas 2.0+ (set_axis inplace)
+_original_set_axis = pd.DataFrame.set_axis
+def _set_axis_patched(self, labels, *args, **kwargs):
+    if 'inplace' in kwargs:
+        del kwargs['inplace']
+    return _original_set_axis(self, labels, *args, **kwargs)
+pd.DataFrame.set_axis = _set_axis_patched
+
+import abagen.images
+
+def _labeltable_to_df_patched(labels):
+    """
+    Patched version of abagen.utils.labeltable_to_df to handle missing 0 index
+    and use pd.concat instead of append.
+    """
+    info = pd.DataFrame(columns=['id', 'label', 'hemisphere', 'structure'])
+    for table, hemi in zip(labels, ('L', 'R')):
+        if len(table) == 0:
+            continue
+        ids, label = zip(*table.items())
+        new_df = pd.DataFrame(dict(id=ids, label=label, hemisphere=hemi, structure='cortex'))
+        info = pd.concat([info, new_df], ignore_index=True)
+        
+    # Use errors='ignore' to handle missing 0
+    info = info.set_index('id').drop([0], axis=0, errors='ignore').sort_index()
+
+    if len(info) != 0:
+        return info
+
+abagen.images.labeltable_to_df = _labeltable_to_df_patched
+
+
+import collections
 from abagen import check_atlas, get_expression_data
 from brainspace.mesh.mesh_io import read_surface, write_surface
 from sklearn.model_selection import ParameterGrid
+from nibabel.gifti import GiftiImage, GiftiDataArray
 
 from brainstat._utils import data_directories, logger
 from brainstat.datasets.base import (
@@ -89,52 +135,90 @@ def surface_genetic_expression(
     elif surfaces is None:
         surfaces = []
 
-    surfaces_gii = []
-    for surface in surfaces:
-        if not isinstance(surface, str) and not isinstance(surface, Path):
-            # Rather roundabout deletion of the temporary file for Windows compatibility.
+    temp_files = []
+    try:
+        if isinstance(labels, np.ndarray):
+            # Assuming 'labels' is a 1D NumPy array of length 20484
+            num_vertices = len(labels)  # Should be 20484
+            half_size = num_vertices // 2  # Half of 20484, which is 10242
+
+            # Split the array into two halves
+            labels_left = labels[:half_size]  # First half for the left hemisphere
+            labels_right = labels[half_size:]  # Second half for the right hemisphere
+
+            # Create GiftiDataArrays for each hemisphere
+            data_array_left = GiftiDataArray(data=labels_left)
+            data_array_right = GiftiDataArray(data=labels_right)
+
+            # Create separate GiftiImages for each hemisphere
+            labels_left_gii = GiftiImage(darrays=[data_array_left])
+            labels_right_gii = GiftiImage(darrays=[data_array_right])
+            
+            # Save to temporary files for abagen compatibility
+            labels_files = []
+            for img in [labels_left_gii, labels_right_gii]:
+                f = tempfile.NamedTemporaryFile(suffix=".gii", delete=False)
+                f.close()
+                nib.save(img, f.name)
+                labels_files.append(f.name)
+                temp_files.append(f.name)
+            labels = tuple(labels_files)
+    
+        surfaces_gii = []
+        for surface in surfaces:
+            if not isinstance(surface, str) and not isinstance(surface, Path):
+                # Cast surface data to float32 to comply with GIFTI standard
+                # GIFTI only supports uint8, int32, and float32 datatypes
+                if hasattr(surface, 'Points') and surface.Points.dtype != np.float32:
+                    surface = surface.copy()
+                    surface.Points = surface.Points.astype(np.float32)
+                
+                f = tempfile.NamedTemporaryFile(suffix=".gii", delete=False)
+                f.close()
+                write_surface(surface, f.name, otype="gii")
+                surfaces_gii.append(f.name)
+                temp_files.append(f.name)
+            else:
+                surfaces_gii.append(surface)
+
+        # Use abagen to grab expression data.
+        logger.info(
+            "If you use BrainStat's genetics functionality, please cite abagen (https://abagen.readthedocs.io/en/stable/citing.html)."
+        )
+        atlas = check_atlas(labels, geometry=surfaces_gii, space=space)
+        expression = get_expression_data(
+            atlas,
+            atlas_info=atlas_info,
+            ibf_threshold=ibf_threshold,
+            probe_selection=probe_selection,
+            donor_probes=donor_probes,
+            lr_mirror=lr_mirror,
+            missing=missing,
+            tolerance=tolerance,
+            sample_norm=sample_norm,
+            gene_norm=gene_norm,
+            norm_matched=norm_matched,
+            norm_structures=norm_structures,
+            region_agg=region_agg,
+            agg_metric=agg_metric,
+            corrected_mni=corrected_mni,
+            reannotated=reannotated,
+            return_counts=return_counts,
+            return_donors=return_donors,
+            return_report=return_report,
+            donors=donors,
+            data_dir=data_dir,
+            verbose=verbose,
+            n_proc=n_proc,
+        )
+
+        return expression
+    finally:
+        for f in temp_files:
             try:
-                with tempfile.NamedTemporaryFile(suffix=".gii", delete=False) as f:
-                    name = f.name
-                    write_surface(surface, name, otype="gii")
-                    surfaces_gii.append(nib.load(name))
-            finally:
-                Path(name).unlink()
-        else:
-            surfaces_gii.append(nib.load(surface))
-
-    # Use abagen to grab expression data.
-    logger.info(
-        "If you use BrainStat's genetics functionality, please cite abagen (https://abagen.readthedocs.io/en/stable/citing.html)."
-    )
-    atlas = check_atlas(labels, geometry=surfaces_gii, space=space)
-    expression = get_expression_data(
-        atlas,
-        atlas_info=atlas_info,
-        ibf_threshold=ibf_threshold,
-        probe_selection=probe_selection,
-        donor_probes=donor_probes,
-        lr_mirror=lr_mirror,
-        missing=missing,
-        tolerance=tolerance,
-        sample_norm=sample_norm,
-        gene_norm=gene_norm,
-        norm_matched=norm_matched,
-        norm_structures=norm_structures,
-        region_agg=region_agg,
-        agg_metric=agg_metric,
-        corrected_mni=corrected_mni,
-        reannotated=reannotated,
-        return_counts=return_counts,
-        return_donors=return_donors,
-        return_report=return_report,
-        donors=donors,
-        data_dir=data_dir,
-        verbose=verbose,
-        n_proc=n_proc,
-    )
-
-    return expression
+                Path(f).unlink()
+            except FileNotFoundError:
+                pass
 
 
 def __create_precomputed(
