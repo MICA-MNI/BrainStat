@@ -11,15 +11,15 @@ jobs:
     runs-on: "ubuntu-latest"
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     
     - name: Set up Python 3.10.
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       with:
         python-version: "3.10"
 
-    - name: Install MATLAB
-      uses: matlab-actions/setup-matlab@v0
+    # - name: Install MATLAB
+    #   uses: matlab-actions/setup-matlab@v0
     
     - name: Install Python BrainStat.
       run: |
@@ -30,12 +30,12 @@ jobs:
       run: |
         python setup.py sdist bdist_wheel
 
-    - name: Modify MATLAB version and path
-      run: |
-        current_release=$(cat brainstat/__init__.py | grep "__version__ =" | grep -Eo "[0-9]\.[0-9]\.[0-9]")
-        brainstat_dir=$(pwd)
-        #sed -i "s:<param\.version>.*</param\.version>:<param\.version>${current_release}</param\.version>:" .github/matlab_toolbox/BrainStat.prj
-        #sed -i "s:BRAINSTAT_DIR/:${brainstat_dir}/:g" .github/matlab_toolbox/BrainStat.prj
+    # - name: Modify MATLAB version and path
+    #   run: |
+    #     current_release=$(cat brainstat/__init__.py | grep "__version__ =" | grep -Eo "[0-9]\.[0-9]\.[0-9]")
+    #     brainstat_dir=$(pwd)
+    #     #sed -i "s:<param\.version>.*</param\.version>:<param\.version>${current_release}</param\.version>:" .github/matlab_toolbox/BrainStat.prj
+    #     #sed -i "s:BRAINSTAT_DIR/:${brainstat_dir}/:g" .github/matlab_toolbox/BrainStat.prj
         
    # - name: Create MATLAB Toolbox
       #uses: matlab-actions/run-command@v0
@@ -49,7 +49,6 @@ jobs:
         prerelease: false
         files: |
           LICENSE
-          #.github/matlab_toolbox/BrainStat.mltbx
           dist/*
 
     - name: Publish to PyPi.
