@@ -24,7 +24,7 @@ plot_hemispheres(
     pial_left,
     pial_right,
     np.mean(thickness, axis=0),
-    color_bar=True,
+    color_bar=False,
     color_range=(1.5, 3.5),
     label_text=["Cortical Thickness"],
     cmap="viridis",
@@ -32,7 +32,7 @@ plot_hemispheres(
     size=(1400, 200),
     zoom=1.45,
     nan_color=(0.7, 0.7, 0.7, 1),
-    cb__labelTextProperty={"fontSize": 12},
+    # cb__labelTextProperty={"fontSize": 12},
     interactive=False,
 )
 
@@ -116,7 +116,7 @@ slm_age.fit(thickness)
 # theoretical quantile values from a normal distribution. We can also map
 # vertexwise measures of skewness and kurtosis (characterizing the residuals
 # distribution) across the cortex.
-skwn, krts = slm_age.qc(thickness, v=87)
+skwn, krts = slm_age.qc(thickness, v=87, histo=False, qq=False)
 ###################################################################
 plot_hemispheres(
     pial_left,
@@ -128,9 +128,9 @@ plot_hemispheres(
     zoom=1.8,
     nan_color=(0.7, 0.7, 0.7, 1),
     interactive=False,
-    color_bar=True,
+    color_bar=False,
     label_text=["Skewness", "Kurtosis"],
-    cb__labelTextProperty={"fontSize": 12},
+    # cb__labelTextProperty={"fontSize": 12},
 )
 
 ###################################################################
@@ -142,7 +142,7 @@ plot_hemispheres(
     pial_left,
     pial_right,
     slm_age.t,
-    color_bar=True,
+    color_bar=False,
     color_range=(-4, 4),
     label_text=["t-values"],
     cmap="viridis",
@@ -150,7 +150,7 @@ plot_hemispheres(
     size=(1400, 200),
     zoom=1.45,
     nan_color=(0.7, 0.7, 0.7, 1),
-    cb__labelTextProperty={"fontSize": 12},
+    # cb__labelTextProperty={"fontSize": 12},
     interactive=False,
 )
 
@@ -171,7 +171,7 @@ plot_hemispheres(
     pial_left,
     pial_right,
     vals,
-    color_bar=True,
+    color_bar=False,
     color_range=(0, 0.05),
     label_text=["Cluster p-values", "Peak p-values", "Vertex p-values"],
     cmap="autumn_r",
@@ -179,7 +179,7 @@ plot_hemispheres(
     size=(1400, 400),
     zoom=1.8,
     nan_color=(0.7, 0.7, 0.7, 1),
-    cb__labelTextProperty={"fontSize": 12},
+    # cb__labelTextProperty={"fontSize": 12},
     interactive=False,
 )
 
@@ -246,7 +246,7 @@ plot_hemispheres(
     pial_left,
     pial_right,
     slm_sex.t,
-    color_bar=True,
+    color_bar=False,
     color_range=(-4, 4),
     label_text=["t-values"],
     cmap="viridis",
@@ -254,7 +254,7 @@ plot_hemispheres(
     size=(1400, 200),
     zoom=1.45,
     nan_color=(0.7, 0.7, 0.7, 1),
-    cb__labelTextProperty={"fontSize": 12},
+    # cb__labelTextProperty={"fontSize": 12},
     interactive=False,
 )
 
@@ -267,7 +267,7 @@ plot_hemispheres(
     pial_left,
     pial_right,
     cp[0].T,
-    color_bar=True,
+    color_bar=False,
     color_range=(0, 0.05),
     label_text=["Cluster p-values"],
     cmap="autumn_r",
@@ -275,7 +275,7 @@ plot_hemispheres(
     size=(1400, 200),
     zoom=1.45,
     nan_color=(0.7, 0.7, 0.7, 1),
-    cb__labelTextProperty={"fontSize": 12},
+    # cb__labelTextProperty={"fontSize": 12},
     interactive=False,
 )
 
@@ -307,7 +307,7 @@ plot_hemispheres(
     pial_left,
     pial_right,
     slm_sexage.t,
-    color_bar=True,
+    color_bar=False,
     color_range=(-4, 4),
     label_text=["t-values"],
     cmap="viridis",
@@ -315,7 +315,7 @@ plot_hemispheres(
     size=(1400, 200),
     zoom=1.45,
     nan_color=(0.7, 0.7, 0.7, 1),
-    cb__labelTextProperty={"fontSize": 12},
+    # cb__labelTextProperty={"fontSize": 12},
     interactive=False,
 )
 
@@ -328,7 +328,7 @@ plot_hemispheres(
     pial_left,
     pial_right,
     cp[0].T,
-    color_bar=True,
+    color_bar=False,
     color_range=(0, 0.05),
     label_text=["Cluster p-values"],
     cmap="autumn_r",
@@ -336,7 +336,7 @@ plot_hemispheres(
     size=(1400, 200),
     zoom=1.45,
     nan_color=(0.7, 0.7, 0.7, 1),
-    cb__labelTextProperty={"fontSize": 12},
+    # cb__labelTextProperty={"fontSize": 12},
     interactive=False,
 )
 
@@ -366,7 +366,7 @@ plot_hemispheres(
     pial_left,
     pial_right,
     slm_sexage_int.t,
-    color_bar=True,
+    color_bar=False,
     color_range=(-4, 4),
     label_text=["t-values"],
     cmap="viridis",
@@ -374,7 +374,7 @@ plot_hemispheres(
     size=(1400, 200),
     zoom=1.45,
     nan_color=(0.7, 0.7, 0.7, 1),
-    cb__labelTextProperty={"fontSize": 12},
+    # cb__labelTextProperty={"fontSize": 12},
     interactive=False,
 )
 
@@ -387,7 +387,7 @@ plot_hemispheres(
     pial_left,
     pial_right,
     cp[0].T,
-    color_bar=True,
+    color_bar=False,
     color_range=(0, 0.05),
     label_text=["Cluster p-values"],
     cmap="autumn_r",
@@ -395,7 +395,7 @@ plot_hemispheres(
     size=(1400, 200),
     zoom=1.45,
     nan_color=(0.7, 0.7, 0.7, 1),
-    cb__labelTextProperty={"fontSize": 12},
+    # cb__labelTextProperty={"fontSize": 12},
     interactive=False,
 )
 
@@ -427,7 +427,7 @@ plot_hemispheres(
     pial_left,
     pial_right,
     slm_sex_int.t,
-    color_bar=True,
+    color_bar=False,
     color_range=(-4, 4),
     label_text=["t-values"],
     cmap="viridis",
@@ -435,7 +435,7 @@ plot_hemispheres(
     size=(1400, 200),
     zoom=1.45,
     nan_color=(0.7, 0.7, 0.7, 1),
-    cb__labelTextProperty={"fontSize": 12},
+    # cb__labelTextProperty={"fontSize": 12},
     interactive=False,
 )
 
@@ -448,7 +448,7 @@ plot_hemispheres(
     pial_left,
     pial_right,
     cp[0].T,
-    color_bar=True,
+    color_bar=False,
     color_range=(0, 0.05),
     label_text=["Cluster p-values"],
     cmap="autumn_r",
@@ -456,7 +456,7 @@ plot_hemispheres(
     size=(1400, 200),
     zoom=1.45,
     nan_color=(0.7, 0.7, 0.7, 1),
-    cb__labelTextProperty={"fontSize": 12},
+    # cb__labelTextProperty={"fontSize": 12},
     interactive=False,
 )
 
@@ -499,7 +499,7 @@ plot_hemispheres(
     pial_left,
     pial_right,
     slm_onetailed.t,
-    color_bar=True,
+    color_bar=False,
     color_range=(-4, 4),
     label_text=["t-values"],
     cmap="viridis",
@@ -507,7 +507,7 @@ plot_hemispheres(
     size=(1400, 200),
     zoom=1.45,
     nan_color=(0.7, 0.7, 0.7, 1),
-    cb__labelTextProperty={"fontSize": 12},
+    # cb__labelTextProperty={"fontSize": 12},
     interactive=False,
 )
 
@@ -520,7 +520,7 @@ plot_hemispheres(
     pial_left,
     pial_right,
     cp[0].T,
-    color_bar=True,
+    color_bar=False,
     color_range=(0, 0.05),
     label_text=["Cluster p-values"],
     cmap="autumn_r",
@@ -528,7 +528,7 @@ plot_hemispheres(
     size=(1400, 200),
     zoom=1.45,
     nan_color=(0.7, 0.7, 0.7, 1),
-    cb__labelTextProperty={"fontSize": 12},
+    # cb__labelTextProperty={"fontSize": 12},
     interactive=False,
 )
 
@@ -570,7 +570,7 @@ plot_hemispheres(
     pial_left,
     pial_right,
     slm_mixed.t,
-    color_bar=True,
+    color_bar=False,
     color_range=(-4, 4),
     label_text=["t-values"],
     cmap="viridis",
@@ -578,7 +578,7 @@ plot_hemispheres(
     size=(1400, 200),
     zoom=1.45,
     nan_color=(0.7, 0.7, 0.7, 1),
-    cb__labelTextProperty={"fontSize": 12},
+    # cb__labelTextProperty={"fontSize": 12},
     interactive=False,
 )
 
@@ -591,7 +591,7 @@ plot_hemispheres(
     pial_left,
     pial_right,
     cp[0].T,
-    color_bar=True,
+    color_bar=False,
     color_range=(0, 0.05),
     label_text=["Cluster p-values"],
     cmap="autumn_r",
@@ -599,7 +599,7 @@ plot_hemispheres(
     size=(1400, 200),
     zoom=1.45,
     nan_color=(0.7, 0.7, 0.7, 1),
-    cb__labelTextProperty={"fontSize": 12},
+    # cb__labelTextProperty={"fontSize": 12},
     interactive=False,
 )
 

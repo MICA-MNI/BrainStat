@@ -41,8 +41,18 @@ class Scraper(object):
             raise ImportError("You must install `sphinx_gallery`")
         image_names = list()
         image_path_iterator = block_vars["image_path_iterator"]
+        
+        # Debug info
+        src_file = block_vars.get('src_file', 'unknown')
+        block_idx = block_vars.get('block_vars', {}).get('example_globals', {}) # Hard to get block index easily
+        print(f"[DEBUG] Scraper called for {src_file}. Plotters: {Plotter.DICT_PLOTTERS.keys()}")
+
+        if not Plotter.DICT_PLOTTERS:
+             print("[DEBUG] No plotters found.")
+        
         for k, p in Plotter.DICT_PLOTTERS.items():
             fname = next(image_path_iterator)
+            print(f"[DEBUG] Scraper: Processing plotter {k}, target file: {fname}")
 
             for _, lren in p.renderers.items():
                 for r in lren:
@@ -52,8 +62,15 @@ class Scraper(object):
                             continue
                         a.labelTextProperty.fontsize = a.labelTextProperty.fontsize * 3
 
-            p.screenshot(fname, scale=1)
-            # p.screenshot(fname)
+            try:
+                p.screenshot(fname, scale=1)
+                if not os.path.exists(fname):
+                    print(f"[ERROR] Screenshot failed to create file: {fname}")
+                    # Try without scale
+                    p.screenshot(fname)
+            except Exception as e:
+                print(f"[ERROR] Screenshot raised exception: {e}")
+            
             image_names.append(fname)
 
         Plotter.close_all()  # close and clear all plotters
@@ -92,7 +109,7 @@ sphinx_gallery_conf = {
     "examples_dirs": "python/tutorials",
     "gallery_dirs": "python/generated_tutorials",
     "filename_pattern": "plot_",
-    "image_scrapers": ("matplotlib", _get_sg_image_scraper()),
+    "image_scrapers": (_get_sg_image_scraper(),),
     "within_subsection_order": FileNameSortKey,
     "reference_url": {
         # The module you locally document uses None

@@ -119,12 +119,12 @@ plot_hemispheres(
     surfaces[0],
     surfaces[1],
     vertexwise_WFDC1,
-    color_bar=True,
+    color_bar=False,
     embed_nb=True,
     size=(1400, 200),
     zoom=1.45,
     nan_color=(0.7, 0.7, 0.7, 1),
-    cb__labelTextProperty={"fontSize": 12},
+    # cb__labelTextProperty={"fontSize": 12},
 )
 
 ########################################################################
@@ -302,11 +302,11 @@ plot_hemispheres(
     vertexwise_data,
     embed_nb=True,
     label_text=["Gradient 1", "Gradient 2"],
-    color_bar=True,
+    color_bar=False,
     size=(1400, 400),
     zoom=1.45,
     nan_color=(0.7, 0.7, 0.7, 1),
-    cb__labelTextProperty={"fontSize": 12},
+    # cb__labelTextProperty={"fontSize": 12},
 )
 
 ########################################################################
@@ -383,13 +383,13 @@ plot_hemispheres(
     surfaces[0],
     surfaces[1],
     functional_gradients[:, 0:3].T,
-    color_bar=True,
+    color_bar=False,
     label_text=["Gradient 1", "Gradient 2", "Gradient 3"],
     embed_nb=True,
     size=(1400, 600),
     zoom=1.45,
     nan_color=(0.7, 0.7, 0.7, 1),
-    cb__labelTextProperty={"fontSize": 12},
+    # cb__labelTextProperty={"fontSize": 12},
 )
 
 ###########################################################################
