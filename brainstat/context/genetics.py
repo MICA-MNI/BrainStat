@@ -169,15 +169,20 @@ def surface_genetic_expression(
             if not isinstance(surface, str) and not isinstance(surface, Path):
                 # Cast surface data to float32 to comply with GIFTI standard
                 # GIFTI only supports uint8, int32, and float32 datatypes
+                original_points = None
                 if hasattr(surface, 'Points') and surface.Points.dtype != np.float32:
-                    surface = surface.copy()
+                    original_points = surface.Points
                     surface.Points = surface.Points.astype(np.float32)
                 
-                f = tempfile.NamedTemporaryFile(suffix=".gii", delete=False)
-                f.close()
-                write_surface(surface, f.name, otype="gii")
-                surfaces_gii.append(f.name)
-                temp_files.append(f.name)
+                try:
+                    f = tempfile.NamedTemporaryFile(suffix=".gii", delete=False)
+                    f.close()
+                    write_surface(surface, f.name, otype="gii")
+                    surfaces_gii.append(f.name)
+                    temp_files.append(f.name)
+                finally:
+                    if original_points is not None:
+                        surface.Points = original_points
             else:
                 surfaces_gii.append(surface)
 
