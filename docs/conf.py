@@ -15,6 +15,9 @@ import sys
 
 sys.path.insert(0, os.path.abspath(".."))
 
+import brainspace
+brainspace.OFF_SCREEN = True
+
 # Run a custom scraper instead of using brainspace.plotting._get_sg_image_scraper
 from brainspace.plotting.base import Plotter
 from brainspace.vtk_interface.wrappers import BSScalarBarActor
@@ -80,7 +83,23 @@ extensions = [
     "sphinx.ext.intersphinx",  # Links code to other packages
     "sphinx.ext.doctest",  # Runs doctests
     "sphinxcontrib.matlab",  # MATLAB plugin
+    "sphinx_gallery.gen_gallery",  # Example gallery
 ]
+
+from sphinx_gallery.sorting import FileNameSortKey
+
+sphinx_gallery_conf = {
+    "examples_dirs": "python/tutorials",
+    "gallery_dirs": "python/generated_tutorials",
+    "filename_pattern": "plot_",
+    "image_scrapers": ("matplotlib", _get_sg_image_scraper()),
+    "within_subsection_order": FileNameSortKey,
+    "reference_url": {
+        # The module you locally document uses None
+        "brainstat": None,
+    },
+    "download_all_examples": False,
+}
 
 
 # Napoleon settings

@@ -7,8 +7,10 @@ Python Index
 Python Tutorials
 ================
 
-- :ref:`python_tutorial1`
-- :ref:`python_tutorial2`
+.. toctree::
+   :maxdepth: 1
+
+   generated_tutorials/index
 
 
 API
