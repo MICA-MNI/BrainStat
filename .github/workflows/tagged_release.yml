@@ -35,8 +35,19 @@ jobs:
       run: |
         current_release=$(cat brainstat/__init__.py | grep "__version__ =" | grep -Eo "[0-9]\.[0-9]\.[0-9]")
         brainstat_dir=$(pwd)
-        sed -i "s:<param\.version>.*</param\.version>:<param\.version>${current_release}</param\.version>:" .github/matlab_toolbox/BrainStat.prj
-        sed -i "s:BRAINSTAT_DIR/:${brainstat_dir}/:g" .github/matlab_toolbox/BrainStat.prj
+        
+        # Replace placeholders in BrainStat.prj
+        # 1. Replace ${current_release} with actual version
+        sed -i "s:\${current_release}:${current_release}:g" .github/matlab_toolbox/BrainStat.prj
+        
+        # 2. Replace ${PROJECT_ROOT}/${brainstat_dir} with absolute path to workspace
+        # We use | as delimiter since paths contain /
+        sed -i "s|\${PROJECT_ROOT}/\${brainstat_dir}|${brainstat_dir}|g" .github/matlab_toolbox/BrainStat.prj
+        
+        # Debug output
+        echo "Updated BrainStat.prj content (Preview):"
+        grep -C 2 "param.version" .github/matlab_toolbox/BrainStat.prj
+        grep -C 2 "fileset.rootdir" .github/matlab_toolbox/BrainStat.prj
         
     - name: Create MATLAB Toolbox
       uses: matlab-actions/run-command@v2
