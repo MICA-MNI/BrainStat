@@ -19,7 +19,7 @@ def test_urls(template):
         Template names.
     """
     try:
-        r = requests.head(json["bigbrain_profiles"][template]["url"], timeout=10)
+        r = requests.get(json["bigbrain_profiles"][template]["url"], timeout=10, stream=True)
         assert r.status_code == 200
     except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
         pytest.skip(f"Network connection issue when testing URL for {template}")
