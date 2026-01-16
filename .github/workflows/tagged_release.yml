@@ -53,6 +53,9 @@ jobs:
       uses: matlab-actions/run-command@v2
       with:
         command: addpath('.github/matlab_toolbox'); package_brainstat;
+    
+    - name: Check MATLAB Toolbox creation
+      run: ls -la .github/matlab_toolbox/
 
     - name: Create Github release. 
       uses: "marvinpinto/action-automatic-releases@latest"
@@ -64,7 +67,7 @@ jobs:
           LICENSE
           dist/*.tar.gz
           dist/*.whl
-          BrainStat.mltbx
+          .github/matlab_toolbox/BrainStat.mltbx
 
     - name: Publish to PyPi.
       uses: pypa/gh-action-pypi-publish@release/v1
