@@ -1,4 +1,3 @@
-# type: ignore
 """ Standard Linear regression models. """
 import warnings
 from math import sqrt
@@ -19,6 +18,9 @@ from brainstat._typing import ArrayLike
 from brainstat.datasets import fetch_parcellation, fetch_template_surface
 from brainstat.datasets.base import fetch_yeo_networks_metadata
 from brainstat.mesh.utils import _mask_edges, mesh_edges
+from brainstat.stats._linear_model import _linear_model
+from brainstat.stats._multiple_comparisons import _fdr, _random_field_theory
+from brainstat.stats._t_test import _t_test
 from brainstat.stats.terms import FixedEffect, MixedEffect
 from brainstat.stats.utils import apply_mask, undo_mask
 
@@ -26,10 +28,13 @@ from brainstat.stats.utils import apply_mask, undo_mask
 class SLM:
     """Core Class for running BrainStat linear models"""
 
-    # Import class methods
-    from ._linear_model import _linear_model
-    from ._multiple_comparisons import _fdr, _random_field_theory
-    from ._t_test import _t_test
+    # Class methods are imported at module level (above) and assigned here
+    # rather than via in-class `from ... import ...`, which trips
+    # python/mypy#10521 and previously forced a file-level `# type: ignore`.
+    _linear_model = _linear_model
+    _fdr = _fdr
+    _random_field_theory = _random_field_theory
+    _t_test = _t_test
 
     def __init__(
         self,
@@ -89,7 +94,7 @@ class SLM:
         """
         # Input arguments.
         self.model = model
-        self.contrast = np.array(contrast)
+        self.contrast = self._coerce_contrast(contrast)
 
         if isinstance(surf, str):
             self.surf_name = surf
@@ -98,7 +103,7 @@ class SLM:
             self.surf_name = None
             self.surf = surf
 
-        self.mask = mask
+        self.mask = self._coerce_mask(mask)
         self.correction = [correction] if isinstance(correction, str) else correction
         self.niter = 1
         self.thetalim = thetalim
@@ -110,11 +115,53 @@ class SLM:
         # Error check
         if self.surf is None:
             if self.correction is not None and "rft" in self.correction:
-                raise ValueError("Random Field Theory corrections require a surface.")
+                raise ValueError(
+                    "Random Field Theory corrections require a surface. For "
+                    "volumetric data, drop 'rft' from `correction` and use "
+                    "`correction='fdr'` (cluster-level RFT/TFCE on volumes is "
+                    "not supported by BrainStat — see issue #342)."
+                )
 
         # We have to initialize fit parameters for our unit tests here.
         # TODO: remove this requirement.
         self._reset_fit_parameters()
+
+    @staticmethod
+    def _coerce_contrast(contrast: ArrayLike) -> np.ndarray:
+        """Convert ``contrast`` to a numeric ndarray.
+
+        Pandas Series and categorical/object inputs are common foot-guns —
+        np.dot then raises a cryptic "can't multiply sequence by non-int"
+        error inside _t_test. Cast to float here and surface a clear
+        TypeError if that fails (see issue #342).
+        """
+        if isinstance(contrast, FixedEffect):
+            return contrast  # type: ignore[return-value]
+        arr = np.asarray(contrast)
+        if arr.dtype.kind in "biufc":
+            return arr
+        try:
+            return arr.astype(float)
+        except (ValueError, TypeError) as exc:
+            raise TypeError(
+                f"`contrast` must be numeric; got dtype {arr.dtype}. If you "
+                "passed a pandas Series with categorical/object dtype, cast "
+                "it to float first (e.g. df['col'].astype(float))."
+            ) from exc
+
+    @staticmethod
+    def _coerce_mask(mask: Optional[ArrayLike]) -> Optional[np.ndarray]:
+        """Convert ``mask`` to a 1-D boolean ndarray.
+
+        Volumetric workflows commonly produce 0/1 *integer* masks (e.g.
+        from `nib.load(...).get_fdata().astype(int)`). The downstream
+        boolean-indexing path then degenerates into fancy indexing, which
+        triggers shape-mismatch errors in `_fdr` (see issue #342). Cast to
+        bool here so callers don't have to remember.
+        """
+        if mask is None:
+            return None
+        return np.asarray(mask).astype(bool)
 
     def fit(self, Y: np.ndarray) -> None:
         """Fits the SLM model

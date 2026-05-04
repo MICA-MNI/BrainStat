@@ -1,4 +1,3 @@
-# type: ignore
 """Multiple comparison corrections."""
 import copy
 import math
