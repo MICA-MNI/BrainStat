@@ -11,24 +11,37 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.10', '3.11', '3.12']
+        # Python 3.12 cannot be exercised while pandas is pinned <2.1 (the
+        # abagen groupby/pkg_resources workaround), because pandas 2.0.x
+        # ships no wheels for 3.12 and cannot be built from source there.
+        # Re-add 3.12 once abagen is patched and the pin is lifted.
+        python-version: ['3.10', '3.11']
         os: [ubuntu-latest, windows-latest, macos-latest]
 
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
-   
+
     - name: Install Dependencies
       shell: bash
-      run: | 
-        python -m pip install --upgrade pip setuptools
+      run: |
+        # setuptools 81+ no longer ships the legacy `pkg_resources` module on
+        # import, but transitive deps (e.g. abagen 0.1.3 in
+        # brainstat/context/genetics.py) still rely on it. Pin <81 so test
+        # collection succeeds; revisit when abagen drops the pkg_resources
+        # import.
+        python -m pip install --upgrade pip
+        python -m pip install 'setuptools<81' wheel
         [[ -z $(git remote show origin | grep "Fetch URL:" | grep git@github.com:MICA-MNI/BrainStat.git) ]] && git config remote.upstream.fetch refs/heads/*:refs/remotes/upstream/* || git config remote.origin.fetch refs/heads/*:refs/origin/upstream/*
         git fetch origin test-data-2.0
         python -m pip install -e .[dev]
+        # Reinstall pinned setuptools in case the editable install pulled it
+        # back up to 81+.
+        python -m pip install --force-reinstall 'setuptools<81'
 
     - name: Test with pytest
       shell: bash

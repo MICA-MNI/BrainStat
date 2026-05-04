@@ -1,7 +1,7 @@
 # type: ignore
 """ Standard Linear regression models. """
 import warnings
-from cmath import sqrt
+from math import sqrt
 from pathlib import Path
 from pprint import pformat
 from typing import Optional, Sequence, Tuple, Union
@@ -17,7 +17,7 @@ from nibabel.nifti1 import Nifti1Image
 
 from brainstat._typing import ArrayLike
 from brainstat.datasets import fetch_parcellation, fetch_template_surface
-from brainstat.datasets.base import fetch_template_surface, fetch_yeo_networks_metadata
+from brainstat.datasets.base import fetch_yeo_networks_metadata
 from brainstat.mesh.utils import _mask_edges, mesh_edges
 from brainstat.stats.terms import FixedEffect, MixedEffect
 from brainstat.stats.utils import apply_mask, undo_mask

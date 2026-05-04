@@ -7,37 +7,63 @@ on:
     paths:
       - brainstat_matlab/*
       - '**.m'
+      - .github/workflows/MATLAB_unittests.yml
   pull_request:
     paths:
       - brainstat_matlab/*
       - '**.m'
+      - .github/workflows/MATLAB_unittests.yml
 
 jobs:
   matlab_unit_test:
     strategy:
       fail-fast: false
       matrix:
-        matlab-version: [R019b, latest]
+        include:
+          - matlab-version: R2022a
+            python-version: '3.9'
+          - matlab-version: latest
+            python-version: '3.10'
 
     runs-on: ubuntu-latest
-    
+
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python 3.8
-      uses: actions/setup-python@v2
+    - uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      id: setup-python
+      uses: actions/setup-python@v5
       with:
-        python-version: 3.8
-    - name: Install dependencies
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install Python dependencies for MATLAB tests
       shell: bash
       run: |
+        python -m pip install --upgrade pip setuptools wheel
+        # numpy + vtk are required by recursive_pkl_conversion in
+        # tests/@test_precomputed/test_precomputed.m, which loads pickle
+        # fixtures via MATLAB's Python bridge.
         python -m pip install numpy vtk
         [[ -z $(git remote show origin | grep "Fetch URL:" | grep git@github.com:MICA-MNI/BrainStat.git) ]] && git config remote.upstream.fetch refs/heads/*:refs/remotes/upstream/* || git config remote.origin.fetch refs/heads/*:refs/origin/upstream/*
         git fetch origin test-data-2.0
         git checkout origin/test-data-2.0 -- extern/test-data
         git reset extern/test-data
+
     - name: Install MATLAB
-      uses: matlab-actions/setup-matlab@v0
-    - name: Run tests 
-      uses: matlab-actions/run-tests@v0
+      uses: matlab-actions/setup-matlab@v2
       with:
-        source-folder: brainstat_matlab
+        release: ${{ matrix.matlab-version }}
+
+    - name: Run tests
+      uses: matlab-actions/run-command@v2
+      with:
+        # Configure MATLAB's Python interpreter explicitly before running the
+        # tests; otherwise test_precomputed/load_pkl errors with
+        # MATLAB:Python:PythonUnavailable on the GitHub runners. Also need to
+        # add brainstat_matlab to the MATLAB path explicitly — run-tests v2
+        # used to do this via source-folder, but run-command does not.
+        command: |
+          addpath(genpath('brainstat_matlab'));
+          pyenv('Version', '${{ steps.setup-python.outputs.python-path }}');
+          results = runtests('brainstat_matlab', 'IncludeSubfolders', true);
+          if any([results.Failed]); error('%d MATLAB test(s) failed.', sum([results.Failed])); end

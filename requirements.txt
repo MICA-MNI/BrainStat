@@ -7,8 +7,12 @@ neurosynth
 nibabel
 nilearn>=0.7.0
 nimare
-numpy>=1.21
-pandas>=1.3
+# numpy and pandas are pinned together: pandas<2.1 is needed because abagen
+# 0.1.3 still calls DataFrame.groupby(axis=...) which pandas 2.1 removed; the
+# resulting pandas 2.0.x is built against numpy 1.x ABI, so numpy must also
+# be <2 to avoid `numpy.dtype size changed` runtime errors.
+numpy>=1.21,<2
+pandas>=1.3,<2.1
 scikit_learn>=1.0
 scipy>=1.7
 statsmodels

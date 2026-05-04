@@ -1,5 +1,4 @@
 import math
-import sys
 import warnings
 
 import numpy as np
@@ -39,7 +38,7 @@ def _t_test(self) -> None:
         if np.square(np.dot(null_space(self.X).T, c)).sum() / np.square(
             c
         ).sum() > np.spacing(1):
-            sys.exit("Contrast is not estimable :-(")
+            raise ValueError("Contrast is not estimable.")
 
     else:
         c = np.dot(pinvX, self.contrast)
@@ -173,6 +172,8 @@ def _t_test(self) -> None:
                 M[M_ef] = ef_duplicate[:, i]
                 M[M_sse] = sse_matrix.flatten()
 
-                self.t[i] = float(np.sqrt(-np.linalg.det(M) / det_sse / vf))
+                # Use .item() rather than float(): numpy >=2.0 raises
+                # TypeError when float() is applied to size-1 ndarrays.
+                self.t[i] = np.sqrt(-np.linalg.det(M) / det_sse / vf).item()
 
     self.t = np.atleast_2d(self.t)
