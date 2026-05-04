@@ -1,5 +1,4 @@
 import math
-import sys
 import warnings
 
 import numpy as np
@@ -39,7 +38,7 @@ def _t_test(self) -> None:
         if np.square(np.dot(null_space(self.X).T, c)).sum() / np.square(
             c
         ).sum() > np.spacing(1):
-            sys.exit("Contrast is not estimable :-(")
+            raise ValueError("Contrast is not estimable.")
 
     else:
         c = np.dot(pinvX, self.contrast)
