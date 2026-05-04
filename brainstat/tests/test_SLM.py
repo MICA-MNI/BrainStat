@@ -180,3 +180,53 @@ def test_volumetric_input():
 
     slm = SLM(model, contrast, surf=mask_image)
     slm.fit(data)
+
+
+def test_volumetric_contrast_coercion():
+    """Pandas Series / categorical contrasts must be coerced rather than
+    crashing inside _t_test (issue #342)."""
+    model = FixedEffect(np.ones(3))
+    slm = SLM(model, pd.Series([1.0, 0.5, -0.5]))
+    assert slm.contrast.dtype == np.float64
+
+    with pytest.raises(TypeError, match="must be numeric"):
+        SLM(model, pd.Series(["a", "b", "c"]))
+
+
+def test_volumetric_int_mask_is_coerced_to_bool():
+    """Volumetric workflows commonly hand SLM a 0/1 *int* mask
+    (issue #342). It should be coerced rather than degenerating into
+    fancy indexing inside _fdr."""
+    model = FixedEffect(np.ones(3))
+    int_mask = np.array([1, 0, 1, 1, 0, 1], dtype=int)
+    slm = SLM(model, np.ones(3), mask=int_mask)
+    assert slm.mask.dtype == np.bool_
+    assert slm.mask.sum() == 4
+
+
+def test_volumetric_rft_without_surface_explains_alternatives():
+    """RFT on a volume is unsupported; the error should point users at FDR
+    rather than just refusing (issue #342)."""
+    model = FixedEffect(np.ones(3))
+    with pytest.raises(ValueError, match="fdr"):
+        SLM(model, np.ones(3), correction="rft")
+
+
+def test_volumetric_fdr_with_int_mask_runs_end_to_end():
+    """The full int-mask + FDR + non-trivial contrast path that the issue
+    reporters originally hit should now run without error (issue #342)."""
+    n_subjects, n_voxels = 8, 64
+    rng = np.random.default_rng(0)
+    data = rng.standard_normal((n_subjects, n_voxels))
+    # Half the voxels in the mask, expressed as ints (the foot-gun shape).
+    int_mask = np.zeros(n_voxels, dtype=int)
+    int_mask[: n_voxels // 2] = 1
+    model = FixedEffect(rng.standard_normal(n_subjects))
+    contrast = pd.Series(rng.standard_normal(n_subjects))  # pandas, on purpose
+    slm = SLM(model, contrast, mask=int_mask, correction="fdr")
+    slm.fit(data)
+    assert slm.t.shape[-1] == n_voxels
+    # Inside the mask the t-values must be finite; outside they're masked
+    # out and undo_mask fills them with NaN.
+    assert np.all(np.isfinite(slm.t[..., int_mask.astype(bool)]))
+    assert slm.Q.shape[-1] == n_voxels
