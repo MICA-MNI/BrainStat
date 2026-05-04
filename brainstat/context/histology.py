@@ -114,6 +114,7 @@ def read_histology_profile(
     data_dir: Optional[Union[str, Path]] = None,
     template: str = "fsaverage",
     overwrite: bool = False,
+    invert: bool = True,
 ) -> np.ndarray:
     """Reads BigBrain histology profiles.
 
@@ -127,6 +128,15 @@ def read_histology_profile(
         default 'fsaverage'.
     overwrite : bool, optional
         If true, existing data will be overwrriten, by default False.
+    invert : bool, optional
+        If True (default), invert the 8-bit intensity values so that higher
+        numbers correspond to darker, more cell-dense regions, matching the
+        convention used in Paquola et al. 2021 (eLife) and most downstream
+        BigBrain analyses. The raw BigBrainWarp data uses the opposite
+        convention (0 = black). Set to False to return the raw values. MPC
+        and gradient computations (correlation-based) are invariant to this
+        flip; only direct inspection of profile intensities is affected.
+        See https://github.com/MICA-MNI/BrainStat/issues/274 for context.
 
     Returns
     -------
@@ -169,12 +179,19 @@ def read_histology_profile(
             profiles = h5_file.get("fs_LR_64k")[...]
         else:
             profiles = h5_file.get(template)[...]
-        if civet_template:
-            fsaverage_surface = fetch_template_surface("fsaverage")
-            civet_surface = fetch_template_surface(civet_template)
-            return _surf2surf(fsaverage_surface, civet_surface, profiles.T).T
-        else:
-            return profiles
+
+    if invert:
+        # Map from BigBrainWarp convention (low = dark/dense) to the
+        # literature convention (high = dark/dense). The data is unsigned
+        # 8-bit, so the inversion is `255 - x`.
+        max_value = np.iinfo(profiles.dtype).max if np.issubdtype(profiles.dtype, np.integer) else 255
+        profiles = max_value - profiles
+
+    if civet_template:
+        fsaverage_surface = fetch_template_surface("fsaverage")
+        civet_surface = fetch_template_surface(civet_template)
+        return _surf2surf(fsaverage_surface, civet_surface, profiles.T).T
+    return profiles
 
 
 def download_histology_profiles(

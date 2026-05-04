@@ -79,27 +79,90 @@ end
 
 function neurosynth_files = fetch_neurosynth_data(data_dir)
 % Fetches neurosynth data files.
+%
+% Downloads the precomputed Neurosynth archive and extracts it into
+% data_dir. Robust to interrupted downloads (which previously left a
+% truncated .zip on disk and broke subsequent calls; see #341): the zip is
+% verified before unzip, and the download is retried up to a small number
+% of times. The zip and any partial extracted state are cleaned up if the
+% download or extraction fails.
 
 json = brainstat_utils.read_data_fetcher_json();
 
 neurosynth_files = find_files(data_dir);
 
 if numel(neurosynth_files) ~= json.neurosynth_precomputed.n_files
+    if ~exist(data_dir, 'dir'); mkdir(data_dir); end
     disp('Downloading Neurosynth files. This may take several minutes.')
-    zip_file = tempname(data_dir) + ".zip";
-    cleanup = onCleanup(@() delete(zip_file));
-    websave(zip_file, json.neurosynth_precomputed.url);
-    unzip(zip_file, data_dir)
+
+    max_attempts = 3;
+    last_err = [];
+    for attempt = 1:max_attempts
+        zip_file = tempname(data_dir) + ".zip";
+        cleanup = onCleanup(@() delete_if_exists(zip_file)); %#ok<NASGU>
+        try
+            websave(zip_file, json.neurosynth_precomputed.url);
+            verify_zip_integrity(zip_file);
+            unzip(zip_file, data_dir);
+            last_err = [];
+            break
+        catch ME
+            last_err = ME;
+            warning('BrainStat:NeurosynthDownload', ...
+                'Attempt %d/%d failed: %s', attempt, max_attempts, ME.message);
+        end
+    end
+
+    if ~isempty(last_err)
+        rethrow(last_err);
+    end
+
     neurosynth_files = find_files(data_dir);
+    if numel(neurosynth_files) ~= json.neurosynth_precomputed.n_files
+        error('BrainStat:NeurosynthDownload', ...
+            ['Neurosynth archive extracted but %d files were found (expected %d). ' ...
+             'Try removing %s and re-running.'], ...
+            numel(neurosynth_files), json.neurosynth_precomputed.n_files, data_dir);
+    end
 end
     function neurosynth_files = find_files(data_dir)
+        if ~exist(data_dir, 'dir')
+            neurosynth_files = strings(0, 1);
+            return
+        end
         data_dir_contents = dir(data_dir);
         data_dir_filenames = {data_dir_contents.name};
         neurosynth_files = regexp(data_dir_filenames, "Neurosynth_TFIDF.*_z_.*consistency.nii.gz", ...
             'match', 'once');
-        neurosynth_files(cellfun(@isempty, neurosynth_files)) = []; 
+        neurosynth_files(cellfun(@isempty, neurosynth_files)) = [];
         neurosynth_files = data_dir + filesep + neurosynth_files;
     end
+end
+
+function verify_zip_integrity(zip_file)
+% Sanity-checks a downloaded zip before handing it to MATLAB's unzip,
+% which is unhelpfully terse when given a truncated archive. We use
+% Java's ZipFile to validate the central directory without extracting
+% the (multi-GB) contents.
+info = dir(zip_file);
+if isempty(info) || info.bytes < 1024
+    error('BrainStat:NeurosynthDownload', ...
+        'Downloaded zip is missing or implausibly small (%d bytes).', ...
+        max(0, info.bytes));
+end
+try
+    zf = java.util.zip.ZipFile(zip_file);
+    zf.close();
+catch ME
+    error('BrainStat:NeurosynthDownload', ...
+        'Downloaded zip failed integrity check: %s', ME.message);
+end
+end
+
+function delete_if_exists(filepath)
+if exist(filepath, 'file')
+    delete(filepath);
+end
 end
 
 function interpolated_volume = nearest_neighbor_interpolation(template, labels)
