@@ -59,8 +59,11 @@ jobs:
       with:
         # Configure MATLAB's Python interpreter explicitly before running the
         # tests; otherwise test_precomputed/load_pkl errors with
-        # MATLAB:Python:PythonUnavailable on the GitHub runners.
+        # MATLAB:Python:PythonUnavailable on the GitHub runners. Also need to
+        # add brainstat_matlab to the MATLAB path explicitly — run-tests v2
+        # used to do this via source-folder, but run-command does not.
         command: |
+          addpath(genpath('brainstat_matlab'));
           pyenv('Version', '${{ steps.setup-python.outputs.python-path }}');
           results = runtests('brainstat_matlab', 'IncludeSubfolders', true);
           if any([results.Failed]); error('%d MATLAB test(s) failed.', sum([results.Failed])); end

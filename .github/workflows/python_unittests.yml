@@ -25,16 +25,19 @@ jobs:
     - name: Install Dependencies
       shell: bash
       run: |
-        # setuptools is no longer bundled by default in Python 3.12 venvs, but
-        # transitive deps (e.g. abagen) still import pkg_resources. Install it
-        # explicitly (both before and after the editable install) so test
-        # collection does not fail with ModuleNotFoundError: pkg_resources.
+        # setuptools 81+ no longer ships the legacy `pkg_resources` module on
+        # import, but transitive deps (e.g. abagen 0.1.3 in
+        # brainstat/context/genetics.py) still rely on it. Pin <81 so test
+        # collection succeeds; revisit when abagen drops the pkg_resources
+        # import.
         python -m pip install --upgrade pip
-        python -m pip install --upgrade setuptools wheel
+        python -m pip install 'setuptools<81' wheel
         [[ -z $(git remote show origin | grep "Fetch URL:" | grep git@github.com:MICA-MNI/BrainStat.git) ]] && git config remote.upstream.fetch refs/heads/*:refs/remotes/upstream/* || git config remote.origin.fetch refs/heads/*:refs/origin/upstream/*
         git fetch origin test-data-2.0
         python -m pip install -e .[dev]
-        python -m pip install --upgrade setuptools
+        # Reinstall pinned setuptools in case the editable install pulled it
+        # back up to 81+.
+        python -m pip install --force-reinstall 'setuptools<81'
 
     - name: Test with pytest
       shell: bash
