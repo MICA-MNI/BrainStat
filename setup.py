@@ -44,9 +44,10 @@ setuptools.setup(
         "nibabel",
         "nilearn>=0.7.0",
         "nimare",
-        "numpy>=1.21",
-        # pandas 2.1 removed DataFrame.groupby(axis=...), which abagen 0.1.3
-        # still uses; pin <2.1 until upstream is patched.
+        # numpy<2 is required so the pinned pandas<2.1 (whose 2.0.x C
+        # extensions were built against the numpy 1.x ABI) loads cleanly.
+        # See requirements.txt for the abagen-driven rationale.
+        "numpy>=1.21,<2",
         "pandas>=1.3,<2.1",
         "scikit_learn>=1.0",
         "scipy>=1.7",
