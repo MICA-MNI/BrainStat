@@ -111,12 +111,15 @@ def fetch_parcellation(
         The surface template. Valid values are "fsaverage", "fsaverage5",
         "fsaverage6", "fslr32k", "civet41k", "civet164k", by default "fsaverage5".
     atlas : str
-        Name of the atlas. Valid names are "cammoun", "glasser", "schaefer", "yeo".
+        Name of the atlas. Valid names are "cammoun", "destrieux", "glasser",
+        "schaefer", "yeo".
     n_regions : int
         Number of regions of the requested atlas. Valid values for the cammoun
         atlas are 33, 60, 125, 250, 500. Valid values for the glasser atlas are
         360. Valid values for the "schaefer" atlas are 100, 200, 300, 400, 500,
-        600, 800, 1000. Valid values for "yeo" are 7 and 17.
+        600, 800, 1000. Valid values for "yeo" are 7 and 17. The
+        "destrieux" atlas (a2009s, FreeSurfer's 75 cortical labels per
+        hemisphere) ignores ``n_regions``.
     join : bool, optional
         If true, returns parcellation as a single array, if false, returns an
         array per hemisphere, by default True.
@@ -154,6 +157,8 @@ def fetch_parcellation(
         parcellations = _fetch_glasser_parcellation(template, data_dir)
     elif atlas == "yeo":
         parcellations = _fetch_yeo_parcellation(template, n_regions, data_dir)
+    elif atlas == "destrieux":
+        parcellations = _fetch_destrieux_parcellation(template, data_dir)
     else:
         raise ValueError(f"Invalid atlas: {atlas}")
 
@@ -534,6 +539,48 @@ def _fetch_glasser_parcellation(template: str, data_dir: Path) -> List[np.ndarra
     gifti = [nib_load(file) for file in filepaths]
     parcellations = [x.darrays[0].data for x in gifti]
     parcellations[1] = (parcellations[1] + 180) * (parcellations[1] > 0)
+    return parcellations
+
+
+def _fetch_destrieux_parcellation(
+    template: str, data_dir: Path
+) -> List[np.ndarray]:
+    """Fetches the Destrieux 2009 (FreeSurfer ``aparc.a2009s``) parcellation.
+
+    Uses :func:`nilearn.datasets.fetch_atlas_surf_destrieux`, which provides
+    the parcellation on the ``fsaverage5`` surface. For other ``fsaverage*``
+    templates we resample with nearest-neighbour interpolation; ``fslr32k``
+    is not supported because the destrieux atlas is FreeSurfer-specific.
+    """
+    from nilearn.datasets import fetch_atlas_surf_destrieux
+
+    if template == "fslr32k":
+        raise ValueError(
+            "The destrieux atlas is FreeSurfer-specific; fslr32k is not "
+            "supported. Use a fsaverage* template instead."
+        )
+
+    bunch = fetch_atlas_surf_destrieux(data_dir=str(data_dir))
+    # nilearn returns int32 arrays for fsaverage5 (10242 vertices/hemi).
+    parcellations = [np.asarray(bunch["map_left"]), np.asarray(bunch["map_right"])]
+
+    if template != "fsaverage5":
+        # Nearest-neighbour resample fsaverage5 -> requested fsaverage*.
+        from brainstat.mesh.interpolate import _surf2surf
+
+        src_left, src_right = fetch_template_surface(
+            "fsaverage5", layer="white", join=False
+        )
+        dst_left, dst_right = fetch_template_surface(
+            template, layer="white", join=False
+        )
+        parcellations[0] = _surf2surf(
+            src_left, dst_left, parcellations[0], interpolation="nearest"
+        ).astype(parcellations[0].dtype)
+        parcellations[1] = _surf2surf(
+            src_right, dst_right, parcellations[1], interpolation="nearest"
+        ).astype(parcellations[1].dtype)
+
     return parcellations
 
 
