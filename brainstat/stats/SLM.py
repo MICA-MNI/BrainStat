@@ -322,7 +322,11 @@ class SLM:
                         )
                         yeo_names, _ = fetch_yeo_networks_metadata(7)
                         yeo_names.insert(0, "Undefined")
-                        yeo7_index = yeo7[self.P["peak"]["vertid"][i]]
+                        # vertid is stored as 1-based (inherited from SurfStat /
+                        # MATLAB conventions in peak_clus); subtract 1 before
+                        # indexing the 0-based yeo7 array (see #347).
+                        vertid = self.P["peak"]["vertid"][i]
+                        yeo7_index = yeo7[vertid - 1] if vertid is not None else None
                         if "yeo7" not in self.P["peak"]:
                             self.P["peak"]["yeo7"] = []
                         self.P["peak"]["yeo7"].append(np.take(yeo_names, yeo7_index))

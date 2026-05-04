@@ -157,8 +157,10 @@ end
 
 function v_col = column_vector(v)
 % Converts the input vector to a column vector.
-arguments
-    v {mustBeVector}
+% Note: mustBeVector was introduced in MATLAB R2020b; an explicit check
+% is used here to keep compatibility with R2019b and R2020a (see #285).
+if ~isempty(v) && ~isvector(v)
+    error('column_vector:NotAVector', 'Input must be a vector.');
 end
 v_col = v(:);
 end
