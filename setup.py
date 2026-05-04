@@ -45,7 +45,9 @@ setuptools.setup(
         "nilearn>=0.7.0",
         "nimare",
         "numpy>=1.21",
-        "pandas>=1.3",
+        # pandas 2.1 removed DataFrame.groupby(axis=...), which abagen 0.1.3
+        # still uses; pin <2.1 until upstream is patched.
+        "pandas>=1.3,<2.1",
         "scikit_learn>=1.0",
         "scipy>=1.7",
         "templateflow",

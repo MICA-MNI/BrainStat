@@ -172,6 +172,8 @@ def _t_test(self) -> None:
                 M[M_ef] = ef_duplicate[:, i]
                 M[M_sse] = sse_matrix.flatten()
 
-                self.t[i] = float(np.sqrt(-np.linalg.det(M) / det_sse / vf))
+                # Use .item() rather than float(): numpy >=2.0 raises
+                # TypeError when float() is applied to size-1 ndarrays.
+                self.t[i] = np.sqrt(-np.linalg.det(M) / det_sse / vf).item()
 
     self.t = np.atleast_2d(self.t)
