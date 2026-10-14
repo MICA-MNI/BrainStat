@@ -6,6 +6,7 @@ import shutil
 import urllib.request
 import warnings
 from pathlib import Path
+from tempfile import TemporaryDirectory
 from typing import Callable
 
 import brainstat
@@ -179,8 +180,11 @@ def _download_file(
     
     for attempt in range(max_retries):
         try:
-            with urllib.request.urlopen(url, timeout=30) as response, open(output_file, "wb") as out_file:
-                shutil.copyfileobj(response, out_file)
+            with TemporaryDirectory(dir=output_file.parent) as tmpdir:
+                temporary_file = Path(tmpdir) / output_file.name
+                with urllib.request.urlopen(url, timeout=30) as response, open(temporary_file, "wb") as out_file:
+                    shutil.copyfileobj(response, out_file)
+                temporary_file.replace(output_file)
             return  # Success, exit function
         except (RemoteDisconnected, URLError, TimeoutError) as e:
             if attempt < max_retries - 1:
