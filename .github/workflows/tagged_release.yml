@@ -4,6 +4,15 @@ on:
   push:
     tags:
       - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing version tag to build and publish
+        required: true
+        type: string
+
+permissions:
+  contents: write
 
 jobs:
   tagged-release:
@@ -12,20 +21,48 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    
+      with:
+        ref: ${{ inputs.tag || github.ref }}
+
     - name: Set up Python 3.10.
       uses: actions/setup-python@v5
       with:
         python-version: "3.10"
 
+    - name: Validate release version
+      env:
+        RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
+      run: |
+        python - <<'PYTHON'
+        import ast
+        import os
+        from pathlib import Path
+
+        module = ast.parse(Path("brainstat/__init__.py").read_text())
+        version = next(ast.literal_eval(node.value) for node in module.body
+                       if isinstance(node, ast.Assign)
+                       and any(isinstance(target, ast.Name) and target.id == "__version__"
+                               for target in node.targets))
+        if os.environ["RELEASE_TAG"] != f"v{version}":
+            raise SystemExit("Release tag must match brainstat.__version__")
+        with open(os.environ["GITHUB_ENV"], "a") as environment:
+            environment.write(f"RELEASE_VERSION={version}\n")
+        changelog = Path("CHANGELOG.md").read_text()
+        entry = changelog.split(f"## [{version}]", 1)[1].split("\n## [", 1)[0]
+        Path("/tmp/brainstat-release-notes.md").write_text(
+            f"BrainStat {version}\n\n" + entry.split("\n", 1)[1].strip() + "\n"
+        )
+        PYTHON
+
+
     - name: Install MATLAB
       uses: matlab-actions/setup-matlab@v2
-    
+
     - name: Install Python BrainStat.
       run: |
         python -m pip install --upgrade pip
         python -m pip install --upgrade setuptools wheel
-    
+
     - name: Build binary wheel and tarball.
       run: |
         python setup.py sdist bdist_wheel
@@ -33,44 +70,48 @@ jobs:
 
     - name: Modify MATLAB version and path
       run: |
-        current_release=$(cat brainstat/__init__.py | grep "__version__ =" | grep -Eo "[0-9]\.[0-9]\.[0-9]")
+        current_release="$RELEASE_VERSION"
         brainstat_dir=$(pwd)
-        
+
         # Replace placeholders in BrainStat.prj
         # 1. Replace ${current_release} with actual version
         sed -i "s:\${current_release}:${current_release}:g" .github/matlab_toolbox/BrainStat.prj
-        
+
         # 2. Replace ${PROJECT_ROOT}/${brainstat_dir} with absolute path to workspace
         # We use | as delimiter since paths contain /
         sed -i "s|\${PROJECT_ROOT}/\${brainstat_dir}|${brainstat_dir}|g" .github/matlab_toolbox/BrainStat.prj
-        
+
         # Debug output
         echo "Updated BrainStat.prj content (Preview):"
         grep -C 2 "param.version" .github/matlab_toolbox/BrainStat.prj
         grep -C 2 "fileset.rootdir" .github/matlab_toolbox/BrainStat.prj
-        
+
     - name: Create MATLAB Toolbox
       uses: matlab-actions/run-command@v2
       with:
         command: addpath('.github/matlab_toolbox'); package_brainstat;
-    
+
     - name: Check MATLAB Toolbox creation
       run: ls -la .github/matlab_toolbox/
 
-    - name: Create Github release. 
-      uses: "marvinpinto/action-automatic-releases@latest"
-      with:
-        repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        prerelease: false
-        title: "BrainStat ${{ github.ref_name }}"
-        files: |
-          LICENSE
-          dist/*.tar.gz
-          dist/*.whl
-          .github/matlab_toolbox/BrainStat.mltbx
+    - name: Publish GitHub release and assets
+      env:
+        GH_TOKEN: ${{ github.token }}
+        RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
+      run: |
+        test -s .github/matlab_toolbox/BrainStat.mltbx
+        if gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+          gh release upload "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --clobber \
+            LICENSE dist/*.tar.gz dist/*.whl .github/matlab_toolbox/BrainStat.mltbx
+        else
+          gh release create "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --verify-tag \
+            --title "BrainStat $RELEASE_TAG" --notes-file /tmp/brainstat-release-notes.md \
+            LICENSE dist/*.tar.gz dist/*.whl .github/matlab_toolbox/BrainStat.mltbx
+        fi
 
     - name: Publish to PyPi.
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
         password: ${{ secrets.PYPI_API_TOKEN }}
         verbose: true
+        skip-existing: true
