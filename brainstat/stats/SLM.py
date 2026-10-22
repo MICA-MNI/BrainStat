@@ -163,6 +163,22 @@ class SLM:
             return None
         return np.asarray(mask).astype(bool)
 
+    def to_html_report(self, filename="slm_report.html", maps=None, surface=None,
+                       title="BrainStat SLM Report", cmap="viridis",
+                       color_range=None):
+        """Write a display-independent HTML report for this fitted SLM."""
+        from brainstat.reporting import make_slm_report
+
+        return make_slm_report(
+            self,
+            filename=filename,
+            maps=maps,
+            surface=surface,
+            title=title,
+            cmap=cmap,
+            color_range=color_range,
+        )
+
     def fit(self, Y: np.ndarray) -> None:
         """Fits the SLM model
 

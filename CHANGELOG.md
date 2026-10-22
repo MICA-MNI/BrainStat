@@ -3,6 +3,46 @@
 All notable changes to BrainStat are recorded here. The project adopts
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] — 2026-10-22
+
+### Added
+
+- Display-free, self-contained HTML reports for fitted univariate SLM surface
+  maps via `brainstat.reporting.make_slm_report` and `SLM.to_html_report`.
+  Uses the released Nilearn viewer, embeds JavaScript, supports template and
+  loaded surfaces, and records corrections, contrast and mask coverage. (#383)
+- Offline genetics contract tests covering hemisphere sizes, argument
+  forwarding, return objects, cleanup and scoped compatibility adapters. The
+  Allen expression-data integration test is opt-in with
+  `BRAINSTAT_LIVE_TESTS=1`. (#384)
+
+### Fixed
+
+- Stage downloads beside the destination and atomically publish only after a
+  successful copy, preserving cached data after interrupted responses. Added
+  regressions for retries, interrupted writes and staging cleanup. (#385)
+- Validate integer parcel labels against actual hemisphere geometry instead
+  of splitting arbitrary arrays in half; write GIFTI labels as int32.
+- Scope legacy abagen compatibility adapters to genetics calls and restore
+  originals on success or failure. Importing genetics no longer patches pandas
+  or abagen globally. BrainStat genetics calls are serialized; direct pandas or
+  abagen work in other threads should not run concurrently with these calls.
+- Declare the runtime `setuptools<81` requirement for abagen's `pkg_resources`
+  import and the directly imported statsmodels dependency.
+- Correct package metadata links to the current repository.
+- Use Python 3.11 and the current Read the Docs configuration schema; remove
+  test modules from public API autosummaries to avoid executing data generators
+  during documentation imports.
+- Require Nilearn >=0.10.4, the supported baseline tested for HTML export.
+
+### Compatibility
+
+- Statistical computations and scientific defaults are unchanged. Invalid
+  label arrays now raise a descriptive error. NumPy/pandas limits remain;
+  Python 3.12 support awaits upstream abagen compatibility.
+- HTML reports require vertexwise, univariate surface maps. Residual-QC
+  figures, volumetric maps and automatic parcel expansion are not included.
+
 ## [0.6.0] — 2026-05
 
 This release re-greens CI after a long stretch of upstream-driven breakage,
