@@ -20,7 +20,7 @@ setuptools.setup(
     description="A toolbox for statistical analysis of neuroimaging data",
     long_description=long_description,
     long_description_content_type="text/x-rst",
-    url="https://github.com/MICA-LAB/BrainStat",
+    url="https://github.com/MICA-MNI/BrainStat",
     packages=setuptools.find_packages(),
     license="BSD 3-Clause License",
     package_data={
@@ -36,13 +36,15 @@ setuptools.setup(
     python_requires=">=3.10",
     install_requires=[
         "abagen>=0.1",
+        "setuptools<81",  # abagen still imports pkg_resources
+        "statsmodels",
         "brainspace>=0.1.2",
         "h5py",
         "matplotlib>=3.4",
         "netneurotools<0.3.0",
         "neurosynth",
         "nibabel",
-        "nilearn>=0.7.0",
+        "nilearn>=0.10.4",
         "nimare",
         # numpy<2 is required so the pinned pandas<2.1 (whose 2.0.x C
         # extensions were built against the numpy 1.x ABI) loads cleanly.
@@ -57,7 +59,7 @@ setuptools.setup(
     extras_require={"dev": ["gitpython", "hcp-utils", "mypy", "plotly", "pytest"]},
     project_urls={  # Optional
         "Documentation": "https://brainstat.readthedocs.io",
-        "Bug Reports": "https://github.com/MICA-LAB/BrainStat/issues",
-        "Source": "https://github.com/MICA-LAB/BrainStat/",
+        "Bug Reports": "https://github.com/MICA-MNI/BrainStat/issues",
+        "Source": "https://github.com/MICA-MNI/BrainStat/",
     },
 )

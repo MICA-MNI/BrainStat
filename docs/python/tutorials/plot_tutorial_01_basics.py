@@ -108,6 +108,17 @@ slm_age = SLM(
 slm_age.fit(thickness)
 
 ###################################################################
+# In Colab or a remote notebook, export an interactive HTML report after
+# fitting. This path does not create a VTK render window. For a fully
+# display-free session, skip the static plot_hemispheres and qc examples.
+# Open the returned HTML file in a browser, or display a notebook FileLink.
+# See the Reporting guide for all map and surface options.
+#
+# report = slm_age.to_html_report(
+#     "slm_age.html", surface=(pial_left, pial_right), maps=["t", "p", "q"]
+# )
+
+###################################################################
 # Before we go any further, we can quickly assess the quality and
 # robustness of the fitted model. We can do this for every vertex/parcel
 # on the cortex (default), for one vertex (see example below for the 88th

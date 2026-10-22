@@ -12,7 +12,7 @@ API
    brainstat.context
    brainstat.datasets
    brainstat.mesh
+   brainstat.reporting
    brainstat.stats
-   brainstat.tests
    brainstat.tutorial
 
